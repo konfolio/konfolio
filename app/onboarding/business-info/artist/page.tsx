@@ -12,7 +12,7 @@ export default function ArtistBusinessInfoPage() {
       <main className="flex-1 flex items-center justify-center px-[25px] sm:px-10 py-[60px] pt-[100px] pb-[120px]">
         <BusinessInfoArtistCard
           displayName={displayName}
-          backHref="/onboarding/name-location/artist"
+          backHref="/onboarding/name/artist"
           nextHref="/onboarding/next-step" // change to your real next route
         />
       </main>

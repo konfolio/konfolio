@@ -1,0 +1,37 @@
+[00:00:05.287] Server  LOG     ✓ Ready in 4s
+[00:00:08.548] Server  LOG     ○ Compiling /onboarding/business-info/artist ...
+[00:00:39.431] Server  LOG     ✓ Compiled in 57ms
+[00:01:10.417] Server  LOG     ✓ Compiled in 155ms
+[02:59:21.817] Server  LOG     ✓ Compiled in 784ms
+[03:06:48.118] Server  LOG     ✓ Compiled in 102ms
+[03:07:36.624] Server  ERROR   ⨯ ReferenceError: BusinessInfoHostCard is not defined
+[03:07:37.642] Browser ERROR   uncaughtError: ReferenceError: BusinessInfoHostCard is not defined
+[03:18:25.017] Server  ERROR   ⨯ ReferenceError: BusinessInfoHostCard is not defined
+[03:18:25.031] Server  LOG     ✓ Compiled in 167ms
+[03:18:28.643] Browser ERROR   uncaughtError: ReferenceError: BusinessInfoHostCard is not defined
+[03:18:28.644] Browser ERROR   uncaughtError: TypeError: Failed to execute 'measure' on 'Performance': '​ArtistBusinessInfoPage' cannot have a negative time stamp.
+[03:19:19.519] Server  ERROR   ⨯ ReferenceError: BusinessInfoHostCard is not defined
+[03:19:19.529] Server  LOG     ✓ Compiled in 76ms
+[03:19:20.200] Browser ERROR   uncaughtError: ReferenceError: BusinessInfoHostCard is not defined
+[03:19:20.200] Browser ERROR   uncaughtError: TypeError: Failed to execute 'measure' on 'Performance': '​ArtistBusinessInfoPage' cannot have a negative time stamp.
+[03:19:26.293] Server  ERROR   ⨯ ReferenceError: BusinessInfoHostCard is not defined
+[03:19:26.318] Server  LOG     ✓ Compiled in 59ms
+[03:19:27.075] Browser ERROR   uncaughtError: ReferenceError: BusinessInfoHostCard is not defined
+[03:19:27.075] Browser ERROR   uncaughtError: TypeError: Failed to execute 'measure' on 'Performance': '​ArtistBusinessInfoPage' cannot have a negative time stamp.
+[03:19:58.485] Server  LOG     ✓ Compiled in 208ms
+[03:25:32.308] Server  LOG     ✓ Compiled in 553ms
+[03:30:37.757] Server  LOG     ✓ Compiled in 218ms
+[03:31:05.109] Server  LOG     ✓ Compiled in 71ms
+[03:32:25.670] Server  LOG     ✓ Compiled in 226ms
+[03:35:23.387] Server  LOG     ✓ Compiled in 233ms
+[03:35:46.066] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[03:35:46.066] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[03:35:46.066] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[03:35:46.066] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[03:35:46.066] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[03:36:24.398] Server  LOG     ✓ Compiled in 92ms
+[03:48:53.243] Server  LOG     ✓ Compiled in 305ms
+[03:49:38.208] Server  LOG     ✓ Compiled in 114ms
+[03:51:09.168] Server  LOG     ✓ Compiled in 227ms
+[03:51:26.022] Server  LOG     ✓ Compiled in 91ms
+[11:35:06.711] Server  LOG     ○ Compiling /explore ...

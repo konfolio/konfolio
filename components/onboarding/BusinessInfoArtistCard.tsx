@@ -13,11 +13,7 @@ type Props = {
   nextHref: string
 }
 
-export default function BusinessInfoArtistCard({
-  displayName,
-  backHref,
-  nextHref,
-}: Props) {
+export default function BusinessInfoArtistCard({ displayName, backHref, nextHref }: Props) {
   const [businessName, setBusinessName] = useState("")
   const [location, setLocation] = useState("")
   const [salesPermit, setSalesPermit] = useState<"" | "yes" | "no">("")
@@ -33,24 +29,21 @@ export default function BusinessInfoArtistCard({
       className="
         relative
         w-[914px] h-[630px]
-        flex flex-col items-center justify-between
+        flex flex-col justify-between items-center
         px-[45px] py-[50px]
         bg-white rounded-[15px]
         shadow-[8px_8px_50px_rgba(0,0,0,0.05)]
         max-w-[calc(100vw-40px)]
       "
     >
-        {/* Header */}
-        <div className="relative w-full flex items-center justify-center h-[30px]">
-        <ArrowLeft
-            href="/onboarding/name/artist"
-            className="absolute left-0"
-        />
+      {/* Header Row */}
+      <div className="relative w-full flex items-center justify-center h-[30px]">
+        <ArrowLeft href={backHref} className="absolute left-0" />
 
-        <p className="font-inter text-[25px] leading-[30px] text-black">
-            Hello, {displayName}!
+        <p className="m-0 font-inter font-normal text-[25px] leading-[30px] text-black text-center">
+          Hello, {displayName}!
         </p>
-        </div>
+      </div>
 
       {/* Form */}
       <div className="w-[426px] flex flex-col gap-[30px]">
@@ -58,6 +51,7 @@ export default function BusinessInfoArtistCard({
           label="Business Name"
           value={businessName}
           onChange={setBusinessName}
+          placeholder=""
         />
 
         <OnboardingField
@@ -67,41 +61,45 @@ export default function BusinessInfoArtistCard({
           placeholder="City, State"
         />
 
-        {/* Sales Permit */}
-        <div className="w-[426px] flex flex-col gap-[10px]">
-          <span className="font-inter text-[14px] text-[#262626]">
-            Valid Sales Permit
-          </span>
+        {/* Dropdown */}
+        <div className="w-[426px] flex flex-col items-start gap-[10px]">
+          <div className="w-full flex flex-col items-start gap-[10px] py-[5px]">
+            <span className="font-inter text-[17px] leading-[140%] text-[#262626]">
+              Valid Sales Permit
+            </span>
+          </div>
 
           <button
             type="button"
             className="
-              w-full h-[40px]
-              flex items-center justify-between
-              px-[16px]
+              w-[426px] h-[40px]
               rounded-[8px]
               border border-[#A5A5A5]/50
               bg-white
-              font-inter text-[15px] leading-[21px]
+              px-[16px]
+              flex items-center justify-between
+              text-left
             "
-            onClick={() =>
-              setSalesPermit((p) => (p === "" ? "yes" : p === "yes" ? "no" : ""))
-            }
+            onClick={() => {
+              setSalesPermit((prev) => (prev === "" ? "yes" : prev === "yes" ? "no" : ""))
+            }}
           >
-            <span className={salesPermit === "" ? "text-[#A5A5A5]" : "text-[#262626]"}>
+            {/* Use flex + items-center so text doesn't look cut off */}
+            <span className="font-inter text-[15px] leading-[21px] text-[#A5A5A5] flex items-center">
               {salesPermit === "" ? "Select" : salesPermit === "yes" ? "Yes" : "No"}
             </span>
             <ArrowDown />
           </button>
         </div>
 
-        {/* Checkbox */}
-        <label className="w-full h-[23px] flex items-center gap-[7px] cursor-pointer">
+        {/* Checkbox row */}
+        <label className="w-[426px] h-[23px] flex items-center gap-[7px] py-[5px] cursor-pointer select-none">
           <span
             className={[
               "relative w-[13px] h-[13px] rounded-[3.25px] flex-shrink-0",
               willApply ? "bg-[#262626]" : "bg-white border border-[#262626]",
             ].join(" ")}
+            aria-hidden="true"
           >
             {willApply && (
               <span
@@ -131,7 +129,7 @@ export default function BusinessInfoArtistCard({
         </label>
       </div>
 
-      {/* Next */}
+      {/* Next Button */}
       <PrimaryButton
         href={canContinue ? nextHref : "#"}
         className={!canContinue ? "pointer-events-none opacity-40" : ""}

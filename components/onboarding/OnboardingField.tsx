@@ -19,7 +19,7 @@ export default function OnboardingField({
     <div className="w-[426px] flex flex-col items-start gap-[10px]">
       <div className="w-full flex flex-col items-start gap-[10px] py-[5px]">
         <div className="flex items-center gap-[5px]">
-          <span className="font-inter text-[14px] leading-[140%] text-[#262626]">
+          <span className="font-inter text-[17px] leading-[140%] text-[#262626]">
             {label}
           </span>
 

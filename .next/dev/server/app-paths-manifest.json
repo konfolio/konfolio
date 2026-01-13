@@ -1,0 +1,9 @@
+{
+  "/explore/page": "app/explore/page.js",
+  "/onboarding/audience/page": "app/onboarding/audience/page.js",
+  "/onboarding/business-info/artist/page": "app/onboarding/business-info/artist/page.js",
+  "/onboarding/business-info/host/page": "app/onboarding/business-info/host/page.js",
+  "/onboarding/name/artist/page": "app/onboarding/name/artist/page.js",
+  "/onboarding/name/host/page": "app/onboarding/name/host/page.js",
+  "/page": "app/page.js"
+}

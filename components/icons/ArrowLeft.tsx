@@ -13,24 +13,33 @@ export default function ArrowLeft({ href, className = "" }: Props) {
       className={`w-[24px] h-[24px] flex items-center justify-center ${className}`}
     >
       <svg
-        width="13"
-        height="13"
-        viewBox="0 0 13 13"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path
-          d="M11.9167 6.5H1.08337"
-          stroke="#262626"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M5.41663 10.8334L1.08329 6.50004L5.41663 2.16671"
-          stroke="#262626"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <g clipPath="url(#clip0_706_7705)">
+          <path
+            d="M2 12H22"
+            stroke="#262626"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M10 20L2 12L10 4"
+            stroke="#262626"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </g>
+        <defs>
+          <clipPath id="clip0_706_7705">
+            <rect width="24" height="24" fill="white" />
+          </clipPath>
+        </defs>
       </svg>
     </Link>
   )
