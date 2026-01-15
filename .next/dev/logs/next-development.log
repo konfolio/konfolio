@@ -413,3 +413,4 @@ It can also happen if the client has a browser extension installed which messes 
 [45:27:12.191] Server  LOG     ✓ Compiled in 1817ms
 [60:13:06.568] Server  LOG     ○ Compiling /_not-found/page ...
 [60:14:48.382] Server  LOG     ✓ Finished writing to filesystem cache in 18.9s
+[60:15:38.203] Server  LOG     ✓ Finished filesystem cache database compaction in 50s
