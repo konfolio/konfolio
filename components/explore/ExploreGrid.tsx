@@ -153,10 +153,15 @@ export default function ExploreGrid() {
         {showDots && (
           <div className="w-full flex justify-center pt-[36px] pb-[12px]">
             <div
-              className="w-[32px] h-[32px] grid place-items-center opacity-60 select-none pointer-events-none"
+              className="
+                w-[32px] h-[32px]
+                grid place-items-center
+                select-none pointer-events-none
+                text-[#A5A5A5]
+              "
               aria-hidden="true"
             >
-              <div className="rotate-90">
+              <div className="rotate-90 scale-[1.6]">
                 <ThreeDotsIcon />
               </div>
             </div>
@@ -169,7 +174,7 @@ export default function ExploreGrid() {
         {/* Sentinel */}
         {hasMore && <div ref={sentinelRef} className="h-[18px]" />}
 
-        {/* Bottom breathing room (smaller now) */}
+        {/* Bottom breathing room  */}
         <div className="h-[36px]" />
 
       </div>

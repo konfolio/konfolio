@@ -1185,18 +1185,18 @@ function ExploreGrid() {
                 showDots && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "w-full flex justify-center pt-[36px] pb-[12px]",
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "w-[32px] h-[32px] grid place-items-center opacity-60 select-none pointer-events-none",
+                        className: " w-[32px] h-[32px] grid place-items-center select-none pointer-events-none text-[#A5A5A5] ",
                         "aria-hidden": "true",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "rotate-90",
+                            className: "rotate-90 scale-[1.6]",
                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$ThreeDotsIcon$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/explore/ExploreGrid.tsx",
-                                lineNumber: 160,
+                                lineNumber: 165,
                                 columnNumber: 17
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/Downloads/konfolio/components/explore/ExploreGrid.tsx",
-                            lineNumber: 159,
+                            lineNumber: 164,
                             columnNumber: 15
                         }, this)
                     }, void 0, false, {
@@ -1213,7 +1213,7 @@ function ExploreGrid() {
                     className: "h-[48px]"
                 }, void 0, false, {
                     fileName: "[project]/Downloads/konfolio/components/explore/ExploreGrid.tsx",
-                    lineNumber: 167,
+                    lineNumber: 172,
                     columnNumber: 22
                 }, this),
                 hasMore && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1221,14 +1221,14 @@ function ExploreGrid() {
                     className: "h-[18px]"
                 }, void 0, false, {
                     fileName: "[project]/Downloads/konfolio/components/explore/ExploreGrid.tsx",
-                    lineNumber: 170,
+                    lineNumber: 175,
                     columnNumber: 21
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "h-[36px]"
                 }, void 0, false, {
                     fileName: "[project]/Downloads/konfolio/components/explore/ExploreGrid.tsx",
-                    lineNumber: 173,
+                    lineNumber: 178,
                     columnNumber: 9
                 }, this)
             ]

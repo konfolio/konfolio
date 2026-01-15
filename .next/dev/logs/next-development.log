@@ -35,3 +35,381 @@
 [03:51:09.168] Server  LOG     ✓ Compiled in 227ms
 [03:51:26.022] Server  LOG     ✓ Compiled in 91ms
 [11:35:06.711] Server  LOG     ○ Compiling /explore ...
+[16:19:37.662] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./Downloads/konfolio/node_modules/next/dist/client/image-component.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[16:19:40.111] Server  LOG     ✓ Compiled in 9.9s
+[16:23:32.208] Server  LOG     ✓ Compiled in 741ms
+[16:28:31.746] Server  LOG     ✓ Compiled in 410ms
+[16:31:22.172] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[16:31:22.172] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[16:31:22.406] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[16:31:22.406] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[16:31:22.406] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[16:32:01.365] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/explore" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/Downloads...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" className="inter_e8e5...">
+                          <body
+                            className="antialiased"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[16:35:58.155] Server  LOG     ✓ Compiled in 1777ms
+[16:39:13.225] Server  LOG     ○ Compiling /onboarding/links/artist ...
+[16:42:51.459] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[16:42:51.460] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[16:42:51.460] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[16:42:51.460] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[16:42:51.460] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[16:47:56.217] Server  LOG     ✓ Compiled in 1387ms
+[16:48:50.866] Server  LOG     ✓ Compiled in 153ms
+[16:49:00.221] Browser WARN    Image with src "/images/califlair_home.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[16:49:00.386] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/explore" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/Downloads...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" className="inter_e8e5...">
+                          <body
+                            className="antialiased"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[16:49:13.021] Browser WARN    Image with src "/images/califlair_home.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[35:13:38.266] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[35:13:38.504] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[35:13:38.901] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[35:13:39.087] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[35:13:39.442] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[35:54:06.527] Server  LOG     ✓ Finished filesystem cache database compaction in 13.8s
+[37:29:03.434] Server  LOG     ✓ Compiled in 832ms
+[37:40:53.765] Server  LOG     ✓ Compiled in 2.8s
+[37:46:19.001] Server  LOG     ✓ Compiled in 741ms
+[37:53:23.885] Server  LOG     ✓ Compiled in 953ms
+[37:53:23.984] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./Downloads/konfolio/components/onboarding/LinksCard.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[37:53:35.624] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/onboardin..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/Downloads...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" className="inter_e8e5...">
+                          <body
+                            className="antialiased"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[37:53:37.443] Server  LOG     ✓ Compiled in 423ms
+[37:53:37.504] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./Downloads/konfolio/components/onboarding/LinksCard.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[37:53:49.727] Server  LOG     ✓ Compiled in 153ms
+[38:39:01.139] Server  LOG     ✓ Compiled in 1978ms
+[38:39:09.236] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/onboardin..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/Downloads...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" className="inter_e8e5...">
+                          <body
+                            className="antialiased"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[38:42:16.572] Server  LOG     ✓ Compiled in 529ms
+[38:45:49.726] Server  LOG     ✓ Compiled in 987ms
+[38:47:50.278] Server  LOG     ✓ Compiled in 1851ms
+[38:48:57.929] Server  LOG     ✓ Compiled in 644ms
+[38:49:09.452] Server  LOG     ✓ Compiled in 164ms
+[38:49:57.607] Server  LOG     ✓ Compiled in 270ms
+[38:50:56.165] Server  LOG     ✓ Compiled in 642ms
+[38:52:04.624] Server  LOG     ✓ Compiled in 1805ms
+[38:52:15.036] Server  LOG     ✓ Compiled in 228ms
+[38:53:01.547] Server  LOG     ✓ Compiled in 1404ms
+[38:53:25.815] Server  LOG     ✓ Compiled in 227ms
+[38:54:28.543] Server  LOG     ✓ Compiled in 286ms
+[38:54:44.356] Server  LOG     ✓ Compiled in 407ms
+[38:54:58.652] Server  LOG     ✓ Compiled in 482ms
+[39:02:44.839] Server  LOG     ✓ Compiled in 5.8s
+[39:03:34.288] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[39:03:34.466] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[39:03:34.466] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[39:03:34.466] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[39:03:34.466] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[39:03:56.131] Server  LOG     ○ Compiling /onboarding/links/host ...
+[39:04:17.286] Server  LOG     ✓ Finished filesystem cache database compaction in 12.3s
+[39:06:55.635] Server  LOG     ✓ Compiled in 3.2s
+[39:10:47.246] Server  LOG     ✓ Compiled in 1699ms
+[39:12:20.708] Server  LOG     ✓ Compiled in 334ms
+[39:12:53.054] Server  LOG     ✓ Compiled in 177ms
+[39:13:01.599] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/onboardin..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/Downloads...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" className="inter_e8e5...">
+                          <body
+                            className="antialiased"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[39:13:53.570] Server  LOG     ✓ Compiled in 256ms
+[39:14:10.692] Server  LOG     ✓ Compiled in 502ms
+[39:14:16.896] Server  LOG     ✓ Compiled in 651ms
+[39:14:23.419] Server  LOG     ✓ Compiled in 258ms
+[39:19:44.942] Server  LOG     ✓ Compiled in 832ms
+[39:19:45.754] Browser ERROR   uncaughtError: ReferenceError: onLinkCountChange is not defined
+[39:20:13.559] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[39:20:14.083] Server  LOG     ✓ Compiled in 602ms
+[39:20:14.580] Server  ERROR   ⨯ ReferenceError: onLinkCountChange is not defined
+[39:20:14.617] Server  LOG     ✓ Compiled in 0ms
+[39:20:14.626] Browser ERROR   uncaughtError: ReferenceError: onLinkCountChange is not defined
+[39:20:14.627] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[39:20:17.885] Browser ERROR   uncaughtError: ReferenceError: onLinkCountChange is not defined
+[40:30:04.158] Server  LOG     ✓ Compiled in 250ms
+[40:30:04.195] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[40:30:07.563] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/onboardin..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/Downloads...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" className="inter_e8e5...">
+                          <body
+                            className="antialiased"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[40:42:24.757] Server  LOG     ✓ Compiled in 872ms
+[40:43:24.913] Server  LOG     ✓ Compiled in 174ms
+[41:37:06.176] Server  LOG     ✓ Compiled in 1339ms
+[41:37:43.272] Server  LOG     ✓ Compiled in 1224ms
+[41:45:09.593] Server  LOG     ✓ Compiled in 505ms
+[41:46:01.134] Server  LOG     ✓ Compiled in 124ms
+[41:55:48.037] Server  LOG     ✓ Compiled in 509ms
+[42:01:55.532] Server  LOG     ✓ Compiled in 923ms
+[42:09:34.525] Server  LOG     ✓ Compiled in 1007ms
+[42:19:10.107] Server  LOG     ✓ Compiled in 880ms
+[42:19:10.429] Browser ERROR   The final argument passed to %s changed size between renders. The order and size of this array must remain constant.
+
+Previous: %s
+Incoming: %s useEffect [0, function () { [native code] }, ] [0, function () { [native code] }]
+[42:19:33.066] Server  LOG     ✓ Finished filesystem cache database compaction in 17.4s
+[42:19:33.307] Server  LOG     ✓ Finished writing to filesystem cache in 15.6s
+[42:19:35.799] Server  LOG     ✓ Compiled in 583ms
+[42:19:35.986] Browser ERROR   The final argument passed to %s changed size between renders. The order and size of this array must remain constant.
+
+Previous: %s
+Incoming: %s useEffect [0, function () { [native code] }] [0, function () { [native code] }, ]
+[42:19:39.823] Server  LOG     ✓ Compiled in 236ms
+[42:19:44.472] Server  LOG     ✓ Compiled in 324ms
+[42:20:02.808] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/onboardin..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/Downloads...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" className="inter_e8e5...">
+                          <body
+                            className="antialiased"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[42:20:18.198] Server  LOG     ✓ Compiled in 152ms
+[42:20:27.633] Server  LOG     ✓ Compiled in 101ms
+[42:25:41.716] Server  LOG     ✓ Compiled in 1060ms
+[42:26:22.068] Server  LOG     ✓ Compiled in 287ms
+[42:40:39.962] Server  LOG     ✓ Compiled in 659ms
+[42:40:56.353] Server  LOG     ✓ Compiled in 550ms
+[42:41:39.236] Server  LOG     ✓ Compiled in 129ms
+[42:44:07.893] Server  LOG     ✓ Compiled in 582ms
+[42:49:06.057] Server  LOG     ✓ Compiled in 764ms
+[42:49:31.298] Server  LOG     ✓ Compiled in 126ms
+[42:51:15.423] Server  LOG     ✓ Compiled in 239ms
+[42:51:29.223] Server  LOG     ✓ Compiled in 110ms
+[42:51:56.093] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[42:51:56.093] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[42:51:56.093] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[42:51:56.093] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[42:51:56.093] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[42:54:14.497] Server  LOG     ✓ Compiled in 1991ms
+[42:55:10.294] Server  LOG     ✓ Compiled in 215ms
+[42:56:02.156] Server  LOG     ✓ Compiled in 261ms
+[42:56:16.151] Server  LOG     ✓ Compiled in 174ms
+[42:57:28.512] Server  LOG     ✓ Compiled in 354ms
+[43:04:25.400] Server  LOG     ✓ Compiled in 392ms
+[43:05:00.402] Server  LOG     ✓ Compiled in 130ms
+[43:11:26.400] Server  LOG     ✓ Compiled in 461ms
+[44:11:32.322] Server  LOG     ✓ Compiled in 961ms
+[44:18:15.781] Server  LOG     ✓ Compiled in 2.1s
+[44:21:59.053] Server  LOG     ✓ Compiled in 1371ms
+[44:31:12.141] Server  LOG     ✓ Compiled in 1710ms
+[45:27:12.191] Server  LOG     ✓ Compiled in 1817ms
+[60:13:06.568] Server  LOG     ○ Compiling /_not-found/page ...
+[60:14:48.382] Server  LOG     ✓ Finished writing to filesystem cache in 18.9s

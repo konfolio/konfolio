@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
 import CheckIcon from "@/components/icons/CheckIcon"
+import ArrowLeft from "@/components/icons/ArrowLeft"
 import OnboardingField from "@/components/onboarding/OnboardingField"
 import { inknut } from "@/app/fonts"
 
@@ -10,6 +11,7 @@ type Mode = "artist" | "host"
 
 type Props = {
   mode: Mode
+  backHref: string
   onNextHref: string
 }
 
@@ -63,7 +65,7 @@ function TermsRow({
   )
 }
 
-export default function NameCard({ mode, onNextHref }: Props) {
+export default function NameCard({ mode, backHref, onNextHref }: Props) {
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [preferredName, setPreferredName] = useState("")
@@ -100,27 +102,38 @@ export default function NameCard({ mode, onNextHref }: Props) {
   return (
     <div
       className="
-        flex w-[914px] h-[630px]
-        flex-col items-center
-        rounded-[15px] bg-white
-        px-[244px] py-[50px]
+        relative
+        w-[914px]
+        min-h-[630px]
+        flex flex-col
+        items-center
+        px-[45px] py-[50px]
+        bg-white rounded-[15px]
         shadow-[8px_8px_50px_rgba(0,0,0,0.05)]
         max-w-[calc(100vw-40px)]
       "
     >
-      {/* Top block */}
-      <div className="flex flex-col items-center gap-[15px]">
-        <p className="m-0 text-center font-inter text-[15px] leading-[18px] text-black whitespace-nowrap">
-          Hello! Welcome to
-        </p>
+      {/* Arrow pinned to the card corner (inside padding) */}
+      <ArrowLeft
+        href={backHref}
+        className="absolute left-[45px] top-[50px]"
+      />
 
-        <div className="relative w-[124px] h-[27.56px]">
-          <span
-            className={`absolute left-[1.97px] top-[4.92px] ${inknut.className} font-semibold text-[#262626] text-[26.7475px] tracking-[-0.02em]`}
-            style={{ WebkitTextStroke: "1.05132px #262626" }}
-          >
-            konfolio
-          </span>
+      {/* Header content (824 wide, centered) */}
+      <div className="w-full flex justify-center">
+        <div className="w-[824px] flex flex-col items-center gap-[15px]">
+          <p className="m-0 text-center font-inter text-[15px] leading-[18px] text-black whitespace-nowrap">
+            Hello! Welcome to
+          </p>
+
+          <div className="relative w-[124px] h-[27.56px]">
+            <span
+              className={`absolute left-[1.97px] top-[4.92px] ${inknut.className} font-semibold text-[#262626] text-[26.7475px] tracking-[-0.02em]`}
+              style={{ WebkitTextStroke: "1.05132px #262626" }}
+            >
+              konfolio
+            </span>
+          </div>
         </div>
       </div>
 

@@ -13,7 +13,7 @@ export default function ArtistBusinessInfoPage() {
         <BusinessInfoArtistCard
           displayName={displayName}
           backHref="/onboarding/name/artist"
-          nextHref="/onboarding/next-step" // change to your real next route
+          nextHref="/onboarding/links/artist" 
         />
       </main>
     </div>

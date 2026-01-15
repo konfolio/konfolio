@@ -12,8 +12,8 @@ export default function HostBusinessInfoPage() {
       <main className="flex-1 flex items-center justify-center px-[25px] sm:px-10 pt-[100px] pb-[120px]">
         <BusinessInfoHostCard
           orgName={orgName}
-          backHref="/onboarding/name/host"   // ✅ FIX: required prop
-          nextHref="/onboarding/next-step"   // change when ready
+          backHref="/onboarding/name/host"   
+          nextHref="/onboarding/links/host"   
         />
       </main>
     </div>

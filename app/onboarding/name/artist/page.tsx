@@ -9,6 +9,7 @@ export default function ArtistNamePage() {
       <main className="flex-1 flex justify-center px-[25px] sm:px-10 pt-[100px] pb-[120px]">
         <NameCard
           mode="artist"
+          backHref="/onboarding/audience"
           onNextHref="/onboarding/business-info/artist"
         />
       </main>
