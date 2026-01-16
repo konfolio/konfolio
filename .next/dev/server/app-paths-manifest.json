@@ -1,4 +1,10 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
+  "/onboarding/audience/page": "app/onboarding/audience/page.js",
+  "/onboarding/business-info/artist/page": "app/onboarding/business-info/artist/page.js",
+  "/onboarding/links/artist/page": "app/onboarding/links/artist/page.js",
+  "/onboarding/merch/page": "app/onboarding/merch/page.js",
+  "/onboarding/name/artist/page": "app/onboarding/name/artist/page.js",
   "/onboarding/profile-pic/artist/page": "app/onboarding/profile-pic/artist/page.js",
   "/onboarding/profile-pic/host/page": "app/onboarding/profile-pic/host/page.js",
   "/page": "app/page.js"

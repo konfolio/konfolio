@@ -10,7 +10,7 @@ export default function HostLinksPage() {
         <LinksCard
           mode="artist"
           backHref="/onboarding/business-info/artist"
-          nextHref="/onboarding/profile-pic/artist" 
+          nextHref="/onboarding/merch" 
         />
       </main>
     </div>
