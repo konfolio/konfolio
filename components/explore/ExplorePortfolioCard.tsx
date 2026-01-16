@@ -9,7 +9,7 @@ type Props = {
   creatorName: string
   previewImageUrl: string
   avatarUrl?: string
-  labels?: string[] // ✅ add this
+  labels?: string[] 
   className?: string
 }
 

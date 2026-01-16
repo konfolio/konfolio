@@ -1,0 +1,12 @@
+{
+  "pages": {},
+  "app": {
+    "[project]/Downloads/konfolio/app/onboarding/profile-pic/host/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2",
+      "static/media/4e169a524d095b18-s.p.d7ccc4be.woff2",
+      "static/media/ce62453a442c7f35-s.p.a9507876.woff2"
+    ]
+  },
+  "appUsingSizeAdjust": true,
+  "pagesUsingSizeAdjust": false
+}

@@ -4,9 +4,9 @@ import OpenTabIcon from "@/components/icons/OpenTabIcon"
 
 type Props = {
   href: string
-  children: string
+  children: React.ReactNode
   className?: string
-  icon?: "arrow" | "open"
+  icon?: "arrow" | "open" | "none"
 }
 
 export default function PrimaryButton({
@@ -38,9 +38,11 @@ export default function PrimaryButton({
     >
       <span>{children}</span>
 
-      <span className="flex items-center justify-center">
-        {icon === "open" ? <OpenTabIcon /> : <ArrowRight />}
-      </span>
+      {icon !== "none" && (
+        <span className="flex items-center justify-center">
+          {icon === "open" ? <OpenTabIcon /> : <ArrowRight />}
+        </span>
+      )}
     </Link>
   )
 }
