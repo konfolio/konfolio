@@ -502,35 +502,30 @@ function PrevConsCard({ backHref, nextHref, title = "Tell us where you’ve been
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: " relative w-[914px] h-[579px] flex flex-col justify-between items-center px-[45px] py-[50px] bg-white rounded-[15px] shadow-[8px_8px_50px_rgba(0,0,0,0.05)] max-w-[calc(100vw-40px)] ",
         children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$ArrowLeft$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                href: backHref,
-                className: "absolute left-[45px] top-[50px]"
-            }, void 0, false, {
-                fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                lineNumber: 107,
-                columnNumber: 7
-            }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "w-full flex justify-center",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "relative w-[824px] h-[18px] flex items-start justify-center",
-                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                className: "relative w-full flex items-center justify-center",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$ArrowLeft$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                        href: backHref,
+                        className: "absolute left-0 w-[40px] h-[40px] flex items-center justify-center"
+                    }, void 0, false, {
+                        fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
+                        lineNumber: 109,
+                        columnNumber: 13
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                         className: "m-0 font-inter font-normal text-[25px] leading-[30px] text-black text-center",
                         children: title
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                        lineNumber: 111,
-                        columnNumber: 11
+                        lineNumber: 114,
+                        columnNumber: 13
                     }, this)
-                }, void 0, false, {
-                    fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                    lineNumber: 110,
-                    columnNumber: 9
-                }, this)
-            }, void 0, false, {
+                ]
+            }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                lineNumber: 109,
-                columnNumber: 7
+                lineNumber: 108,
+                columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "w-[436px] h-[330px] flex flex-col items-start gap-[30px]",
@@ -543,7 +538,7 @@ function PrevConsCard({ backHref, nextHref, title = "Tell us where you’ve been
                                 children: "Previous Vending"
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                lineNumber: 119,
+                                lineNumber: 121,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -555,7 +550,7 @@ function PrevConsCard({ backHref, nextHref, title = "Tell us where you’ve been
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                lineNumber: 123,
+                                lineNumber: 125,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -583,12 +578,12 @@ function PrevConsCard({ backHref, nextHref, title = "Tell us where you’ve been
               `
                                 }, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                    lineNumber: 128,
+                                    lineNumber: 130,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                lineNumber: 127,
+                                lineNumber: 129,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -614,17 +609,17 @@ function PrevConsCard({ backHref, nextHref, title = "Tell us where you’ve been
                                                 className: "[&_path]:stroke-white"
                                             }, void 0, false, {
                                                 fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                                lineNumber: 174,
+                                                lineNumber: 176,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                            lineNumber: 165,
+                                            lineNumber: 167,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                        lineNumber: 157,
+                                        lineNumber: 159,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -632,19 +627,19 @@ function PrevConsCard({ backHref, nextHref, title = "Tell us where you’ve been
                                         children: "I’m looking for my first vend."
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                        lineNumber: 179,
+                                        lineNumber: 181,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                lineNumber: 152,
+                                lineNumber: 154,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                        lineNumber: 118,
+                        lineNumber: 120,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -655,7 +650,7 @@ function PrevConsCard({ backHref, nextHref, title = "Tell us where you’ve been
                                 children: "Previous Vends"
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                lineNumber: 186,
+                                lineNumber: 188,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -665,7 +660,7 @@ function PrevConsCard({ backHref, nextHref, title = "Tell us where you’ve been
                                     children: "—"
                                 }, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                    lineNumber: 192,
+                                    lineNumber: 194,
                                     columnNumber: 15
                                 }, this) : vends.map((v)=>{
                                     const { name, year, tail } = splitYear(v);
@@ -679,7 +674,7 @@ function PrevConsCard({ backHref, nextHref, title = "Tell us where you’ve been
                                                         children: name
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                                        lineNumber: 221,
+                                                        lineNumber: 223,
                                                         columnNumber: 23
                                                     }, this),
                                                     year && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -687,7 +682,7 @@ function PrevConsCard({ backHref, nextHref, title = "Tell us where you’ve been
                                                         children: year
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                                        lineNumber: 223,
+                                                        lineNumber: 225,
                                                         columnNumber: 25
                                                     }, this),
                                                     tail ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -695,13 +690,13 @@ function PrevConsCard({ backHref, nextHref, title = "Tell us where you’ve been
                                                         children: tail
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                                        lineNumber: 236,
+                                                        lineNumber: 238,
                                                         columnNumber: 31
                                                     }, this) : null
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                                lineNumber: 210,
+                                                lineNumber: 212,
                                                 columnNumber: 21
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -715,41 +710,41 @@ function PrevConsCard({ backHref, nextHref, title = "Tell us where you’ve been
                                                         className: "[&_path]:stroke-[#A5A5A5]"
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                                        lineNumber: 253,
+                                                        lineNumber: 255,
                                                         columnNumber: 25
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                                    lineNumber: 252,
+                                                    lineNumber: 254,
                                                     columnNumber: 23
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                                lineNumber: 239,
+                                                lineNumber: 241,
                                                 columnNumber: 21
                                             }, this)
                                         ]
                                     }, v, true, {
                                         fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                        lineNumber: 200,
+                                        lineNumber: 202,
                                         columnNumber: 19
                                     }, this);
                                 })
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                                lineNumber: 190,
+                                lineNumber: 192,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                        lineNumber: 185,
+                        lineNumber: 187,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                lineNumber: 117,
+                lineNumber: 119,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$buttons$2f$PrimaryButton$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -758,7 +753,7 @@ function PrevConsCard({ backHref, nextHref, title = "Tell us where you’ve been
                 children: "Next"
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/PrevConsCard.tsx",
-                lineNumber: 264,
+                lineNumber: 266,
                 columnNumber: 7
             }, this)
         ]

@@ -246,15 +246,17 @@ export default function MerchTypeCard({
         max-w-[calc(100vw-40px)]
       "
     >
-      <ArrowLeft href={backHref} className="absolute left-[45px] top-[50px]" />
 
       {/* Header row */}
-      <div className="w-full flex justify-center">
-        <div className="relative w-[824px] h-[18px] flex items-start justify-center">
-          <p className="m-0 font-inter font-normal text-[25px] leading-[30px] text-black text-center">
-            {title}
-          </p>
-        </div>
+      <div className="relative w-full flex items-center justify-center">
+        <ArrowLeft
+          href={backHref}
+          className="absolute left-0 w-[40px] h-[40px] flex items-center justify-center"
+        />
+
+        <p className="m-0 font-inter font-normal text-[25px] leading-[30px] text-black text-center">
+          {title}
+        </p>
       </div>
 
       {/* Frame 115 */}

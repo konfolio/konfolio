@@ -9,7 +9,7 @@ export default function PrevConsPage() {
       <main className="flex-1 flex items-center justify-center px-[25px] sm:px-10 pt-[100px] pb-[120px]">
         <PrevConsCard
           backHref="/onboarding/merch" 
-          nextHref="/onboarding/profile-pic/artist" // change to your actual next route
+          nextHref="/onboarding/collabs"
         />
       </main>
     </div>

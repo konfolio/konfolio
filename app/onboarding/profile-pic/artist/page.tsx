@@ -8,7 +8,7 @@ export default function UploadProfilePage() {
 
       <main className="flex-1 flex items-center justify-center px-[25px] sm:px-10 pt-[100px] pb-[120px]">
         <UploadProfileCard
-          backHref="/onboarding/links/artist" // change later
+          backHref="/onboarding/collabs" 
           nextHref="/onboarding/finish"
           title="Last step!"
           displayName="Business Name"

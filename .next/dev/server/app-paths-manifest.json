@@ -2,6 +2,7 @@
   "/_not-found/page": "app/_not-found/page.js",
   "/onboarding/audience/page": "app/onboarding/audience/page.js",
   "/onboarding/business-info/artist/page": "app/onboarding/business-info/artist/page.js",
+  "/onboarding/collabs/page": "app/onboarding/collabs/page.js",
   "/onboarding/links/artist/page": "app/onboarding/links/artist/page.js",
   "/onboarding/merch/page": "app/onboarding/merch/page.js",
   "/onboarding/name/artist/page": "app/onboarding/name/artist/page.js",
