@@ -1,658 +1,7 @@
-[00:00:06.129] Server  LOG     ✓ Ready in 4.8s
-[00:11:12.742] Server  LOG     ✓ Compiled in 2.7s
-[00:11:47.823] Server  LOG     ✓ Compiled in 150ms
-[00:22:42.611] Server  LOG     ✓ Compiled in 686ms
-[01:20:56.029] Server  LOG     ✓ Compiled in 800ms
-[02:10:26.483] Server  LOG     ✓ Compiled in 581ms
-[02:17:05.835] Server  LOG     ✓ Compiled in 444ms
-[02:28:18.736] Server  LOG     ✓ Compiled in 1316ms
-[02:28:38.201] Server  LOG     ✓ Compiled in 205ms
-[17:51:00.446] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/onboardin..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
-
-[17:54:12.585] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[17:54:12.585] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[17:54:12.585] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[17:54:12.585] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[17:54:12.585] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[18:20:03.351] Server  LOG     ✓ Compiled in 545ms
-[18:42:45.019] Server  LOG     ✓ Compiled in 437ms
-[18:43:57.365] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./Downloads/konfolio/node_modules/next/dist/client/image-component.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
-[18:43:58.382] Server  LOG     ✓ Compiled in 2.7s
-[18:44:01.674] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
-
-[18:44:01.674] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[18:44:01.674] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[18:44:01.674] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[18:44:01.674] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[18:44:01.674] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[18:44:22.015] Browser WARN    Image with src "/images/linvaniin_home.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[00:00:03.624] Server  LOG     ✓ Ready in 2.7s
+[00:00:08.268] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
 Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[18:45:45.975] Server  LOG     ✓ Compiled in 192ms
-[18:58:53.226] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- update if your Tag path differs
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[18:58:53.238] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- update if your Tag path differs
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[18:58:53.243] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- update if your Tag path differs
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[18:58:53.249] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- update if your Tag path differs
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[18:58:53.261] Server  LOG     ✓ Compiled in 1471ms
-[18:58:53.363] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- update if your Tag path differs
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[18:58:53.379] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- update if your Tag path differs
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[18:58:53.393] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- update if your Tag path differs
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[18:58:53.416] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- update if your Tag path differs
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[18:58:53.452] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- update if your Tag path differs
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[18:58:53.460] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- update if your Tag path differs
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[18:58:53.466] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- update if your Tag path differs
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[18:58:53.471] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- update if your Tag path differs
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[18:58:53.662] Browser ERROR   ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- update if your Tag path differs
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-[18:59:06.352] Server  LOG     ✓ Compiled in 698ms
-[19:07:00.206] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- adjust path if needed
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[19:07:00.236] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- adjust path if needed
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[19:07:00.247] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- adjust path if needed
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[19:07:00.263] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- adjust path if needed
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[19:07:00.353] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- adjust path if needed
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[19:07:00.536] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- adjust path if needed
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[19:07:00.541] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- adjust path if needed
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[19:07:00.547] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- adjust path if needed
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[19:07:00.562] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- adjust path if needed
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[19:07:00.570] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- adjust path if needed
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[19:07:00.575] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- adjust path if needed
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[19:07:00.583] Server  ERROR   ⨯ ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- adjust path if needed
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-[19:07:00.591] Server  LOG     ✓ Compiled in 734ms
-[19:07:01.710] Browser ERROR   ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx:7:1
-Module not found: Can't resolve '@/components/common/Tag'
-   5 | import ArrowDown from "@/components/icons/ArrowDown"
-   6 | import PrimaryButton from "@/components/buttons/PrimaryButton"
->  7 | import Tag from "@/components/common/Tag" // <- adjust path if needed
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 |
-   9 | type Props = {
-  10 |   backHref: string
-
-Import map: aliased to relative './components/common/Tag' inside of [project]/Downloads/konfolio
-
-Import trace:
-  Server Component:
-    ./Downloads/konfolio/components/onboarding/MerchTypeCard.tsx
-    ./Downloads/konfolio/app/onboarding/merch/page.tsx
-
-https://nextjs.org/docs/messages/module-not-found
-[19:07:09.984] Server  LOG     ✓ Compiled in 147ms
-[19:08:02.492] Server  LOG     ✓ Compiled in 183ms
-[19:08:07.668] Server  LOG     ✓ Compiled in 107ms
-[19:08:51.225] Server  LOG     ✓ Compiled in 218ms
-[19:21:54.313] Server  LOG     ✓ Compiled in 469ms
-[19:23:33.416] Server  LOG     ✓ Compiled in 818ms
-[19:24:03.962] Server  LOG     ✓ Compiled in 166ms
-[19:30:29.557] Server  LOG     ✓ Compiled in 804ms
-[19:31:14.558] Server  LOG     ✓ Compiled in 327ms
-[19:33:55.723] Server  LOG     ✓ Compiled in 376ms
-[19:39:45.297] Server  LOG     ✓ Compiled in 838ms
-[19:44:05.951] Server  LOG     ✓ Compiled in 1104ms
-[19:44:15.597] Server  LOG     ✓ Compiled in 5ms
-[19:45:50.894] Server  LOG     ✓ Compiled in 208ms
-[19:46:33.013] Server  LOG     ✓ Compiled in 286ms
-[19:47:13.807] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+[00:00:08.268] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
 
 - A server/client branch `if (typeof window !== 'undefined')`.
 - Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
@@ -670,7 +19,7 @@ It can also happen if the client has a browser extension installed which messes 
         <ReplaySsrOnlyErrors>
         <DevRootHTTPAccessFallbackBoundary>
           <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/onboardin..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
+            <HTTPAccessFallbackErrorBoundary pathname="/my-portfo..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
               <RedirectBoundary>
                 <RedirectErrorBoundary router={{...}}>
                   <Head>
@@ -687,19 +36,12 @@ It can also happen if the client has a browser extension installed which messes 
                           >
                   ...
 
-[20:03:02.751] Server  LOG     ✓ Compiled in 1131ms
-[20:03:22.310] Server  LOG     ✓ Compiled in 1751ms
-[20:03:43.697] Server  LOG     ✓ Compiled in 227ms
-[20:06:11.646] Server  LOG     ○ Compiling /onboarding/prev-cons ...
-[20:14:22.382] Server  LOG     ✓ Compiled in 2.5s
-[20:21:31.983] Server  LOG     ✓ Compiled in 666ms
-[20:24:19.869] Server  LOG     ✓ Compiled in 465ms
-[20:24:40.412] Server  LOG     ✓ Compiled in 227ms
-[20:25:10.916] Server  LOG     ✓ Compiled in 97ms
-[20:29:10.864] Server  LOG     ✓ Compiled in 387ms
-[20:31:01.197] Server  LOG     ✓ Compiled in 840ms
-[20:39:47.783] Server  LOG     ✓ Compiled in 430ms
-[20:39:56.119] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+[00:00:10.887] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:03:01.346] Server  LOG     ✓ Compiled in 3.7s
+[00:03:05.105] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:03:05.105] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
 
 - A server/client branch `if (typeof window !== 'undefined')`.
 - Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
@@ -717,7 +59,7 @@ It can also happen if the client has a browser extension installed which messes 
         <ReplaySsrOnlyErrors>
         <DevRootHTTPAccessFallbackBoundary>
           <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/onboardin..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
+            <HTTPAccessFallbackErrorBoundary pathname="/my-portfo..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
               <RedirectBoundary>
                 <RedirectErrorBoundary router={{...}}>
                   <Head>
@@ -734,213 +76,599 @@ It can also happen if the client has a browser extension installed which messes 
                           >
                   ...
 
-[21:00:43.363] Server  LOG     ✓ Compiled in 2.6s
-[21:01:43.937] Server  LOG     ✓ Compiled in 327ms
-[21:01:50.243] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+[00:03:10.935] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:03:23.664] Server  LOG     ✓ Compiled in 151ms
+[00:08:15.442] Server  LOG     ✓ Compiled in 622ms
+[00:08:21.138] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:08:32.616] Server  LOG     ✓ Compiled in 81ms
+[00:08:36.636] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:08:40.689] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:08:41.969] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:08:42.789] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:08:43.652] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:08:44.520] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:08:45.335] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:15:47.620] Server  LOG     ✓ Compiled in 466ms
+[00:15:54.827] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:50:54.602] Server  LOG     ✓ Compiled in 502ms
+[00:51:29.301] Server  LOG     ✓ Compiled in 2.2s
+[01:25:40.694] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
 
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
 
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
 
-%s%s https://react.dev/link/hydration-mismatch 
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
 
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/onboardin..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
+https://nextjs.org/docs/messages/module-not-found
 
-[21:02:20.879] Server  LOG     ✓ Compiled in 195ms
-[21:02:25.073] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
 
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
+[01:25:40.702] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
 
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
 
-%s%s https://react.dev/link/hydration-mismatch 
 
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/onboardin..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
 
-[21:02:48.437] Server  LOG     ✓ Compiled in 76ms
-[21:03:22.416] Server  LOG     ✓ Compiled in 88ms
-[21:03:27.366] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+https://nextjs.org/docs/messages/module-not-found
 
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
 
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+[01:25:40.708] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
 
-%s%s https://react.dev/link/hydration-mismatch 
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
 
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/onboardin..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
 
-[21:03:37.797] Server  LOG     ✓ Compiled in 80ms
-[21:03:48.936] Server  LOG     ✓ Compiled in 157ms
-[21:04:10.321] Server  LOG     ✓ Compiled in 136ms
-[21:04:17.178] Server  LOG     ✓ Compiled in 55ms
-[21:04:25.581] Server  LOG     ✓ Compiled in 70ms
-[21:04:33.085] Server  LOG     ✓ Compiled in 95ms
-[21:05:00.958] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
 
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
+https://nextjs.org/docs/messages/module-not-found
 
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
 
-%s%s https://react.dev/link/hydration-mismatch 
+[01:25:40.768] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
 
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/onboardin..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
 
-[96:16:54.659] Server  LOG     ✓ Compiled in 6s
-[96:22:17.351] Server  LOG     ✓ Compiled in 3s
-[96:47:13.606] Server  LOG     ✓ Finished filesystem cache database compaction in 19.6s
-[96:47:13.946] Server  LOG     ✓ Finished writing to filesystem cache in 16.5s
-[96:47:36.026] Server  LOG     ✓ Compiled in 861ms
-[96:47:55.669] Server  LOG     ✓ Compiled in 326ms
-[96:48:35.642] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
 
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
 
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+https://nextjs.org/docs/messages/module-not-found
 
-%s%s https://react.dev/link/hydration-mismatch 
 
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/onboardin..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
+[01:25:42.092] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
 
-[96:48:41.788] Server  LOG     ○ Compiling /onboarding/collabs ...
-[96:52:02.398] Server  LOG     ✓ Compiled in 851ms
-[96:55:08.516] Server  LOG     ✓ Compiled in 451ms
-[97:07:01.031] Server  LOG     ✓ Compiled in 1990ms
-[97:11:17.144] Server  LOG     ✓ Compiled in 921ms
-[97:11:18.289] Browser ERROR   uncaughtError: Error: Failed prop type: The prop `href` expects a `string` or `object` in `<Link>`, but got `undefined` instead.
-Open your browser's console to view the Component stack trace.
-[97:17:51.968] Server  LOG     ✓ Compiled in 335ms
-[97:17:51.994] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[97:22:45.633] Server  LOG     ✓ Compiled in 647ms
-[97:30:41.946] Server  LOG     ✓ Compiled in 511ms
-[97:31:40.352] Server  LOG     ✓ Compiled in 192ms
-[97:32:09.753] Server  LOG     ✓ Compiled in 315ms
-[97:33:15.881] Server  LOG     ✓ Compiled in 544ms
-[97:44:26.280] Server  LOG     ✓ Compiled in 445ms
-[97:44:39.607] Server  LOG     ✓ Compiled in 110ms
-[97:44:52.816] Server  LOG     ✓ Compiled in 85ms
-[97:45:35.409] Server  LOG     ✓ Compiled in 95ms
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:25:42.096] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:25:42.098] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:25:42.100] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:25:42.103] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:25:42.114] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:25:42.123] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:25:42.128] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:25:42.136] Server  LOG     ✓ Compiled in 4.3s
+[01:25:42.518] Browser ERROR   ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+[01:25:54.556] Server  LOG     ✓ Compiled in 283ms
+[01:25:59.641] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[01:45:14.353] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:45:14.360] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:45:14.363] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:45:14.373] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:45:14.993] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:45:14.998] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:45:15.005] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:45:15.011] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:45:15.026] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:45:15.032] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:45:15.041] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:45:15.047] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[01:45:15.058] Server  LOG     ✓ Compiled in 1787ms
+[01:45:15.969] Browser ERROR   ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:11:1
+Module not found: Can't resolve '@/components/ui/InfoPopover'
+   9 | import ArrowRight from "@/components/icons/ArrowRight"
+  10 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+> 11 | import InfoPopover from "@/components/ui/InfoPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  12 |
+  13 | type TemplateCard = {
+  14 |   title: string
+
+Import map: aliased to relative './components/ui/InfoPopover' inside of [project]/Downloads/konfolio
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+[01:45:25.381] Server  LOG     ✓ Compiled in 368ms
+[01:45:32.336] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[01:54:52.945] Server  LOG     ✓ Compiled in 726ms
+[01:57:29.278] Server  LOG     ✓ Compiled in 315ms
+[01:58:01.126] Server  LOG     ✓ Compiled in 105ms
+[01:58:27.071] Server  LOG     ✓ Compiled in 264ms
+[22:25:34.782] Server  LOG     ✓ Compiled in 6.1s
+[22:25:57.104] Server  LOG     ✓ Compiled in 890ms
+[22:50:06.791] Server  LOG     ✓ Compiled in 1684ms
+[22:50:17.081] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[22:50:36.657] Server  LOG     ✓ Compiled in 517ms
+[22:57:25.052] Server  LOG     ✓ Compiled in 824ms
+[22:57:26.802] Server  LOG     ✓ Compiled in 240ms
+[22:58:24.209] Server  LOG     ✓ Compiled in 326ms
+[22:58:34.952] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[23:01:11.921] Server  LOG     ✓ Compiled in 239ms
+[23:01:24.952] Server  LOG     ✓ Compiled in 206ms
+[23:01:32.242] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[23:03:24.420] Server  LOG     ✓ Compiled in 243ms
+[23:03:30.376] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading

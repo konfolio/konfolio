@@ -497,16 +497,8 @@ function UploadProfileCard({ backHref, nextHref, title = "Last step!", displayNa
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                         className: "m-0 w-[110px] text-center font-inter font-normal text-[11px] leading-[13px] text-[#A5A5A5]",
-                                        children: [
-                                            "Drop image here or click",
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
-                                                fileName: "[project]/Downloads/konfolio/components/onboarding/UploadProfileCard.tsx",
-                                                lineNumber: 127,
-                                                columnNumber: 21
-                                            }, this),
-                                            "to open files"
-                                        ]
-                                    }, void 0, true, {
+                                        children: "Drop image here or click to open files"
+                                    }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/onboarding/UploadProfileCard.tsx",
                                         lineNumber: 125,
                                         columnNumber: 17
@@ -531,7 +523,7 @@ function UploadProfileCard({ backHref, nextHref, title = "Last step!", displayNa
                                 children: displayName
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/UploadProfileCard.tsx",
-                                lineNumber: 136,
+                                lineNumber: 134,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -539,13 +531,13 @@ function UploadProfileCard({ backHref, nextHref, title = "Last step!", displayNa
                                 children: locationText
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/UploadProfileCard.tsx",
-                                lineNumber: 139,
+                                lineNumber: 137,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/UploadProfileCard.tsx",
-                        lineNumber: 135,
+                        lineNumber: 133,
                         columnNumber: 9
                     }, this)
                 ]
@@ -561,7 +553,7 @@ function UploadProfileCard({ backHref, nextHref, title = "Last step!", displayNa
                 children: "Finish"
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/UploadProfileCard.tsx",
-                lineNumber: 146,
+                lineNumber: 144,
                 columnNumber: 7
             }, this)
         ]

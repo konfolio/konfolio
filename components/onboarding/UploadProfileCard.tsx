@@ -123,9 +123,7 @@ export default function UploadProfileCard({
                     <ImageIcon className="w-[39px] h-[39px] text-[#A5A5A5]" />
                 </div>
                 <p className="m-0 w-[110px] text-center font-inter font-normal text-[11px] leading-[13px] text-[#A5A5A5]">
-                    Drop image here or click
-                    <br />
-                    to open files
+                    Drop image here or click to open files
                 </p>
                 </div>
             )}
