@@ -926,7 +926,7 @@ function CreateKonfolioCard({ infoText = "We work with templates to reduce varie
         imageSrc: "/images/template-1.png",
         imageAlt: "Square template preview",
         primaryCta: "Use Square Template",
-        primaryHref: "/onboarding/template/square",
+        primaryHref: "/my-portfolios/edit-square",
         secondaryCta: "Explore Square Examples",
         secondaryHref: "/explore?template=square"
     },
@@ -937,7 +937,7 @@ function CreateKonfolioCard({ infoText = "We work with templates to reduce varie
         imageSrc: "/images/template-2.png",
         imageAlt: "Portrait template preview",
         primaryCta: "Use Portrait Template",
-        primaryHref: "/onboarding/template/portrait",
+        primaryHref: "/my-portfolios/edit-portrait",
         secondaryCta: "Explore Portrait Examples",
         secondaryHref: "/explore?template=portrait"
     }
@@ -950,7 +950,6 @@ function CreateKonfolioCard({ infoText = "We work with templates to reduce varie
         display: "none"
     });
     const [iconShiftX, setIconShiftX] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(0);
-    // Keep popover arrow centered. If popover would be clamped, shift ICON permanently so its center matches popover center.
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useLayoutEffect"])({
         "CreateKonfolioCard.useLayoutEffect": ()=>{
             const compute = {
@@ -963,21 +962,14 @@ function CreateKonfolioCard({ infoText = "We work with templates to reduce varie
                     const POPOVER_W = 166;
                     const ARROW_H = 8;
                     const GAP = 6;
-                    // Fixed button box size from your classes
                     const BTN_W = 36;
-                    // Because the button is `absolute right-0`, its natural (unshifted) center X inside the section is:
                     const baseIconCenterX = sectionRect.width - BTN_W / 2;
-                    // Popover must stay within [padding, sectionWidth - POPOVER_W - padding]
                     const padding = 8;
                     const minCenterX = padding + POPOVER_W / 2;
                     const maxCenterX = sectionRect.width - padding - POPOVER_W / 2;
-                    // Desired center for popover (and arrow) is the icon center, but clamped to bounds
                     const desiredCenterX = Math.max(minCenterX, Math.min(baseIconCenterX, maxCenterX));
-                    // Permanently shift icon so its center matches the clamped popover center (no jump on open)
                     setIconShiftX(desiredCenterX - baseIconCenterX);
-                    // Popover position: centered at desiredCenterX
                     const left = desiredCenterX - POPOVER_W / 2;
-                    // Vertical anchoring can still use btnRect (Y only)
                     const top = btnRect.bottom - sectionRect.top + GAP + ARROW_H;
                     setPopoverStyle({
                         position: "absolute",
@@ -1006,7 +998,7 @@ function CreateKonfolioCard({ infoText = "We work with templates to reduce varie
                     const btn = infoBtnRef.current;
                     const pop = document.getElementById("create-konfolio-info-popover");
                     const target = e.target;
-                    // Let the button handle toggle; don't close from this handler.
+                    // Let the button handle toggle
                     if (btn?.contains(target)) return;
                     if (pop?.contains(target)) return;
                     setInfoOpen(false);
@@ -1039,7 +1031,7 @@ function CreateKonfolioCard({ infoText = "We work with templates to reduce varie
                         children: "Create your first Konfolio"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                        lineNumber: 156,
+                        lineNumber: 148,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1054,18 +1046,18 @@ function CreateKonfolioCard({ infoText = "We work with templates to reduce varie
                         "aria-expanded": infoOpen,
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$InfoIcon$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                             fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                            lineNumber: 181,
+                            lineNumber: 173,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                        lineNumber: 161,
+                        lineNumber: 153,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                lineNumber: 155,
+                lineNumber: 147,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1078,17 +1070,17 @@ function CreateKonfolioCard({ infoText = "We work with templates to reduce varie
                         onClose: ()=>setInfoOpen(false)
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                        lineNumber: 188,
+                        lineNumber: 180,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                    lineNumber: 187,
+                    lineNumber: 179,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                lineNumber: 186,
+                lineNumber: 178,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1102,36 +1094,36 @@ function CreateKonfolioCard({ infoText = "We work with templates to reduce varie
                                 t: templates[0]
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                                lineNumber: 204,
+                                lineNumber: 196,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(TemplateColumn, {
                                 t: templates[1]
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                                lineNumber: 205,
+                                lineNumber: 197,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                        lineNumber: 203,
+                        lineNumber: 195,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                    lineNumber: 202,
+                    lineNumber: 194,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                lineNumber: 193,
+                lineNumber: 185,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-        lineNumber: 144,
+        lineNumber: 136,
         columnNumber: 5
     }, this);
 }
@@ -1149,7 +1141,7 @@ function TemplateColumn({ t }) {
                         children: t.title
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                        lineNumber: 218,
+                        lineNumber: 210,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1157,13 +1149,13 @@ function TemplateColumn({ t }) {
                         children: t.subtitle
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                        lineNumber: 221,
+                        lineNumber: 213,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                lineNumber: 217,
+                lineNumber: 209,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$onboarding$2f$Tag$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -1171,7 +1163,7 @@ function TemplateColumn({ t }) {
                 className: "text-[#A5A5A5]"
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                lineNumber: 227,
+                lineNumber: 219,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1188,12 +1180,12 @@ function TemplateColumn({ t }) {
                     priority: false
                 }, void 0, false, {
                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                    lineNumber: 243,
+                    lineNumber: 235,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                lineNumber: 230,
+                lineNumber: 222,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$buttons$2f$PrimaryButton$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -1202,7 +1194,7 @@ function TemplateColumn({ t }) {
                 children: t.primaryCta
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                lineNumber: 254,
+                lineNumber: 246,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -1213,26 +1205,26 @@ function TemplateColumn({ t }) {
                         children: t.secondaryCta
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                        lineNumber: 272,
+                        lineNumber: 264,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$ArrowRight$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                         className: "w-[11px] h-[11px]"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                        lineNumber: 273,
+                        lineNumber: 265,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-                lineNumber: 259,
+                lineNumber: 251,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx",
-        lineNumber: 215,
+        lineNumber: 207,
         columnNumber: 5
     }, this);
 }

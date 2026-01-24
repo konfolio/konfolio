@@ -1014,6 +1014,9 @@ function CheckIcon({ className = "" }) {
     }, this);
 }
 _c = CheckIcon;
+const GRID_BASE_SHADOW = "2px 4px 25px rgba(165,165,165,0.1), inset 2.14645px 2.00046px 9.24px rgba(165,165,165,0.126), inset 1.21725px 1.13446px 4.62px rgba(165,165,165,0.126), inset 0 0 0 1px rgba(255,255,255,0.9)";
+// subtle hover bump (still “grid-like”, not dramatic)
+const GRID_HOVER_SHADOW = "2px 4px 25px rgba(165,165,165,0.14), inset 2.14645px 2.00046px 9.24px rgba(165,165,165,0.126), inset 1.21725px 1.13446px 4.62px rgba(165,165,165,0.126), inset 0 0 0 1px rgba(255,255,255,0.9)";
 function ExplorePortfolioCard({ businessName, creatorName, previewImageUrl, avatarUrl, labels = [], className = "" }) {
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: `
@@ -1022,18 +1025,24 @@ function ExplorePortfolioCard({ businessName, creatorName, previewImageUrl, avat
         flex flex-col items-center
         pb-[10px]
         gap-[15px]
-        drop-shadow-[2px_4px_25px_rgba(165,165,165,0.1)]
         ${className}
       `,
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: " relative w-[390px] h-[260px] rounded-[15px] overflow-hidden transition-all duration-200 ease-out [backdrop-filter:blur(14.65328598022461px)]  /* Base shadows (match Figma) */ [box-shadow:1.93px_3.87px_24.16px_0px_rgba(165,165,165,0.102),inset_1.18px_1.1px_4.47px_0px_rgba(165,165,165,0.125),inset_2.07px_1.93px_8.93px_0px_rgba(165,165,165,0.125)]  /* Hover shadow (match Figma) */ group-hover:[box-shadow:2px_4px_25px_0px_rgba(165,165,165,0.4),1.93px_3.87px_24.16px_0px_rgba(165,165,165,0.102),inset_1.18px_1.1px_4.47px_0px_rgba(165,165,165,0.125),inset_2.07px_1.93px_8.93px_0px_rgba(165,165,165,0.125)] ",
+                className: " relative w-[390px] h-[260px] rounded-[15px] overflow-hidden bg-[rgba(165,165,165,0.068)] border border-white transition-shadow duration-200 ease-out [backdrop-filter:blur(14.65328598022461px)] group-hover:[box-shadow:var(--hoverShadow)] ",
+                style: {
+                    boxShadow: GRID_BASE_SHADOW,
+                    // allow Tailwind arbitrary box-shadow on hover via CSS var
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    "--hoverShadow": GRID_HOVER_SHADOW
+                },
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: " pointer-events-none absolute inset-0 rounded-[15px] p-[1.5px] [background:conic-gradient(from_90deg_at_0%_0%,rgba(165,165,165,0)_-47.02deg,rgba(165,165,165,0.352)_42.98deg,rgba(165,165,165,0)_132.98deg,rgba(165,165,165,0.352)_222.98deg,rgba(165,165,165,0)_312.98deg,rgba(165,165,165,0.352)_402.98deg)] [mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)] [mask-composite:exclude] [-webkit-mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)] [-webkit-mask-composite:xor] "
+                        className: " pointer-events-none absolute inset-0 rounded-[15px] p-[1.5px] [background:conic-gradient(from_90deg_at_0%_0%,rgba(165,165,165,0)_-47.02deg,rgba(165,165,165,0.22)_42.98deg,rgba(165,165,165,0)_132.98deg,rgba(165,165,165,0.22)_222.98deg,rgba(165,165,165,0)_312.98deg,rgba(165,165,165,0.22)_402.98deg)] [mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)] [mask-composite:exclude] [-webkit-mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)] [-webkit-mask-composite:xor] "
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-                        lineNumber: 71,
+                        lineNumber: 84,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -1044,7 +1053,7 @@ function ExplorePortfolioCard({ businessName, creatorName, previewImageUrl, avat
                         sizes: "390px"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-                        lineNumber: 84,
+                        lineNumber: 97,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1053,12 +1062,12 @@ function ExplorePortfolioCard({ businessName, creatorName, previewImageUrl, avat
                         "aria-label": "More options",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$ThreeDotsIcon$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                             fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-                            lineNumber: 97,
+                            lineNumber: 110,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-                        lineNumber: 92,
+                        lineNumber: 105,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1070,18 +1079,18 @@ function ExplorePortfolioCard({ businessName, creatorName, previewImageUrl, avat
                             children: "View"
                         }, void 0, false, {
                             fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-                            lineNumber: 109,
-                            columnNumber: 13
+                            lineNumber: 122,
+                            columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-                        lineNumber: 101,
+                        lineNumber: 114,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-                lineNumber: 57,
+                lineNumber: 63,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1095,7 +1104,7 @@ function ExplorePortfolioCard({ businessName, creatorName, previewImageUrl, avat
                                 children: businessName
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-                                lineNumber: 123,
+                                lineNumber: 136,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1111,12 +1120,12 @@ function ExplorePortfolioCard({ businessName, creatorName, previewImageUrl, avat
                                             sizes: "13px"
                                         }, void 0, false, {
                                             fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-                                            lineNumber: 130,
+                                            lineNumber: 143,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-                                        lineNumber: 128,
+                                        lineNumber: 141,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1124,19 +1133,19 @@ function ExplorePortfolioCard({ businessName, creatorName, previewImageUrl, avat
                                         children: creatorName
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-                                        lineNumber: 140,
+                                        lineNumber: 153,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-                                lineNumber: 127,
+                                lineNumber: 140,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-                        lineNumber: 122,
+                        lineNumber: 135,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1148,7 +1157,7 @@ function ExplorePortfolioCard({ businessName, creatorName, previewImageUrl, avat
                                         className: "w-[10px] h-[10px]"
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-                                        lineNumber: 150,
+                                        lineNumber: 163,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1156,30 +1165,30 @@ function ExplorePortfolioCard({ businessName, creatorName, previewImageUrl, avat
                                         children: label
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-                                        lineNumber: 151,
+                                        lineNumber: 164,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, label, true, {
                                 fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-                                lineNumber: 149,
+                                lineNumber: 162,
                                 columnNumber: 13
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-                        lineNumber: 147,
+                        lineNumber: 160,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-                lineNumber: 120,
+                lineNumber: 133,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Downloads/konfolio/components/explore/ExplorePortfolioCard.tsx",
-        lineNumber: 45,
+        lineNumber: 52,
         columnNumber: 5
     }, this);
 }

@@ -9,7 +9,7 @@ type Props = {
   creatorName: string
   previewImageUrl: string
   avatarUrl?: string
-  labels?: string[] 
+  labels?: string[]
   className?: string
 }
 
@@ -33,6 +33,13 @@ function CheckIcon({ className = "" }: { className?: string }) {
   )
 }
 
+const GRID_BASE_SHADOW =
+  "2px 4px 25px rgba(165,165,165,0.1), inset 2.14645px 2.00046px 9.24px rgba(165,165,165,0.126), inset 1.21725px 1.13446px 4.62px rgba(165,165,165,0.126), inset 0 0 0 1px rgba(255,255,255,0.9)"
+
+// subtle hover bump (still “grid-like”, not dramatic)
+const GRID_HOVER_SHADOW =
+  "2px 4px 25px rgba(165,165,165,0.14), inset 2.14645px 2.00046px 9.24px rgba(165,165,165,0.126), inset 1.21725px 1.13446px 4.62px rgba(165,165,165,0.126), inset 0 0 0 1px rgba(255,255,255,0.9)"
+
 export default function ExplorePortfolioCard({
   businessName,
   creatorName,
@@ -49,30 +56,36 @@ export default function ExplorePortfolioCard({
         flex flex-col items-center
         pb-[10px]
         gap-[15px]
-        drop-shadow-[2px_4px_25px_rgba(165,165,165,0.1)]
         ${className}
       `}
     >
       {/* ===== Preview ===== */}
       <div
         className="
-          relative w-[390px] h-[260px] rounded-[15px] overflow-hidden
-          transition-all duration-200 ease-out
+          relative w-[390px] h-[260px]
+          rounded-[15px] overflow-hidden
+          bg-[rgba(165,165,165,0.068)]
+          border border-white
+          transition-shadow duration-200 ease-out
           [backdrop-filter:blur(14.65328598022461px)]
-
-          /* Base shadows (match Figma) */
-          [box-shadow:1.93px_3.87px_24.16px_0px_rgba(165,165,165,0.102),inset_1.18px_1.1px_4.47px_0px_rgba(165,165,165,0.125),inset_2.07px_1.93px_8.93px_0px_rgba(165,165,165,0.125)]
-
-          /* Hover shadow (match Figma) */
-          group-hover:[box-shadow:2px_4px_25px_0px_rgba(165,165,165,0.4),1.93px_3.87px_24.16px_0px_rgba(165,165,165,0.102),inset_1.18px_1.1px_4.47px_0px_rgba(165,165,165,0.125),inset_2.07px_1.93px_8.93px_0px_rgba(165,165,165,0.125)]
+          group-hover:[box-shadow:var(--hoverShadow)]
         "
+        style={
+          {
+            boxShadow: GRID_BASE_SHADOW,
+            // allow Tailwind arbitrary box-shadow on hover via CSS var
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            "--hoverShadow": GRID_HOVER_SHADOW,
+          } as React.CSSProperties
+        }
       >
-        {/* Conic gradient border overlay (true border-image behavior via masking) */}
+        {/* Gradient / conic border overlay (kept for the “gradient effect”) */}
         <div
           className="
             pointer-events-none absolute inset-0 rounded-[15px]
             p-[1.5px]
-            [background:conic-gradient(from_90deg_at_0%_0%,rgba(165,165,165,0)_-47.02deg,rgba(165,165,165,0.352)_42.98deg,rgba(165,165,165,0)_132.98deg,rgba(165,165,165,0.352)_222.98deg,rgba(165,165,165,0)_312.98deg,rgba(165,165,165,0.352)_402.98deg)]
+            [background:conic-gradient(from_90deg_at_0%_0%,rgba(165,165,165,0)_-47.02deg,rgba(165,165,165,0.22)_42.98deg,rgba(165,165,165,0)_132.98deg,rgba(165,165,165,0.22)_222.98deg,rgba(165,165,165,0)_312.98deg,rgba(165,165,165,0.22)_402.98deg)]
             [mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)]
             [mask-composite:exclude]
             [-webkit-mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)]
@@ -106,13 +119,13 @@ export default function ExplorePortfolioCard({
             group-hover:opacity-100 group-hover:pointer-events-auto
           "
         >
-            <PrimaryButton
-                href={`/portfolio/${businessName}`}
-                icon="open"
-                className="h-[33px] min-w-[150px] px-[40px] py-[10px]"
-            >
-                View
-            </PrimaryButton>
+          <PrimaryButton
+            href={`/portfolio/${businessName}`}
+            icon="open"
+            className="h-[33px] min-w-[150px] px-[40px] py-[10px]"
+          >
+            View
+          </PrimaryButton>
         </div>
       </div>
 

@@ -1,3 +1,14 @@
 {
-  "/my-portfolios/page": "app/my-portfolios/page.js"
+  "/explore/[portfolioId]/page": "app/explore/[portfolioId]/page.js",
+  "/explore/page": "app/explore/page.js",
+  "/my-portfolios/edit-square/page": "app/my-portfolios/edit-square/page.js",
+  "/my-portfolios/page": "app/my-portfolios/page.js",
+  "/onboarding/audience/page": "app/onboarding/audience/page.js",
+  "/onboarding/business-info/artist/page": "app/onboarding/business-info/artist/page.js",
+  "/onboarding/collabs/page": "app/onboarding/collabs/page.js",
+  "/onboarding/links/artist/page": "app/onboarding/links/artist/page.js",
+  "/onboarding/merch/page": "app/onboarding/merch/page.js",
+  "/onboarding/name/artist/page": "app/onboarding/name/artist/page.js",
+  "/onboarding/prev-cons/page": "app/onboarding/prev-cons/page.js",
+  "/onboarding/profile-pic/artist/page": "app/onboarding/profile-pic/artist/page.js"
 }
