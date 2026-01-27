@@ -1,0 +1,36 @@
+type Props = {
+    className?: string
+    title?: string
+}
+  
+export default function SunIcon({ className = "", title }: Props) {
+    return (
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className={className}
+        aria-hidden={title ? undefined : true}
+        role={title ? "img" : "presentation"}
+      >
+        {title ? <title>{title}</title> : null}
+        <path d="M8 2.5V1" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+          d="M8 11.5C9.933 11.5 11.5 9.933 11.5 8C11.5 6.067 9.933 4.5 8 4.5C6.067 4.5 4.5 6.067 4.5 8C4.5 9.933 6.067 11.5 8 11.5Z"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path d="M4 4L3 3" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M4 12L3 13" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M12 4L13 3" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M12 12L13 13" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M2.5 8H1" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M8 13.5V15" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M13.5 8H15" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    )
+}
+  

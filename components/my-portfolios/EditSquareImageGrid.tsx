@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import ImageIcon from "@/components/icons/ImageIcon"
 import SlidersIcon from "@/components/icons/SlidersIcon"
+import EditImagePopover from "@/components/my-portfolios/EditImagePopover"
 
 type Cell = {
   id: string
@@ -20,11 +21,9 @@ const RECOMMENDED = [
   "Your Product",
   "Most Recent Work",
   "Your Product",
-
   "Most Recent Work",
   "You & Table Display",
   "Most Recent Work",
-
   "Your Product",
   "Most Recent Work",
   "Your Product",
@@ -125,6 +124,8 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
     setImageFromFile(idx, file)
   }
 
+  const [openEditorIdx, setOpenEditorIdx] = useState<number | null>(null)
+
   return (
     <section className="w-[922px] h-[982px] flex flex-col items-center justify-center py-[30px]">
       <div className="w-[922px] h-[922px]">
@@ -132,6 +133,11 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
           {cells.map((cell, idx) => {
             const hasImage = Boolean(cell.src)
             const isDragOver = dragOverIdx === idx
+            const isEditorOpen = openEditorIdx === idx
+
+            // right-most column => flip popover (sliders left, image right)
+            const col = idx % 3
+            const placement: "right" | "left" = col === 2 ? "left" : "right"
 
             return (
               <div
@@ -140,7 +146,7 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                   group
                   relative
                   rounded-[15px]
-                  overflow-hidden
+                  overflow-visible
                   bg-[rgba(165,165,165,0.068)]
                   shadow-[2px_4px_25px_rgba(165,165,165,0.1),
                           inset_2.14645px_2.00046px_9.24px_rgba(165,165,165,0.126),
@@ -150,7 +156,6 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                   ${isDragOver ? "border-dashed" : ""}
                 `}
                 style={{
-                  // subtle "glowy/gradient-ish" border feel 
                   boxShadow:
                     "2px 4px 25px rgba(165,165,165,0.1), inset 2.14645px 2.00046px 9.24px rgba(165,165,165,0.126), inset 1.21725px 1.13446px 4.62px rgba(165,165,165,0.126), inset 0 0 0 1px rgba(255,255,255,0.9)",
                 }}
@@ -158,7 +163,6 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                 onDragLeave={(e) => onDragLeave(idx, e)}
                 onDrop={(e) => onDrop(idx, e)}
               >
-                {/* Hidden input per cell */}
                 <input
                   ref={(el) => {
                     inputsRef.current[idx] = el
@@ -169,17 +173,20 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                   onChange={(e) => onInputChange(idx, e)}
                 />
 
-                {/* Click target: opens file picker */}
+                {/* Click target (transparent, behind buttons/popover) */}
                 <button
                   type="button"
-                  className="absolute inset-0"
+                  className="absolute inset-0 z-[0] bg-transparent"
                   aria-label={`Upload image ${idx + 1}`}
-                  onClick={() => openFilePicker(idx)}
+                  onClick={() => {
+                    if (isEditorOpen) return
+                    openFilePicker(idx)
+                  }}
                 >
                   <span className="sr-only">Upload</span>
                 </button>
 
-                {/* Sliders icon (hover only) */}
+                {/* Sliders icon (hover only) + pointer cursor */}
                 <button
                   type="button"
                   aria-label="Image settings"
@@ -190,14 +197,26 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                     w-[24px] h-[24px]
                     group-hover:flex
                     items-center justify-center
-                    z-[3]
+                    z-[10]
+                    cursor-pointer
                   "
                   onClick={(e) => {
                     e.stopPropagation()
+                    setOpenEditorIdx((cur) => (cur === idx ? null : idx))
                   }}
                 >
                   <SlidersIcon />
                 </button>
+
+                {/* Popover */}
+                {isEditorOpen && (
+                  <EditImagePopover
+                    title={`Recommended - ${RECOMMENDED[idx]}`}
+                    imageSrc={cell.src}
+                    onClose={() => setOpenEditorIdx(null)}
+                    placement={placement}
+                  />
+                )}
 
                 {/* Image preview */}
                 {hasImage ? (
@@ -205,12 +224,12 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                   <img
                     src={cell.src}
                     alt=""
-                    className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                    className="absolute inset-0 w-full h-full object-cover pointer-events-none z-[1] rounded-[15px]"
                     draggable={false}
                   />
                 ) : null}
 
-                {/* "Recommended" content */}
+                {/* Recommended content */}
                 {!hasImage && (
                   <div
                     className="
@@ -244,7 +263,7 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                     absolute bottom-0 left-0 right-0
                     h-[70px]
                     px-[15px] pt-[12px] pb-[10px]
-                    flex flex-col justify-end items-start 
+                    flex flex-col justify-end items-start
                     opacity-0
                     group-hover:opacity-100
                     transition-opacity
@@ -254,20 +273,16 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                     z-[2]
                   "
                 >
-                  {/* Title */}
                   <p className="m-0 w-full font-inter font-normal text-[17px] leading-[140%] text-[#262626]">
                     {cell.title ?? "Title"}
                   </p>
-
-                  {/* Short description */}
                   <p className="m-0 w-full font-inter font-normal text-[15px] leading-[140%] text-[#262626]">
                     {cell.description ?? "Short description"}
                   </p>
                 </div>
 
-                {/* Drag-over hint overlay (subtle) */}
                 {isDragOver && (
-                  <div className="pointer-events-none absolute inset-0 z-[4] bg-white/20" />
+                  <div className="pointer-events-none absolute inset-0 z-[4] bg-white/20 rounded-[15px]" />
                 )}
               </div>
             )

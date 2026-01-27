@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from "react"
 import Tag from "@/components/onboarding/Tag"
 import DeleteIcon from "@/components/icons/DeleteIcon"
 import PopoverArrow from "@/components/icons/PopoverArrow"
+import PlusIcon from "@/components/icons/PlusIcon"
 import useClickOutside from "@/components/hooks/useClickOutside"
 
 const COMMON = [
@@ -266,17 +267,33 @@ export default function MerchTagPicker({ maxTags = 8, onMerchClick, value, onCha
           className={limitReached ? "pointer-events-none opacity-60" : "hover:opacity-90"}
           aria-label="Add merch tags"
         >
-          <Tag
-            label="Merch"
-            showPlus
-            className="
-              border-[#A5A5A5]/50
-              text-[#A5A5A5]
-              [&_span]:text-[#A5A5A5]
-              [&_svg]:text-[#A5A5A5]
-              cursor-pointer
-            "
-          />
+          {selected.length === 0 ? (
+            <Tag
+              label="Merch"
+              showPlus
+              className="
+                border-[#A5A5A5]/50
+                text-[#A5A5A5]
+                [&_span]:text-[#A5A5A5]
+                [&_svg]:text-[#A5A5A5]
+                cursor-pointer
+              "
+            />
+          ) : (
+            <div
+              className="
+                w-[24px] h-[24px]
+                flex items-center justify-center
+                p-[4px]
+                rounded-full
+                border border-[#A5A5A5]/50
+                bg-[rgba(255,255,255,0.1)]
+                [&_path]:stroke-[#A5A5A5]
+              "
+            >
+              <PlusIcon />
+            </div>
+          )}
         </button>
 
         {/* Dropdown */}

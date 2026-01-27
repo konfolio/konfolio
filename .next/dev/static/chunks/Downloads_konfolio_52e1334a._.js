@@ -723,10 +723,12 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$nod
 var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$onboarding$2f$Tag$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/components/onboarding/Tag.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$DeleteIcon$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/components/icons/DeleteIcon.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$PopoverArrow$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/components/icons/PopoverArrow.tsx [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$PlusIcon$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/components/icons/PlusIcon.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$hooks$2f$useClickOutside$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/components/hooks/useClickOutside.ts [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
 "use client";
+;
 ;
 ;
 ;
@@ -1202,7 +1204,7 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange }) {
                                 label: label
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                lineNumber: 227,
+                                lineNumber: 228,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1214,23 +1216,23 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange }) {
                                     className: "w-[13.42px] h-[13.42px]"
                                 }, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                    lineNumber: 246,
+                                    lineNumber: 247,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                lineNumber: 228,
+                                lineNumber: 229,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, label, true, {
                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                        lineNumber: 226,
+                        lineNumber: 227,
                         columnNumber: 13
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                lineNumber: 224,
+                lineNumber: 225,
                 columnNumber: 9
             }, this) : null,
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1250,18 +1252,29 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange }) {
                         },
                         className: limitReached ? "pointer-events-none opacity-60" : "hover:opacity-90",
                         "aria-label": "Add merch tags",
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$onboarding$2f$Tag$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                        children: selected.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$onboarding$2f$Tag$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                             label: "Merch",
                             showPlus: true,
                             className: " border-[#A5A5A5]/50 text-[#A5A5A5] [&_span]:text-[#A5A5A5] [&_svg]:text-[#A5A5A5] cursor-pointer "
                         }, void 0, false, {
                             fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                            lineNumber: 269,
-                            columnNumber: 11
+                            lineNumber: 271,
+                            columnNumber: 13
+                        }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: " w-[24px] h-[24px] flex items-center justify-center p-[4px] rounded-full border border-[#A5A5A5]/50 bg-[rgba(255,255,255,0.1)] [&_path]:stroke-[#A5A5A5] ",
+                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$PlusIcon$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
+                                fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                                lineNumber: 294,
+                                columnNumber: 15
+                            }, this)
+                        }, void 0, false, {
+                            fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                            lineNumber: 283,
+                            columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                        lineNumber: 255,
+                        lineNumber: 256,
                         columnNumber: 9
                     }, this),
                     open && !limitReached ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1273,12 +1286,12 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange }) {
                                     className: "w-[27px] h-[8px] block"
                                 }, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                    lineNumber: 296,
+                                    lineNumber: 313,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                lineNumber: 295,
+                                lineNumber: 312,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1293,12 +1306,12 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange }) {
                                     className: " flex-1 bg-transparent outline-none font-inter font-normal text-[14px] leading-[140%] text-[#262626] placeholder:text-[#A5A5A5] "
                                 }, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                    lineNumber: 311,
+                                    lineNumber: 328,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                lineNumber: 299,
+                                lineNumber: 316,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1309,7 +1322,7 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange }) {
                                         children: "Commonly Selected"
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                        lineNumber: 330,
+                                        lineNumber: 347,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1327,23 +1340,23 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange }) {
                                                     showPlus: true
                                                 }, void 0, false, {
                                                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                                    lineNumber: 346,
+                                                    lineNumber: 363,
                                                     columnNumber: 21
                                                 }, this)
                                             }, label, false, {
                                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                                lineNumber: 336,
+                                                lineNumber: 353,
                                                 columnNumber: 19
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                        lineNumber: 334,
+                                        lineNumber: 351,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                lineNumber: 329,
+                                lineNumber: 346,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1365,7 +1378,7 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange }) {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                        lineNumber: 356,
+                                        lineNumber: 373,
                                         columnNumber: 19
                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "flex flex-col",
@@ -1376,7 +1389,7 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange }) {
                                                     children: row.label
                                                 }, `h-${row.label}-${idx}`, false, {
                                                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                                    lineNumber: 378,
+                                                    lineNumber: 395,
                                                     columnNumber: 27
                                                 }, this);
                                             }
@@ -1391,7 +1404,7 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange }) {
                                                         children: base
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                                        lineNumber: 409,
+                                                        lineNumber: 426,
                                                         columnNumber: 27
                                                     }, this),
                                                     isLow ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1399,51 +1412,51 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange }) {
                                                         children: "Low Accuracy"
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                                        lineNumber: 412,
+                                                        lineNumber: 429,
                                                         columnNumber: 29
                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {}, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                                        lineNumber: 423,
+                                                        lineNumber: 440,
                                                         columnNumber: 29
                                                     }, this)
                                                 ]
                                             }, `i-${row.label}-${idx}`, true, {
                                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                                lineNumber: 395,
+                                                lineNumber: 412,
                                                 columnNumber: 25
                                             }, this);
                                         })
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                        lineNumber: 374,
+                                        lineNumber: 391,
                                         columnNumber: 19
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                    lineNumber: 354,
+                                    lineNumber: 371,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                lineNumber: 353,
+                                lineNumber: 370,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                        lineNumber: 284,
+                        lineNumber: 301,
                         columnNumber: 11
                     }, this) : null
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                lineNumber: 254,
+                lineNumber: 255,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-        lineNumber: 221,
+        lineNumber: 222,
         columnNumber: 5
     }, this);
 }
