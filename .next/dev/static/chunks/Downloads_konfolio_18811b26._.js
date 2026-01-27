@@ -4969,7 +4969,7 @@ function SliderRow({ icon, value, onChange, ariaLabel, showFill = false, fillMod
                 children: icon
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                lineNumber: 50,
+                lineNumber: 57,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$my$2d$portfolios$2f$SliderField$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -4981,13 +4981,13 @@ function SliderRow({ icon, value, onChange, ariaLabel, showFill = false, fillMod
                 fillMode: fillMode
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                lineNumber: 54,
+                lineNumber: 61,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-        lineNumber: 49,
+        lineNumber: 56,
         columnNumber: 5
     }, this);
 }
@@ -4995,7 +4995,38 @@ _c = SliderRow;
 function clamp(n, min, max) {
     return Math.max(min, Math.min(max, n));
 }
-function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, onClose, placement = "right" }) {
+const VARIANT_STYLES = {
+    square: {
+        popover: {
+            w: "w-[515px]",
+            h: "h-[314px]"
+        },
+        image: {
+            w: "w-[284px]",
+            h: "h-[284px]"
+        },
+        controls: {
+            xFromLeft: "left-[319px]",
+            h: "h-[284px]"
+        }
+    },
+    portrait: {
+        // Matches your Figma styling
+        popover: {
+            w: "w-[505px]",
+            h: "h-[375px]"
+        },
+        image: {
+            w: "w-[274px]",
+            h: "h-[345px]"
+        },
+        controls: {
+            xFromLeft: "left-[309px]",
+            h: "h-[345px]"
+        }
+    }
+};
+function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, onClose, placement = "right", variant = "square" }) {
     _s();
     const popoverRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$hooks$2f$useClickOutside$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"])(popoverRef, onClose, {
@@ -5003,17 +5034,15 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
         closeOnEsc: true
     });
     // --- Slider UI state (0..100) ---
-    // Rotate: neutral at 50
-    const [rotate, setRotate] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(50);
-    // Zoom: start at LEFT
-    const [zoom, setZoom] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(0);
-    // Filters: neutral around 50
+    const [rotate, setRotate] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(50) // neutral at 50
+    ;
+    const [zoom, setZoom] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(0) // starts at left
+    ;
     const [brightness, setBrightness] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(50);
     const [contrast, setContrast] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(50);
     const [saturation, setSaturation] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(50);
     const [temperature, setTemperature] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(50);
     // --- Map sliders -> CSS ---
-    // rotate: 0..100 => -180..+180, neutral at 50 => 0deg
     const rotateDeg = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
         "EditImagePopover.useMemo[rotateDeg]": ()=>{
             const t = clamp(rotate, 0, 100);
@@ -5022,7 +5051,6 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
     }["EditImagePopover.useMemo[rotateDeg]"], [
         rotate
     ]);
-    // zoom: 0..100 => 1.0..2.0 (feel free to tweak max)
     const zoomScale = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
         "EditImagePopover.useMemo[zoomScale]": ()=>{
             const t = clamp(zoom, 0, 100);
@@ -5031,7 +5059,6 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
     }["EditImagePopover.useMemo[zoomScale]"], [
         zoom
     ]);
-    // brightness: 0..100 => 0.5..1.5 (neutral at 1.0)
     const brightnessVal = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
         "EditImagePopover.useMemo[brightnessVal]": ()=>{
             const t = clamp(brightness, 0, 100);
@@ -5040,7 +5067,6 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
     }["EditImagePopover.useMemo[brightnessVal]"], [
         brightness
     ]);
-    // contrast: 0..100 => 0.5..1.5
     const contrastVal = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
         "EditImagePopover.useMemo[contrastVal]": ()=>{
             const t = clamp(contrast, 0, 100);
@@ -5049,7 +5075,6 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
     }["EditImagePopover.useMemo[contrastVal]"], [
         contrast
     ]);
-    // saturation: 0..100 => 0..2 (neutral at 1.0 when 50)
     const saturateVal = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
         "EditImagePopover.useMemo[saturateVal]": ()=>{
             const t = clamp(saturation, 0, 100);
@@ -5059,8 +5084,6 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
     }["EditImagePopover.useMemo[saturateVal]"], [
         saturation
     ]);
-    // temperature: proxy using hue-rotate + a touch of sepia
-    // 0..100 => -30deg..+30deg hue shift (neutral at 50)
     const hueRotateDeg = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
         "EditImagePopover.useMemo[hueRotateDeg]": ()=>{
             const t = clamp(temperature, 0, 100);
@@ -5069,14 +5092,11 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
     }["EditImagePopover.useMemo[hueRotateDeg]"], [
         temperature
     ]);
-    // sepia: add a subtle warmth as temp increases above neutral
     const sepiaVal = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
         "EditImagePopover.useMemo[sepiaVal]": ()=>{
             const t = clamp(temperature, 0, 100);
-            const warm = Math.max(0, t - 50) / 50 // 0..1
-            ;
-            return warm * 0.25 // up to 0.25
-            ;
+            const warm = Math.max(0, t - 50) / 50;
+            return warm * 0.25;
         }
     }["EditImagePopover.useMemo[sepiaVal]"], [
         temperature
@@ -5100,8 +5120,8 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
         sepiaVal,
         hueRotateDeg
     ]);
-    const squarePreview = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
-        "EditImagePopover.useMemo[squarePreview]": ()=>{
+    const preview = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
+        "EditImagePopover.useMemo[preview]": ()=>{
             if (!imageSrc) return null;
             // eslint-disable-next-line @next/next/no-img-element
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
@@ -5112,18 +5132,21 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
                 draggable: false
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                lineNumber: 149,
+                lineNumber: 167,
                 columnNumber: 7
             }, this);
         }
-    }["EditImagePopover.useMemo[squarePreview]"], [
+    }["EditImagePopover.useMemo[preview]"], [
         imageSrc,
         imgStyle
     ]);
     const isFlipped = placement === "left";
+    const v = VARIANT_STYLES[variant];
+    // anchor stays the same between variants (matches both of your Figma: left -16, top -15)
     const popoverAnchorClass = isFlipped ? "right-[-16px] top-[-15px]" : "left-[-16px] top-[-15px]";
     const imagePosClass = isFlipped ? "absolute right-[15px] top-[15px]" : "absolute left-[15px] top-[15px]";
-    const controlsPosClass = isFlipped ? "absolute left-[15px] top-[15px]" : "absolute left-[319px] top-[15px]";
+    // controls: when flipped, it’s always left:15; otherwise uses variant x
+    const controlsPosClass = isFlipped ? "absolute left-[15px] top-[15px]" : `absolute ${v.controls.xFromLeft} top-[15px]`;
     const onReset = ()=>{
         setRotate(50);
         setZoom(0);
@@ -5137,7 +5160,7 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
         className: `
         absolute
         ${popoverAnchorClass}
-        w-[515px] h-[314px]
+        ${v.popover.w} ${v.popover.h}
         rounded-[20px]
         bg-[rgba(255,255,255,0.9)]
         shadow-[4px_4px_15px_rgba(0,0,0,0.05)]
@@ -5151,7 +5174,7 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: `
           ${imagePosClass}
-          w-[284px] h-[284px]
+          ${v.image.w} ${v.image.h}
           rounded-[15px]
           overflow-hidden
           bg-[rgba(165,165,165,0.068)]
@@ -5160,14 +5183,14 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
                   inset_1.21725px_1.13446px_4.62px_rgba(255,255,255,0.126)]
           backdrop-blur-[7.58px]
         `,
-                children: squarePreview
+                children: preview
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                lineNumber: 192,
+                lineNumber: 214,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: `${controlsPosClass} w-[181px] h-[284px] flex flex-col justify-between items-start`,
+                className: `${controlsPosClass} w-[181px] ${v.controls.h} flex flex-col justify-between items-start`,
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "w-[181px] h-[25px] flex flex-row items-start gap-[10px] relative",
@@ -5177,7 +5200,7 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
                                 children: title
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                lineNumber: 212,
+                                lineNumber: 234,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -5189,23 +5212,23 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
                                     className: "inline-flex scale-[1.5] origin-center",
                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$DeleteIcon$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                        lineNumber: 223,
+                                        lineNumber: 245,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                    lineNumber: 222,
+                                    lineNumber: 244,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                lineNumber: 216,
+                                lineNumber: 238,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                        lineNumber: 211,
+                        lineNumber: 233,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5214,7 +5237,7 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(SliderRow, {
                                 icon: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$ArrowRotateIcon$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                    lineNumber: 232,
+                                    lineNumber: 253,
                                     columnNumber: 19
                                 }, void 0),
                                 value: rotate,
@@ -5224,13 +5247,13 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
                                 fillMode: "center"
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                lineNumber: 231,
+                                lineNumber: 252,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(SliderRow, {
                                 icon: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$ZoomInIcon$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                    lineNumber: 242,
+                                    lineNumber: 262,
                                     columnNumber: 19
                                 }, void 0),
                                 value: zoom,
@@ -5240,13 +5263,13 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
                                 fillMode: "start"
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                lineNumber: 241,
+                                lineNumber: 261,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(SliderRow, {
                                 icon: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$SunIcon$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                    lineNumber: 251,
+                                    lineNumber: 271,
                                     columnNumber: 19
                                 }, void 0),
                                 value: brightness,
@@ -5256,13 +5279,13 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
                                 fillMode: "start"
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                lineNumber: 250,
+                                lineNumber: 270,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(SliderRow, {
                                 icon: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$CircleHalfIcon$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                    lineNumber: 260,
+                                    lineNumber: 280,
                                     columnNumber: 19
                                 }, void 0),
                                 value: contrast,
@@ -5272,7 +5295,7 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
                                 fillMode: "start"
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                lineNumber: 259,
+                                lineNumber: 279,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(SliderRow, {
@@ -5281,7 +5304,7 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
                                     className: "block"
                                 }, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                    lineNumber: 269,
+                                    lineNumber: 289,
                                     columnNumber: 19
                                 }, void 0),
                                 value: saturation,
@@ -5291,13 +5314,13 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
                                 fillMode: "start"
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                lineNumber: 268,
+                                lineNumber: 288,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(SliderRow, {
                                 icon: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$ThermometerIcon$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                    lineNumber: 278,
+                                    lineNumber: 298,
                                     columnNumber: 19
                                 }, void 0),
                                 value: temperature,
@@ -5307,13 +5330,13 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
                                 fillMode: "start"
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                lineNumber: 277,
+                                lineNumber: 297,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                        lineNumber: 229,
+                        lineNumber: 251,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5328,12 +5351,12 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
                                         className: "w-[16px] h-[16px] text-[#262626] cursor-pointer",
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$ImagesIcon$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                             fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                            lineNumber: 295,
+                                            lineNumber: 315,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                        lineNumber: 290,
+                                        lineNumber: 310,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -5342,18 +5365,18 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
                                         className: "w-[16px] h-[16px] text-[#262626] cursor-pointer",
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$WandIcon$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                             fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                            lineNumber: 302,
+                                            lineNumber: 323,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                        lineNumber: 297,
+                                        lineNumber: 318,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                lineNumber: 289,
+                                lineNumber: 309,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -5363,34 +5386,34 @@ function EditImagePopover({ title = "Recommended - Most Recent Work", imageSrc, 
                                 onClick: onReset,
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$RevertIcon$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                    lineNumber: 312,
+                                    lineNumber: 333,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                                lineNumber: 306,
+                                lineNumber: 327,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                        lineNumber: 288,
+                        lineNumber: 308,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-                lineNumber: 209,
+                lineNumber: 231,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditImagePopover.tsx",
-        lineNumber: 175,
+        lineNumber: 197,
         columnNumber: 5
     }, this);
 }
-_s(EditImagePopover, "Hg6VUR5aW/mBzMrmxMK6r+3BBCE=", false, function() {
+_s(EditImagePopover, "Rzp+Rgmo5TiV/p/vSMc+bQ0zuRo=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$hooks$2f$useClickOutside$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"]
     ];

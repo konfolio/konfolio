@@ -6,3 +6,457 @@
 [00:15:19.670] Server  LOG     ✓ Compiled in 121ms
 [00:18:15.848] Server  LOG     ✓ Compiled in 149ms
 [00:24:15.032] Server  LOG     ✓ Compiled in 332ms
+[00:44:00.106] Server  LOG     ✓ Compiled in 184ms
+[00:45:22.413] Server  LOG     ✓ Compiled in 143ms
+[01:03:20.650] Server  LOG     ○ Compiling /my-portfolios/edit-portrait ...
+[01:04:42.811] Server  LOG     ✓ Compiled in 212ms
+[01:05:14.941] Server  LOG     ✓ Compiled in 157ms
+[01:06:35.827] Server  LOG     ✓ Compiled in 404ms
+[01:11:09.662] Server  LOG     ✓ Compiled in 194ms
+[01:16:08.180] Server  LOG     ✓ Compiled in 301ms
+[01:16:14.318] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/my-portfo..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/Downloads...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" className="inter_e8e5...">
+                          <body
+                            className="antialiased"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[01:17:58.732] Server  LOG     ✓ Compiled in 322ms
+[01:19:44.200] Server  LOG     ✓ Compiled in 208ms
+[02:41:33.529] Server  LOG     ✓ Compiled in 807ms
+[03:55:53.503] Server  LOG     ✓ Compiled in 942ms
+[03:59:58.485] Server  LOG     ✓ Compiled in 303ms
+[04:00:27.833] Server  LOG     ✓ Compiled in 138ms
+[04:03:43.400] Server  LOG     ✓ Compiled in 158ms
+[04:04:04.003] Server  LOG     ✓ Compiled in 121ms
+[04:14:28.951] Server  LOG     ✓ Compiled in 561ms
+[04:18:42.232] Server  LOG     ✓ Compiled in 321ms
+[04:22:45.742] Server  LOG     ✓ Compiled in 237ms
+[04:27:54.210] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/my-portfo..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/Downloads...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" className="inter_e8e5...">
+                          <body
+                            className="antialiased"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[04:38:33.229] Server  LOG     ✓ Compiled in 1717ms
+[04:47:10.721] Server  LOG     ✓ Compiled in 426ms
+[04:47:14.184] Server  LOG     ✓ Compiled in 283ms
+[04:58:10.488] Server  LOG     ✓ Compiled in 458ms
+[04:58:57.109] Server  LOG     ✓ Compiled in 825ms
+[04:58:57.877] Browser ERROR   ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx:469:11
+Ecmascript file had an error
+  467 |
+  468 |           {/* Placeholder overlay visibility tweak (no DOM rewrites) */}
+> 469 |           <style jsx>{`
+      |           ^^^^^^^^^^^^^
+> 470 |             .relative.w-\\[520px\\] > .absolute {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 471 |               opacity: 0.6;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 472 |             }
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 473 |           `}</style>
+      | ^^^^^^^^^^^^^^^^^^^^^
+  474 |         </div>
+  475 |       </div>
+  476 |     </section>
+
+Detected nested styled-jsx tag.
+Read more: https://nextjs.org/docs/messages/nested-styled-jsx-tags
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
+[04:59:03.902] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx:469:11
+Ecmascript file had an error
+  467 |
+  468 |           {/* Placeholder overlay visibility tweak (no DOM rewrites) */}
+> 469 |           <style jsx>{`
+      |           ^^^^^^^^^^^^^
+> 470 |             .relative.w-\\[520px\\] > .absolute {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 471 |               opacity: 0.6;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 472 |             }
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 473 |           `}</style>
+      | ^^^^^^^^^^^^^^^^^^^^^
+  474 |         </div>
+  475 |       </div>
+  476 |     </section>
+
+Detected nested styled-jsx tag.
+Read more: https://nextjs.org/docs/messages/nested-styled-jsx-tags
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
+
+
+[04:59:04.095] Browser ERROR   ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx:469:11
+Ecmascript file had an error
+  467 |
+  468 |           {/* Placeholder overlay visibility tweak (no DOM rewrites) */}
+> 469 |           <style jsx>{`
+      |           ^^^^^^^^^^^^^
+> 470 |             .relative.w-\\[520px\\] > .absolute {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 471 |               opacity: 0.6;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 472 |             }
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 473 |           `}</style>
+      | ^^^^^^^^^^^^^^^^^^^^^
+  474 |         </div>
+  475 |       </div>
+  476 |     </section>
+
+Detected nested styled-jsx tag.
+Read more: https://nextjs.org/docs/messages/nested-styled-jsx-tags
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
+[04:59:06.931] Server  LOG     ○ Compiling /_error ...
+[04:59:06.996] Browser ERROR   ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx:469:11
+Ecmascript file had an error
+  467 |
+  468 |           {/* Placeholder overlay visibility tweak (no DOM rewrites) */}
+> 469 |           <style jsx>{`
+      |           ^^^^^^^^^^^^^
+> 470 |             .relative.w-\\[520px\\] > .absolute {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 471 |               opacity: 0.6;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 472 |             }
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 473 |           `}</style>
+      | ^^^^^^^^^^^^^^^^^^^^^
+  474 |         </div>
+  475 |       </div>
+  476 |     </section>
+
+Detected nested styled-jsx tag.
+Read more: https://nextjs.org/docs/messages/nested-styled-jsx-tags
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
+[04:59:06.996] Browser ERROR   ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx:469:11
+Ecmascript file had an error
+  467 |
+  468 |           {/* Placeholder overlay visibility tweak (no DOM rewrites) */}
+> 469 |           <style jsx>{`
+      |           ^^^^^^^^^^^^^
+> 470 |             .relative.w-\\[520px\\] > .absolute {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 471 |               opacity: 0.6;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 472 |             }
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 473 |           `}</style>
+      | ^^^^^^^^^^^^^^^^^^^^^
+  474 |         </div>
+  475 |       </div>
+  476 |     </section>
+
+Detected nested styled-jsx tag.
+Read more: https://nextjs.org/docs/messages/nested-styled-jsx-tags
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
+[04:59:08.605] Browser ERROR   uncaughtError: Error: ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx:469:11
+Ecmascript file had an error
+  467 |
+  468 |           {/* Placeholder overlay visibility tweak (no DOM rewrites) */}
+> 469 |           <style jsx>{`
+      |           ^^^^^^^^^^^^^
+> 470 |             .relative.w-\\[520px\\] > .absolute {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 471 |               opacity: 0.6;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 472 |             }
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 473 |           `}</style>
+      | ^^^^^^^^^^^^^^^^^^^^^
+  474 |         </div>
+  475 |       </div>
+  476 |     </section>
+
+Detected nested styled-jsx tag.
+Read more: https://nextjs.org/docs/messages/nested-styled-jsx-tags
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
+
+
+[04:59:08.752] Browser ERROR   ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx:469:11
+Ecmascript file had an error
+  467 |
+  468 |           {/* Placeholder overlay visibility tweak (no DOM rewrites) */}
+> 469 |           <style jsx>{`
+      |           ^^^^^^^^^^^^^
+> 470 |             .relative.w-\\[520px\\] > .absolute {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 471 |               opacity: 0.6;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 472 |             }
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 473 |           `}</style>
+      | ^^^^^^^^^^^^^^^^^^^^^
+  474 |         </div>
+  475 |       </div>
+  476 |     </section>
+
+Detected nested styled-jsx tag.
+Read more: https://nextjs.org/docs/messages/nested-styled-jsx-tags
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
+[04:59:09.344] Browser ERROR   ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx:469:11
+Ecmascript file had an error
+  467 |
+  468 |           {/* Placeholder overlay visibility tweak (no DOM rewrites) */}
+> 469 |           <style jsx>{`
+      |           ^^^^^^^^^^^^^
+> 470 |             .relative.w-\\[520px\\] > .absolute {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 471 |               opacity: 0.6;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 472 |             }
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 473 |           `}</style>
+      | ^^^^^^^^^^^^^^^^^^^^^
+  474 |         </div>
+  475 |       </div>
+  476 |     </section>
+
+Detected nested styled-jsx tag.
+Read more: https://nextjs.org/docs/messages/nested-styled-jsx-tags
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
+[04:59:19.779] Browser ERROR   ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx:469:11
+Ecmascript file had an error
+  467 |
+  468 |           {/* Placeholder overlay visibility tweak (no DOM rewrites) */}
+> 469 |           <style jsx>{`
+      |           ^^^^^^^^^^^^^
+> 470 |             .relative.w-\\[520px\\] > .absolute {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 471 |               opacity: 0.6;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 472 |             }
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 473 |           `}</style>
+      | ^^^^^^^^^^^^^^^^^^^^^
+  474 |         </div>
+  475 |       </div>
+  476 |     </section>
+
+Detected nested styled-jsx tag.
+Read more: https://nextjs.org/docs/messages/nested-styled-jsx-tags
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/EditPortraitImageGrid.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
+[04:59:48.476] Server  LOG     ✓ Compiled in 160ms
+[04:59:50.301] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/my-portfo..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/Downloads...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" className="inter_e8e5...">
+                          <body
+                            className="antialiased"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[05:13:52.594] Server  LOG     ✓ Compiled in 689ms
+[05:14:55.585] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/my-portfo..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/Downloads...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" className="inter_e8e5...">
+                          <body
+                            className="antialiased"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[05:20:45.694] Server  LOG     ✓ Compiled in 900ms
+[05:27:44.827] Server  LOG     ✓ Compiled in 1321ms
+[05:36:00.132] Server  LOG     ✓ Compiled in 1129ms
+[05:43:29.541] Server  LOG     ✓ Compiled in 688ms

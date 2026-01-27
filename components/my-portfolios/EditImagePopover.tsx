@@ -17,6 +17,8 @@ import RevertIcon from "@/components/icons/RevertIcon"
 
 import SliderField from "@/components/my-portfolios/SliderField"
 
+type Variant = "square" | "portrait"
+
 type Props = {
   title?: string
   imageSrc?: string
@@ -26,6 +28,11 @@ type Props = {
    * left  = sliders on left, image on right (for right-most column cells)
    */
   placement?: "right" | "left"
+  /**
+   * square = 284x284 preview, 515x314 popover (default)
+   * portrait = 274x345 preview, 505x375 popover (Figma)
+   */
+  variant?: Variant
 }
 
 type SliderRowProps = {
@@ -67,69 +74,80 @@ function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n))
 }
 
+const VARIANT_STYLES: Record<
+  Variant,
+  {
+    popover: { w: string; h: string }
+    image: { w: string; h: string }
+    controls: { xFromLeft: string; h: string }
+  }
+> = {
+  square: {
+    popover: { w: "w-[515px]", h: "h-[314px]" },
+    image: { w: "w-[284px]", h: "h-[284px]" },
+    controls: { xFromLeft: "left-[319px]", h: "h-[284px]" },
+  },
+  portrait: {
+    // Matches your Figma styling
+    popover: { w: "w-[505px]", h: "h-[375px]" },
+    image: { w: "w-[274px]", h: "h-[345px]" },
+    controls: { xFromLeft: "left-[309px]", h: "h-[345px]" },
+  },
+}
+
 export default function EditImagePopover({
   title = "Recommended - Most Recent Work",
   imageSrc,
   onClose,
   placement = "right",
+  variant = "square",
 }: Props) {
   const popoverRef = useRef<HTMLDivElement | null>(null)
   useClickOutside(popoverRef, onClose, { enabled: true, closeOnEsc: true })
 
   // --- Slider UI state (0..100) ---
-  // Rotate: neutral at 50
-  const [rotate, setRotate] = useState(50)
-  // Zoom: start at LEFT
-  const [zoom, setZoom] = useState(0)
-  // Filters: neutral around 50
+  const [rotate, setRotate] = useState(50) // neutral at 50
+  const [zoom, setZoom] = useState(0) // starts at left
   const [brightness, setBrightness] = useState(50)
   const [contrast, setContrast] = useState(50)
   const [saturation, setSaturation] = useState(50)
   const [temperature, setTemperature] = useState(50)
 
   // --- Map sliders -> CSS ---
-  // rotate: 0..100 => -180..+180, neutral at 50 => 0deg
   const rotateDeg = useMemo(() => {
     const t = clamp(rotate, 0, 100)
     return ((t - 50) / 50) * 180
   }, [rotate])
 
-  // zoom: 0..100 => 1.0..2.0 (feel free to tweak max)
   const zoomScale = useMemo(() => {
     const t = clamp(zoom, 0, 100)
     return 1 + (t / 100) * 1.0
   }, [zoom])
 
-  // brightness: 0..100 => 0.5..1.5 (neutral at 1.0)
   const brightnessVal = useMemo(() => {
     const t = clamp(brightness, 0, 100)
     return 0.5 + (t / 100) * 1.0
   }, [brightness])
 
-  // contrast: 0..100 => 0.5..1.5
   const contrastVal = useMemo(() => {
     const t = clamp(contrast, 0, 100)
     return 0.5 + (t / 100) * 1.0
   }, [contrast])
 
-  // saturation: 0..100 => 0..2 (neutral at 1.0 when 50)
   const saturateVal = useMemo(() => {
     const t = clamp(saturation, 0, 100)
     return (t / 50) * 1.0 // 0->0, 50->1, 100->2
   }, [saturation])
 
-  // temperature: proxy using hue-rotate + a touch of sepia
-  // 0..100 => -30deg..+30deg hue shift (neutral at 50)
   const hueRotateDeg = useMemo(() => {
     const t = clamp(temperature, 0, 100)
     return ((t - 50) / 50) * 30
   }, [temperature])
 
-  // sepia: add a subtle warmth as temp increases above neutral
   const sepiaVal = useMemo(() => {
     const t = clamp(temperature, 0, 100)
-    const warm = Math.max(0, t - 50) / 50 // 0..1
-    return warm * 0.25 // up to 0.25
+    const warm = Math.max(0, t - 50) / 50
+    return warm * 0.25
   }, [temperature])
 
   const imgStyle = useMemo<React.CSSProperties>(() => {
@@ -142,7 +160,7 @@ export default function EditImagePopover({
     }
   }, [zoomScale, rotateDeg, brightnessVal, contrastVal, saturateVal, sepiaVal, hueRotateDeg])
 
-  const squarePreview = useMemo(() => {
+  const preview = useMemo(() => {
     if (!imageSrc) return null
     // eslint-disable-next-line @next/next/no-img-element
     return (
@@ -157,10 +175,14 @@ export default function EditImagePopover({
   }, [imageSrc, imgStyle])
 
   const isFlipped = placement === "left"
+  const v = VARIANT_STYLES[variant]
 
+  // anchor stays the same between variants (matches both of your Figma: left -16, top -15)
   const popoverAnchorClass = isFlipped ? "right-[-16px] top-[-15px]" : "left-[-16px] top-[-15px]"
   const imagePosClass = isFlipped ? "absolute right-[15px] top-[15px]" : "absolute left-[15px] top-[15px]"
-  const controlsPosClass = isFlipped ? "absolute left-[15px] top-[15px]" : "absolute left-[319px] top-[15px]"
+
+  // controls: when flipped, it’s always left:15; otherwise uses variant x
+  const controlsPosClass = isFlipped ? "absolute left-[15px] top-[15px]" : `absolute ${v.controls.xFromLeft} top-[15px]`
 
   const onReset = () => {
     setRotate(50)
@@ -177,7 +199,7 @@ export default function EditImagePopover({
       className={`
         absolute
         ${popoverAnchorClass}
-        w-[515px] h-[314px]
+        ${v.popover.w} ${v.popover.h}
         rounded-[20px]
         bg-[rgba(255,255,255,0.9)]
         shadow-[4px_4px_15px_rgba(0,0,0,0.05)]
@@ -188,11 +210,11 @@ export default function EditImagePopover({
       role="dialog"
       aria-label="Edit image"
     >
-      {/* Square image */}
+      {/* Image preview (square or portrait) */}
       <div
         className={`
           ${imagePosClass}
-          w-[284px] h-[284px]
+          ${v.image.w} ${v.image.h}
           rounded-[15px]
           overflow-hidden
           bg-[rgba(165,165,165,0.068)]
@@ -202,11 +224,11 @@ export default function EditImagePopover({
           backdrop-blur-[7.58px]
         `}
       >
-        {squarePreview}
+        {preview}
       </div>
 
       {/* Interaction field */}
-      <div className={`${controlsPosClass} w-[181px] h-[284px] flex flex-col justify-between items-start`}>
+      <div className={`${controlsPosClass} w-[181px] ${v.controls.h} flex flex-col justify-between items-start`}>
         {/* Text + Close */}
         <div className="w-[181px] h-[25px] flex flex-row items-start gap-[10px] relative">
           <p className="m-0 w-[155px] h-[25px] font-inter font-normal text-[12px] leading-[130%] text-[#A5A5A5]">
@@ -227,7 +249,6 @@ export default function EditImagePopover({
 
         {/* Editing Field */}
         <div className="w-[181px] h-[186px] flex flex-col items-start gap-[18px]">
-          {/* Rotate: center fill from middle */}
           <SliderRow
             icon={<ArrowRotateIcon />}
             value={rotate}
@@ -237,7 +258,6 @@ export default function EditImagePopover({
             fillMode="center"
           />
 
-          {/* Zoom: starts from left */}
           <SliderRow
             icon={<ZoomInIcon />}
             value={zoom}
@@ -294,6 +314,7 @@ export default function EditImagePopover({
             >
               <ImagesIcon />
             </button>
+
             <button
               type="button"
               aria-label="Magic wand"

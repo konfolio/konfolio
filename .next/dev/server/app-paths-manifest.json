@@ -1,3 +1,5 @@
 {
-  "/my-portfolios/edit-square/page": "app/my-portfolios/edit-square/page.js"
+  "/my-portfolios/edit-portrait/page": "app/my-portfolios/edit-portrait/page.js",
+  "/my-portfolios/edit-square/page": "app/my-portfolios/edit-square/page.js",
+  "/my-portfolios/page": "app/my-portfolios/page.js"
 }
