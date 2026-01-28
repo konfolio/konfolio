@@ -53,7 +53,7 @@ export default function AudienceCard() {
             onClick={() => go("artist")}
           />
           <AudienceOptionCard
-            title="Event Host"
+            title="Event Organizer"
             description="I host events where artist vendors can market their products."
             onClick={() => go("host")}
           />
