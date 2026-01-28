@@ -1,13 +1,12 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
 import CheckIcon from "@/components/icons/CheckIcon"
 import ArrowLeft from "@/components/icons/ArrowLeft"
 import OnboardingField from "@/components/onboarding/OnboardingField"
 import { inknut } from "@/app/fonts"
-
-type Mode = "artist" | "host"
+import { useOnboardingDraft, type Mode } from "@/stores/onboardingDraft"
 
 type Props = {
   mode: Mode
@@ -38,8 +37,8 @@ function TermsRow({
             className="absolute"
             style={{
               left: "2.17px",
-              top: "3.6px",          
-              transform: "scale(0.78)", 
+              top: "3.6px",
+              transform: "scale(0.78)",
               transformOrigin: "top left",
             }}
           >
@@ -66,11 +65,19 @@ function TermsRow({
 }
 
 export default function NameCard({ mode, backHref, onNextHref }: Props) {
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
-  const [preferredName, setPreferredName] = useState("")
-  const [organization, setOrganization] = useState("")
-  const [acceptedTerms, setAcceptedTerms] = useState(false)
+  // Zustand state
+  const firstName = useOnboardingDraft((s) => s.firstName)
+  const lastName = useOnboardingDraft((s) => s.lastName)
+  const preferredName = useOnboardingDraft((s) => s.preferredName)
+  const organization = useOnboardingDraft((s) => s.organization)
+  const acceptedTerms = useOnboardingDraft((s) => s.acceptedTerms)
+
+  // Zustand setters
+  const setFirstName = useOnboardingDraft((s) => s.setFirstName)
+  const setLastName = useOnboardingDraft((s) => s.setLastName)
+  const setPreferredName = useOnboardingDraft((s) => s.setPreferredName)
+  const setOrganization = useOnboardingDraft((s) => s.setOrganization)
+  const setAcceptedTerms = useOnboardingDraft((s) => s.setAcceptedTerms)
 
   const thirdField = useMemo(() => {
     if (mode === "artist") {
@@ -91,7 +98,7 @@ export default function NameCard({ mode, backHref, onNextHref }: Props) {
         onChange={setOrganization}
       />
     )
-  }, [mode, organization, preferredName])
+  }, [mode, organization, preferredName, setOrganization, setPreferredName])
 
   const canContinue =
     firstName.trim() !== "" &&
@@ -114,10 +121,7 @@ export default function NameCard({ mode, backHref, onNextHref }: Props) {
       "
     >
       {/* Arrow pinned to the card corner (inside padding) */}
-      <ArrowLeft
-        href={backHref}
-        className="absolute left-[45px] top-[50px]"
-      />
+      <ArrowLeft href={backHref} className="absolute left-[45px] top-[50px]" />
 
       {/* Header content (824 wide, centered) */}
       <div className="w-full flex justify-center">

@@ -1,11 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo } from "react"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
 import ArrowLeft from "@/components/icons/ArrowLeft"
-import LinkDropdown from "@/components/onboarding/LinkDropdown"
-
-type Mode = "artist" | "host"
+import LinkDropdown, { isValidLinkForKey } from "@/components/onboarding/LinkDropdown"
+import { useOnboardingDraft, type Mode } from "@/stores/onboardingDraft"
 
 type Props = {
   mode: Mode
@@ -14,14 +13,17 @@ type Props = {
 }
 
 export default function LinksCard({ mode, backHref, nextHref }: Props) {
-  const [hasAnyValidLink, setHasAnyValidLink] = useState(false)
+  const activeKeys = useOnboardingDraft((s) => s.activeLinkKeys)
+  const links = useOnboardingDraft((s) => s.links)
 
   const title =
     mode === "artist"
       ? "Links for reviewers to find you!"
       : "Links for applicants to find you!"
 
-  const canContinue = hasAnyValidLink
+  const canContinue = useMemo(() => {
+    return activeKeys.some((k) => isValidLinkForKey(k, links[k]))
+  }, [activeKeys, links])
 
   return (
     <div
@@ -49,7 +51,7 @@ export default function LinksCard({ mode, backHref, nextHref }: Props) {
       <div className="flex-1 min-h-0 w-full overflow-y-auto">
         <div className="w-full flex justify-center pt-[60px] pb-[33px]">
           <div className="w-[426px]">
-            <LinkDropdown onHasAnyValidLinkChange={setHasAnyValidLink} />
+            <LinkDropdown />
           </div>
         </div>
       </div>

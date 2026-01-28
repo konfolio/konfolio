@@ -1,39 +1,5 @@
-[00:00:04.813] Server  LOG     ✓ Ready in 3.9s
-[00:15:38.870] Server  LOG     ✓ Compiled in 2.2s
-[00:22:11.384] Server  LOG     ✓ Compiled in 193ms
-[00:28:16.383] Server  LOG     ✓ Compiled in 469ms
-[00:32:01.641] Server  LOG     ✓ Compiled in 244ms
-[00:33:17.687] Server  LOG     ✓ Compiled in 150ms
-[00:40:05.081] Server  LOG     ✓ Compiled in 272ms
-[00:40:45.757] Server  LOG     ✓ Compiled in 800ms
-[00:40:46.531] Browser ERROR   ./Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx:438:1
-Parsing ecmascript source code failed
-  436 |     </header>
-  437 |   )
-> 438 | }
-      | ^
-  439 |
-
-Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
-
-Import traces:
-  Client Component Browser:
-    ./Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx [Client Component Browser]
-    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component Browser]
-    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx [Client Component SSR]
-    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Client Component SSR]
-    ./Downloads/konfolio/app/my-portfolios/edit-portrait/page.tsx [Server Component]
-[00:48:28.951] Server  LOG     ✓ Compiled in 162ms
-[00:50:19.843] Server  LOG     ✓ Compiled in 171ms
-[00:55:55.064] Server  LOG     ✓ Compiled in 1574ms
-[00:58:52.256] Server  LOG     ✓ Compiled in 241ms
-[01:01:03.149] Server  LOG     ✓ Compiled in 84ms
-[01:18:51.132] Server  LOG     ✓ Compiled in 843ms
-[01:21:37.697] Server  LOG     ✓ Compiled in 318ms
-[01:22:32.190] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+[00:00:05.198] Server  LOG     ✓ Ready in 4.4s
+[00:00:09.645] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
 
 - A server/client branch `if (typeof window !== 'undefined')`.
 - Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
@@ -51,7 +17,7 @@ It can also happen if the client has a browser extension installed which messes 
         <ReplaySsrOnlyErrors>
         <DevRootHTTPAccessFallbackBoundary>
           <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/my-portfo..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
+            <HTTPAccessFallbackErrorBoundary pathname="/onboardin..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
               <RedirectBoundary>
                 <RedirectErrorBoundary router={{...}}>
                   <Head>
@@ -68,71 +34,24 @@ It can also happen if the client has a browser extension installed which messes 
                           >
                   ...
 
-[01:23:03.279] Server  LOG     ✓ Compiled in 183ms
-[01:25:22.929] Server  LOG     ✓ Compiled in 268ms
-[01:28:55.853] Server  LOG     ✓ Compiled in 385ms
-[01:28:56.528] Browser ERROR   React has detected a change in the order of Hooks called by %s. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://react.dev/link/rules-of-hooks
-
-   Previous render            Next render
-   ------------------------------------------------------
-%s   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- MerchTagPicker 1. useState                   useState
-2. useState                   useState
-3. useState                   useState
-4. useRef                     useRef
-5. useRef                     useRef
-6. useMemo                    useMemo
-7. useEffect                  useEffect
-8. useMemo                    useMemo
-9. undefined                  useRef
-
-[01:28:56.528] Browser ERROR   uncaughtError: Error: Rendered more hooks than during the previous render.
-[01:31:17.385] Server  LOG     ✓ Compiled in 947ms
-[01:31:17.444] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[01:31:19.689] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/my-portfo..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
-
-[01:44:38.839] Server  LOG     ✓ Compiled in 185ms
-[01:59:50.271] Server  LOG     ✓ Compiled in 483ms
-[02:01:43.016] Server  LOG     ✓ Compiled in 304ms
-[02:04:16.385] Server  LOG     ✓ Compiled in 138ms
-[02:04:44.034] Server  LOG     ✓ Compiled in 133ms
-[02:19:04.957] Server  LOG     ✓ Compiled in 266ms
-[02:19:05.529] Browser ERROR   The final argument passed to %s changed size between renders. The order and size of this array must remain constant.
-
-Previous: %s
-Incoming: %s useEffect [false, 0] [false]
-[02:23:11.683] Server  LOG     ✓ Compiled in 175ms
-[02:33:52.745] Server  LOG     ✓ Compiled in 608ms
+[00:04:42.510] Server  LOG     ✓ Compiled in 732ms
+[00:05:29.491] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:07:21.921] Server  LOG     ✓ Compiled in 389ms
+[00:07:34.916] Server  LOG     ✓ Compiled in 123ms
+[00:10:51.260] Server  LOG     ✓ Compiled in 206ms
+[00:10:54.329] Server  LOG     ✓ Compiled in 98ms
+[00:13:08.750] Server  LOG     ✓ Compiled in 190ms
+[00:14:52.143] Server  LOG     ✓ Compiled in 209ms
+[00:20:35.400] Server  LOG     ✓ Compiled in 857ms
+[00:20:50.900] Server  LOG     ✓ Compiled in 185ms
+[00:28:43.679] Server  LOG     ✓ Compiled in 575ms
+[00:41:18.475] Server  LOG     ✓ Compiled in 667ms
+[00:42:53.264] Server  LOG     ✓ Compiled in 236ms
+[00:44:40.803] Server  LOG     ✓ Compiled in 712ms
+[00:48:53.518] Server  LOG     ✓ Compiled in 166ms
+[01:18:57.874] Server  LOG     ✓ Compiled in 1474ms
+[01:22:34.780] Server  LOG     ✓ Compiled in 203ms
+[01:25:22.826] Server  LOG     ✓ Compiled in 334ms
+[01:30:27.182] Server  LOG     ✓ Compiled in 237ms
+[01:31:21.653] Server  LOG     ✓ Compiled in 82ms

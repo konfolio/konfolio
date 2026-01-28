@@ -5,6 +5,7 @@ import ArrowLeft from "@/components/icons/ArrowLeft"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
 import CheckIcon from "@/components/icons/CheckIcon"
 import DeleteIcon from "@/components/icons/DeleteIcon"
+import { useOnboardingDraft } from "@/stores/onboardingDraft"
 
 type Props = {
   backHref: string
@@ -17,23 +18,21 @@ type Props = {
 function splitYear(label: string) {
   const trimmed = label.trim()
 
-  // Prefer a year at the end: "Anime Expo 2025"
   const endYear = trimmed.match(/^(.*?)(\s(19|20)\d{2})$/)
   if (endYear) {
     return {
       name: endYear[1].trim(),
-      year: endYear[2].trim(), // includes leading space, we trimmed
+      year: endYear[2].trim(),
     }
   }
 
-  // Fallback: first 4-digit year anywhere
   const anyYear = trimmed.match(/(19|20)\d{2}/)
   if (anyYear) {
     const idx = trimmed.indexOf(anyYear[0])
     return {
       name: trimmed.slice(0, idx).trim(),
       year: anyYear[0],
-      tail: trimmed.slice(idx + anyYear[0].length).trim(), // optional extra
+      tail: trimmed.slice(idx + anyYear[0].length).trim(),
     }
   }
 
@@ -46,51 +45,57 @@ export default function PrevConsCard({
   title = "Tell us where you’ve been!",
   maxPastVends = 4,
 }: Props) {
-  const [firstVend, setFirstVend] = useState(false)
+  // ✅ Zustand state
+  const firstVend = useOnboardingDraft((s) => s.firstVend)
+  const prevVends = useOnboardingDraft((s) => s.prevVends)
+
+  // ✅ Zustand setters (these must exist in your store)
+  const setFirstVend = useOnboardingDraft((s) => s.setFirstVend)
+  const setPrevVends = useOnboardingDraft((s) => s.setPrevVends)
+
+  // local input only
   const [input, setInput] = useState("")
-  const [vends, setVends] = useState<string[]>([])
 
   const canContinue = useMemo(() => {
-    return firstVend || vends.length > 0
-  }, [firstVend, vends.length])
+    return firstVend || prevVends.length > 0
+  }, [firstVend, prevVends.length])
+
+  const inputLocked = firstVend || prevVends.length >= maxPastVends
 
   function addVend() {
     const trimmed = input.trim()
     if (!trimmed) return
-    if (vends.length >= maxPastVends) return
-    if (vends.some((v) => v.toLowerCase() === trimmed.toLowerCase())) {
+    if (prevVends.length >= maxPastVends) return
+    if (prevVends.some((v) => v.toLowerCase() === trimmed.toLowerCase())) {
       setInput("")
       return
     }
-    setVends((prev) => [...prev, trimmed])
+
+    setPrevVends([...prevVends, trimmed])
     setInput("")
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") {
-      e.preventDefault()
-      if (firstVend) return
-      if (vends.length >= maxPastVends) return
-      addVend()
-    }
+    if (e.key !== "Enter") return
+    e.preventDefault()
+    if (inputLocked) return
+    addVend()
   }
 
   function toggleFirstVend() {
-    setFirstVend((prev) => {
-      const next = !prev
-      if (next) {
-        setInput("")
-        setVends([])
-      }
-      return next
-    })
+    const next = !firstVend
+    setFirstVend(next)
+
+    if (next) {
+      // if they say it's their first vend, clear any previous vends
+      setPrevVends([])
+      setInput("")
+    }
   }
 
   function removeVend(v: string) {
-    setVends((prev) => prev.filter((x) => x !== v))
+    setPrevVends(prevVends.filter((x) => x !== v))
   }
-
-  const inputLocked = firstVend || vends.length >= maxPastVends
 
   return (
     <div
@@ -104,19 +109,20 @@ export default function PrevConsCard({
         max-w-[calc(100vw-40px)]
       "
     >
+      {/* Header */}
+      <div className="relative w-full flex items-center justify-center">
+        <ArrowLeft
+          href={backHref}
+          className="absolute left-0 w-[40px] h-[40px] flex items-center justify-center"
+        />
 
-        <div className="relative w-full flex items-center justify-center">
-            <ArrowLeft
-                href={backHref}
-                className="absolute left-0 w-[40px] h-[40px] flex items-center justify-center"
-            />
-
-            <p className="m-0 font-inter font-normal text-[25px] leading-[30px] text-black text-center">
-                {title}
-            </p>
-        </div>
+        <p className="m-0 font-inter font-normal text-[25px] leading-[30px] text-black text-center">
+          {title}
+        </p>
+      </div>
 
       <div className="w-[436px] h-[330px] flex flex-col items-start gap-[30px]">
+        {/* Input */}
         <div className="w-[436px] flex flex-col items-start gap-[8px]">
           <p className="m-0 w-full font-inter font-normal text-[16px] leading-[140%] text-[#1E1E1E]">
             Previous Vending
@@ -126,31 +132,27 @@ export default function PrevConsCard({
             Max {maxPastVends} past vends
           </p>
 
-          <div className="w-[436px] h-[40px]">
-            <input
-              value={input}
-              onChange={(e) => {
-                if (inputLocked) return
-                setInput(e.target.value)
-              }}
-              onKeyDown={onKeyDown}
-              placeholder="Vended Event 2026"
-              disabled={inputLocked}
-              className={`
-                w-full h-full
-                px-[12px]
-                bg-white
-                border border-[#A5A5A5]/50
-                rounded-[8px]
-                font-inter font-normal text-[14px] leading-[140%]
-                text-[#262626]
-                placeholder:text-[#A5A5A5]
-                outline-none
-                ${inputLocked ? "opacity-50 cursor-not-allowed" : ""}
-              `}
-            />
-          </div>
+          <input
+            value={input}
+            onChange={(e) => !inputLocked && setInput(e.target.value)}
+            onKeyDown={onKeyDown}
+            placeholder="Vended Event 2026"
+            disabled={inputLocked}
+            className={`
+              w-full h-[40px]
+              px-[12px]
+              bg-white
+              border border-[#A5A5A5]/50
+              rounded-[8px]
+              font-inter text-[14px]
+              text-[#262626]
+              placeholder:text-[#A5A5A5]
+              outline-none
+              ${inputLocked ? "opacity-50 cursor-not-allowed" : ""}
+            `}
+          />
 
+          {/* First vend checkbox */}
           <button
             type="button"
             onClick={toggleFirstVend}
@@ -184,31 +186,23 @@ export default function PrevConsCard({
           </button>
         </div>
 
+        {/* List */}
         <div className="w-[436px] flex flex-col items-center gap-[15px]">
           <p className="m-0 w-full text-center font-inter font-normal text-[13px] leading-[16px] text-[#A5A5A5]">
             Previous Vends
           </p>
 
           <div className="w-full h-[150px] flex flex-col items-center gap-[10px]">
-            {vends.length === 0 ? (
+            {prevVends.length === 0 ? (
               <p className="m-0 w-full text-center font-inter font-normal text-[15px] leading-[140%] text-[#A5A5A5]">
                 —
               </p>
             ) : (
-              vends.map((v) => {
+              prevVends.map((v) => {
                 const { name, year, tail } = splitYear(v)
 
                 return (
-                  <div
-                    key={v}
-                    className="
-                      group
-                      w-full
-                      flex items-center justify-center
-                      relative
-                    "
-                  >
-                    {/* Event text (turn gray on hover) */}
+                  <div key={v} className="group relative w-full flex justify-center">
                     <p
                       className="
                         m-0
@@ -222,37 +216,38 @@ export default function PrevConsCard({
                     >
                       <span>{name}</span>
                       {year && (
-                        <span
-                          className="
-                            ml-[6px]
-                            font-inter
-                            italic
-                            text-[12px]
-                            leading-[140%]
-                            text-[#A5A5A5]
-                          "
-                        >
+                        <span className="ml-[6px] italic text-[12px] text-[#A5A5A5]">
                           {year}
                         </span>
                       )}
                       {tail ? <span className="ml-[6px]">{tail}</span> : null}
                     </p>
 
+                    {/* Hover delete pill */}
                     <button
                       type="button"
                       onClick={() => removeVend(v)}
+                      aria-label={`Remove ${v}`}
                       className="
-                        absolute right-0
+                        absolute
+                        right-[-5.25px]
+                        top-1/2
+                        -translate-y-1/2
+                        w-[17.25px]
+                        h-[17.25px]
+                        flex items-center justify-center
+                        rounded-full
+                        bg-[#A5A5A5]
+                        z-[1]
+
                         opacity-0
                         group-hover:opacity-100
                         transition-opacity
-                        w-[16px] h-[16px]
-                        flex items-center justify-center
+                        duration-150
                       "
-                      aria-label={`Remove ${v}`}
                     >
-                      <span className="scale-[2] flex items-center justify-center">
-                        <DeleteIcon className="[&_path]:stroke-[#A5A5A5]" />
+                      <span className="w-[13.42px] h-[13.42px] flex items-center justify-center">
+                        <DeleteIcon className="[&_path]:stroke-white [&_path]:fill-[#262626]" />
                       </span>
                     </button>
                   </div>

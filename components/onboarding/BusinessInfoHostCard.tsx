@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
 import ArrowLeft from "@/components/icons/ArrowLeft"
 import OnboardingField from "@/components/onboarding/OnboardingField"
+import { useOnboardingDraft } from "@/stores/onboardingDraft"
 
 type Props = {
   orgName: string
@@ -12,13 +12,20 @@ type Props = {
 }
 
 export default function BusinessInfoHostCard({ orgName, backHref, nextHref }: Props) {
-  const [website, setWebsite] = useState("")
-  const [orgSize, setOrgSize] = useState("")
-  const [attendees, setAttendees] = useState("")
-  const [eventLocation, setEventLocation] = useState("")
+  // Zustand state
+  const hostWebsite = useOnboardingDraft((s) => s.hostWebsite)
+  const orgSize = useOnboardingDraft((s) => s.orgSize)
+  const attendees = useOnboardingDraft((s) => s.attendees)
+  const eventLocation = useOnboardingDraft((s) => s.eventLocation)
+
+  // Zustand setters
+  const setHostWebsite = useOnboardingDraft((s) => s.setHostWebsite)
+  const setOrgSize = useOnboardingDraft((s) => s.setOrgSize)
+  const setAttendees = useOnboardingDraft((s) => s.setAttendees)
+  const setEventLocation = useOnboardingDraft((s) => s.setEventLocation)
 
   const canContinue =
-    website.trim() !== "" &&
+    hostWebsite.trim() !== "" &&
     orgSize.trim() !== "" &&
     attendees.trim() !== "" &&
     eventLocation.trim() !== ""
@@ -48,8 +55,8 @@ export default function BusinessInfoHostCard({ orgName, backHref, nextHref }: Pr
       <div className="w-[426px] flex flex-col gap-[20px]">
         <OnboardingField
           label="Website"
-          value={website}
-          onChange={setWebsite}
+          value={hostWebsite}
+          onChange={setHostWebsite}
         />
 
         <OnboardingField

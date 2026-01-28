@@ -14,16 +14,7 @@ import PixivIcon from "@/components/icons/PixivIcon"
 import BlueskyIcon from "@/components/icons/BlueskyIcon"
 
 import RemovableLinkInput from "@/components/onboarding/RemovableLinkInput"
-
-type MediaKey =
-  | "website"
-  | "shop"
-  | "instagram"
-  | "x"
-  | "facebook"
-  | "tumblr"
-  | "pixiv"
-  | "bluesky"
+import { useOnboardingDraft, type MediaKey } from "@/stores/onboardingDraft"
 
 type LinkRow = {
   key: MediaKey
@@ -36,17 +27,12 @@ type LinkRow = {
 type Props = {
   noteText?: string
   maxLinks?: number
-  onHasAnyValidLinkChange?: (hasAnyValid: boolean) => void
 }
 
 function normalizeUrlInput(raw: string) {
   const v = raw.trim()
   if (!v) return ""
-
-  // If it already starts with a scheme, keep it
   if (/^https?:\/\//i.test(v)) return v
-
-  // Otherwise assume https
   return `https://${v}`
 }
 
@@ -62,53 +48,39 @@ function safeParseUrl(raw: string) {
 
 function hostnameMatches(hostname: string, allowed: string[]) {
   const h = hostname.toLowerCase()
-
   return allowed.some((domain) => {
     const d = domain.toLowerCase()
     return h === d || h.endsWith(`.${d}`)
   })
 }
 
-function isValidLinkForKey(key: MediaKey, raw: string) {
+export function isValidLinkForKey(key: MediaKey, raw: string) {
   const url = safeParseUrl(raw)
   if (!url) return false
 
-  // Must be http/https
   if (url.protocol !== "http:" && url.protocol !== "https:") return false
 
-  // Must have a real-ish host (dot helps avoid "https://localhost" etc.)
   const host = url.hostname
   if (!host || !host.includes(".")) return false
 
-  // No spaces anywhere
   if (/\s/.test(raw)) return false
 
-  // Platform/domain rules
   switch (key) {
     case "website":
     case "shop":
-      // Any valid domain is fine
       return true
-
     case "instagram":
       return hostnameMatches(host, ["instagram.com"])
-
     case "x":
       return hostnameMatches(host, ["x.com", "twitter.com"])
-
     case "facebook":
       return hostnameMatches(host, ["facebook.com"])
-
     case "tumblr":
       return hostnameMatches(host, ["tumblr.com"])
-
     case "pixiv":
       return hostnameMatches(host, ["pixiv.net"])
-
     case "bluesky":
-      // bluesky commonly uses bsky.app / bsky.social domains
       return hostnameMatches(host, ["bsky.app", "bsky.social"])
-
     default:
       return false
   }
@@ -117,22 +89,19 @@ function isValidLinkForKey(key: MediaKey, raw: string) {
 export default function LinkDropdown({
   noteText = "Recommended: 1 website, 2 social media, and 1 shop",
   maxLinks = 8,
-  onHasAnyValidLinkChange,
 }: Props) {
+  // Local UI state only
   const [open, setOpen] = useState(false)
-  const [links, setLinks] = useState<Record<MediaKey, string>>({
-    website: "",
-    shop: "",
-    instagram: "",
-    x: "",
-    facebook: "",
-    tumblr: "",
-    pixiv: "",
-    bluesky: "",
-  })
-  const [activeKeys, setActiveKeys] = useState<MediaKey[]>([])
-
   const wrapRef = useRef<HTMLDivElement | null>(null)
+
+  // Zustand state
+  const activeKeys = useOnboardingDraft((s) => s.activeLinkKeys)
+  const links = useOnboardingDraft((s) => s.links)
+
+  // Zustand actions
+  const setActiveLinkKeys = useOnboardingDraft((s) => s.setActiveLinkKeys)
+  const setLinkValue = useOnboardingDraft((s) => s.setLinkValue)
+  const clearLinkKey = useOnboardingDraft((s) => s.clearLinkKey)
 
   const options: LinkRow[] = useMemo(
     () => [
@@ -191,26 +160,20 @@ export default function LinkDropdown({
     []
   )
 
+  const limitReached = activeKeys.length >= maxLinks
+
   function addKey(key: MediaKey) {
-    setActiveKeys((prev) => {
-      if (prev.includes(key)) return prev
-      if (prev.length >= maxLinks) return prev
-      return [...prev, key]
-    })
+    if (activeKeys.includes(key)) return
+    if (activeKeys.length >= maxLinks) return
+    setActiveLinkKeys([...activeKeys, key])
     setOpen(false)
   }
 
   function removeKey(key: MediaKey) {
-    setActiveKeys((prev) => prev.filter((k) => k !== key))
-    setLinks((prev) => ({ ...prev, [key]: "" }))
+    clearLinkKey(key) // removes from active + clears its value
   }
 
-  // ✅ Tell parent whether at least ONE active link is valid
-  useEffect(() => {
-    const anyValid = activeKeys.some((k) => isValidLinkForKey(k, links[k]))
-    onHasAnyValidLinkChange?.(anyValid)
-  }, [activeKeys, links, onHasAnyValidLinkChange])
-
+  // close on outside click / esc
   useEffect(() => {
     function onDocDown(e: MouseEvent) {
       if (!wrapRef.current) return
@@ -239,18 +202,22 @@ export default function LinkDropdown({
           {/* Collapsed input */}
           <button
             type="button"
-            onClick={() => setOpen((v) => !v)}
-            className="
+            onClick={() => {
+              if (limitReached) return
+              setOpen((v) => !v)
+            }}
+            className={`
               w-[360px] h-[40px]
               flex items-center justify-between
               px-[10px] py-[12px]
               border border-[#A5A5A5]/50
               rounded-[8px]
               bg-white text-left
-            "
+              ${limitReached ? "opacity-60 cursor-not-allowed" : ""}
+            `}
           >
             <span className="font-inter text-[12px] leading-[140%] text-[#A5A5A5]">
-              Select a media
+              {limitReached ? "Max links reached" : "Select a media"}
             </span>
             <span className={open ? "text-[#262626]" : "text-[#A5A5A5]"}>
               <ArrowDown />
@@ -258,7 +225,7 @@ export default function LinkDropdown({
           </button>
 
           {/* Dropdown */}
-          {open && (
+          {open && !limitReached && (
             <div
               className="
                 absolute left-0 top-[44px]
@@ -283,33 +250,36 @@ export default function LinkDropdown({
 
               {/* Options */}
               <div className="w-[340px] flex flex-col gap-[10px]">
-                {options.map((opt) => (
-                  <button
-                    key={opt.key}
-                    type="button"
-                    onClick={() => addKey(opt.key)}
-                    className="
-                      w-[340px] h-[19px]
-                      flex items-center justify-between
-                      px-[5px]
-                      hover:bg-[#F7F7F7]
-                      rounded-[4px]
-                      text-left
-                    "
-                  >
-                    <span className="font-inter text-[12px] leading-[15px] text-[#262626]">
-                      {opt.label}
-                    </span>
-
-                    {opt.recommended ? (
-                      <span className="font-inter text-[9px] leading-[11px] text-[#A5A5A5]">
-                        Recommended
+                {options.map((opt) => {
+                  const disabled = activeKeys.includes(opt.key)
+                  return (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      onClick={() => !disabled && addKey(opt.key)}
+                      className={`
+                        w-[340px] h-[19px]
+                        flex items-center justify-between
+                        px-[5px]
+                        rounded-[4px]
+                        text-left
+                        ${disabled ? "opacity-40 cursor-not-allowed" : "hover:bg-[#F7F7F7]"}
+                      `}
+                    >
+                      <span className="font-inter text-[12px] leading-[15px] text-[#262626]">
+                        {opt.label}
                       </span>
-                    ) : (
-                      <span />
-                    )}
-                  </button>
-                ))}
+
+                      {opt.recommended ? (
+                        <span className="font-inter text-[9px] leading-[11px] text-[#A5A5A5]">
+                          Recommended
+                        </span>
+                      ) : (
+                        <span />
+                      )}
+                    </button>
+                  )
+                })}
               </div>
             </div>
           )}
@@ -336,7 +306,7 @@ export default function LinkDropdown({
                 key={key}
                 icon={opt.icon}
                 value={value}
-                onChange={(v) => setLinks((prev) => ({ ...prev, [key]: v }))}
+                onChange={(v) => setLinkValue(key, v)}
                 placeholder={opt.placeholder}
                 isValid={valid}
                 onRemove={() => removeKey(key)}

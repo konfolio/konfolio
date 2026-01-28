@@ -1,15 +1,10 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import ArrowLeft from "@/components/icons/ArrowLeft"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
 import CheckIcon from "@/components/icons/CheckIcon"
-
-type CollabOption =
-  | "Stamp Rally"
-  | "Share Table"
-  | "Other Collabs"
-  | "Not open for collabs"
+import { useOnboardingDraft, type CollabOption } from "@/stores/onboardingDraft"
 
 type Props = {
   backHref: string
@@ -29,31 +24,33 @@ export default function CollabCard({
   nextHref,
   title = "Are you open for artist collabs?",
 }: Props) {
-  const [selected, setSelected] = useState<Set<CollabOption>>(new Set())
+  const collabs = useOnboardingDraft((s) => s.collabs)
+  const setCollabs = useOnboardingDraft((s) => s.setCollabs)
+
+  const selectedSet = useMemo(() => new Set<CollabOption>(collabs), [collabs])
+  const canContinue = collabs.length > 0
 
   function toggle(option: CollabOption) {
-    setSelected((prev) => {
-      const next = new Set(prev)
+    const next = new Set<CollabOption>(selectedSet)
 
-      if (option === "Not open for collabs") {
-        if (next.has(option)) next.delete(option)
-        else {
-          next.clear()
-          next.add(option)
-        }
-        return next
-      }
-
-      next.delete("Not open for collabs")
-
+    if (option === "Not open for collabs") {
       if (next.has(option)) next.delete(option)
-      else next.add(option)
+      else {
+        next.clear()
+        next.add(option)
+      }
+      setCollabs(Array.from(next))
+      return
+    }
 
-      return next
-    })
+    // selecting any other option removes "Not open..."
+    next.delete("Not open for collabs")
+
+    if (next.has(option)) next.delete(option)
+    else next.add(option)
+
+    setCollabs(Array.from(next))
   }
-
-  const canContinue = useMemo(() => selected.size > 0, [selected])
 
   return (
     <div
@@ -69,7 +66,6 @@ export default function CollabCard({
     >
       {/* Header row */}
       <div className="relative w-full flex items-center justify-center">
-        {/* Larger clickable area */}
         <ArrowLeft
           href={backHref}
           className="absolute left-0 w-[40px] h-[40px] flex items-center justify-center"
@@ -88,7 +84,7 @@ export default function CollabCard({
 
         <div className="w-[186px] flex flex-col items-start gap-[30px]">
           {OPTIONS.map((label) => {
-            const checked = selected.has(label)
+            const checked = selectedSet.has(label)
 
             return (
               <button
@@ -101,9 +97,7 @@ export default function CollabCard({
                 <span
                   className={[
                     "relative w-[13px] h-[13px] rounded-[3.25px] flex-shrink-0",
-                    checked
-                      ? "bg-[#262626]"
-                      : "bg-white border border-[#262626]",
+                    checked ? "bg-[#262626]" : "bg-white border border-[#262626]",
                   ].join(" ")}
                   aria-hidden="true"
                 >
@@ -134,7 +128,7 @@ export default function CollabCard({
       {/* Extra space before Next */}
       <div className="h-[100px]" />
 
-      {/* Next button (non-stretching) */}
+      {/* Next */}
       <div className="flex justify-center w-auto">
         <PrimaryButton
           href={canContinue ? nextHref : "#"}

@@ -5,6 +5,8 @@ import ArrowLeft from "@/components/icons/ArrowLeft"
 import ArrowDown from "@/components/icons/ArrowDown"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
 import Tag from "@/components/onboarding/Tag"
+import DeleteIcon from "@/components/icons/DeleteIcon"
+import { useOnboardingDraft } from "@/stores/onboardingDraft"
 
 type Props = {
   backHref: string
@@ -34,6 +36,7 @@ type Row =
   | { type: "header"; label: GroupKey }
   | { type: "item"; label: string; group: GroupKey }
 
+/* ---------- ROWS DATA UNCHANGED ---------- */
 const ROWS: Row[] = [
   { type: "header", label: "PRINT" },
   { type: "item", group: "PRINT", label: "Lenticular" },
@@ -131,7 +134,11 @@ export default function MerchTypeCard({
   businessName,
   maxTags = 8,
 }: Props) {
-  const [selected, setSelected] = useState<string[]>([])
+  // Zustand state
+  const selected = useOnboardingDraft((s) => s.merchTags)
+  const setMerchTags = useOnboardingDraft((s) => s.setMerchTags)
+
+  // local UI state
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState("")
   const wrapRef = useRef<HTMLDivElement | null>(null)
@@ -143,10 +150,8 @@ export default function MerchTypeCard({
 
   const selectedSet = useMemo(() => new Set(selected.map(keyify)), [selected])
 
-  // Build dropdown list as: Header + visible items beneath it
   const visibleRows = useMemo(() => {
     const q = keyify(query)
-
     const out: Row[] = []
     let currentHeader: GroupKey | null = null
     let headerAdded = false
@@ -158,11 +163,9 @@ export default function MerchTypeCard({
         continue
       }
 
-      // item row
       if (selectedSet.has(keyify(row.label))) continue
       if (q && !keyify(row.label).includes(q)) continue
 
-      // add header before the first visible item in that group
       if (!headerAdded && currentHeader) {
         out.push({ type: "header", label: currentHeader })
         headerAdded = true
@@ -177,15 +180,21 @@ export default function MerchTypeCard({
   function addTag(raw: string) {
     const label = normalize(raw)
     if (!label) return
+
+    const current = useOnboardingDraft.getState().merchTags
+    const currentSet = new Set(current.map(keyify))
     const k = keyify(label)
-    if (selectedSet.has(k)) return
-    if (limitReached) return
-    setSelected((prev) => [...prev, label])
+
+    if (currentSet.has(k)) return
+    if (current.length >= maxTags) return
+
+    setMerchTags([...current, label])
   }
 
   function removeTag(label: string) {
     const k = keyify(label)
-    setSelected((prev) => prev.filter((t) => keyify(t) !== k))
+    const current = useOnboardingDraft.getState().merchTags
+    setMerchTags(current.filter((t) => keyify(t) !== k))
   }
 
   function pickOption(label: string) {
@@ -217,7 +226,6 @@ export default function MerchTypeCard({
     setOpen(false)
   }
 
-  // close on outside click / esc
   useEffect(() => {
     function onDocDown(e: MouseEvent) {
       if (!wrapRef.current) return
@@ -246,25 +254,26 @@ export default function MerchTypeCard({
         max-w-[calc(100vw-40px)]
       "
     >
-
-      {/* Header row */}
+      {/* Header */}
       <div className="relative w-full flex items-center justify-center">
         <ArrowLeft
           href={backHref}
           className="absolute left-0 w-[40px] h-[40px] flex items-center justify-center"
         />
-
         <p className="m-0 font-inter font-normal text-[25px] leading-[30px] text-black text-center">
           {title}
         </p>
       </div>
 
-      {/* Frame 115 */}
+      {/* Frame */}
       <div className="w-[526px] h-[356px] flex flex-col items-center gap-[70px]">
         {/* Add Tag Field */}
         <div className="w-[526px] h-[177px] flex flex-col items-center gap-[20px]">
-          {/* Input Field */}
-          <div className="w-[397px] h-[70px] flex flex-col items-start gap-[8px]" ref={wrapRef}>
+          {/* Input */}
+          <div
+            className="w-[397px] h-[70px] flex flex-col items-start gap-[8px]"
+            ref={wrapRef}
+          >
             <p className="m-0 w-full font-inter font-normal text-[16px] leading-[140%] text-[#1E1E1E]">
               Merchandise Category
             </p>
@@ -272,13 +281,8 @@ export default function MerchTypeCard({
             <div className="relative w-[397px] h-[40px]">
               <div
                 className={`
-                  w-full h-full
-                  flex items-center
-                  px-[10px] py-[12px]
-                  border border-[#A5A5A5]/50
-                  rounded-[8px]
-                  bg-white
-                  gap-[10px]
+                  w-full h-full flex items-center px-[10px] py-[12px]
+                  border border-[#A5A5A5]/50 rounded-[8px] bg-white gap-[10px]
                   ${limitReached ? "opacity-60" : ""}
                 `}
                 onClick={() => {
@@ -298,15 +302,7 @@ export default function MerchTypeCard({
                   onFocus={() => !limitReached && setOpen(true)}
                   onKeyDown={onEnter}
                   placeholder="Select or type a category"
-                  className="
-                    flex-1
-                    bg-transparent
-                    outline-none
-                    font-inter font-normal text-[14px] leading-[140%]
-                    text-[#262626]
-                    placeholder:text-[#A5A5A5]
-                    disabled:cursor-not-allowed
-                  "
+                  className="flex-1 bg-transparent outline-none font-inter text-[14px] leading-[140%]"
                 />
 
                 <button
@@ -316,30 +312,17 @@ export default function MerchTypeCard({
                     e.stopPropagation()
                     if (limitReached) return
                     setOpen((v) => !v)
-                    requestAnimationFrame(() => inputRef.current?.focus())
                   }}
-                  className="w-[16px] h-[16px] flex items-center justify-center text-[#A5A5A5] disabled:cursor-not-allowed"
-                  aria-label="Toggle dropdown"
+                  className="w-[16px] h-[16px] flex items-center justify-center text-[#A5A5A5]"
                 >
                   <ArrowDown />
                 </button>
               </div>
 
-              {/* Dropdown (scrollable) */}
+              {/* Dropdown */}
               {open && !limitReached && (
-                <div
-                  className="
-                    absolute left-0 top-[44px]
-                    w-[397px]
-                    bg-white
-                    border border-[#A5A5A5]/50
-                    rounded-[8px]
-                    px-[10px] py-[10px]
-                    z-50
-                  "
-                >
+                <div className="absolute left-0 top-[44px] w-[397px] bg-white border border-[#A5A5A5]/50 rounded-[8px] px-[10px] py-[10px] z-50">
                   <div className="max-h-[260px] overflow-y-auto pr-[4px]">
-                    {/* no matches -> allow add */}
                     {visibleRows.filter((r) => r.type === "item").length === 0 ? (
                       <button
                         type="button"
@@ -348,13 +331,7 @@ export default function MerchTypeCard({
                           setQuery("")
                           setOpen(false)
                         }}
-                        className="
-                          w-full text-left
-                          px-[8px] py-[8px]
-                          rounded-[6px]
-                          hover:bg-[#F7F7F7]
-                          font-inter text-[14px] leading-[140%] text-[#262626]
-                        "
+                        className="w-full text-left px-[8px] py-[8px] rounded-[6px] hover:bg-[#F7F7F7]"
                       >
                         Add “{normalize(query) || "New category"}”
                       </button>
@@ -365,12 +342,7 @@ export default function MerchTypeCard({
                             return (
                               <div
                                 key={`h-${row.label}-${idx}`}
-                                className="
-                                  px-[8px] pt-[10px] pb-[6px]
-                                  font-inter font-normal
-                                  text-[12px] leading-[140%]
-                                  text-[#A5A5A5]
-                                "
+                                className="px-[8px] pt-[10px] pb-[6px] text-[12px] text-[#A5A5A5]"
                               >
                                 {row.label}
                               </div>
@@ -384,33 +356,13 @@ export default function MerchTypeCard({
                               key={`i-${row.label}-${idx}`}
                               type="button"
                               onClick={() => pickOption(row.label)}
-                              className="
-                                w-full
-                                flex items-center justify-between
-                                gap-[10px]
-                                text-left
-                                px-[8px] py-[8px]
-                                rounded-[6px]
-                                hover:bg-[#F7F7F7]
-                              "
+                              className="w-full flex items-center justify-between px-[8px] py-[8px] rounded-[6px] hover:bg-[#F7F7F7]"
                             >
-                              <span className="font-inter text-[14px] leading-[140%] text-[#262626]">
-                                {base}
-                              </span>
-
-                              {isLow ? (
-                                <span
-                                  className="
-                                    font-inter font-normal
-                                    text-[9px] leading-[100%]
-                                    text-[#A5A5A5]
-                                    whitespace-nowrap
-                                  "
-                                >
+                              <span>{base}</span>
+                              {isLow && (
+                                <span className="text-[9px] text-[#A5A5A5]">
                                   Low Accuracy
                                 </span>
-                              ) : (
-                                <span />
                               )}
                             </button>
                           )
@@ -423,19 +375,16 @@ export default function MerchTypeCard({
             </div>
           </div>
 
-          {/* Commonly Selected */}
+          {/* Common */}
           <div className="w-[526px] h-[87px] flex flex-col items-center gap-[15px]">
-            <p className="m-0 font-inter font-normal text-[14px] leading-[140%] text-[#A5A5A5] text-center">
-              Commonly Selected
-            </p>
-
-            <div className="w-[526px] h-[62px] flex flex-row flex-wrap justify-center items-center content-center gap-[10px]">
+            <p className="m-0 text-[14px] text-[#A5A5A5]">Commonly Selected</p>
+            <div className="flex flex-wrap justify-center gap-[10px]">
               {COMMON.map((label) => (
                 <button
                   key={label}
                   type="button"
                   onClick={() => addTag(label)}
-                  className={limitReached ? "pointer-events-none opacity-50" : "hover:opacity-80"}
+                  className={limitReached ? "pointer-events-none opacity-50" : ""}
                 >
                   <Tag label={label} showPlus />
                 </button>
@@ -444,44 +393,66 @@ export default function MerchTypeCard({
           </div>
         </div>
 
-        {/* Your Merch Tags */}
+        {/* Your Merchandise */}
         <div className="w-[526px] h-[109px] flex flex-col items-center gap-[15px]">
-          <p className="m-0 font-inter font-normal text-[14px] leading-[140%] text-[#A5A5A5] text-center">
-            Your Merchandise
-          </p>
+          <p className="m-0 text-[14px] text-[#A5A5A5]">Your Merchandise</p>
 
-          <div className="w-[526px] h-[80px] flex flex-row flex-wrap justify-center items-center content-center gap-[10px]">
+          <div className="flex flex-wrap justify-center gap-[10px]">
             {selected.length === 0 ? (
-              <p className="m-0 font-inter text-[12px] leading-[140%] text-[#A5A5A5]">
+              <p className="text-[12px] text-[#A5A5A5]">
                 Add at least 1 category above
               </p>
             ) : (
               selected.map((label) => (
-                <button
+                <div
                   key={label}
-                  type="button"
-                  onClick={() => removeTag(label)}
-                  title="Click to remove"
-                  className="hover:opacity-80"
+                  className="group relative inline-flex items-center"
                 >
                   <Tag label={label} />
-                </button>
-              ))
+              
+                  {/* Hover Delete Button */}
+                  <button
+                    type="button"
+                    onClick={() => removeTag(label)}
+                    aria-label={`Remove ${label}`}
+                    className="
+                      absolute
+                      right-[-5.25px]
+                      top-1/2
+                      -translate-y-1/2
+                      w-[17.25px]
+                      h-[17.25px]
+                      flex
+                      items-center
+                      justify-center
+                      rounded-full
+                      bg-[#A5A5A5]
+                      z-[1]
+              
+                      opacity-0
+                      group-hover:opacity-100
+                      transition-opacity
+                      duration-150
+                    "
+                  >
+                    <span className="w-[13.42px] h-[13.42px] flex items-center justify-center">
+                      <DeleteIcon className="[&_path]:stroke-white [&_path]:fill-[#262626]" />
+                    </span>
+                  </button>
+                </div>
+              ))              
             )}
           </div>
 
-          {/* Limit reached caption */}
+          {/* Limit */}
           <div className="h-[9px]">
             {limitReached && (
-              <p className="m-0 font-inter font-normal text-[12px] leading-[140%] text-[#FF4603]">
-                Limit Reached
-              </p>
+              <p className="text-[12px] text-[#FF4603]">Limit Reached</p>
             )}
           </div>
         </div>
       </div>
 
-      {/* Next */}
       <PrimaryButton
         href={canContinue ? nextHref : "#"}
         className={!canContinue ? "pointer-events-none opacity-40" : ""}
