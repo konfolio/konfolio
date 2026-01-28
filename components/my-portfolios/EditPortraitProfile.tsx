@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import ArrowLeft from "@/components/icons/ArrowLeft"
 import ImageIcon from "@/components/icons/ImageIcon"
 import BrushIcon from "@/components/icons/BrushIcon"
@@ -31,13 +31,11 @@ type Props = {
   displayName?: string
   onChangeDisplayName?: (val: string) => void
 
-  // ✅ include these because your page passes them
   locationText?: string
   email?: string
   onChangeLocationText?: (val: string) => void
   onChangeEmail?: (val: string) => void
 
-  // ✅ include these because your page passes them
   showAddLink?: boolean
   onAddLinkClick?: () => void
 
@@ -47,6 +45,11 @@ type Props = {
   onPublish?: () => void
   onOpenPreview?: () => void
 }
+
+const BUSINESS_PLACEHOLDER = "Business Name"
+const NAME_PLACEHOLDER = "Your Name"
+const LOCATION_PLACEHOLDER = "City, State"
+const EMAIL_PLACEHOLDER = "myemailaddress@konfolio.com"
 
 export default function EditPortraitProfile({
   backHref,
@@ -59,14 +62,14 @@ export default function EditPortraitProfile({
   profileImageUrl,
   onChangeProfileImage,
 
-  businessName = "Business Name",
+  businessName = BUSINESS_PLACEHOLDER,
   onChangeBusinessName,
 
-  displayName = "Your Name",
+  displayName = NAME_PLACEHOLDER,
   onChangeDisplayName,
 
-  locationText = "City, State",
-  email = "myemailaddress@konfolio.com",
+  locationText = LOCATION_PLACEHOLDER,
+  email = EMAIL_PLACEHOLDER,
   onChangeLocationText,
   onChangeEmail,
 
@@ -89,13 +92,16 @@ export default function EditPortraitProfile({
   useEffect(() => setLocalLocation(locationText), [locationText])
   useEffect(() => setLocalEmail(email), [email])
 
+  // colors
   const [localBanner, setLocalBanner] = useState(bannerColor)
   const [localBg, setLocalBg] = useState(backgroundColor)
   useEffect(() => setLocalBanner(bannerColor), [bannerColor])
   useEffect(() => setLocalBg(backgroundColor), [backgroundColor])
 
+  // expanded color picker popover
   const [openPicker, setOpenPicker] = useState<OpenPicker>(null)
   const openPickerRef = useRef<OpenPicker>(null)
+
   useEffect(() => {
     openPickerRef.current = openPicker
   }, [openPicker])
@@ -103,6 +109,7 @@ export default function EditPortraitProfile({
   const colorPopoverRef = useRef<HTMLDivElement | null>(null)
   const colorButtonsWrapRef = useRef<HTMLDivElement | null>(null)
 
+  // close on outside click
   useEffect(() => {
     if (!openPicker) return
 
@@ -114,6 +121,7 @@ export default function EditPortraitProfile({
       if (pop?.contains(target)) return
       if (btnWrap?.contains(target)) return
       setOpenPicker(null)
+      openPickerRef.current = null
     }
 
     window.addEventListener("pointerdown", onDown)
@@ -121,7 +129,12 @@ export default function EditPortraitProfile({
   }, [openPicker])
 
   const togglePicker = (which: Exclude<OpenPicker, null>) => {
-    setOpenPicker((prev) => (prev === which ? null : which))
+    setOpenPicker((prev) => {
+      const next: OpenPicker = prev === which ? null : which
+      // sync ref immediately so ColorPicker onChange always targets correct one
+      openPickerRef.current = next
+      return next
+    })
   }
 
   const pickerLabel = openPicker === "banner" ? "Banner Color" : "Background Color"
@@ -182,8 +195,39 @@ export default function EditPortraitProfile({
     e.stopPropagation()
   }
 
+  // placeholder-like behavior: clear on focus if it equals the placeholder; restore on blur if empty
+  const focusClearIfPlaceholder = (val: string, placeholder: string, setter: (v: string) => void) => {
+    if ((val ?? "").trim() === placeholder) setter("")
+  }
+
+  const blurRestoreIfEmpty = (
+    val: string,
+    placeholder: string,
+    setter: (v: string) => void,
+    onChange?: (v: string) => void
+  ) => {
+    if ((val ?? "").trim() !== "") return
+    setter(placeholder)
+    onChange?.(placeholder)
+  }
+
+  // measure rendered location text so icon is ALWAYS 5px from the first letter (even while editing)
+  const locationMeasureRef = useRef<HTMLSpanElement | null>(null)
+  const [locationPxWidth, setLocationPxWidth] = useState<number>(90)
+
+  useLayoutEffect(() => {
+    const el = locationMeasureRef.current
+    if (!el) return
+    const w = Math.ceil(el.getBoundingClientRect().width)
+    // min width + tiny breathing room for caret
+    setLocationPxWidth(Math.max(90, w + 2))
+  }, [localLocation])
+
   return (
-    <header className="relative w-[1512px] h-[147px] bg-white flex items-center justify-center">
+    <header
+      className="relative w-[1512px] h-[180px] flex items-center justify-center"
+      style={{ backgroundColor: localBanner }}
+    >
       <div className="absolute left-[105px] top-1/2 -translate-y-1/2 z-[2]">
         <ArrowLeft href={backHref} className="w-[30px] h-[30px]" />
       </div>
@@ -227,11 +271,20 @@ export default function EditPortraitProfile({
             <div className="w-full h-[21px] flex items-center gap-[10px] pt-[5px]">
               <input
                 value={localBusiness}
+                placeholder={BUSINESS_PLACEHOLDER}
+                onFocus={() =>
+                  focusClearIfPlaceholder(localBusiness, BUSINESS_PLACEHOLDER, (v) => {
+                    setLocalBusiness(v)
+                    onChangeBusinessName?.(v)
+                  })
+                }
+                onBlur={() =>
+                  blurRestoreIfEmpty(localBusiness, BUSINESS_PLACEHOLDER, (v) => setLocalBusiness(v), onChangeBusinessName)
+                }
                 onChange={(e) => {
                   setLocalBusiness(e.target.value)
                   onChangeBusinessName?.(e.target.value)
                 }}
-                placeholder="Business Name"
                 className="w-full font-inter font-normal text-[22px] leading-[27px] text-[#A5A5A5] placeholder:text-[#A5A5A5] bg-transparent outline-none"
               />
             </div>
@@ -240,8 +293,9 @@ export default function EditPortraitProfile({
               <LinkPicker onAddLinkClick={showAddLink ? onAddLinkClick : undefined} />
             </div>
 
-            <div className="w-full min-h-[25px] flex flex-wrap items-start gap-[10px]">
-              <MerchTagPicker maxTags={8} onMerchClick={onMerchClick} />
+            {/* Merch — aligned to same left edge as Business Name + Links */}
+            <div className="w-full min-h-[25px] flex items-start">
+                <MerchTagPicker maxTags={8} onMerchClick={onMerchClick} layout="inlineLeft" />
             </div>
           </div>
 
@@ -259,7 +313,7 @@ export default function EditPortraitProfile({
                   type="button"
                   onClick={() => togglePicker("banner")}
                   aria-label="Pick banner color"
-                  className="w-[36px] h-[36px] border border-[rgba(165,165,165,0.5)] bg-white relative overflow-hidden"
+                  className="w-[36px] h-[36px] rounded-full border border-[rgba(165,165,165,0.5)] bg-white cursor-pointer relative overflow-hidden"
                 >
                   <span className="absolute inset-0" style={{ backgroundColor: localBanner }} />
                 </button>
@@ -268,18 +322,21 @@ export default function EditPortraitProfile({
                   type="button"
                   onClick={() => togglePicker("background")}
                   aria-label="Pick background color"
-                  className="w-[36px] h-[36px] border border-[rgba(165,165,165,0.5)] bg-white relative overflow-hidden"
+                  className="w-[36px] h-[36px] rounded-full border border-[rgba(165,165,165,0.5)] bg-white cursor-pointer relative overflow-hidden"
                 >
                   <span className="absolute inset-0" style={{ backgroundColor: localBg }} />
                 </button>
 
                 {openPicker ? (
-                  <div ref={colorPopoverRef} className="absolute z-50 top-[44px] left-1/2 -translate-x-1/2 w-[276px]">
+                  <div ref={colorPopoverRef} className="absolute z-50 top-[52px] left-1/2 -translate-x-1/2 w-[276px]">
                     <ColorPicker
                       label={pickerLabel}
                       initialHex={pickerHex}
                       onChange={applyPickerHex}
-                      onRequestClose={() => setOpenPicker(null)}
+                      onRequestClose={() => {
+                        setOpenPicker(null)
+                        openPickerRef.current = null
+                      }}
                     />
                   </div>
                 ) : null}
@@ -294,44 +351,86 @@ export default function EditPortraitProfile({
                   type="button"
                   aria-label="Open preview"
                   onClick={onOpenPreview}
-                  className="w-[30px] h-[30px] rounded-full border border-[#262626] flex items-center justify-center"
+                  className="w-[30px] h-[30px] bg-white rounded-full border border-[#262626] flex items-center justify-center"
                 >
-                  <OpenTabIcon className="w-[16px] h-[16px]" />
+                  <OpenTabIcon className="w-[16px] h-[16px] [&_path]:stroke-[#262626]" />
                 </button>
               </div>
             </div>
 
-            <div className="w-[220px] h-[54px] flex flex-col items-end justify-center gap-[10px]">
+            {/* equal small gaps; keep email position stable */}
+            <div className="w-[220px] h-[54px] flex flex-col items-end justify-center gap-[4px] pt-[4px]">
               <input
                 value={localName}
+                placeholder={NAME_PLACEHOLDER}
+                onFocus={() =>
+                  focusClearIfPlaceholder(localName, NAME_PLACEHOLDER, (v) => {
+                    setLocalName(v)
+                    onChangeDisplayName?.(v)
+                  })
+                }
+                onBlur={() =>
+                  blurRestoreIfEmpty(localName, NAME_PLACEHOLDER, (v) => setLocalName(v), onChangeDisplayName)
+                }
                 onChange={(e) => {
                   setLocalName(e.target.value)
                   onChangeDisplayName?.(e.target.value)
                 }}
-                className="w-full text-right font-inter font-normal text-[15px] leading-[18px] text-black bg-transparent outline-none"
+                className="w-full text-right font-inter font-normal text-[15px] leading-[18px] text-black placeholder:text-black bg-transparent outline-none"
               />
 
-              <div className="w-[220px] flex items-center justify-end gap-[5px]">
-                <div className="w-[12px] h-[12px] flex items-center justify-center text-[#A5A5A5] [&_path]:fill-[#A5A5A5]">
-                  <LocationIcon className="w-[12px] h-[12px]" />
+              {/* Location: icon always 5px from first letter, icon moves with text length */}
+              <div className="w-[220px] flex justify-end relative">
+                {/* hidden measurer */}
+                <span
+                  ref={locationMeasureRef}
+                  className="absolute -left-[9999px] top-0 whitespace-pre font-inter font-normal text-[15px] leading-[18px]"
+                >
+                  {localLocation}
+                </span>
+
+                <div className="inline-flex items-center">
+                  <span className="inline-flex items-center mr-[5px] text-[#A5A5A5] [&_path]:fill-[#A5A5A5]">
+                    <LocationIcon className="w-[12px] h-[12px]" />
+                  </span>
+
+                  <input
+                    value={localLocation}
+                    placeholder={LOCATION_PLACEHOLDER}
+                    onFocus={() =>
+                      focusClearIfPlaceholder(localLocation, LOCATION_PLACEHOLDER, (v) => {
+                        setLocalLocation(v)
+                        onChangeLocationText?.(v)
+                      })
+                    }
+                    onBlur={() =>
+                      blurRestoreIfEmpty(localLocation, LOCATION_PLACEHOLDER, (v) => setLocalLocation(v), onChangeLocationText)
+                    }
+                    onChange={(e) => {
+                      setLocalLocation(e.target.value)
+                      onChangeLocationText?.(e.target.value)
+                    }}
+                    style={{ width: locationPxWidth }}
+                    className="text-right font-inter font-normal text-[15px] leading-[18px] text-[#A5A5A5] placeholder:text-[#A5A5A5] bg-transparent outline-none"
+                  />
                 </div>
-                <input
-                  value={localLocation}
-                  onChange={(e) => {
-                    setLocalLocation(e.target.value)
-                    onChangeLocationText?.(e.target.value)
-                  }}
-                  className="w-auto text-center font-inter font-normal text-[15px] leading-[18px] text-[#A5A5A5] bg-transparent outline-none"
-                />
               </div>
 
               <input
                 value={localEmail}
+                placeholder={EMAIL_PLACEHOLDER}
+                onFocus={() =>
+                  focusClearIfPlaceholder(localEmail, EMAIL_PLACEHOLDER, (v) => {
+                    setLocalEmail(v)
+                    onChangeEmail?.(v)
+                  })
+                }
+                onBlur={() => blurRestoreIfEmpty(localEmail, EMAIL_PLACEHOLDER, (v) => setLocalEmail(v), onChangeEmail)}
                 onChange={(e) => {
                   setLocalEmail(e.target.value)
                   onChangeEmail?.(e.target.value)
                 }}
-                className="w-full text-center font-inter font-normal text-[15px] leading-[18px] text-[#A5A5A5] bg-transparent outline-none"
+                className="w-full text-right font-inter font-normal text-[15px] leading-[18px] text-[#A5A5A5] placeholder:text-[#A5A5A5] bg-transparent outline-none"
               />
             </div>
           </div>

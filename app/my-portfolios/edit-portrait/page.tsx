@@ -10,7 +10,7 @@ export default function EditPortraitPage() {
   const [backgroundColor, setBackgroundColor] = useState("#F7F7F7")
 
   const [businessName, setBusinessName] = useState("Business Name")
-  const [displayName, setDisplayName] = useState("Name")
+  const [displayName, setDisplayName] = useState("Your Name")
 
   const [profileImageUrl, setProfileImageUrl] = useState<string>("")
 
@@ -19,7 +19,7 @@ export default function EditPortraitPage() {
       {/* Figma header uses 150px side padding */}
       <div className="w-full px-[25px] sm:px-10 lg:px-[150px]">
         <div className="mx-auto max-w-[1512px]">
-          {/* ✅ Page stack: Profile (top) then Image Grid (below) */}
+          {/* Profile (top) then Image Grid (below) */}
           <div className="flex flex-col items-center">
             <EditPortraitProfileSidebar
               backHref="/my-portfolios"

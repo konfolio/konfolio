@@ -2489,8 +2489,7 @@ function splitLowAccuracy(label) {
         isLow
     };
 }
-function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange }) {
-    // internal fallback (uncontrolled mode)
+function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange, layout = "default" }) {
     const [internalSelected, setInternalSelected] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const selected = value ?? internalSelected;
     const setSelected = (next)=>{
@@ -2541,7 +2540,7 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange }) {
         if (!label) return;
         const k = keyify(label);
         if (selectedSet.has(k)) return;
-        if (limitReached) return;
+        if (selected.length >= maxTags) return;
         setSelected([
             ...selected,
             label
@@ -2554,12 +2553,12 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange }) {
     const pickOption = (label)=>{
         addTag(label);
         setQuery("");
-        setOpen(false); // auto close
+        setOpen(false);
     };
     const onEnter = (e)=>{
         if (e.key !== "Enter") return;
         e.preventDefault();
-        if (limitReached) return;
+        if (selected.length >= maxTags) return;
         const q = normalize(query);
         if (!q) return;
         const exact = ROWS.find((r)=>r.type === "item" && keyify(r.label) === keyify(q));
@@ -2571,6 +2570,353 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange }) {
         setQuery("");
         setOpen(false);
     };
+    const Dropdown = open && !limitReached ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: " relative w-[276px] bg-white rounded-[15px] shadow-[5px_5px_25px_rgba(0,0,0,0.05)] p-[10px] z-[70] ",
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "absolute left-1/2 -translate-x-1/2 top-[-6px] z-[80] pointer-events-none",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$PopoverArrow$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                    className: "w-[27px] h-[8px] block"
+                }, void 0, false, {
+                    fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                    lineNumber: 243,
+                    columnNumber: 11
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                lineNumber: 242,
+                columnNumber: 9
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: " w-full flex items-center px-[10px] py-[10px] border border-[#A5A5A5]/50 rounded-[10px] bg-white gap-[8px] ",
+                onClick: ()=>requestAnimationFrame(()=>inputRef.current?.focus()),
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                    ref: inputRef,
+                    value: query,
+                    onChange: (e)=>setQuery(e.target.value),
+                    onKeyDown: onEnter,
+                    placeholder: "Select or type a category",
+                    className: " flex-1 bg-transparent outline-none font-inter font-normal text-[14px] leading-[140%] text-[#262626] placeholder:text-[#A5A5A5] "
+                }, void 0, false, {
+                    fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                    lineNumber: 258,
+                    columnNumber: 11
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                lineNumber: 246,
+                columnNumber: 9
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "pt-[10px]",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                        className: "m-0 pb-[6px] font-inter font-normal text-[12px] leading-[140%] text-[#A5A5A5]",
+                        children: "Commonly Selected"
+                    }, void 0, false, {
+                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                        lineNumber: 276,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "flex flex-col gap-[8px]",
+                        children: COMMON.map((label)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                type: "button",
+                                onClick: ()=>{
+                                    addTag(label);
+                                    setQuery("");
+                                    setOpen(false);
+                                },
+                                className: "w-full flex justify-center hover:opacity-80",
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$onboarding$2f$Tag$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                                    label: label,
+                                    showPlus: true
+                                }, void 0, false, {
+                                    fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                                    lineNumber: 292,
+                                    columnNumber: 17
+                                }, this)
+                            }, label, false, {
+                                fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                                lineNumber: 282,
+                                columnNumber: 15
+                            }, this))
+                    }, void 0, false, {
+                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                        lineNumber: 280,
+                        columnNumber: 11
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                lineNumber: 275,
+                columnNumber: 9
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "pt-[10px]",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "max-h-[230px] overflow-y-auto pr-[4px]",
+                    children: visibleRows.filter((r)=>r.type === "item").length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                        type: "button",
+                        onClick: ()=>{
+                            addTag(query);
+                            setQuery("");
+                            setOpen(false);
+                        },
+                        className: " w-full text-left px-[8px] py-[8px] rounded-[8px] hover:bg-[#F7F7F7] font-inter text-[14px] leading-[140%] text-[#262626] ",
+                        children: [
+                            "Add “",
+                            normalize(query) || "New category",
+                            "”"
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                        lineNumber: 301,
+                        columnNumber: 15
+                    }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "flex flex-col",
+                        children: visibleRows.map((row, idx)=>{
+                            if (row.type === "header") {
+                                return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: " px-[8px] pt-[10px] pb-[6px] font-inter font-normal text-[12px] leading-[140%] text-[#A5A5A5] ",
+                                    children: row.label
+                                }, `h-${row.label}-${idx}`, false, {
+                                    fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                                    lineNumber: 323,
+                                    columnNumber: 23
+                                }, this);
+                            }
+                            const { base, isLow } = splitLowAccuracy(row.label);
+                            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                type: "button",
+                                onClick: ()=>pickOption(row.label),
+                                className: " w-full flex items-center justify-between gap-[10px] text-left px-[8px] py-[8px] rounded-[8px] hover:bg-[#F7F7F7] ",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "font-inter text-[14px] leading-[140%] text-[#262626]",
+                                        children: base
+                                    }, void 0, false, {
+                                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                                        lineNumber: 354,
+                                        columnNumber: 23
+                                    }, this),
+                                    isLow ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: " font-inter font-normal text-[9px] leading-[100%] text-[#A5A5A5] whitespace-nowrap ",
+                                        children: "Low Accuracy"
+                                    }, void 0, false, {
+                                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                                        lineNumber: 357,
+                                        columnNumber: 25
+                                    }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {}, void 0, false, {
+                                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                                        lineNumber: 368,
+                                        columnNumber: 25
+                                    }, this)
+                                ]
+                            }, `i-${row.label}-${idx}`, true, {
+                                fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                                lineNumber: 340,
+                                columnNumber: 21
+                            }, this);
+                        })
+                    }, void 0, false, {
+                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                        lineNumber: 319,
+                        columnNumber: 15
+                    }, this)
+                }, void 0, false, {
+                    fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                    lineNumber: 299,
+                    columnNumber: 11
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                lineNumber: 298,
+                columnNumber: 9
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+        lineNumber: 231,
+        columnNumber: 7
+    }, this) : null;
+    // ===== Inline-left layout (portrait header) =====
+    if (layout === "inlineLeft") {
+        const plusBtnRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
+        const [anchor, setAnchor] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
+        const row1 = selected.slice(0, 6);
+        const row2 = selected.slice(6);
+        const TagChip = (label)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "relative group shrink-0",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$onboarding$2f$Tag$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                        label: label
+                    }, void 0, false, {
+                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                        lineNumber: 390,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                        type: "button",
+                        "aria-label": `Remove ${label}`,
+                        onClick: ()=>removeTag(label),
+                        className: " absolute right-[-5.25px] top-1/2 -translate-y-1/2 w-[17.25px] h-[17.25px] flex items-center justify-center bg-[#A5A5A5] rounded-full opacity-0 transition-opacity group-hover:opacity-100 z-10 [&_path]:stroke-[#FFFFFF] [&_path]:fill-[#FFFFFF] ",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$DeleteIcon$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                            className: "w-[13.42px] h-[13.42px]"
+                        }, void 0, false, {
+                            fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                            lineNumber: 409,
+                            columnNumber: 11
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                        lineNumber: 391,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, label, true, {
+                fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                lineNumber: 389,
+                columnNumber: 7
+            }, this);
+        const measureAnchor = ()=>{
+            const wrap = wrapRef.current;
+            const btn = plusBtnRef.current;
+            if (!wrap || !btn) return null;
+            const wrapRect = wrap.getBoundingClientRect();
+            const btnRect = btn.getBoundingClientRect();
+            const left = btnRect.left - wrapRect.left + btnRect.width / 2;
+            const top = btnRect.bottom - wrapRect.top + 10;
+            return {
+                left,
+                top
+            };
+        };
+        const openDropdown = ()=>{
+            const nextAnchor = measureAnchor();
+            if (!nextAnchor) {
+                setAnchor(null);
+                setOpen(true);
+                requestAnimationFrame(()=>inputRef.current?.focus());
+                return;
+            }
+            setAnchor(nextAnchor);
+            setOpen(true);
+            requestAnimationFrame(()=>inputRef.current?.focus());
+        };
+        const closeDropdown = ()=>{
+            setOpen(false);
+            setAnchor(null);
+        };
+        (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+            if (!open) return;
+            const onResize = ()=>{
+                const nextAnchor = measureAnchor();
+                if (nextAnchor) setAnchor(nextAnchor);
+            };
+            window.addEventListener("resize", onResize);
+            return ()=>window.removeEventListener("resize", onResize);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [
+            open
+        ]);
+        const shouldPutPlusInRow1 = row2.length === 0;
+        // ✅ Portrait: plus disappears once limit reached (already true)
+        const PlusTrigger = !limitReached ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+            ref: plusBtnRef,
+            type: "button",
+            onClick: (e)=>{
+                e.preventDefault();
+                e.stopPropagation();
+                if (open) {
+                    closeDropdown();
+                    return;
+                }
+                onMerchClick?.();
+                openDropdown();
+            },
+            className: "shrink-0 hover:opacity-90",
+            "aria-label": "Add merch tags",
+            children: selected.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$onboarding$2f$Tag$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                label: "Merch",
+                showPlus: true,
+                className: " border-[#A5A5A5]/50 text-[#A5A5A5] [&_span]:text-[#A5A5A5] [&_svg]:text-[#A5A5A5] cursor-pointer "
+            }, void 0, false, {
+                fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                lineNumber: 477,
+                columnNumber: 11
+            }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: " w-[24px] h-[24px] flex items-center justify-center p-[4px] rounded-full border border-[#A5A5A5]/50 bg-[rgba(255,255,255,0.1)] [&_path]:stroke-[#A5A5A5] ",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$PlusIcon$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
+                    fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                    lineNumber: 500,
+                    columnNumber: 13
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                lineNumber: 489,
+                columnNumber: 11
+            }, this)
+        }, void 0, false, {
+            fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+            lineNumber: 460,
+            columnNumber: 7
+        }, this) : null;
+        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "w-full flex flex-col items-start gap-[10px]",
+            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                ref: wrapRef,
+                className: "relative w-full",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "w-full flex flex-row flex-nowrap justify-start items-center gap-[10px] whitespace-nowrap",
+                        children: [
+                            row1.map((label)=>TagChip(label)),
+                            shouldPutPlusInRow1 ? PlusTrigger : null
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                        lineNumber: 509,
+                        columnNumber: 11
+                    }, this),
+                    row2.length > 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "w-full flex flex-row flex-nowrap justify-start items-center gap-[10px] whitespace-nowrap mt-[10px]",
+                        children: [
+                            row2.map((label)=>TagChip(label)),
+                            PlusTrigger
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                        lineNumber: 515,
+                        columnNumber: 13
+                    }, this) : null,
+                    open && !limitReached && anchor ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "absolute z-[70]",
+                        style: {
+                            left: anchor.left,
+                            top: anchor.top,
+                            transform: "translateX(-50%)"
+                        },
+                        children: Dropdown
+                    }, void 0, false, {
+                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                        lineNumber: 522,
+                        columnNumber: 13
+                    }, this) : null
+                ]
+            }, void 0, true, {
+                fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                lineNumber: 508,
+                columnNumber: 9
+            }, this)
+        }, void 0, false, {
+            fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+            lineNumber: 507,
+            columnNumber: 7
+        }, this);
+    }
+    // ===== Default layout (square sidebar) =====
+    // ✅ Change: hide the plus trigger when limitReached (so it never appears after 8)
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "w-[276px] flex flex-col items-center gap-[12px]",
         children: [
@@ -2583,7 +2929,7 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange }) {
                                 label: label
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                lineNumber: 228,
+                                lineNumber: 546,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2595,41 +2941,39 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange }) {
                                     className: "w-[13.42px] h-[13.42px]"
                                 }, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                    lineNumber: 247,
+                                    lineNumber: 565,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                lineNumber: 229,
+                                lineNumber: 547,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, label, true, {
                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                        lineNumber: 227,
+                        lineNumber: 545,
                         columnNumber: 13
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                lineNumber: 225,
+                lineNumber: 543,
                 columnNumber: 9
             }, this) : null,
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            !limitReached ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "relative w-full flex justify-center",
                 ref: wrapRef,
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                         type: "button",
-                        disabled: limitReached,
                         onClick: (e)=>{
                             e.preventDefault();
                             e.stopPropagation();
-                            if (limitReached) return;
                             setOpen((v)=>!v);
                             onMerchClick?.();
                             requestAnimationFrame(()=>inputRef.current?.focus());
                         },
-                        className: limitReached ? "pointer-events-none opacity-60" : "hover:opacity-90",
+                        className: "hover:opacity-90",
                         "aria-label": "Add merch tags",
                         children: selected.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$onboarding$2f$Tag$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                             label: "Merch",
@@ -2637,205 +2981,43 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange }) {
                             className: " border-[#A5A5A5]/50 text-[#A5A5A5] [&_span]:text-[#A5A5A5] [&_svg]:text-[#A5A5A5] cursor-pointer "
                         }, void 0, false, {
                             fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                            lineNumber: 271,
-                            columnNumber: 13
+                            lineNumber: 587,
+                            columnNumber: 15
                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: " w-[24px] h-[24px] flex items-center justify-center p-[4px] rounded-full border border-[#A5A5A5]/50 bg-[rgba(255,255,255,0.1)] [&_path]:stroke-[#A5A5A5] ",
                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$PlusIcon$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                lineNumber: 294,
-                                columnNumber: 15
+                                lineNumber: 610,
+                                columnNumber: 17
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                            lineNumber: 283,
-                            columnNumber: 13
+                            lineNumber: 599,
+                            columnNumber: 15
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                        lineNumber: 256,
-                        columnNumber: 9
-                    }, this),
-                    open && !limitReached ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: " absolute left-1/2 -translate-x-1/2 top-[34px] w-[276px] bg-white rounded-[15px] shadow-[5px_5px_25px_rgba(0,0,0,0.05)] p-[10px] z-[70] ",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "absolute left-1/2 -translate-x-1/2 top-[-6px] z-[80] pointer-events-none",
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$PopoverArrow$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                                    className: "w-[27px] h-[8px] block"
-                                }, void 0, false, {
-                                    fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                    lineNumber: 313,
-                                    columnNumber: 15
-                                }, this)
-                            }, void 0, false, {
-                                fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                lineNumber: 312,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: " w-full flex items-center px-[10px] py-[10px] border border-[#A5A5A5]/50 rounded-[10px] bg-white gap-[8px] ",
-                                onClick: ()=>requestAnimationFrame(()=>inputRef.current?.focus()),
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                    ref: inputRef,
-                                    value: query,
-                                    onChange: (e)=>setQuery(e.target.value),
-                                    onKeyDown: onEnter,
-                                    placeholder: "Select or type a category",
-                                    className: " flex-1 bg-transparent outline-none font-inter font-normal text-[14px] leading-[140%] text-[#262626] placeholder:text-[#A5A5A5] "
-                                }, void 0, false, {
-                                    fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                    lineNumber: 328,
-                                    columnNumber: 15
-                                }, this)
-                            }, void 0, false, {
-                                fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                lineNumber: 316,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "pt-[10px]",
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                        className: "m-0 pb-[6px] font-inter font-normal text-[12px] leading-[140%] text-[#A5A5A5]",
-                                        children: "Commonly Selected"
-                                    }, void 0, false, {
-                                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                        lineNumber: 347,
-                                        columnNumber: 15
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "flex flex-col gap-[8px]",
-                                        children: COMMON.map((label)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                type: "button",
-                                                onClick: ()=>{
-                                                    addTag(label);
-                                                    setQuery("");
-                                                    setOpen(false);
-                                                },
-                                                className: "w-full flex justify-center hover:opacity-80",
-                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$onboarding$2f$Tag$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                                                    label: label,
-                                                    showPlus: true
-                                                }, void 0, false, {
-                                                    fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                                    lineNumber: 363,
-                                                    columnNumber: 21
-                                                }, this)
-                                            }, label, false, {
-                                                fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                                lineNumber: 353,
-                                                columnNumber: 19
-                                            }, this))
-                                    }, void 0, false, {
-                                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                        lineNumber: 351,
-                                        columnNumber: 15
-                                    }, this)
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                lineNumber: 346,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "pt-[10px]",
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "max-h-[230px] overflow-y-auto pr-[4px]",
-                                    children: visibleRows.filter((r)=>r.type === "item").length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                        type: "button",
-                                        onClick: ()=>{
-                                            addTag(query);
-                                            setQuery("");
-                                            setOpen(false);
-                                        },
-                                        className: " w-full text-left px-[8px] py-[8px] rounded-[8px] hover:bg-[#F7F7F7] font-inter text-[14px] leading-[140%] text-[#262626] ",
-                                        children: [
-                                            "Add “",
-                                            normalize(query) || "New category",
-                                            "”"
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                        lineNumber: 373,
-                                        columnNumber: 19
-                                    }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "flex flex-col",
-                                        children: visibleRows.map((row, idx)=>{
-                                            if (row.type === "header") {
-                                                return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: " px-[8px] pt-[10px] pb-[6px] font-inter font-normal text-[12px] leading-[140%] text-[#A5A5A5] ",
-                                                    children: row.label
-                                                }, `h-${row.label}-${idx}`, false, {
-                                                    fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                                    lineNumber: 395,
-                                                    columnNumber: 27
-                                                }, this);
-                                            }
-                                            const { base, isLow } = splitLowAccuracy(row.label);
-                                            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                type: "button",
-                                                onClick: ()=>pickOption(row.label),
-                                                className: " w-full flex items-center justify-between gap-[10px] text-left px-[8px] py-[8px] rounded-[8px] hover:bg-[#F7F7F7] ",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "font-inter text-[14px] leading-[140%] text-[#262626]",
-                                                        children: base
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                                        lineNumber: 426,
-                                                        columnNumber: 27
-                                                    }, this),
-                                                    isLow ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: " font-inter font-normal text-[9px] leading-[100%] text-[#A5A5A5] whitespace-nowrap ",
-                                                        children: "Low Accuracy"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                                        lineNumber: 429,
-                                                        columnNumber: 29
-                                                    }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {}, void 0, false, {
-                                                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                                        lineNumber: 440,
-                                                        columnNumber: 29
-                                                    }, this)
-                                                ]
-                                            }, `i-${row.label}-${idx}`, true, {
-                                                fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                                lineNumber: 412,
-                                                columnNumber: 25
-                                            }, this);
-                                        })
-                                    }, void 0, false, {
-                                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                        lineNumber: 391,
-                                        columnNumber: 19
-                                    }, this)
-                                }, void 0, false, {
-                                    fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                    lineNumber: 371,
-                                    columnNumber: 15
-                                }, this)
-                            }, void 0, false, {
-                                fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                                lineNumber: 370,
-                                columnNumber: 13
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                        lineNumber: 301,
+                        lineNumber: 574,
                         columnNumber: 11
+                    }, this),
+                    open ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "absolute left-1/2 -translate-x-1/2 top-[34px]",
+                        children: Dropdown
+                    }, void 0, false, {
+                        fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
+                        lineNumber: 615,
+                        columnNumber: 19
                     }, this) : null
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-                lineNumber: 255,
-                columnNumber: 7
-            }, this)
+                lineNumber: 573,
+                columnNumber: 9
+            }, this) : null
         ]
     }, void 0, true, {
         fileName: "[project]/Downloads/konfolio/components/my-portfolios/MerchTagPicker.tsx",
-        lineNumber: 222,
+        lineNumber: 541,
         columnNumber: 5
     }, this);
 }
@@ -2870,7 +3052,11 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$com
 ;
 ;
 ;
-function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColor = "#F7F7F7", onChangeBannerColor, onChangeBackgroundColor, profileImageUrl, onChangeProfileImage, businessName = "Business Name", onChangeBusinessName, displayName = "Your Name", onChangeDisplayName, locationText = "City, State", email = "myemailaddress@konfolio.com", onChangeLocationText, onChangeEmail, showAddLink = false, onAddLinkClick, onMerchClick, publishLabel = "Publish", onPublish, onOpenPreview }) {
+const BUSINESS_PLACEHOLDER = "Business Name";
+const NAME_PLACEHOLDER = "Your Name";
+const LOCATION_PLACEHOLDER = "City, State";
+const EMAIL_PLACEHOLDER = "myemailaddress@konfolio.com";
+function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColor = "#F7F7F7", onChangeBannerColor, onChangeBackgroundColor, profileImageUrl, onChangeProfileImage, businessName = BUSINESS_PLACEHOLDER, onChangeBusinessName, displayName = NAME_PLACEHOLDER, onChangeDisplayName, locationText = LOCATION_PLACEHOLDER, email = EMAIL_PLACEHOLDER, onChangeLocationText, onChangeEmail, showAddLink = false, onAddLinkClick, onMerchClick, publishLabel = "Publish", onPublish, onOpenPreview }) {
     const [localBusiness, setLocalBusiness] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(businessName);
     const [localName, setLocalName] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(displayName);
     const [localLocation, setLocalLocation] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(locationText);
@@ -2887,6 +3073,7 @@ function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColo
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>setLocalEmail(email), [
         email
     ]);
+    // colors
     const [localBanner, setLocalBanner] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(bannerColor);
     const [localBg, setLocalBg] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(backgroundColor);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>setLocalBanner(bannerColor), [
@@ -2895,6 +3082,7 @@ function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColo
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>setLocalBg(backgroundColor), [
         backgroundColor
     ]);
+    // expanded color picker popover
     const [openPicker, setOpenPicker] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const openPickerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
@@ -2904,6 +3092,7 @@ function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColo
     ]);
     const colorPopoverRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
     const colorButtonsWrapRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
+    // close on outside click
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (!openPicker) return;
         const onDown = (e)=>{
@@ -2914,6 +3103,7 @@ function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColo
             if (pop?.contains(target)) return;
             if (btnWrap?.contains(target)) return;
             setOpenPicker(null);
+            openPickerRef.current = null;
         };
         window.addEventListener("pointerdown", onDown);
         return ()=>window.removeEventListener("pointerdown", onDown);
@@ -2921,7 +3111,12 @@ function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColo
         openPicker
     ]);
     const togglePicker = (which)=>{
-        setOpenPicker((prev)=>prev === which ? null : which);
+        setOpenPicker((prev)=>{
+            const next = prev === which ? null : which;
+            // sync ref immediately so ColorPicker onChange always targets correct one
+            openPickerRef.current = next;
+            return next;
+        });
     };
     const pickerLabel = openPicker === "banner" ? "Banner Color" : "Background Color";
     const pickerHex = openPicker === "banner" ? localBanner : localBg;
@@ -2973,8 +3168,32 @@ function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColo
         e.preventDefault();
         e.stopPropagation();
     };
+    // placeholder-like behavior: clear on focus if it equals the placeholder; restore on blur if empty
+    const focusClearIfPlaceholder = (val, placeholder, setter)=>{
+        if ((val ?? "").trim() === placeholder) setter("");
+    };
+    const blurRestoreIfEmpty = (val, placeholder, setter, onChange)=>{
+        if ((val ?? "").trim() !== "") return;
+        setter(placeholder);
+        onChange?.(placeholder);
+    };
+    // measure rendered location text so icon is ALWAYS 5px from the first letter (even while editing)
+    const locationMeasureRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const [locationPxWidth, setLocationPxWidth] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(90);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useLayoutEffect"])(()=>{
+        const el = locationMeasureRef.current;
+        if (!el) return;
+        const w = Math.ceil(el.getBoundingClientRect().width);
+        // min width + tiny breathing room for caret
+        setLocationPxWidth(Math.max(90, w + 2));
+    }, [
+        localLocation
+    ]);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("header", {
-        className: "relative w-[1512px] h-[147px] bg-white flex items-center justify-center",
+        className: "relative w-[1512px] h-[180px] flex items-center justify-center",
+        style: {
+            backgroundColor: localBanner
+        },
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "absolute left-[105px] top-1/2 -translate-y-1/2 z-[2]",
@@ -2983,12 +3202,12 @@ function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColo
                     className: "w-[30px] h-[30px]"
                 }, void 0, false, {
                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                    lineNumber: 188,
+                    lineNumber: 232,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                lineNumber: 187,
+                lineNumber: 231,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3007,7 +3226,7 @@ function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColo
                                 onChange: onFileInputChange
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                lineNumber: 197,
+                                lineNumber: 241,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3020,12 +3239,12 @@ function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColo
                                     children: "Upload"
                                 }, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                    lineNumber: 205,
+                                    lineNumber: 249,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                lineNumber: 199,
+                                lineNumber: 243,
                                 columnNumber: 11
                             }, this),
                             localImgUrl ? // eslint-disable-next-line @next/next/no-img-element
@@ -3036,7 +3255,7 @@ function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColo
                                 draggable: false
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                lineNumber: 210,
+                                lineNumber: 254,
                                 columnNumber: 13
                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "pointer-events-none absolute inset-0 flex items-center justify-center",
@@ -3044,23 +3263,23 @@ function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColo
                                     className: "w-[40px] h-[40px] text-[#A5A5A5] [&_path]:stroke-[#A5A5A5] [&_path]:fill-[#A5A5A5]",
                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$ImageIcon$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                        lineNumber: 219,
+                                        lineNumber: 263,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                    lineNumber: 218,
+                                    lineNumber: 262,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                lineNumber: 217,
+                                lineNumber: 261,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                        lineNumber: 192,
+                        lineNumber: 236,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3073,20 +3292,25 @@ function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColo
                                         className: "w-full h-[21px] flex items-center gap-[10px] pt-[5px]",
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                             value: localBusiness,
+                                            placeholder: BUSINESS_PLACEHOLDER,
+                                            onFocus: ()=>focusClearIfPlaceholder(localBusiness, BUSINESS_PLACEHOLDER, (v)=>{
+                                                    setLocalBusiness(v);
+                                                    onChangeBusinessName?.(v);
+                                                }),
+                                            onBlur: ()=>blurRestoreIfEmpty(localBusiness, BUSINESS_PLACEHOLDER, (v)=>setLocalBusiness(v), onChangeBusinessName),
                                             onChange: (e)=>{
                                                 setLocalBusiness(e.target.value);
                                                 onChangeBusinessName?.(e.target.value);
                                             },
-                                            placeholder: "Business Name",
                                             className: "w-full font-inter font-normal text-[22px] leading-[27px] text-[#A5A5A5] placeholder:text-[#A5A5A5] bg-transparent outline-none"
                                         }, void 0, false, {
                                             fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                            lineNumber: 228,
+                                            lineNumber: 272,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                        lineNumber: 227,
+                                        lineNumber: 271,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3095,33 +3319,34 @@ function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColo
                                             onAddLinkClick: showAddLink ? onAddLinkClick : undefined
                                         }, void 0, false, {
                                             fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                            lineNumber: 240,
+                                            lineNumber: 293,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                        lineNumber: 239,
+                                        lineNumber: 292,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "w-full min-h-[25px] flex flex-wrap items-start gap-[10px]",
+                                        className: "w-full min-h-[25px] flex items-start",
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$my$2d$portfolios$2f$MerchTagPicker$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                                             maxTags: 8,
-                                            onMerchClick: onMerchClick
+                                            onMerchClick: onMerchClick,
+                                            layout: "inlineLeft"
                                         }, void 0, false, {
                                             fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                            lineNumber: 244,
-                                            columnNumber: 15
+                                            lineNumber: 298,
+                                            columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                        lineNumber: 243,
+                                        lineNumber: 297,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                lineNumber: 226,
+                                lineNumber: 270,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3140,19 +3365,19 @@ function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColo
                                                             className: "w-[16px] h-[16px]"
                                                         }, void 0, false, {
                                                             fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                            lineNumber: 255,
+                                                            lineNumber: 309,
                                                             columnNumber: 19
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                        lineNumber: 254,
+                                                        lineNumber: 308,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                         type: "button",
                                                         onClick: ()=>togglePicker("banner"),
                                                         "aria-label": "Pick banner color",
-                                                        className: "w-[36px] h-[36px] border border-[rgba(165,165,165,0.5)] bg-white relative overflow-hidden",
+                                                        className: "w-[36px] h-[36px] rounded-full border border-[rgba(165,165,165,0.5)] bg-white cursor-pointer relative overflow-hidden",
                                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                             className: "absolute inset-0",
                                                             style: {
@@ -3160,19 +3385,19 @@ function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColo
                                                             }
                                                         }, void 0, false, {
                                                             fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                            lineNumber: 264,
+                                                            lineNumber: 318,
                                                             columnNumber: 19
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                        lineNumber: 258,
+                                                        lineNumber: 312,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                         type: "button",
                                                         onClick: ()=>togglePicker("background"),
                                                         "aria-label": "Pick background color",
-                                                        className: "w-[36px] h-[36px] border border-[rgba(165,165,165,0.5)] bg-white relative overflow-hidden",
+                                                        className: "w-[36px] h-[36px] rounded-full border border-[rgba(165,165,165,0.5)] bg-white cursor-pointer relative overflow-hidden",
                                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                             className: "absolute inset-0",
                                                             style: {
@@ -3180,36 +3405,39 @@ function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColo
                                                             }
                                                         }, void 0, false, {
                                                             fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                            lineNumber: 273,
+                                                            lineNumber: 327,
                                                             columnNumber: 19
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                        lineNumber: 267,
+                                                        lineNumber: 321,
                                                         columnNumber: 17
                                                     }, this),
                                                     openPicker ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         ref: colorPopoverRef,
-                                                        className: "absolute z-50 top-[44px] left-1/2 -translate-x-1/2 w-[276px]",
+                                                        className: "absolute z-50 top-[52px] left-1/2 -translate-x-1/2 w-[276px]",
                                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$my$2d$portfolios$2f$ColorPicker$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                                                             label: pickerLabel,
                                                             initialHex: pickerHex,
                                                             onChange: applyPickerHex,
-                                                            onRequestClose: ()=>setOpenPicker(null)
+                                                            onRequestClose: ()=>{
+                                                                setOpenPicker(null);
+                                                                openPickerRef.current = null;
+                                                            }
                                                         }, void 0, false, {
                                                             fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                            lineNumber: 278,
+                                                            lineNumber: 332,
                                                             columnNumber: 21
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                        lineNumber: 277,
+                                                        lineNumber: 331,
                                                         columnNumber: 19
                                                     }, this) : null
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                lineNumber: 250,
+                                                lineNumber: 304,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3221,128 +3449,167 @@ function EditPortraitProfile({ backHref, bannerColor = "#FFFFFF", backgroundColo
                                                         children: publishLabel
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                        lineNumber: 289,
+                                                        lineNumber: 346,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                         type: "button",
                                                         "aria-label": "Open preview",
                                                         onClick: onOpenPreview,
-                                                        className: "w-[30px] h-[30px] rounded-full border border-[#262626] flex items-center justify-center",
+                                                        className: "w-[30px] h-[30px] bg-white rounded-full border border-[#262626] flex items-center justify-center",
                                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$OpenTabIcon$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                                                            className: "w-[16px] h-[16px]"
+                                                            className: "w-[16px] h-[16px] [&_path]:stroke-[#262626]"
                                                         }, void 0, false, {
                                                             fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                            lineNumber: 299,
+                                                            lineNumber: 356,
                                                             columnNumber: 19
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                        lineNumber: 293,
+                                                        lineNumber: 350,
                                                         columnNumber: 17
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                lineNumber: 288,
+                                                lineNumber: 345,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                        lineNumber: 249,
+                                        lineNumber: 303,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "w-[220px] h-[54px] flex flex-col items-end justify-center gap-[10px]",
+                                        className: "w-[220px] h-[54px] flex flex-col items-end justify-center gap-[4px] pt-[4px]",
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                                 value: localName,
+                                                placeholder: NAME_PLACEHOLDER,
+                                                onFocus: ()=>focusClearIfPlaceholder(localName, NAME_PLACEHOLDER, (v)=>{
+                                                        setLocalName(v);
+                                                        onChangeDisplayName?.(v);
+                                                    }),
+                                                onBlur: ()=>blurRestoreIfEmpty(localName, NAME_PLACEHOLDER, (v)=>setLocalName(v), onChangeDisplayName),
                                                 onChange: (e)=>{
                                                     setLocalName(e.target.value);
                                                     onChangeDisplayName?.(e.target.value);
                                                 },
-                                                className: "w-full text-right font-inter font-normal text-[15px] leading-[18px] text-black bg-transparent outline-none"
+                                                className: "w-full text-right font-inter font-normal text-[15px] leading-[18px] text-black placeholder:text-black bg-transparent outline-none"
                                             }, void 0, false, {
                                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                lineNumber: 305,
+                                                lineNumber: 363,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "w-[220px] flex items-center justify-end gap-[5px]",
+                                                className: "w-[220px] flex justify-end relative",
                                                 children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "w-[12px] h-[12px] flex items-center justify-center text-[#A5A5A5] [&_path]:fill-[#A5A5A5]",
-                                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$LocationIcon$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                                                            className: "w-[12px] h-[12px]"
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                            lineNumber: 316,
-                                                            columnNumber: 19
-                                                        }, this)
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        ref: locationMeasureRef,
+                                                        className: "absolute -left-[9999px] top-0 whitespace-pre font-inter font-normal text-[15px] leading-[18px]",
+                                                        children: localLocation
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                        lineNumber: 315,
+                                                        lineNumber: 385,
                                                         columnNumber: 17
                                                     }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                                        value: localLocation,
-                                                        onChange: (e)=>{
-                                                            setLocalLocation(e.target.value);
-                                                            onChangeLocationText?.(e.target.value);
-                                                        },
-                                                        className: "w-auto text-center font-inter font-normal text-[15px] leading-[18px] text-[#A5A5A5] bg-transparent outline-none"
-                                                    }, void 0, false, {
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        className: "inline-flex items-center",
+                                                        children: [
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "inline-flex items-center mr-[5px] text-[#A5A5A5] [&_path]:fill-[#A5A5A5]",
+                                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$LocationIcon$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                                                                    className: "w-[12px] h-[12px]"
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
+                                                                    lineNumber: 394,
+                                                                    columnNumber: 21
+                                                                }, this)
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
+                                                                lineNumber: 393,
+                                                                columnNumber: 19
+                                                            }, this),
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                                                value: localLocation,
+                                                                placeholder: LOCATION_PLACEHOLDER,
+                                                                onFocus: ()=>focusClearIfPlaceholder(localLocation, LOCATION_PLACEHOLDER, (v)=>{
+                                                                        setLocalLocation(v);
+                                                                        onChangeLocationText?.(v);
+                                                                    }),
+                                                                onBlur: ()=>blurRestoreIfEmpty(localLocation, LOCATION_PLACEHOLDER, (v)=>setLocalLocation(v), onChangeLocationText),
+                                                                onChange: (e)=>{
+                                                                    setLocalLocation(e.target.value);
+                                                                    onChangeLocationText?.(e.target.value);
+                                                                },
+                                                                style: {
+                                                                    width: locationPxWidth
+                                                                },
+                                                                className: "text-right font-inter font-normal text-[15px] leading-[18px] text-[#A5A5A5] placeholder:text-[#A5A5A5] bg-transparent outline-none"
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
+                                                                lineNumber: 397,
+                                                                columnNumber: 19
+                                                            }, this)
+                                                        ]
+                                                    }, void 0, true, {
                                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                        lineNumber: 318,
+                                                        lineNumber: 392,
                                                         columnNumber: 17
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                lineNumber: 314,
+                                                lineNumber: 383,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                                 value: localEmail,
+                                                placeholder: EMAIL_PLACEHOLDER,
+                                                onFocus: ()=>focusClearIfPlaceholder(localEmail, EMAIL_PLACEHOLDER, (v)=>{
+                                                        setLocalEmail(v);
+                                                        onChangeEmail?.(v);
+                                                    }),
+                                                onBlur: ()=>blurRestoreIfEmpty(localEmail, EMAIL_PLACEHOLDER, (v)=>setLocalEmail(v), onChangeEmail),
                                                 onChange: (e)=>{
                                                     setLocalEmail(e.target.value);
                                                     onChangeEmail?.(e.target.value);
                                                 },
-                                                className: "w-full text-center font-inter font-normal text-[15px] leading-[18px] text-[#A5A5A5] bg-transparent outline-none"
+                                                className: "w-full text-right font-inter font-normal text-[15px] leading-[18px] text-[#A5A5A5] placeholder:text-[#A5A5A5] bg-transparent outline-none"
                                             }, void 0, false, {
                                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                                lineNumber: 328,
+                                                lineNumber: 419,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                        lineNumber: 304,
+                                        lineNumber: 362,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                                lineNumber: 248,
+                                lineNumber: 302,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                        lineNumber: 225,
+                        lineNumber: 269,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-                lineNumber: 191,
+                lineNumber: 235,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Downloads/konfolio/components/my-portfolios/EditPortraitProfile.tsx",
-        lineNumber: 186,
+        lineNumber: 227,
         columnNumber: 5
     }, this);
 }
@@ -5373,7 +5640,7 @@ function EditPortraitPage() {
     const [bannerColor, setBannerColor] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("#FFFFFF");
     const [backgroundColor, setBackgroundColor] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("#F7F7F7");
     const [businessName, setBusinessName] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("Business Name");
-    const [displayName, setDisplayName] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("Name");
+    const [displayName, setDisplayName] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("Your Name");
     const [profileImageUrl, setProfileImageUrl] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
         className: "w-full min-h-[982px]",
