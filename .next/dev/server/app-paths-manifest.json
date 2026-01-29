@@ -1,5 +1,6 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
+  "/my-portfolios/edit-square/page": "app/my-portfolios/edit-square/page.js",
   "/my-portfolios/page": "app/my-portfolios/page.js",
   "/onboarding/audience/page": "app/onboarding/audience/page.js",
   "/onboarding/business-info/artist/page": "app/onboarding/business-info/artist/page.js",

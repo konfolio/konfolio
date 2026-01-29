@@ -455,7 +455,7 @@ export default function MerchTagPicker({
 
     const shouldPutPlusInRow1 = row2.length === 0
 
-    // ✅ Portrait: plus disappears once limit reached (already true)
+    // Portrait: plus disappears once limit reached 
     const PlusTrigger = !limitReached ? (
       <button
         ref={plusBtnRef}
@@ -536,7 +536,7 @@ export default function MerchTagPicker({
   }
 
   // ===== Default layout (square sidebar) =====
-  // ✅ Change: hide the plus trigger when limitReached (so it never appears after 8)
+  // hide the plus trigger when limitReached (so it never appears after 8)
   return (
     <div className="w-[276px] flex flex-col items-center gap-[12px]">
       {selected.length > 0 ? (
