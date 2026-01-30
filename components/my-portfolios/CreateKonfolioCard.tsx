@@ -37,7 +37,7 @@ export default function CreateKonfolioCard({
       imageSrc: "/images/template-1.png",
       imageAlt: "Square template preview",
       primaryCta: "Use Square Template",
-      primaryHref: "/onboarding/template/square",
+      primaryHref: "/my-portfolios/edit-square",
       secondaryCta: "Explore Square Examples",
       secondaryHref: "/explore?template=square",
     },
@@ -48,7 +48,7 @@ export default function CreateKonfolioCard({
       imageSrc: "/images/template-2.png",
       imageAlt: "Portrait template preview",
       primaryCta: "Use Portrait Template",
-      primaryHref: "/onboarding/template/portrait",
+      primaryHref: "/my-portfolios/edit-portrait",
       secondaryCta: "Explore Portrait Examples",
       secondaryHref: "/explore?template=portrait",
     },
@@ -62,7 +62,6 @@ export default function CreateKonfolioCard({
   const [popoverStyle, setPopoverStyle] = useState<CSSProperties>({ display: "none" })
   const [iconShiftX, setIconShiftX] = useState(0)
 
-  // Keep popover arrow centered. If popover would be clamped, shift ICON permanently so its center matches popover center.
   useLayoutEffect(() => {
     const compute = () => {
       const section = sectionRef.current
@@ -76,27 +75,20 @@ export default function CreateKonfolioCard({
       const ARROW_H = 8
       const GAP = 6
 
-      // Fixed button box size from your classes
       const BTN_W = 36
 
-      // Because the button is `absolute right-0`, its natural (unshifted) center X inside the section is:
       const baseIconCenterX = sectionRect.width - BTN_W / 2
 
-      // Popover must stay within [padding, sectionWidth - POPOVER_W - padding]
       const padding = 8
       const minCenterX = padding + POPOVER_W / 2
       const maxCenterX = sectionRect.width - padding - POPOVER_W / 2
 
-      // Desired center for popover (and arrow) is the icon center, but clamped to bounds
       const desiredCenterX = Math.max(minCenterX, Math.min(baseIconCenterX, maxCenterX))
 
-      // Permanently shift icon so its center matches the clamped popover center (no jump on open)
       setIconShiftX(desiredCenterX - baseIconCenterX)
 
-      // Popover position: centered at desiredCenterX
       const left = desiredCenterX - POPOVER_W / 2
 
-      // Vertical anchoring can still use btnRect (Y only)
       const top = btnRect.bottom - sectionRect.top + GAP + ARROW_H
 
       setPopoverStyle({
@@ -121,7 +113,7 @@ export default function CreateKonfolioCard({
       const pop = document.getElementById("create-konfolio-info-popover")
       const target = e.target as Node
 
-      // Let the button handle toggle; don't close from this handler.
+      // Let the button handle toggle
       if (btn?.contains(target)) return
       if (pop?.contains(target)) return
 
@@ -157,11 +149,11 @@ export default function CreateKonfolioCard({
           Create your first Konfolio
         </p>
 
-        {/* Info button: shifted always (stable), not on click */}
+        {/* Info button */}
         <button
           ref={infoBtnRef}
           type="button"
-          onClick={() => setInfoOpen((v) => !v)} // ✅ click again closes
+          onClick={() => setInfoOpen((v) => !v)} 
           className="
             absolute right-0 top-1/2
             w-[36px] h-[36px]
@@ -182,7 +174,7 @@ export default function CreateKonfolioCard({
         </button>
       </div>
 
-      {/* Popover (arrow remains centered inside popover like before) */}
+      {/* Popover */}
       <div style={popoverStyle}>
         <div id="create-konfolio-info-popover">
           <InfoPopover open={infoOpen} text={infoText} onClose={() => setInfoOpen(false)} />

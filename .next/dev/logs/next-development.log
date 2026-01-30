@@ -1,0 +1,58 @@
+[00:00:05.198] Server  LOG     ✓ Ready in 4.4s
+[00:00:09.645] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/onboardin..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/Downloads...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" className="inter_e8e5...">
+                          <body
+                            className="antialiased"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[00:04:42.510] Server  LOG     ✓ Compiled in 732ms
+[00:05:29.491] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:07:21.921] Server  LOG     ✓ Compiled in 389ms
+[00:07:34.916] Server  LOG     ✓ Compiled in 123ms
+[00:10:51.260] Server  LOG     ✓ Compiled in 206ms
+[00:10:54.329] Server  LOG     ✓ Compiled in 98ms
+[00:13:08.750] Server  LOG     ✓ Compiled in 190ms
+[00:14:52.143] Server  LOG     ✓ Compiled in 209ms
+[00:20:35.400] Server  LOG     ✓ Compiled in 857ms
+[00:20:50.900] Server  LOG     ✓ Compiled in 185ms
+[00:28:43.679] Server  LOG     ✓ Compiled in 575ms
+[00:41:18.475] Server  LOG     ✓ Compiled in 667ms
+[00:42:53.264] Server  LOG     ✓ Compiled in 236ms
+[00:44:40.803] Server  LOG     ✓ Compiled in 712ms
+[00:48:53.518] Server  LOG     ✓ Compiled in 166ms
+[01:18:57.874] Server  LOG     ✓ Compiled in 1474ms
+[01:22:34.780] Server  LOG     ✓ Compiled in 203ms
+[01:25:22.826] Server  LOG     ✓ Compiled in 334ms
+[01:30:27.182] Server  LOG     ✓ Compiled in 237ms
+[01:31:21.653] Server  LOG     ✓ Compiled in 82ms
+[24:39:19.416] Server  LOG     ✓ Compiled in 1114ms

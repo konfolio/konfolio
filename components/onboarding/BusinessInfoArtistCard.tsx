@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
 import ArrowLeft from "@/components/icons/ArrowLeft"
 import ArrowDown from "@/components/icons/ArrowDown"
 import CheckIcon from "@/components/icons/CheckIcon"
 import OnboardingField from "@/components/onboarding/OnboardingField"
+import { useOnboardingDraft } from "@/stores/onboardingDraft"
 
 type Props = {
   displayName: string
@@ -13,16 +14,49 @@ type Props = {
   nextHref: string
 }
 
-export default function BusinessInfoArtistCard({ displayName, backHref, nextHref }: Props) {
-  const [businessName, setBusinessName] = useState("")
-  const [location, setLocation] = useState("")
-  const [salesPermit, setSalesPermit] = useState<"" | "yes" | "no">("")
-  const [willApply, setWillApply] = useState(false)
+export default function BusinessInfoArtistCard({
+  displayName,
+  backHref,
+  nextHref,
+}: Props) {
+  // Zustand state
+  const businessName = useOnboardingDraft((s) => s.businessName)
+  const location = useOnboardingDraft((s) => s.location)
+  const salesPermit = useOnboardingDraft((s) => s.salesPermit)
+  const willApply = useOnboardingDraft((s) => s.willApply)
+
+  // Zustand setters
+  const setBusinessName = useOnboardingDraft((s) => s.setBusinessName)
+  const setLocation = useOnboardingDraft((s) => s.setLocation)
+  const setSalesPermit = useOnboardingDraft((s) => s.setSalesPermit)
+  const setWillApply = useOnboardingDraft((s) => s.setWillApply)
 
   const canContinue =
     businessName.trim() !== "" &&
     location.trim() !== "" &&
     (salesPermit !== "" || willApply)
+
+  // dropdown open state
+  const [open, setOpen] = useState(false)
+  const wrapRef = useRef<HTMLDivElement | null>(null)
+
+  // close on outside click / esc
+  useEffect(() => {
+    function onDocDown(e: MouseEvent) {
+      if (!wrapRef.current) return
+      if (!wrapRef.current.contains(e.target as Node)) setOpen(false)
+    }
+    function onEsc(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false)
+    }
+
+    document.addEventListener("mousedown", onDocDown)
+    document.addEventListener("keydown", onEsc)
+    return () => {
+      document.removeEventListener("mousedown", onDocDown)
+      document.removeEventListener("keydown", onEsc)
+    }
+  }, [])
 
   return (
     <div
@@ -51,7 +85,6 @@ export default function BusinessInfoArtistCard({ displayName, backHref, nextHref
           label="Business Name"
           value={businessName}
           onChange={setBusinessName}
-          placeholder=""
         />
 
         <OnboardingField
@@ -61,16 +94,21 @@ export default function BusinessInfoArtistCard({ displayName, backHref, nextHref
           placeholder="City, State"
         />
 
-        {/* Dropdown */}
-        <div className="w-[426px] flex flex-col items-start gap-[10px]">
+        {/* Sales Permit Dropdown */}
+        <div
+          className="w-[426px] flex flex-col items-start gap-[10px] relative"
+          ref={wrapRef}
+        >
           <div className="w-full flex flex-col items-start gap-[10px] py-[5px]">
             <span className="font-inter text-[17px] leading-[140%] text-[#262626]">
               Valid Sales Permit
             </span>
           </div>
 
+          {/* Trigger */}
           <button
             type="button"
+            onClick={() => setOpen((v) => !v)}
             className="
               w-[426px] h-[40px]
               rounded-[8px]
@@ -80,16 +118,57 @@ export default function BusinessInfoArtistCard({ displayName, backHref, nextHref
               flex items-center justify-between
               text-left
             "
-            onClick={() => {
-              setSalesPermit((prev) => (prev === "" ? "yes" : prev === "yes" ? "no" : ""))
-            }}
           >
-            {/* Use flex + items-center so text doesn't look cut off */}
-            <span className="font-inter text-[15px] leading-[21px] text-[#A5A5A5] flex items-center">
-              {salesPermit === "" ? "Select" : salesPermit === "yes" ? "Yes" : "No"}
+            <span
+              className={`font-inter text-[15px] leading-[21px] ${
+                salesPermit ? "text-[#262626]" : "text-[#A5A5A5]"
+              }`}
+            >
+              {salesPermit === ""
+                ? "Select"
+                : salesPermit === "yes"
+                ? "Yes"
+                : "No"}
             </span>
             <ArrowDown />
           </button>
+
+          {/* Menu */}
+          {open && (
+            <div
+              className="
+                absolute top-[72px]
+                left-0
+                w-[426px]
+                bg-white
+                border border-[#A5A5A5]/50
+                rounded-[8px]
+                shadow-[0_8px_20px_rgba(0,0,0,0.08)]
+                z-50
+              "
+            >
+              {["yes", "no"].map((opt) => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => {
+                    setSalesPermit(opt as "yes" | "no")
+                    setOpen(false)
+                  }}
+                  className="
+                    w-full
+                    px-[16px]
+                    py-[10px]
+                    text-left
+                    hover:bg-[#F7F7F7]
+                    font-inter text-[14px]
+                  "
+                >
+                  {opt === "yes" ? "Yes" : "No"}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Checkbox row */}

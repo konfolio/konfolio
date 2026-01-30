@@ -3,14 +3,17 @@
 import { useRouter } from "next/navigation"
 import AudienceOptionCard from "./AudienceOptionCard"
 import { inknut } from "@/app/fonts"
+import { useOnboardingDraft } from "@/stores/onboardingDraft"
 
 export default function AudienceCard() {
   const router = useRouter()
+  const setModeAndResetFlow = useOnboardingDraft((s) => s.setModeAndResetFlow)
 
   function go(next: "artist" | "host") {
-    router.push(next === "artist"
-      ? "/onboarding/name/artist"
-      : "/onboarding/name/host"
+    setModeAndResetFlow(next)
+
+    router.push(
+      next === "artist" ? "/onboarding/name/artist" : "/onboarding/name/host"
     )
   }
 
@@ -53,7 +56,7 @@ export default function AudienceCard() {
             onClick={() => go("artist")}
           />
           <AudienceOptionCard
-            title="Event Host"
+            title="Event Organizer"
             description="I host events where artist vendors can market their products."
             onClick={() => go("host")}
           />
