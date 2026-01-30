@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+:root {
+  --background: #F7F7F7;
+  --foreground: #262626;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-inter);
+  --font-logo: var(--font-inknut);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+html, body {
+  overflow-x: hidden;
+}
+
+/* Prevent layout shift on hover for weight change */
+.no-shift::after {
+  content: attr(data-text);
+  font-weight: 600;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  display: block;
+}
+
+/* Conic gradient border used on Explore Portfolio preview */
+.konf-conic-border {
+  position: relative;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.konf-conic-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1.5px; /* border thickness */
+  border-radius: 15px;
+
+  background: conic-gradient(
+    from 90deg at 0% 0%,
+    rgba(165, 165, 165, 0) -47.02deg,
+    rgba(165, 165, 165, 0.352) 42.98deg,
+    rgba(165, 165, 165, 0) 132.98deg,
+    rgba(165, 165, 165, 0.352) 222.98deg,
+    rgba(165, 165, 165, 0) 312.98deg,
+    rgba(165, 165, 165, 0.352) 402.98deg
+  );
+
+  /* “Punch out” the middle so only the border shows */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  pointer-events: none;
+  z-index: 5;
+}
