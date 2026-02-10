@@ -55,13 +55,9 @@ export default function NewKonfolioPage() {
 
   const [ready, setReady] = useState(false)
 
-  // Read template from query string if present
   const templateFromQuery = useMemo(() => parseTemplateParam(searchParams.get("template")), [searchParams])
-
-  // Prevent double-create in dev strict mode / fast refresh
   const didAutoCreateRef = useRef(false)
 
-  // Hydrate both stores on mount
   useEffect(() => {
     let alive = true
 
@@ -69,17 +65,13 @@ export default function NewKonfolioPage() {
       if (!hasOnboardingHydrated) {
         try {
           await forceOnboardingHydrate()
-        } catch {
-          // ignore
-        }
+        } catch {}
       }
 
       if (!hasKonfolioHydrated) {
         try {
           await forceKonfolioHydrate()
-        } catch {
-          // ignore
-        }
+        } catch {}
       }
 
       if (!alive) return
@@ -88,7 +80,6 @@ export default function NewKonfolioPage() {
 
     run()
 
-    // Failsafe: don't hang forever
     const t = window.setTimeout(() => {
       if (!alive) return
       setReady(true)
@@ -98,22 +89,24 @@ export default function NewKonfolioPage() {
       alive = false
       window.clearTimeout(t)
     }
-  }, [
-    hasOnboardingHydrated,
-    forceOnboardingHydrate,
-    hasKonfolioHydrated,
-    forceKonfolioHydrate,
-  ])
+  }, [hasOnboardingHydrated, forceOnboardingHydrate, hasKonfolioHydrated, forceKonfolioHydrate])
 
-  const createAndGo = (template: TemplateType) => {
+  const createAndGo = (template: TemplateType, source: "query" | "click") => {
     const id = makeId()
 
     if (template === "square") {
       const o = useOnboardingDraft.getState()
 
-      // If onboarding has real values, autofill from onboarding.
-      // Otherwise, fall back to profile-based defaults (so you don't get placeholders).
-      const draft = hasMeaningfulOnboarding(o)
+      // Debug: print exactly what we are using
+      // eslint-disable-next-line no-console
+      console.log("[NEW] createAndGo", { source, template, hasOnboardingHydrated, onboardingSnapshot: o })
+
+      const useOnboarding = hasMeaningfulOnboarding(o)
+
+      // eslint-disable-next-line no-console
+      console.log("[NEW] hasMeaningfulOnboarding?", useOnboarding)
+
+      const draft = useOnboarding
         ? fromOnboardingToSquareDraft({
             id,
             onboarding: {
@@ -132,32 +125,38 @@ export default function NewKonfolioPage() {
           })
         : createDraftFromProfile({ id, template: "square" })
 
-      // New konfolio: always overwrite for this new id
+      // eslint-disable-next-line no-console
+      console.log("[NEW] draft built:", {
+        debugSource: useOnboarding ? "fromOnboardingToSquareDraft" : "createDraftFromProfile",
+        businessName: draft.businessName,
+        displayName: draft.displayName,
+        locationText: draft.locationText,
+        email: draft.email,
+        merchTagsCount: draft.merchTags.length,
+        prevVendsCount: draft.previousVends.length,
+        activeLinksCount: draft.links.activeKeys.length,
+        profileImageUrl: draft.profileImageUrl,
+      })
+
       setDraft(id, draft)
       router.push(`/my-portfolios/${id}/edit`)
       return
     }
 
-    // Portrait placeholder
     const draft = createDraftFromProfile({ id, template: "portrait" })
     setDraft(id, draft)
     router.push(`/my-portfolios/${id}/edit`)
   }
 
-  // Auto-create if query param exists.
   useEffect(() => {
     if (!ready) return
     if (!templateFromQuery) return
     if (didAutoCreateRef.current) return
 
-    // IMPORTANT: Only auto-create once onboarding has hydrated,
-    // otherwise we will build the square draft with placeholders.
-    if (!hasOnboardingHydrated) return
-
     didAutoCreateRef.current = true
-    createAndGo(templateFromQuery)
+    createAndGo(templateFromQuery, "query")
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ready, templateFromQuery, hasOnboardingHydrated])
+  }, [ready, templateFromQuery])
 
   if (!ready) {
     return (
@@ -170,18 +169,13 @@ export default function NewKonfolioPage() {
     )
   }
 
-  // If query param existed, we already auto-created; render nothing while pushing route
   if (templateFromQuery) return null
 
   return (
     <>
       <Navbar />
       <main className="min-h-[calc(100vh-61px)] flex justify-center pt-[60px] pb-[80px]">
-        <CreateKonfolioCard
-          title="Create your first Konfolio"
-          onPickTemplate={(t) => createAndGo(t)}
-          disabled={!hasOnboardingHydrated}
-        />
+        <CreateKonfolioCard title="Create your first Konfolio" onPickTemplate={(t) => createAndGo(t, "click")} />
       </main>
     </>
   )

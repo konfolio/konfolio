@@ -1,9 +1,15 @@
-// components/my-portfolios/editor/editorTypes.ts
 import type { LinkPickerValue } from "@/components/my-portfolios/LinkPicker"
 
 export type TemplateType = "square" | "portrait"
 
 export type SquareCell = {
+  id: string
+  src?: string
+  title?: string
+  description?: string
+}
+
+export type PortraitCell = {
   id: string
   src?: string
   title?: string
@@ -20,33 +26,43 @@ export type BaseDraft = {
 export type SquareDraft = BaseDraft & {
   template: "square"
 
-  // colors
   bannerColor: string
   backgroundColor: string
-
-  // persisted palettes (persist per draft; start empty for new drafts)
   bannerSwatches: string[]
   backgroundSwatches: string[]
 
-  // profile
   profileImageUrl: string
   businessName: string
   displayName: string
   locationText: string
   email: string
 
-  // sidebar data
   links: LinkPickerValue
   merchTags: string[]
   previousVends: string[]
 
-  // main grid
   images: SquareCell[]
 }
 
 export type PortraitDraft = BaseDraft & {
   template: "portrait"
-  // TODO later
+
+  bannerColor: string
+  backgroundColor: string
+  bannerSwatches: string[]
+  backgroundSwatches: string[]
+
+  profileImageUrl: string
+  businessName: string
+  displayName: string
+  locationText: string
+  email: string
+
+  links: LinkPickerValue
+  merchTags: string[]
+  previousVends: string[]
+
+  images: PortraitCell[] // 8 cells
 }
 
 export type KonfolioDraft = SquareDraft | PortraitDraft

@@ -1,15 +1,5 @@
-// components/my-portfolios/editor/adapters/fromProfile.ts
-import type { KonfolioDraft, SquareDraft, SquareCell, TemplateType } from "@/components/my-portfolios/editor/editorTypes"
+import type { KonfolioDraft, SquareCell, PortraitCell, SquareDraft, PortraitDraft } from "@/components/my-portfolios/editor/editorTypes"
 import type { LinkPickerValue } from "@/components/my-portfolios/LinkPicker"
-
-function makeDefaultCells(count: number): SquareCell[] {
-  return Array.from({ length: count }).map((_, i) => ({
-    id: `cell-${i + 1}`,
-    src: "",
-    title: "Title",
-    description: "Short description",
-  }))
-}
 
 export function emptyLinks(): LinkPickerValue {
   return {
@@ -27,40 +17,68 @@ export function emptyLinks(): LinkPickerValue {
   }
 }
 
-export function createDraftFromProfile(args: { id: string; template: TemplateType }): KonfolioDraft {
-  const now = Date.now()
+function makeDefaultSquareCells(): SquareCell[] {
+  return Array.from({ length: 9 }).map((_, i) => ({
+    id: `cell-${i + 1}`,
+    src: "",
+    title: "Title",
+    description: "Short description",
+  }))
+}
 
-  if (args.template === "square") {
-    const draft: SquareDraft = {
-      id: args.id,
+function makeDefaultPortraitCells(): PortraitCell[] {
+  return Array.from({ length: 8 }).map((_, i) => ({
+    id: `cell-${i + 1}`,
+    src: "",
+    title: "Title",
+    description: "Short description",
+  }))
+}
+
+export function createDraftFromProfile(params: { id: string; template: "square" | "portrait" }): KonfolioDraft {
+  const base = {
+    id: params.id,
+    status: "draft" as const,
+    updatedAt: Date.now(),
+  }
+
+  if (params.template === "square") {
+    const d: SquareDraft = {
+      ...base,
       template: "square",
-      status: "draft",
-      updatedAt: now,
-
       bannerColor: "#FFFFFF",
       backgroundColor: "#F7F7F7",
       bannerSwatches: [],
       backgroundSwatches: [],
-
       profileImageUrl: "",
       businessName: "Business Name",
       displayName: "Name",
       locationText: "City, State",
       email: "myemailaddress@konfolio.com",
-
       links: emptyLinks(),
       merchTags: [],
       previousVends: [],
-
-      images: makeDefaultCells(9),
+      images: makeDefaultSquareCells(),
     }
-    return draft
+    return d
   }
 
-  return {
-    id: args.id,
+  const d: PortraitDraft = {
+    ...base,
     template: "portrait",
-    status: "draft",
-    updatedAt: now,
+    bannerColor: "#FFFFFF",
+    backgroundColor: "#F7F7F7",
+    bannerSwatches: [],
+    backgroundSwatches: [],
+    profileImageUrl: "",
+    businessName: "Business Name",
+    displayName: "Name",
+    locationText: "City, State",
+    email: "myemailaddress@konfolio.com",
+    links: emptyLinks(),
+    merchTags: [],
+    previousVends: [],
+    images: makeDefaultPortraitCells(),
   }
+  return d
 }

@@ -10,3 +10,58 @@ Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
 [00:02:35.979] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"22c00b36-134e-40ac-84ae-64cabbf8c771","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1770754618717}
 [00:02:35.980] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] draft changed: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"22c00b36-134e-40ac-84ae-64cabbf8c771","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1770754618717}
 [00:02:35.980] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] draft source: undefined
+[00:30:05.234] Server  LOG     ✓ Compiled in 2.2s
+[00:30:58.579] Server  LOG     ✓ Compiled in 540ms
+[00:43:48.815] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/my-portfo..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/Downloads...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" className="inter_e8e5...">
+                          <body
+                            className="antialiased"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[00:43:49.266] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:51:08.076] Server  LOG     ✓ Compiled in 1108ms
+[00:51:08.683] Browser ERROR   The final argument passed to %s changed size between renders. The order and size of this array must remain constant.
+
+Previous: %s
+Incoming: %s useEffect [true, , true] [true, ]
+[00:51:23.594] Browser LOG     [NEW] createAndGo {"hasOnboardingHydrated":true,"onboardingSnapshot":{"acceptedTerms":false,"activeLinkKeys":[],"attendees":"","businessName":"","collabs":[],"eventLocation":"","firstName":"","firstVend":false,"hasHydrated":true,"hostWebsite":"","lastName":"","links":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""},"location":"","merchTags":[],"orgSize":"","organization":"","preferredName":"","prevVends":[],"profileFile":null,"profilePreviewUrl":"","salesPermit":"","willApply":false},"source":"click","template":"square"}
+[00:51:23.594] Browser LOG     [NEW] hasMeaningfulOnboarding? false
+[00:51:23.594] Browser LOG     [NEW] draft built: {"activeLinksCount":0,"businessName":"Business Name","debugSource":"createDraftFromProfile","displayName":"Name","email":"myemailaddress@konfolio.com","locationText":"City, State","merchTagsCount":0,"prevVendsCount":0,"profileImageUrl":""}
+[00:51:23.941] Browser LOG     [SQUARE] mount {"draftId":"3a54ff95-89e6-4813-ba09-7ba6de5cb170"}
+[00:51:23.941] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"3a54ff95-89e6-4813-ba09-7ba6de5cb170","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1770757547740}
+[00:51:23.941] Browser LOG     [SQUARE] draft changed: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"3a54ff95-89e6-4813-ba09-7ba6de5cb170","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1770757547740}
+[00:51:23.941] Browser LOG     [SQUARE] draft source: undefined
+[00:51:23.941] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"3a54ff95-89e6-4813-ba09-7ba6de5cb170"}
+[00:51:23.941] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"3a54ff95-89e6-4813-ba09-7ba6de5cb170","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1770757547740}
+[00:51:23.941] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] draft changed: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"3a54ff95-89e6-4813-ba09-7ba6de5cb170","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1770757547740}
+[00:51:23.941] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] draft source: undefined

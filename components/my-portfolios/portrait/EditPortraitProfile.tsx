@@ -9,7 +9,7 @@ import OpenTabIcon from "@/components/icons/OpenTabIcon"
 import SecondaryButton from "@/components/buttons/SecondaryButton"
 
 import ColorPicker from "@/components/my-portfolios/ColorPicker"
-import LinkPicker from "@/components/my-portfolios/LinkPicker"
+import LinkPicker, { type LinkPickerValue } from "@/components/my-portfolios/LinkPicker"
 import MerchTagPicker from "@/components/my-portfolios/MerchTagPicker"
 
 type OpenPicker = "banner" | "background" | null
@@ -21,6 +21,12 @@ type Props = {
   backgroundColor?: string
   onChangeBannerColor?: (hex: string) => void
   onChangeBackgroundColor?: (hex: string) => void
+
+  /** Persisted palettes */
+  bannerSwatches?: string[]
+  backgroundSwatches?: string[]
+  onChangeBannerSwatches?: (next: string[]) => void
+  onChangeBackgroundSwatches?: (next: string[]) => void
 
   profileImageUrl?: string
   onChangeProfileImage?: (file: File, objectUrl: string) => void
@@ -39,6 +45,13 @@ type Props = {
   showAddLink?: boolean
   onAddLinkClick?: () => void
 
+  /** Controlled link picker */
+  linksValue?: LinkPickerValue
+  onChangeLinks?: (next: LinkPickerValue) => void
+
+  /** Controlled merch tags */
+  merchTags?: string[]
+  onChangeMerchTags?: (next: string[]) => void
   onMerchClick?: () => void
 
   publishLabel?: string
@@ -59,6 +72,11 @@ export default function EditPortraitProfile({
   onChangeBannerColor,
   onChangeBackgroundColor,
 
+  bannerSwatches = [],
+  backgroundSwatches = [],
+  onChangeBannerSwatches,
+  onChangeBackgroundSwatches,
+
   profileImageUrl,
   onChangeProfileImage,
 
@@ -73,9 +91,14 @@ export default function EditPortraitProfile({
   onChangeLocationText,
   onChangeEmail,
 
-  showAddLink = false,
+  showAddLink = true,
   onAddLinkClick,
 
+  linksValue,
+  onChangeLinks,
+
+  merchTags,
+  onChangeMerchTags,
   onMerchClick,
 
   publishLabel = "Publish",
@@ -98,14 +121,14 @@ export default function EditPortraitProfile({
   useEffect(() => setLocalBanner(bannerColor), [bannerColor])
   useEffect(() => setLocalBg(backgroundColor), [backgroundColor])
 
+  // swatches (local for snappy UI)
+  const [localBannerSwatches, setLocalBannerSwatches] = useState<string[]>(bannerSwatches)
+  const [localBgSwatches, setLocalBgSwatches] = useState<string[]>(backgroundSwatches)
+  useEffect(() => setLocalBannerSwatches(bannerSwatches), [bannerSwatches])
+  useEffect(() => setLocalBgSwatches(backgroundSwatches), [backgroundSwatches])
+
   // expanded color picker popover
   const [openPicker, setOpenPicker] = useState<OpenPicker>(null)
-  const openPickerRef = useRef<OpenPicker>(null)
-
-  useEffect(() => {
-    openPickerRef.current = openPicker
-  }, [openPicker])
-
   const colorPopoverRef = useRef<HTMLDivElement | null>(null)
   const colorButtonsWrapRef = useRef<HTMLDivElement | null>(null)
 
@@ -121,7 +144,6 @@ export default function EditPortraitProfile({
       if (pop?.contains(target)) return
       if (btnWrap?.contains(target)) return
       setOpenPicker(null)
-      openPickerRef.current = null
     }
 
     window.addEventListener("pointerdown", onDown)
@@ -129,25 +151,30 @@ export default function EditPortraitProfile({
   }, [openPicker])
 
   const togglePicker = (which: Exclude<OpenPicker, null>) => {
-    setOpenPicker((prev) => {
-      const next: OpenPicker = prev === which ? null : which
-      // sync ref immediately so ColorPicker onChange always targets correct one
-      openPickerRef.current = next
-      return next
-    })
+    setOpenPicker((prev) => (prev === which ? null : which))
   }
 
   const pickerLabel = openPicker === "banner" ? "Banner Color" : "Background Color"
   const pickerHex = openPicker === "banner" ? localBanner : localBg
+  const pickerSwatches = openPicker === "banner" ? localBannerSwatches : localBgSwatches
 
   const applyPickerHex = (hex: string) => {
-    const which = openPickerRef.current
-    if (which === "banner") {
+    if (openPicker === "banner") {
       setLocalBanner(hex)
       onChangeBannerColor?.(hex)
-    } else if (which === "background") {
+    } else if (openPicker === "background") {
       setLocalBg(hex)
       onChangeBackgroundColor?.(hex)
+    }
+  }
+
+  const applyPickerSwatches = (next: string[]) => {
+    if (openPicker === "banner") {
+      setLocalBannerSwatches(next)
+      onChangeBannerSwatches?.(next)
+    } else if (openPicker === "background") {
+      setLocalBgSwatches(next)
+      onChangeBackgroundSwatches?.(next)
     }
   }
 
@@ -195,7 +222,7 @@ export default function EditPortraitProfile({
     e.stopPropagation()
   }
 
-  // placeholder-like behavior: clear on focus if it equals the placeholder; restore on blur if empty
+  // placeholder-like behavior
   const focusClearIfPlaceholder = (val: string, placeholder: string, setter: (v: string) => void) => {
     if ((val ?? "").trim() === placeholder) setter("")
   }
@@ -211,7 +238,7 @@ export default function EditPortraitProfile({
     onChange?.(placeholder)
   }
 
-  // measure rendered location text so icon is ALWAYS 5px from the first letter (even while editing)
+  // measure location text width
   const locationMeasureRef = useRef<HTMLSpanElement | null>(null)
   const [locationPxWidth, setLocationPxWidth] = useState<number>(90)
 
@@ -219,7 +246,6 @@ export default function EditPortraitProfile({
     const el = locationMeasureRef.current
     if (!el) return
     const w = Math.ceil(el.getBoundingClientRect().width)
-    // min width + tiny breathing room for caret
     setLocationPxWidth(Math.max(90, w + 2))
   }, [localLocation])
 
@@ -233,6 +259,7 @@ export default function EditPortraitProfile({
       </div>
 
       <div className="w-[1182px] h-[102px] flex items-center gap-[20px]">
+        {/* Profile image */}
         <div
           className="relative w-[102px] h-[102px] bg-white border border-[#A5A5A5] border-[0.5px] rounded-[11.7339px] overflow-hidden"
           onDrop={onDrop}
@@ -267,6 +294,7 @@ export default function EditPortraitProfile({
         </div>
 
         <div className="w-[1060px] h-[105px] flex items-center gap-[10px]">
+          {/* Left column */}
           <div className="w-[830px] h-[100px] flex flex-col items-start gap-[15px]">
             <div className="w-full h-[21px] flex items-center gap-[10px] pt-[5px]">
               <input
@@ -290,15 +318,23 @@ export default function EditPortraitProfile({
             </div>
 
             <div className="flex items-center gap-[10px]">
-              <LinkPicker onAddLinkClick={showAddLink ? onAddLinkClick : undefined} />
+              {showAddLink ? (
+                <LinkPicker onAddLinkClick={onAddLinkClick} value={linksValue} onChange={onChangeLinks} />
+              ) : null}
             </div>
 
-            {/* Merch — aligned to same left edge as Business Name + Links */}
             <div className="w-full min-h-[25px] flex items-start">
-                <MerchTagPicker maxTags={8} onMerchClick={onMerchClick} layout="inlineLeft" />
+              <MerchTagPicker
+                maxTags={8}
+                onMerchClick={onMerchClick}
+                layout="inlineLeft"
+                value={merchTags}
+                onChange={onChangeMerchTags}
+              />
             </div>
           </div>
 
+          {/* Right column */}
           <div className="w-[220px] h-[105px] flex flex-col items-end gap-[15px]">
             <div className="w-[205px] h-[36px] flex items-center justify-end gap-[30px]">
               <div
@@ -331,12 +367,11 @@ export default function EditPortraitProfile({
                   <div ref={colorPopoverRef} className="absolute z-50 top-[52px] left-1/2 -translate-x-1/2 w-[276px]">
                     <ColorPicker
                       label={pickerLabel}
-                      initialHex={pickerHex}
-                      onChange={applyPickerHex}
-                      onRequestClose={() => {
-                        setOpenPicker(null)
-                        openPickerRef.current = null
-                      }}
+                      valueHex={pickerHex}
+                      onChangeHex={applyPickerHex}
+                      swatches={pickerSwatches}
+                      onChangeSwatches={applyPickerSwatches}
+                      onRequestClose={() => setOpenPicker(null)}
                     />
                   </div>
                 ) : null}
@@ -358,7 +393,6 @@ export default function EditPortraitProfile({
               </div>
             </div>
 
-            {/* equal small gaps; keep email position stable */}
             <div className="w-[220px] h-[54px] flex flex-col items-end justify-center gap-[4px] pt-[4px]">
               <input
                 value={localName}
@@ -379,9 +413,7 @@ export default function EditPortraitProfile({
                 className="w-full text-right font-inter font-normal text-[15px] leading-[18px] text-black placeholder:text-black bg-transparent outline-none"
               />
 
-              {/* Location: icon always 5px from first letter, icon moves with text length */}
               <div className="w-[220px] flex justify-end relative">
-                {/* hidden measurer */}
                 <span
                   ref={locationMeasureRef}
                   className="absolute -left-[9999px] top-0 whitespace-pre font-inter font-normal text-[15px] leading-[18px]"
