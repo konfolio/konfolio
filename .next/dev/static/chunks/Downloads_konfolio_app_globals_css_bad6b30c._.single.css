@@ -71,6 +71,7 @@
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
     --ease-out: cubic-bezier(0, 0, .2, 1);
+    --animate-pulse: pulse 2s cubic-bezier(.4, 0, .6, 1) infinite;
     --default-transition-duration: .15s;
     --default-transition-timing-function: cubic-bezier(.4, 0, .2, 1);
     --default-font-family: var(--font-inter);
@@ -737,6 +738,10 @@
     margin-right: 5px;
   }
 
+  .mb-\[10px\] {
+    margin-bottom: 10px;
+  }
+
   .ml-\[6px\] {
     margin-left: 6px;
   }
@@ -767,10 +772,6 @@
 
   .inline-flex {
     display: inline-flex;
-  }
-
-  .table {
-    display: table;
   }
 
   .h-0 {
@@ -1147,6 +1148,10 @@
 
   .min-h-\[25px\] {
     min-height: 25px;
+  }
+
+  .min-h-\[70vh\] {
+    min-height: 70vh;
   }
 
   .min-h-\[193px\] {
@@ -1593,6 +1598,10 @@
     max-width: 193px;
   }
 
+  .max-w-\[900px\] {
+    max-width: 900px;
+  }
+
   .max-w-\[1212px\] {
     max-width: 1212px;
   }
@@ -1674,6 +1683,10 @@
 
   .transform {
     transform: var(--tw-rotate-x, ) var(--tw-rotate-y, ) var(--tw-rotate-z, ) var(--tw-skew-x, ) var(--tw-skew-y, );
+  }
+
+  .animate-pulse {
+    animation: var(--animate-pulse);
   }
 
   .cursor-not-allowed {
@@ -1868,6 +1881,10 @@
     align-self: stretch;
   }
 
+  .overflow-auto {
+    overflow: auto;
+  }
+
   .overflow-hidden {
     overflow: hidden;
   }
@@ -2011,6 +2028,11 @@
     background-color: #262626;
   }
 
+  .bg-\[\#262626\]\/40 {
+    background-color: #26262666;
+    background-color: lab(15.1597% 0 0 / .4);
+  }
+
   .bg-\[\#A5A5A5\] {
     background-color: #a5a5a5;
   }
@@ -2065,6 +2087,16 @@
     }
   }
 
+  .bg-white\/60 {
+    background-color: #fff9;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-white\/60 {
+      background-color: color-mix(in oklab, var(--color-white) 60%, transparent);
+    }
+  }
+
   .bg-\[linear-gradient\(180deg\,rgba\(255\,255\,255\,0\)_0\%\,rgba\(255\,255\,255\,0\.9\)_70\%\,\#FFFFFF_100\%\)\] {
     background-image: linear-gradient(#fff0 0%, #ffffffe6 70%, #fff 100%);
   }
@@ -2108,6 +2140,10 @@
 
   .p-\[10px\] {
     padding: 10px;
+  }
+
+  .p-\[20px\] {
+    padding: 20px;
   }
 
   .p-\[30px\] {
@@ -2604,6 +2640,16 @@
 
   .text-white {
     color: var(--color-white);
+  }
+
+  .text-white\/70 {
+    color: #ffffffb3;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .text-white\/70 {
+      color: color-mix(in oklab, var(--color-white) 70%, transparent);
+    }
   }
 
   .text-zinc-700 {
@@ -3509,6 +3555,12 @@ html, body {
 @property --tw-ease {
   syntax: "*";
   inherits: false
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .5;
+  }
 }
 
 /*# sourceMappingURL=Downloads_konfolio_app_globals_css_bad6b30c._.single.css.map*/
