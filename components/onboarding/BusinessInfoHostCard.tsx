@@ -1,18 +1,25 @@
 "use client"
 
+import { useMemo } from "react"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
 import ArrowLeft from "@/components/icons/ArrowLeft"
 import OnboardingField from "@/components/onboarding/OnboardingField"
 import { useOnboardingDraft } from "@/stores/onboardingDraft"
 
 type Props = {
-  orgName: string
+  orgName?: string // optional fallback
   backHref: string
   nextHref: string
 }
 
-export default function BusinessInfoHostCard({ orgName, backHref, nextHref }: Props) {
+export default function BusinessInfoHostCard({
+  orgName = "",
+  backHref,
+  nextHref,
+}: Props) {
   // Zustand state
+  const organization = useOnboardingDraft((s) => s.organization)
+
   const hostWebsite = useOnboardingDraft((s) => s.hostWebsite)
   const orgSize = useOnboardingDraft((s) => s.orgSize)
   const attendees = useOnboardingDraft((s) => s.attendees)
@@ -23,6 +30,10 @@ export default function BusinessInfoHostCard({ orgName, backHref, nextHref }: Pr
   const setOrgSize = useOnboardingDraft((s) => s.setOrgSize)
   const setAttendees = useOnboardingDraft((s) => s.setAttendees)
   const setEventLocation = useOnboardingDraft((s) => s.setEventLocation)
+
+  const headerOrg = useMemo(() => {
+    return (organization || orgName || "").trim()
+  }, [organization, orgName])
 
   const canContinue =
     hostWebsite.trim() !== "" &&
@@ -47,7 +58,7 @@ export default function BusinessInfoHostCard({ orgName, backHref, nextHref }: Pr
         <ArrowLeft href={backHref} className="absolute left-0" />
 
         <p className="m-0 font-inter font-normal text-[25px] leading-[30px] text-black text-center">
-          Tell us more about {orgName}!
+          Tell us more about {headerOrg || "your organization"}!
         </p>
       </div>
 
@@ -75,7 +86,7 @@ export default function BusinessInfoHostCard({ orgName, backHref, nextHref }: Pr
           label="Event Location"
           value={eventLocation}
           onChange={setEventLocation}
-          placeholder="Placeholder Text"
+          placeholder="City, State"
         />
       </div>
 

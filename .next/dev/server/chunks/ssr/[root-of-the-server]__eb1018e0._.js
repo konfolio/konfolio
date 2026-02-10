@@ -1051,7 +1051,9 @@ function splitLowAccuracy(label) {
         isLow
     };
 }
-function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
+function MerchTypeCard({ backHref, nextHref, businessName = "", maxTags = 8 }) {
+    // Store business name always wins (prevents org name leak)
+    const storeBusinessName = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOnboardingDraft"])((s)=>s.businessName);
     // Zustand state
     const selected = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOnboardingDraft"])((s)=>s.merchTags);
     const setMerchTags = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOnboardingDraft"])((s)=>s.setMerchTags);
@@ -1060,7 +1062,8 @@ function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
     const [query, setQuery] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
     const wrapRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
     const inputRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
-    const title = `Tell us more about ${businessName}`;
+    const headerName = (storeBusinessName || businessName || "").trim();
+    const title = headerName ? `Tell us more about ${headerName}` : "Tell us more about your merchandise";
     const limitReached = selected.length >= maxTags;
     const canContinue = selected.length > 0;
     const selectedSet = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useMemo"])(()=>new Set(selected.map(keyify)), [
@@ -1158,7 +1161,7 @@ function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
                         className: "absolute left-0 w-[40px] h-[40px] flex items-center justify-center"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                        lineNumber: 259,
+                        lineNumber: 264,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1166,13 +1169,13 @@ function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
                         children: title
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                        lineNumber: 263,
+                        lineNumber: 268,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                lineNumber: 258,
+                lineNumber: 263,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1190,7 +1193,7 @@ function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
                                         children: "Merchandise Category"
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                        lineNumber: 277,
+                                        lineNumber: 282,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1222,7 +1225,7 @@ function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
                                                         className: "flex-1 bg-transparent outline-none font-inter text-[14px] leading-[140%]"
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                                        lineNumber: 294,
+                                                        lineNumber: 299,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1236,18 +1239,18 @@ function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
                                                         className: "w-[16px] h-[16px] flex items-center justify-center text-[#A5A5A5]",
                                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$ArrowDown$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                                             fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                                            lineNumber: 318,
+                                                            lineNumber: 323,
                                                             columnNumber: 19
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                                        lineNumber: 308,
+                                                        lineNumber: 313,
                                                         columnNumber: 17
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                                lineNumber: 282,
+                                                lineNumber: 287,
                                                 columnNumber: 15
                                             }, this),
                                             open && !limitReached && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1269,7 +1272,7 @@ function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                                        lineNumber: 327,
+                                                        lineNumber: 332,
                                                         columnNumber: 23
                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         className: "flex flex-col",
@@ -1280,7 +1283,7 @@ function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
                                                                     children: row.label
                                                                 }, `h-${row.label}-${idx}`, false, {
                                                                     fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                                                    lineNumber: 343,
+                                                                    lineNumber: 348,
                                                                     columnNumber: 31
                                                                 }, this);
                                                             }
@@ -1294,7 +1297,7 @@ function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
                                                                         children: base
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                                                        lineNumber: 361,
+                                                                        lineNumber: 366,
                                                                         columnNumber: 31
                                                                     }, this),
                                                                     isLow && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1302,41 +1305,41 @@ function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
                                                                         children: "Low Accuracy"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                                                        lineNumber: 363,
+                                                                        lineNumber: 368,
                                                                         columnNumber: 33
                                                                     }, this)
                                                                 ]
                                                             }, `i-${row.label}-${idx}`, true, {
                                                                 fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                                                lineNumber: 355,
+                                                                lineNumber: 360,
                                                                 columnNumber: 29
                                                             }, this);
                                                         })
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                                        lineNumber: 339,
+                                                        lineNumber: 344,
                                                         columnNumber: 23
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                                    lineNumber: 325,
+                                                    lineNumber: 330,
                                                     columnNumber: 19
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                                lineNumber: 324,
+                                                lineNumber: 329,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                        lineNumber: 281,
+                                        lineNumber: 286,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                lineNumber: 273,
+                                lineNumber: 278,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1347,7 +1350,7 @@ function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
                                         children: "Commonly Selected"
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                        lineNumber: 380,
+                                        lineNumber: 385,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1361,29 +1364,29 @@ function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
                                                     showPlus: true
                                                 }, void 0, false, {
                                                     fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                                    lineNumber: 389,
+                                                    lineNumber: 394,
                                                     columnNumber: 19
                                                 }, this)
                                             }, label, false, {
                                                 fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                                lineNumber: 383,
+                                                lineNumber: 388,
                                                 columnNumber: 17
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                        lineNumber: 381,
+                                        lineNumber: 386,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                lineNumber: 379,
+                                lineNumber: 384,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                        lineNumber: 271,
+                        lineNumber: 276,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1394,7 +1397,7 @@ function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
                                 children: "Your Merchandise"
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                lineNumber: 398,
+                                lineNumber: 403,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1404,7 +1407,7 @@ function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
                                     children: "Add at least 1 category above"
                                 }, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                    lineNumber: 402,
+                                    lineNumber: 407,
                                     columnNumber: 15
                                 }, this) : selected.map((label)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "group relative inline-flex items-center",
@@ -1413,7 +1416,7 @@ function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
                                                 label: label
                                             }, void 0, false, {
                                                 fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                                lineNumber: 411,
+                                                lineNumber: 416,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1427,28 +1430,28 @@ function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
                                                         className: "[&_path]:stroke-white [&_path]:fill-[#262626]"
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                                        lineNumber: 439,
+                                                        lineNumber: 444,
                                                         columnNumber: 23
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                                    lineNumber: 438,
+                                                    lineNumber: 443,
                                                     columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                                lineNumber: 414,
+                                                lineNumber: 419,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, label, true, {
                                         fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                        lineNumber: 407,
+                                        lineNumber: 412,
                                         columnNumber: 17
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                lineNumber: 400,
+                                lineNumber: 405,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1458,24 +1461,24 @@ function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
                                     children: "Limit Reached"
                                 }, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                    lineNumber: 450,
+                                    lineNumber: 455,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                                lineNumber: 448,
+                                lineNumber: 453,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                        lineNumber: 397,
+                        lineNumber: 402,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                lineNumber: 269,
+                lineNumber: 274,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$buttons$2f$PrimaryButton$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -1484,13 +1487,13 @@ function MerchTypeCard({ backHref, nextHref, businessName, maxTags = 8 }) {
                 children: "Next"
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-                lineNumber: 456,
+                lineNumber: 461,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Downloads/konfolio/components/onboarding/MerchTypeCard.tsx",
-        lineNumber: 246,
+        lineNumber: 251,
         columnNumber: 5
     }, this);
 }

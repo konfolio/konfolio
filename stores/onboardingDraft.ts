@@ -1,7 +1,8 @@
+// stores/onboardingDraft.ts
 "use client"
 
 import { create } from "zustand"
-import { persist, createJSONStorage } from "zustand/middleware"
+import { persist, createJSONStorage, type StateStorage } from "zustand/middleware"
 
 export type Mode = "artist" | "host"
 export type SalesPermit = "" | "yes" | "no"
@@ -23,6 +24,9 @@ export type MediaKey =
   | "bluesky"
 
 type Draft = {
+  /** true once storage rehydrate has completed (success OR failure) */
+  hasHydrated: boolean
+
   // audience
   mode?: Mode
 
@@ -45,7 +49,7 @@ type Draft = {
   attendees: string
   eventLocation: string
 
-  // collabs (your CollabCard)
+  // collabs
   collabs: CollabOption[]
 
   // links
@@ -110,6 +114,9 @@ type Actions = {
 
   // global
   resetDraft: () => void
+
+  /** Manually trigger persist rehydrate + ensure hasHydrated flips */
+  forceHydrate: () => Promise<void>
 }
 
 const emptyLinks: Record<MediaKey, string> = {
@@ -124,6 +131,8 @@ const emptyLinks: Record<MediaKey, string> = {
 }
 
 const initialDraft: Draft = {
+  hasHydrated: false,
+
   mode: undefined,
 
   firstName: "",
@@ -156,10 +165,49 @@ const initialDraft: Draft = {
   profilePreviewUrl: "",
 }
 
+// ---- Safe LOCAL storage wrapper (never undefined) ----
+// This is the key change vs sessionStorage.
+const safeLocalStorage: StateStorage = {
+  getItem: (name) => {
+    try {
+      if (typeof window === "undefined") return null
+      return window.localStorage.getItem(name)
+    } catch {
+      return null
+    }
+  },
+  setItem: (name, value) => {
+    try {
+      if (typeof window === "undefined") return
+      window.localStorage.setItem(name, value)
+    } catch {
+      // ignore
+    }
+  },
+  removeItem: (name) => {
+    try {
+      if (typeof window === "undefined") return
+      window.localStorage.removeItem(name)
+    } catch {
+      // ignore
+    }
+  },
+}
+
 export const useOnboardingDraft = create<Draft & Actions>()(
   persist(
-    (set, get) => ({
+    (set, get, api) => ({
       ...initialDraft,
+
+      // manual rehydrate helper
+      forceHydrate: async () => {
+        try {
+          const p = (api as any).persist
+          if (p?.rehydrate) await p.rehydrate()
+        } finally {
+          set({ hasHydrated: true })
+        }
+      },
 
       // audience
       setMode: (mode) => set({ mode }),
@@ -172,31 +220,31 @@ export const useOnboardingDraft = create<Draft & Actions>()(
         if (!prevMode || prevMode === mode) return
 
         if (mode === "artist") {
-            // switched to ARTIST -> clear host-only fields
-            set({
-              organization: "",
-              hostWebsite: "",
-              orgSize: "",
-              attendees: "",
-              eventLocation: "",
-            })
+          // switched to ARTIST -> clear host-only fields
+          set({
+            organization: "",
+            hostWebsite: "",
+            orgSize: "",
+            attendees: "",
+            eventLocation: "",
+          })
         } else {
-            // switched to HOST -> clear artist-only fields
-            set({
-              preferredName: "",
-          
-              businessName: "",
-              location: "",
-              salesPermit: "",
-              willApply: false,
-          
-              collabs: [],
-              merchTags: [],
-          
-              firstVend: false,
-              prevVends: [],
-            })
-        }          
+          // switched to HOST -> clear artist-only fields
+          set({
+            preferredName: "",
+
+            businessName: "",
+            location: "",
+            salesPermit: "",
+            willApply: false,
+
+            collabs: [],
+            merchTags: [],
+
+            firstVend: false,
+            prevVends: [],
+          })
+        }
       },
 
       // name
@@ -224,8 +272,7 @@ export const useOnboardingDraft = create<Draft & Actions>()(
       // links
       setActiveLinkKeys: (keys) => set({ activeLinkKeys: keys }),
 
-      setLinkValue: (key, value) =>
-        set({ links: { ...get().links, [key]: value } }),
+      setLinkValue: (key, value) => set({ links: { ...get().links, [key]: value } }),
 
       clearLinkKey: (key) => {
         const { links, activeLinkKeys } = get()
@@ -245,8 +292,7 @@ export const useOnboardingDraft = create<Draft & Actions>()(
       setPrevVends: (v) => set({ prevVends: v }),
 
       // profile
-      setProfileFile: (file, previewUrl) =>
-        set({ profileFile: file, profilePreviewUrl: previewUrl }),
+      setProfileFile: (file, previewUrl) => set({ profileFile: file, profilePreviewUrl: previewUrl }),
 
       clearProfile: () => {
         const url = get().profilePreviewUrl
@@ -258,17 +304,23 @@ export const useOnboardingDraft = create<Draft & Actions>()(
       resetDraft: () => {
         const url = get().profilePreviewUrl
         if (url) URL.revokeObjectURL(url)
-        set({ ...initialDraft })
+        // keep store "hydrated" after reset so UI doesn't hang
+        set({ ...initialDraft, hasHydrated: true })
       },
     }),
     {
       name: "konfolio-onboarding-draft",
-      storage: createJSONStorage(() => sessionStorage),
+      storage: createJSONStorage(() => safeLocalStorage),
 
       // File objects can't be serialized; do not persist them
       partialize: (state) => {
         const { profileFile, profilePreviewUrl, ...rest } = state
         return rest
+      },
+
+      // Set hasHydrated once rehydration completes (even if it errors)
+      onRehydrateStorage: () => (_state, _error) => {
+        useOnboardingDraft.setState({ hasHydrated: true })
       },
     }
   )

@@ -1150,18 +1150,24 @@ __turbopack_context__.s([
     ()=>PaletteIcon
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/node_modules/next/dist/server/route-modules/app-page/vendored/rsc/react-jsx-dev-runtime.js [app-rsc] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/node_modules/next/dist/server/route-modules/app-page/vendored/rsc/react.js [app-rsc] (ecmascript)");
 ;
-function PaletteIcon({ className = "" }) {
+;
+function PaletteIcon({ className = "", size = 25, width, height, ...props }) {
+    const clipId = __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["useId"]();
+    const w = width ?? size;
+    const h = height ?? size;
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
-        width: "25",
-        height: "25",
+        width: w,
+        height: h,
         viewBox: "0 0 25 25",
         fill: "none",
         xmlns: "http://www.w3.org/2000/svg",
         className: className,
+        ...props,
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("g", {
-                clipPath: "url(#clip0)",
+                clipPath: `url(#${clipId})`,
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                         d: "M12.5 18.75C12.5 18.1284 12.7469 17.5322 13.1865 17.0927C13.626 16.6532 14.2221 16.4062 14.8438 16.4062H19.3564C19.8873 16.4063 20.4025 16.2262 20.8176 15.8953C21.2327 15.5645 21.5233 15.1025 21.6416 14.5849C21.8029 13.8744 21.8812 13.1475 21.875 12.4189C21.8311 7.26073 17.5625 3.07323 12.4023 3.12499C9.9329 3.15071 7.57335 4.14978 5.83626 5.90515C4.09917 7.66052 3.12487 10.0304 3.125 12.5C3.125 16.583 5.73535 19.6719 9.375 20.958C9.72837 21.0829 10.1066 21.1213 10.4778 21.0699C10.8491 21.0184 11.2026 20.8787 11.5087 20.6624C11.8148 20.4462 12.0646 20.1596 12.2371 19.8268C12.4096 19.4941 12.4997 19.1248 12.5 18.75Z",
@@ -1171,8 +1177,8 @@ function PaletteIcon({ className = "" }) {
                         strokeLinejoin: "round"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/icons/PaletteIcon.tsx",
-                        lineNumber: 12,
-                        columnNumber: 11
+                        lineNumber: 25,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
                         cx: "12.5",
@@ -1181,8 +1187,8 @@ function PaletteIcon({ className = "" }) {
                         fill: "#262626"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/icons/PaletteIcon.tsx",
-                        lineNumber: 19,
-                        columnNumber: 11
+                        lineNumber: 32,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
                         cx: "8.20312",
@@ -1191,8 +1197,8 @@ function PaletteIcon({ className = "" }) {
                         fill: "#262626"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/icons/PaletteIcon.tsx",
-                        lineNumber: 20,
-                        columnNumber: 11
+                        lineNumber: 33,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
                         cx: "8.20312",
@@ -1201,8 +1207,8 @@ function PaletteIcon({ className = "" }) {
                         fill: "#262626"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/icons/PaletteIcon.tsx",
-                        lineNumber: 21,
-                        columnNumber: 11
+                        lineNumber: 34,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
                         cx: "16.7968",
@@ -1211,42 +1217,42 @@ function PaletteIcon({ className = "" }) {
                         fill: "#262626"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/icons/PaletteIcon.tsx",
-                        lineNumber: 22,
-                        columnNumber: 11
+                        lineNumber: 35,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/icons/PaletteIcon.tsx",
-                lineNumber: 11,
-                columnNumber: 9
+                lineNumber: 24,
+                columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("defs", {
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("clipPath", {
-                    id: "clip0",
+                    id: clipId,
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("rect", {
                         width: "25",
                         height: "25",
                         fill: "white"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/icons/PaletteIcon.tsx",
-                        lineNumber: 26,
-                        columnNumber: 13
+                        lineNumber: 40,
+                        columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/Downloads/konfolio/components/icons/PaletteIcon.tsx",
-                    lineNumber: 25,
-                    columnNumber: 11
+                    lineNumber: 39,
+                    columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/icons/PaletteIcon.tsx",
-                lineNumber: 24,
-                columnNumber: 9
+                lineNumber: 38,
+                columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Downloads/konfolio/components/icons/PaletteIcon.tsx",
-        lineNumber: 3,
-        columnNumber: 7
+        lineNumber: 15,
+        columnNumber: 5
     }, this);
 }
 }),

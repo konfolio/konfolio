@@ -60,6 +60,7 @@
 @layer theme {
   :root, :host {
     --font-sans: var(--font-inter);
+    --color-red-500: #fb2c36;
     --color-zinc-700: #3f3f46;
     --color-zinc-900: #18181b;
     --color-black: #000;
@@ -78,6 +79,7 @@
 
   @supports (color: lab(0% 0 0)) {
     :root, :host {
+      --color-red-500: lab(55.4814% 75.0732 48.8528);
       --color-zinc-700: lab(26.8019% 1.35387 -4.68303);
       --color-zinc-900: lab(8.30603% .618205 -2.16572);
     }
@@ -335,10 +337,6 @@
 @layer utilities {
   .pointer-events-none {
     pointer-events: none;
-  }
-
-  .visible {
-    visibility: visible;
   }
 
   .sr-only {
@@ -771,6 +769,10 @@
     display: inline-flex;
   }
 
+  .table {
+    display: table;
+  }
+
   .h-0 {
     height: calc(var(--spacing) * 0);
   }
@@ -903,20 +905,12 @@
     height: 61px;
   }
 
-  .h-\[62px\] {
-    height: 62px;
-  }
-
   .h-\[63px\] {
     height: 63px;
   }
 
   .h-\[70px\] {
     height: 70px;
-  }
-
-  .h-\[80px\] {
-    height: 80px;
   }
 
   .h-\[87px\] {
@@ -1599,10 +1593,6 @@
     max-width: 193px;
   }
 
-  .max-w-\[480px\] {
-    max-width: 480px;
-  }
-
   .max-w-\[1212px\] {
     max-width: 1212px;
   }
@@ -2053,6 +2043,10 @@
     background-color: #ffffffe6;
   }
 
+  .bg-black {
+    background-color: var(--color-black);
+  }
+
   .bg-transparent {
     background-color: #0000;
   }
@@ -2096,6 +2090,10 @@
     padding: calc(var(--spacing) * 0);
   }
 
+  .p-6 {
+    padding: calc(var(--spacing) * 6);
+  }
+
   .p-\[1\.5px\] {
     padding: 1.5px;
   }
@@ -2114,6 +2112,10 @@
 
   .p-\[30px\] {
     padding: 30px;
+  }
+
+  .px-6 {
+    padding-inline: calc(var(--spacing) * 6);
   }
 
   .px-\[5px\] {
@@ -2174,6 +2176,10 @@
 
   .px-\[244px\] {
     padding-inline: 244px;
+  }
+
+  .py-3 {
+    padding-block: calc(var(--spacing) * 3);
   }
 
   .py-\[5px\] {
@@ -2590,6 +2596,10 @@
 
   .text-black {
     color: var(--color-black);
+  }
+
+  .text-red-500 {
+    color: var(--color-red-500);
   }
 
   .text-white {
@@ -3013,8 +3023,16 @@
     background-color: #26262666;
   }
 
+  .disabled\:pointer-events-none:disabled {
+    pointer-events: none;
+  }
+
   .disabled\:cursor-not-allowed:disabled {
     cursor: not-allowed;
+  }
+
+  .disabled\:opacity-40:disabled {
+    opacity: .4;
   }
 
   .disabled\:opacity-50:disabled {

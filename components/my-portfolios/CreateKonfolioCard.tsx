@@ -1,3 +1,4 @@
+// components/my-portfolios/CreateKonfolioCard.tsx
 "use client"
 
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react"
@@ -10,6 +11,8 @@ import ArrowRight from "@/components/icons/ArrowRight"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
 import InfoPopover from "@/components/icons/InfoPopover"
 
+type TemplateType = "square" | "portrait"
+
 type TemplateCard = {
   title: string
   subtitle: string
@@ -17,17 +20,29 @@ type TemplateCard = {
   imageSrc: string
   imageAlt: string
   primaryCta: string
-  primaryHref: string
+  primaryHref?: string
   secondaryCta: string
   secondaryHref: string
+  templateType: TemplateType
 }
 
 type Props = {
   templates?: [TemplateCard, TemplateCard]
   infoText?: string
+  title?: string
+
+  /** If provided, buttons become callback-driven instead of href navigation. */
+  onPickTemplate?: (t: TemplateType) => void
+
+  /** Disable primary template buttons */
+  disabled?: boolean
+
+  /** Optional override label while creating */
+  primaryLoadingLabel?: string
 }
 
 export default function CreateKonfolioCard({
+  title = "Create your first Konfolio",
   infoText = "We work with templates to reduce variety and support our auto-fill system.",
   templates = [
     {
@@ -37,9 +52,10 @@ export default function CreateKonfolioCard({
       imageSrc: "/images/template-1.png",
       imageAlt: "Square template preview",
       primaryCta: "Use Square Template",
-      primaryHref: "/my-portfolios/edit-square",
+      primaryHref: "/my-portfolios/new?template=square",
       secondaryCta: "Explore Square Examples",
       secondaryHref: "/explore?template=square",
+      templateType: "square",
     },
     {
       title: "4x2 Portrait Template",
@@ -48,11 +64,15 @@ export default function CreateKonfolioCard({
       imageSrc: "/images/template-2.png",
       imageAlt: "Portrait template preview",
       primaryCta: "Use Portrait Template",
-      primaryHref: "/my-portfolios/edit-portrait",
+      primaryHref: "/my-portfolios/new?template=portrait",
       secondaryCta: "Explore Portrait Examples",
       secondaryHref: "/explore?template=portrait",
+      templateType: "portrait",
     },
   ],
+  onPickTemplate,
+  disabled = false,
+  primaryLoadingLabel,
 }: Props) {
   const [infoOpen, setInfoOpen] = useState(false)
 
@@ -76,7 +96,6 @@ export default function CreateKonfolioCard({
       const GAP = 6
 
       const BTN_W = 36
-
       const baseIconCenterX = sectionRect.width - BTN_W / 2
 
       const padding = 8
@@ -84,11 +103,9 @@ export default function CreateKonfolioCard({
       const maxCenterX = sectionRect.width - padding - POPOVER_W / 2
 
       const desiredCenterX = Math.max(minCenterX, Math.min(baseIconCenterX, maxCenterX))
-
       setIconShiftX(desiredCenterX - baseIconCenterX)
 
       const left = desiredCenterX - POPOVER_W / 2
-
       const top = btnRect.bottom - sectionRect.top + GAP + ARROW_H
 
       setPopoverStyle({
@@ -106,14 +123,12 @@ export default function CreateKonfolioCard({
     return () => window.removeEventListener("resize", compute)
   }, [infoOpen])
 
-  // Close on outside click / ESC (single source of truth)
   useEffect(() => {
     const onPointerDown = (e: PointerEvent) => {
       const btn = infoBtnRef.current
       const pop = document.getElementById("create-konfolio-info-popover")
       const target = e.target as Node
 
-      // Let the button handle toggle
       if (btn?.contains(target)) return
       if (pop?.contains(target)) return
 
@@ -135,25 +150,15 @@ export default function CreateKonfolioCard({
   return (
     <section
       ref={sectionRef}
-      className="
-        relative
-        w-[1254px] h-[766px]
-        flex flex-col items-end
-        gap-[41px]
-        max-w-[calc(100vw-40px)]
-      "
+      className="relative w-[1254px] h-[766px] flex flex-col items-end gap-[41px] max-w-[calc(100vw-40px)]"
     >
-      {/* Header */}
       <div className="relative w-full h-[18px] flex items-center justify-center">
-        <p className="m-0 font-inter font-normal text-[25px] leading-[30px] text-[#262626] text-center">
-          Create your first Konfolio
-        </p>
+        <p className="m-0 font-inter font-normal text-[25px] leading-[30px] text-[#262626] text-center">{title}</p>
 
-        {/* Info button */}
         <button
           ref={infoBtnRef}
           type="button"
-          onClick={() => setInfoOpen((v) => !v)} 
+          onClick={() => setInfoOpen((v) => !v)}
           className="
             absolute right-0 top-1/2
             w-[36px] h-[36px]
@@ -164,9 +169,7 @@ export default function CreateKonfolioCard({
             focus:outline-none focus-visible:outline-none
             focus:ring-0 focus-visible:ring-0
           "
-          style={{
-            transform: `translate(${iconShiftX}px, -50%)`,
-          }}
+          style={{ transform: `translate(${iconShiftX}px, -50%)` }}
           aria-label="Info"
           aria-expanded={infoOpen}
         >
@@ -174,27 +177,27 @@ export default function CreateKonfolioCard({
         </button>
       </div>
 
-      {/* Popover */}
       <div style={popoverStyle}>
         <div id="create-konfolio-info-popover">
           <InfoPopover open={infoOpen} text={infoText} onClose={() => setInfoOpen(false)} />
         </div>
       </div>
 
-      {/* White card */}
-      <div
-        className="
-          relative
-          w-[1254px] h-[707px]
-          bg-white
-          rounded-[15px]
-          shadow-[4px_4px_15px_rgba(0,0,0,0.1)]
-        "
-      >
+      <div className="relative w-[1254px] h-[707px] bg-white rounded-[15px] shadow-[4px_4px_15px_rgba(0,0,0,0.1)]">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-full px-[67px] flex items-center justify-between">
-            <TemplateColumn t={templates[0]} />
-            <TemplateColumn t={templates[1]} />
+            <TemplateColumn
+              t={templates[0]}
+              onPickTemplate={onPickTemplate}
+              disabled={disabled}
+              loadingLabel={primaryLoadingLabel}
+            />
+            <TemplateColumn
+              t={templates[1]}
+              onPickTemplate={onPickTemplate}
+              disabled={disabled}
+              loadingLabel={primaryLoadingLabel}
+            />
           </div>
         </div>
       </div>
@@ -202,23 +205,26 @@ export default function CreateKonfolioCard({
   )
 }
 
-function TemplateColumn({ t }: { t: TemplateCard }) {
+function TemplateColumn({
+  t,
+  onPickTemplate,
+  disabled,
+  loadingLabel,
+}: {
+  t: TemplateCard
+  onPickTemplate?: (t: TemplateType) => void
+  disabled?: boolean
+  loadingLabel?: string
+}) {
   return (
     <div className="w-[540px] h-[585.71px] flex flex-col items-center gap-[30px]">
-      {/* Title */}
       <div className="w-[240px] flex flex-col items-center gap-[15px]">
-        <p className="m-0 font-roboto text-[20px] leading-[23px] text-[#262626] text-center">
-          {t.title}
-        </p>
-        <p className="m-0 font-roboto text-[13px] leading-[15px] text-[#A5A5A5] text-center">
-          {t.subtitle}
-        </p>
+        <p className="m-0 font-roboto text-[20px] leading-[23px] text-[#262626] text-center">{t.title}</p>
+        <p className="m-0 font-roboto text-[13px] leading-[15px] text-[#A5A5A5] text-center">{t.subtitle}</p>
       </div>
 
-      {/* Tag */}
       <Tag label={t.tagLabel} className="text-[#A5A5A5]" />
 
-      {/* Preview image */}
       <div
         className="
           relative
@@ -232,22 +238,35 @@ function TemplateColumn({ t }: { t: TemplateCard }) {
         "
         style={{ height: "350.7143px" }}
       >
-        <Image
-          src={t.imageSrc}
-          alt={t.imageAlt}
-          fill
-          sizes="540px"
-          className="object-contain"
-          priority={false}
-        />
+        <Image src={t.imageSrc} alt={t.imageAlt} fill sizes="540px" className="object-contain" priority={false} />
       </div>
 
-      {/* Primary CTA */}
-      <PrimaryButton href={t.primaryHref} icon="none">
-        {t.primaryCta}
-      </PrimaryButton>
+      {onPickTemplate ? (
+        <button
+          type="button"
+          disabled={!!disabled}
+          onClick={() => onPickTemplate(t.templateType)}
+          className={`
+            group flex items-center justify-center gap-[7px]
+            h-[39px] min-w-[150px] px-[40px] py-[13px]
+            rounded-[100px]
+            text-[14px] leading-[140%] font-normal whitespace-nowrap
+            transition-all duration-100 ease-out
+            ${
+              disabled
+                ? "bg-[#262626]/40 text-white/70 cursor-not-allowed"
+                : "bg-[#262626] text-white hover:bg-[#262626CC] active:bg-[#262626B2]"
+            }
+          `}
+        >
+          <span>{disabled && loadingLabel ? loadingLabel : t.primaryCta}</span>
+        </button>
+      ) : (
+        <PrimaryButton href={t.primaryHref ?? "/my-portfolios/new"} icon="none">
+          {t.primaryCta}
+        </PrimaryButton>
+      )}
 
-      {/* Secondary CTA */}
       <Link
         href={t.secondaryHref}
         className="

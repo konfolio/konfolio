@@ -300,7 +300,7 @@ function Navbar({ signedIn = false, firstName = "Trinity", profileImageUrl }) {
                                 lineNumber: 125,
                                 columnNumber: 15
                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                href: "/onboarding/audience",
+                                href: "/login",
                                 className: " hidden lg:flex h-[24px] items-center justify-center text-[17px] leading-[140%] font-normal text-center text-[#262626] whitespace-nowrap transition-all duration-100 ease-out hover:font-semibold ",
                                 children: "Sign In"
                             }, void 0, false, {
@@ -926,7 +926,7 @@ function CreateKonfolioCard({ infoText = "We work with templates to reduce varie
         imageSrc: "/images/template-1.png",
         imageAlt: "Square template preview",
         primaryCta: "Use Square Template",
-        primaryHref: "/my-portfolios/edit-square",
+        primaryHref: "/my-portfolios/create?template=square",
         secondaryCta: "Explore Square Examples",
         secondaryHref: "/explore?template=square"
     },
@@ -937,7 +937,7 @@ function CreateKonfolioCard({ infoText = "We work with templates to reduce varie
         imageSrc: "/images/template-2.png",
         imageAlt: "Portrait template preview",
         primaryCta: "Use Portrait Template",
-        primaryHref: "/my-portfolios/edit-portrait",
+        primaryHref: "/my-portfolios/create?template=portrait",
         secondaryCta: "Explore Portrait Examples",
         secondaryHref: "/explore?template=portrait"
     }

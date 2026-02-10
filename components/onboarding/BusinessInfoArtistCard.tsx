@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
 import ArrowLeft from "@/components/icons/ArrowLeft"
 import ArrowDown from "@/components/icons/ArrowDown"
@@ -9,17 +9,20 @@ import OnboardingField from "@/components/onboarding/OnboardingField"
 import { useOnboardingDraft } from "@/stores/onboardingDraft"
 
 type Props = {
-  displayName: string
+  displayName?: string // optional fallback
   backHref: string
   nextHref: string
 }
 
 export default function BusinessInfoArtistCard({
-  displayName,
+  displayName = "",
   backHref,
   nextHref,
 }: Props) {
   // Zustand state
+  const firstName = useOnboardingDraft((s) => s.firstName)
+  const preferredName = useOnboardingDraft((s) => s.preferredName)
+
   const businessName = useOnboardingDraft((s) => s.businessName)
   const location = useOnboardingDraft((s) => s.location)
   const salesPermit = useOnboardingDraft((s) => s.salesPermit)
@@ -30,6 +33,10 @@ export default function BusinessInfoArtistCard({
   const setLocation = useOnboardingDraft((s) => s.setLocation)
   const setSalesPermit = useOnboardingDraft((s) => s.setSalesPermit)
   const setWillApply = useOnboardingDraft((s) => s.setWillApply)
+
+  const helloName = useMemo(() => {
+    return (preferredName || firstName || displayName || "").trim()
+  }, [preferredName, firstName, displayName])
 
   const canContinue =
     businessName.trim() !== "" &&
@@ -75,7 +82,7 @@ export default function BusinessInfoArtistCard({
         <ArrowLeft href={backHref} className="absolute left-0" />
 
         <p className="m-0 font-inter font-normal text-[25px] leading-[30px] text-black text-center">
-          Hello, {displayName}!
+          Hello{helloName ? `, ${helloName}` : ""}!
         </p>
       </div>
 

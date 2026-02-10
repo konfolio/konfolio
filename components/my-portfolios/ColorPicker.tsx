@@ -1,15 +1,22 @@
 // components/my-portfolios/ColorPicker.tsx
 "use client"
 
-import React, { useEffect, useMemo, useRef, useState } from "react"
+import React, { useMemo, useRef, useState, useEffect } from "react"
 import PlusIcon from "@/components/icons/PlusIcon"
 import PopoverArrow from "@/components/icons/PopoverArrow"
 import DeleteIcon from "@/components/icons/DeleteIcon"
 
 type Props = {
   label?: string
-  initialHex?: string
-  onChange?: (hex: string) => void
+
+  /** Controlled hex (preferred) */
+  valueHex?: string
+  onChangeHex?: (hex: string) => void
+
+  /** Optional controlled swatches (persist in draft/store) */
+  swatches?: string[]
+  onChangeSwatches?: (next: string[]) => void
+
   onRequestClose?: () => void
 }
 
@@ -104,41 +111,42 @@ function hsvToHex(hsv: HSV) {
 
 export default function ColorPicker({
   label = "Banner Color",
-  initialHex = "#1708FF",
-  onChange,
+  valueHex = "#1708FF",
+  onChangeHex,
+  swatches: swatchesProp,
+  onChangeSwatches,
   onRequestClose,
 }: Props) {
-  const safeInitial = useMemo(() => (isValidHex(initialHex) ? normalizeHex(initialHex) : "#1708FF"), [initialHex])
+  const safeValue = useMemo(() => (isValidHex(valueHex) ? normalizeHex(valueHex) : "#1708FF"), [valueHex])
 
-  const [hsv, setHsv] = useState<HSV>(() => hexToHsv(safeInitial))
-  const [hexInput, setHexInput] = useState<string>(() => safeInitial)
-  const [swatches, setSwatches] = useState<string[]>([]) // starts empty
+  // local hsv mirrors the controlled hex
+  const [hsv, setHsv] = useState<HSV>(() => hexToHsv(safeValue))
+  const [hexInput, setHexInput] = useState<string>(() => safeValue)
   const [selectedSwatch, setSelectedSwatch] = useState<string | null>(null)
+
+  // swatches controlled/uncontrolled
+  const [swatchesLocal, setSwatchesLocal] = useState<string[]>([])
+  const swatches = swatchesProp ?? swatchesLocal
+
+  // keep local hsv/input synced when parent changes valueHex
+  useEffect(() => {
+    setHsv(hexToHsv(safeValue))
+    setHexInput(safeValue)
+    setSelectedSwatch(null)
+  }, [safeValue])
 
   const currentHex = useMemo(() => hsvToHex(hsv), [hsv])
 
-  // --- prevent infinite loop when syncing from props ---
-  const syncingRef = useRef(false)
-  const lastInitialRef = useRef<string>(safeInitial)
+  // Only emit to parent from event handlers
+  const emitHex = (hex: string) => {
+    onChangeHex?.(hex)
+    setHexInput((prev) => (isValidHex(prev) ? hex : prev))
+  }
 
-  useEffect(() => {
-    if (lastInitialRef.current === safeInitial) return
-    lastInitialRef.current = safeInitial
-
-    syncingRef.current = true
-    setHsv(hexToHsv(safeInitial))
-    setHexInput(safeInitial)
-    setSelectedSwatch(null)
-  }, [safeInitial])
-
-  useEffect(() => {
-    if (syncingRef.current) {
-      syncingRef.current = false
-      return
-    }
-    onChange?.(currentHex)
-    setHexInput((prev) => (isValidHex(prev) ? currentHex : prev))
-  }, [currentHex, onChange])
+  const setSwatches = (next: string[]) => {
+    if (onChangeSwatches) onChangeSwatches(next)
+    else setSwatchesLocal(next)
+  }
 
   // ESC closes
   useEffect(() => {
@@ -169,7 +177,10 @@ export default function ColorPicker({
     const v = rect.height === 0 ? 0 : 1 - y / rect.height
 
     setSelectedSwatch(null)
-    setHsv((prev) => ({ ...prev, s, v }))
+
+    const next = { ...hsv, s, v }
+    setHsv(next)
+    emitHex(hsvToHex(next))
   }
 
   function setFromHueClientPoint(clientX: number) {
@@ -182,7 +193,10 @@ export default function ColorPicker({
     const h = t * 360
 
     setSelectedSwatch(null)
-    setHsv((prev) => ({ ...prev, h }))
+
+    const next = { ...hsv, h }
+    setHsv(next)
+    emitHex(hsvToHex(next))
   }
 
   function onPointerDownSV(e: React.PointerEvent) {
@@ -214,26 +228,27 @@ export default function ColorPicker({
     const normalized = normalizeHex(next)
     setSelectedSwatch(null)
     setHsv(hexToHsv(normalized))
+    emitHex(normalized)
   }
 
   function addSwatch() {
     if (swatches.length >= MAX_SWATCHES) return
     const hex = currentHex
-    setSwatches((prev) => {
-      if (prev.includes(hex)) return prev
-      if (prev.length >= MAX_SWATCHES) return prev
-      return [...prev, hex]
-    })
+    if (swatches.includes(hex)) return
+    const next = [...swatches, hex].slice(0, MAX_SWATCHES)
+    setSwatches(next)
     setSelectedSwatch(hex)
   }
 
   function pickSwatch(hex: string) {
     setSelectedSwatch(hex)
     setHsv(hexToHsv(hex))
+    emitHex(hex)
   }
 
   function deleteSwatch(hex: string) {
-    setSwatches((prev) => prev.filter((c) => c !== hex))
+    const next = swatches.filter((c) => c !== hex)
+    setSwatches(next)
     setSelectedSwatch((prev) => (prev === hex ? null : prev))
   }
 
@@ -307,7 +322,6 @@ export default function ColorPicker({
           </div>
         </div>
 
-        {/* Top-left anchored swatches */}
         <div className="cpSwatches">
           {swatches.map((hex) => (
             <div key={hex} className="cpSwatchWrap">
@@ -343,7 +357,6 @@ export default function ColorPicker({
           position: relative;
           width: 276px;
         }
-
         .cpArrow {
           position: absolute;
           top: -8px;
@@ -356,13 +369,11 @@ export default function ColorPicker({
           align-items: flex-end;
           justify-content: center;
         }
-
         .cpArrowSvg {
           transform: scaleX(1.6);
           transform-origin: center bottom;
           display: block;
         }
-
         .cpRoot {
           position: relative;
           width: 276px;
@@ -377,7 +388,6 @@ export default function ColorPicker({
           isolation: isolate;
           box-shadow: 5px 5px 25px rgba(0, 0, 0, 0.05);
         }
-
         .cpHeaderRow {
           width: 276px;
           height: 33px;
@@ -387,7 +397,6 @@ export default function ColorPicker({
           align-items: center;
           box-sizing: border-box;
         }
-
         .cpLabel {
           font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
           font-weight: 400;
@@ -399,7 +408,6 @@ export default function ColorPicker({
           overflow: hidden;
           text-overflow: ellipsis;
         }
-
         .cpHexPill {
           display: flex;
           align-items: center;
@@ -411,14 +419,12 @@ export default function ColorPicker({
           border-radius: 4px;
           box-sizing: border-box;
         }
-
         .cpTinySwatch {
           width: 25px;
           height: 25px;
           border-radius: 4px;
           flex: none;
         }
-
         .cpHexInput {
           width: 70px;
           border: none;
@@ -431,7 +437,6 @@ export default function ColorPicker({
           color: #888888;
           padding: 0;
         }
-
         .cpSVWrap {
           width: 276px;
           height: 292px;
@@ -439,7 +444,6 @@ export default function ColorPicker({
           padding: 0 10px;
           box-sizing: border-box;
         }
-
         .cpSV {
           width: 256px;
           height: 292px;
@@ -449,25 +453,21 @@ export default function ColorPicker({
           touch-action: none;
           user-select: none;
         }
-
         .cpSVWhite {
           position: absolute;
           inset: 0;
           background: linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, #ffffff 100%);
         }
-
         .cpSVBlack {
           position: absolute;
           inset: 0;
           background: linear-gradient(360deg, #000000 0%, rgba(0, 0, 0, 0) 100%);
         }
-
         .cpSVCursor {
           position: absolute;
           width: 14px;
           height: 14px;
         }
-
         .cpSVCursorRing {
           position: absolute;
           inset: 0;
@@ -476,14 +476,12 @@ export default function ColorPicker({
           box-sizing: border-box;
           z-index: 1;
         }
-
         .cpSVCursorFill {
           position: absolute;
           inset: 0;
           border-radius: 999px;
           z-index: 0;
         }
-
         .cpHueRow {
           width: 276px;
           height: 36px;
@@ -493,7 +491,6 @@ export default function ColorPicker({
           justify-content: center;
           box-sizing: border-box;
         }
-
         .cpHueTrack {
           width: 256px;
           height: 16px;
@@ -530,7 +527,6 @@ export default function ColorPicker({
           touch-action: none;
           user-select: none;
         }
-
         .cpHueThumb {
           box-sizing: border-box;
           position: absolute;
@@ -541,8 +537,6 @@ export default function ColorPicker({
           box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
           border-radius: 8px;
         }
-
-        /* Bigger gaps between swatches */
         .cpSwatches {
           width: 276px;
           height: 105px;
@@ -553,15 +547,13 @@ export default function ColorPicker({
           align-items: flex-start;
           align-content: flex-start;
           justify-content: flex-start;
-          gap: 20px 22px; 
+          gap: 20px 22px;
         }
-
         .cpSwatchWrap {
           width: 46px;
           height: 46px;
           position: relative;
         }
-
         .cpSwatchBtn {
           width: 46px;
           height: 46px;
@@ -571,14 +563,12 @@ export default function ColorPicker({
           position: relative;
           cursor: pointer;
         }
-
         .cpSwatch {
           width: 46px;
           height: 46px;
           border-radius: 95.8333px;
           display: block;
         }
-
         .cpSwatchSelectedRing {
           position: absolute;
           left: 4.79px;
@@ -590,7 +580,6 @@ export default function ColorPicker({
           box-sizing: border-box;
           pointer-events: none;
         }
-
         .cpDeleteBtn {
           position: absolute;
           right: -0.25px;
@@ -609,24 +598,20 @@ export default function ColorPicker({
           transform: scale(0.95);
           transition: opacity 150ms ease, transform 150ms ease;
         }
-
         .cpSwatchWrap:hover .cpDeleteBtn {
           opacity: 1;
           transform: scale(1);
         }
-
         .cpDeleteIcon {
           width: 13.42px;
           height: 13.42px;
         }
-
         .cpDeleteBtn :global(path),
         .cpDeleteBtn :global(line),
         .cpDeleteBtn :global(svg) {
           stroke: #ffffff !important;
           fill: none !important;
         }
-
         .cpAddBtn {
           width: 46px;
           height: 46px;
@@ -638,7 +623,6 @@ export default function ColorPicker({
           align-items: center;
           justify-content: center;
         }
-
         .cpAddBtn :global(svg),
         .cpAddBtn :global(path),
         .cpAddBtn :global(line) {

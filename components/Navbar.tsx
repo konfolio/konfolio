@@ -1,13 +1,14 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
+import { useEffect, useMemo, useState } from "react"
 import { inknut } from "@/app/fonts"
+import { supabase } from "@/lib/supabaseClient"
 
-type Props = {
-  signedIn?: boolean
-  firstName?: string
-  profileImageUrl?: string
+type Profile = {
+  first_name: string | null
+  profile_image_url: string | null
 }
 
 function normalizePath(pathnameRaw: string) {
@@ -60,18 +61,77 @@ function NavItem({
   )
 }
 
-export default function Navbar({
-  signedIn = false,
-  firstName = "Trinity",
-  profileImageUrl,
-}: Props) {
+export default function Navbar() {
+  const router = useRouter()
   const pathnameRaw = usePathname() || ""
   const pathname = normalizePath(pathnameRaw)
+
+  const [signedIn, setSignedIn] = useState(false)
+  const [firstName, setFirstName] = useState<string>("")
+  const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null)
 
   const isExploreActive = pathname === "/explore" || pathname.startsWith("/explore/")
   const isPortfoliosActive =
     pathname === "/my-portfolios" || pathname.startsWith("/my-portfolios/")
   const isSupportActive = pathname === "/support" || pathname.startsWith("/support/")
+
+  // Pull session + profile (and keep in sync with auth events)
+  useEffect(() => {
+    let mounted = true
+
+    async function load() {
+      const { data } = await supabase.auth.getSession()
+      const user = data.session?.user
+
+      if (!mounted) return
+
+      if (!user) {
+        setSignedIn(false)
+        setFirstName("")
+        setProfileImageUrl(null)
+        return
+      }
+
+      setSignedIn(true)
+
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("first_name, profile_image_url")
+        .eq("id", user.id)
+        .maybeSingle()
+
+      if (!mounted) return
+
+      if (error) {
+        // If profile is blocked/missing, still consider the user signed in,
+        // but fall back to initials.
+        setFirstName("")
+        setProfileImageUrl(null)
+        return
+      }
+
+      const p = profile as Profile | null
+      setFirstName((p?.first_name || "").trim())
+      setProfileImageUrl(p?.profile_image_url ?? null)
+    }
+
+    load()
+
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, _session) => {
+      // reload state when user signs in/out
+      load()
+    })
+
+    return () => {
+      mounted = false
+      sub.subscription.unsubscribe()
+    }
+  }, [])
+
+  const initials = useMemo(() => {
+    const c = firstName?.[0]?.toUpperCase()
+    return c && c.length ? c : "U"
+  }, [firstName])
 
   return (
     <nav className="w-full h-[61px] bg-white">
@@ -151,7 +211,7 @@ export default function Navbar({
                     />
                   ) : (
                     <span className="text-[12px] font-inter text-[#262626]">
-                      {firstName?.[0]?.toUpperCase() ?? "U"}
+                      {initials}
                     </span>
                   )}
                 </span>
@@ -166,12 +226,12 @@ export default function Navbar({
                     whitespace-nowrap
                   "
                 >
-                  {firstName}
+                  {firstName || "Account"}
                 </span>
               </Link>
             ) : (
               <Link
-                href="/onboarding/audience"
+                href="/login"
                 className="
                   hidden lg:flex
                   h-[24px]
@@ -190,7 +250,7 @@ export default function Navbar({
 
             {/* Mobile: keep simple */}
             <Link
-              href={signedIn ? "/explore" : "/explore"}
+              href="/explore"
               className="
                 flex lg:hidden
                 h-[24px]

@@ -2821,7 +2821,7 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange, layout = "
             open
         ]);
         const shouldPutPlusInRow1 = row2.length === 0;
-        // ✅ Portrait: plus disappears once limit reached (already true)
+        // Portrait: plus disappears once limit reached 
         const PlusTrigger = !limitReached ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
             ref: plusBtnRef,
             type: "button",
@@ -2916,7 +2916,7 @@ function MerchTagPicker({ maxTags = 8, onMerchClick, value, onChange, layout = "
         }, this);
     }
     // ===== Default layout (square sidebar) =====
-    // ✅ Change: hide the plus trigger when limitReached (so it never appears after 8)
+    // hide the plus trigger when limitReached (so it never appears after 8)
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "w-[276px] flex flex-col items-center gap-[12px]",
         children: [

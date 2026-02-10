@@ -11,7 +11,7 @@ import { useOnboardingDraft } from "@/stores/onboardingDraft"
 type Props = {
   backHref: string
   nextHref: string
-  businessName: string
+  businessName?: string // optional fallback
   maxTags?: number
 }
 
@@ -131,9 +131,12 @@ function splitLowAccuracy(label: string) {
 export default function MerchTypeCard({
   backHref,
   nextHref,
-  businessName,
+  businessName = "",
   maxTags = 8,
 }: Props) {
+  // Store business name always wins (prevents org name leak)
+  const storeBusinessName = useOnboardingDraft((s) => s.businessName)
+
   // Zustand state
   const selected = useOnboardingDraft((s) => s.merchTags)
   const setMerchTags = useOnboardingDraft((s) => s.setMerchTags)
@@ -144,7 +147,9 @@ export default function MerchTypeCard({
   const wrapRef = useRef<HTMLDivElement | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null)
 
-  const title = `Tell us more about ${businessName}`
+  const headerName = (storeBusinessName || businessName || "").trim()
+  const title = headerName ? `Tell us more about ${headerName}` : "Tell us more about your merchandise"
+
   const limitReached = selected.length >= maxTags
   const canContinue = selected.length > 0
 
@@ -409,7 +414,7 @@ export default function MerchTypeCard({
                   className="group relative inline-flex items-center"
                 >
                   <Tag label={label} />
-              
+
                   {/* Hover Delete Button */}
                   <button
                     type="button"
@@ -428,7 +433,7 @@ export default function MerchTypeCard({
                       rounded-full
                       bg-[#A5A5A5]
                       z-[1]
-              
+
                       opacity-0
                       group-hover:opacity-100
                       transition-opacity
@@ -440,7 +445,7 @@ export default function MerchTypeCard({
                     </span>
                   </button>
                 </div>
-              ))              
+              ))
             )}
           </div>
 

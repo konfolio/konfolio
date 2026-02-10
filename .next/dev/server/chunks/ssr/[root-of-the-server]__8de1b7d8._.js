@@ -646,8 +646,10 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$sto
 ;
 ;
 ;
-function BusinessInfoArtistCard({ displayName, backHref, nextHref }) {
+function BusinessInfoArtistCard({ displayName = "", backHref, nextHref }) {
     // Zustand state
+    const firstName = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOnboardingDraft"])((s)=>s.firstName);
+    const preferredName = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOnboardingDraft"])((s)=>s.preferredName);
     const businessName = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOnboardingDraft"])((s)=>s.businessName);
     const location = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOnboardingDraft"])((s)=>s.location);
     const salesPermit = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOnboardingDraft"])((s)=>s.salesPermit);
@@ -657,6 +659,13 @@ function BusinessInfoArtistCard({ displayName, backHref, nextHref }) {
     const setLocation = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOnboardingDraft"])((s)=>s.setLocation);
     const setSalesPermit = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOnboardingDraft"])((s)=>s.setSalesPermit);
     const setWillApply = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOnboardingDraft"])((s)=>s.setWillApply);
+    const helloName = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useMemo"])(()=>{
+        return (preferredName || firstName || displayName || "").trim();
+    }, [
+        preferredName,
+        firstName,
+        displayName
+    ]);
     const canContinue = businessName.trim() !== "" && location.trim() !== "" && (salesPermit !== "" || willApply);
     // dropdown open state
     const [open, setOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
@@ -688,25 +697,25 @@ function BusinessInfoArtistCard({ displayName, backHref, nextHref }) {
                         className: "absolute left-0"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                        lineNumber: 75,
+                        lineNumber: 82,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                         className: "m-0 font-inter font-normal text-[25px] leading-[30px] text-black text-center",
                         children: [
-                            "Hello, ",
-                            displayName,
+                            "Hello",
+                            helloName ? `, ${helloName}` : "",
                             "!"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                        lineNumber: 77,
+                        lineNumber: 84,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                lineNumber: 74,
+                lineNumber: 81,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -718,7 +727,7 @@ function BusinessInfoArtistCard({ displayName, backHref, nextHref }) {
                         onChange: setBusinessName
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                        lineNumber: 84,
+                        lineNumber: 91,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$onboarding$2f$OnboardingField$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -728,7 +737,7 @@ function BusinessInfoArtistCard({ displayName, backHref, nextHref }) {
                         placeholder: "City, State"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                        lineNumber: 90,
+                        lineNumber: 97,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -742,12 +751,12 @@ function BusinessInfoArtistCard({ displayName, backHref, nextHref }) {
                                     children: "Valid Sales Permit"
                                 }, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                                    lineNumber: 103,
+                                    lineNumber: 110,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                                lineNumber: 102,
+                                lineNumber: 109,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -760,18 +769,18 @@ function BusinessInfoArtistCard({ displayName, backHref, nextHref }) {
                                         children: salesPermit === "" ? "Select" : salesPermit === "yes" ? "Yes" : "No"
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                                        lineNumber: 122,
+                                        lineNumber: 129,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$ArrowDown$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                                        lineNumber: 133,
+                                        lineNumber: 140,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                                lineNumber: 109,
+                                lineNumber: 116,
                                 columnNumber: 11
                             }, this),
                             open && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -789,18 +798,18 @@ function BusinessInfoArtistCard({ displayName, backHref, nextHref }) {
                                         children: opt === "yes" ? "Yes" : "No"
                                     }, opt, false, {
                                         fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                                        lineNumber: 151,
+                                        lineNumber: 158,
                                         columnNumber: 17
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                                lineNumber: 138,
+                                lineNumber: 145,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                        lineNumber: 98,
+                        lineNumber: 105,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
@@ -824,17 +833,17 @@ function BusinessInfoArtistCard({ displayName, backHref, nextHref }) {
                                         className: "[&_path]:stroke-white"
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                                        lineNumber: 193,
+                                        lineNumber: 200,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                                    lineNumber: 184,
+                                    lineNumber: 191,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                                lineNumber: 176,
+                                lineNumber: 183,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -844,7 +853,7 @@ function BusinessInfoArtistCard({ displayName, backHref, nextHref }) {
                                 onChange: (e)=>setWillApply(e.target.checked)
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                                lineNumber: 198,
+                                lineNumber: 205,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -852,19 +861,19 @@ function BusinessInfoArtistCard({ displayName, backHref, nextHref }) {
                                 children: "I will apply for a sales permit."
                             }, void 0, false, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                                lineNumber: 205,
+                                lineNumber: 212,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                        lineNumber: 175,
+                        lineNumber: 182,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                lineNumber: 83,
+                lineNumber: 90,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$buttons$2f$PrimaryButton$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -873,13 +882,13 @@ function BusinessInfoArtistCard({ displayName, backHref, nextHref }) {
                 children: "Next"
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-                lineNumber: 212,
+                lineNumber: 219,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx",
-        lineNumber: 62,
+        lineNumber: 69,
         columnNumber: 5
     }, this);
 }

@@ -1,7 +1,7 @@
 module.exports = [
-"[project]/Downloads/konfolio/.next-internal/server/app/onboarding/business-info/artist/page/actions.js [app-rsc] (server actions loader, ecmascript)", ((__turbopack_context__, module, exports) => {
+"[project]/Downloads/konfolio/.next-internal/server/app/onboarding/business-info/artist/page/actions.js [app-rsc] (server actions loader, ecmascript)", (() => {{
 
-}),
+throw new Error("An error occurred while generating the chunk item [project]/Downloads/konfolio/.next-internal/server/app/onboarding/business-info/artist/page/actions.js [app-rsc] (server actions loader, ecmascript)\n\nCaused by:\n- failed to parse [project]/Downloads/konfolio/.next-internal/server/app/onboarding/business-info/artist/page/actions.js (server actions loader)\n- Cell CellId { type_id: ValueTypeId { id: 210, name: ValueType { name: \"turbo_tasks_fs::FileContent\", dbg: \"(trait fn)\", dbg_depth: \"(trait fn)\" } }, index: 0 } no longer exists in task build_server_actions_loader (no cell of this type exists)\n\nDebug info:\n- An error occurred while generating the chunk item [project]/Downloads/konfolio/.next-internal/server/app/onboarding/business-info/artist/page/actions.js [app-rsc] (server actions loader, ecmascript)\n- Execution of <ModuleChunkItem as EcmascriptChunkItem>::content_with_async_module_info failed\n- Execution of *EcmascriptChunkItemContent::new failed\n- Execution of *EcmascriptModuleContent::new failed\n- Execution of <EcmascriptModuleAsset as EcmascriptAnalyzable>::module_content_options failed\n- Execution of parse failed\n- failed to parse [project]/Downloads/konfolio/.next-internal/server/app/onboarding/business-info/artist/page/actions.js (server actions loader)\n- Cell CellId { type_id: ValueTypeId { id: 210, name: ValueType { name: \"turbo_tasks_fs::FileContent\", dbg: \"(trait fn)\", dbg_depth: \"(trait fn)\" } }, index: 0 } no longer exists in task build_server_actions_loader (no cell of this type exists)");
+
+}}),
 ];
-
-//# sourceMappingURL=5c2dc__next-internal_server_app_onboarding_business-info_artist_page_actions_5a62964e.js.map

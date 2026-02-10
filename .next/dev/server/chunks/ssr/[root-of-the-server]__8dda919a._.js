@@ -561,6 +561,7 @@ __turbopack_context__.s([
     ()=>BusinessInfoHostCard
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$buttons$2f$PrimaryButton$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/components/buttons/PrimaryButton.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$ArrowLeft$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/components/icons/ArrowLeft.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$onboarding$2f$OnboardingField$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/components/onboarding/OnboardingField.tsx [app-ssr] (ecmascript)");
@@ -571,8 +572,10 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$sto
 ;
 ;
 ;
-function BusinessInfoHostCard({ orgName, backHref, nextHref }) {
+;
+function BusinessInfoHostCard({ orgName = "", backHref, nextHref }) {
     // Zustand state
+    const organization = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOnboardingDraft"])((s)=>s.organization);
     const hostWebsite = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOnboardingDraft"])((s)=>s.hostWebsite);
     const orgSize = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOnboardingDraft"])((s)=>s.orgSize);
     const attendees = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOnboardingDraft"])((s)=>s.attendees);
@@ -582,6 +585,12 @@ function BusinessInfoHostCard({ orgName, backHref, nextHref }) {
     const setOrgSize = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOnboardingDraft"])((s)=>s.setOrgSize);
     const setAttendees = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOnboardingDraft"])((s)=>s.setAttendees);
     const setEventLocation = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOnboardingDraft"])((s)=>s.setEventLocation);
+    const headerOrg = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useMemo"])(()=>{
+        return (organization || orgName || "").trim();
+    }, [
+        organization,
+        orgName
+    ]);
     const canContinue = hostWebsite.trim() !== "" && orgSize.trim() !== "" && attendees.trim() !== "" && eventLocation.trim() !== "";
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: " relative w-[914px] h-[636px] flex flex-col justify-between items-center px-[45px] py-[50px] bg-white rounded-[15px] shadow-[8px_8px_50px_rgba(0,0,0,0.05)] max-w-[calc(100vw-40px)] ",
@@ -594,25 +603,25 @@ function BusinessInfoHostCard({ orgName, backHref, nextHref }) {
                         className: "absolute left-0"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoHostCard.tsx",
-                        lineNumber: 47,
+                        lineNumber: 58,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                         className: "m-0 font-inter font-normal text-[25px] leading-[30px] text-black text-center",
                         children: [
                             "Tell us more about ",
-                            orgName,
+                            headerOrg || "your organization",
                             "!"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoHostCard.tsx",
-                        lineNumber: 49,
+                        lineNumber: 60,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoHostCard.tsx",
-                lineNumber: 46,
+                lineNumber: 57,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -624,7 +633,7 @@ function BusinessInfoHostCard({ orgName, backHref, nextHref }) {
                         onChange: setHostWebsite
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoHostCard.tsx",
-                        lineNumber: 56,
+                        lineNumber: 67,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$onboarding$2f$OnboardingField$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -633,7 +642,7 @@ function BusinessInfoHostCard({ orgName, backHref, nextHref }) {
                         onChange: setOrgSize
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoHostCard.tsx",
-                        lineNumber: 62,
+                        lineNumber: 73,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$onboarding$2f$OnboardingField$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -642,23 +651,23 @@ function BusinessInfoHostCard({ orgName, backHref, nextHref }) {
                         onChange: setAttendees
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoHostCard.tsx",
-                        lineNumber: 68,
+                        lineNumber: 79,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$onboarding$2f$OnboardingField$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                         label: "Event Location",
                         value: eventLocation,
                         onChange: setEventLocation,
-                        placeholder: "Placeholder Text"
+                        placeholder: "City, State"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoHostCard.tsx",
-                        lineNumber: 74,
+                        lineNumber: 85,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoHostCard.tsx",
-                lineNumber: 55,
+                lineNumber: 66,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$buttons$2f$PrimaryButton$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -667,13 +676,13 @@ function BusinessInfoHostCard({ orgName, backHref, nextHref }) {
                 children: "Next"
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoHostCard.tsx",
-                lineNumber: 83,
+                lineNumber: 94,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Downloads/konfolio/components/onboarding/BusinessInfoHostCard.tsx",
-        lineNumber: 34,
+        lineNumber: 45,
         columnNumber: 5
     }, this);
 }
