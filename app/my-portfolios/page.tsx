@@ -1,21 +1,18 @@
 import Navbar from "@/components/Navbar"
-import CreateFirstKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+import DashboardProfileHeader from "@/components/my-portfolios/dashboard/DashboardProfileHeader"
 
 export default function MyPortfoliosPage() {
   return (
-    <>
+    <main className="min-h-screen bg-[#F7F7F7]">
       <Navbar />
 
-      <main
-        className="
-          min-h-[calc(100vh-61px)]
-          flex justify-center
-          pt-[60px]
-          pb-[80px]
-        "
-      >
-        <CreateFirstKonfolioCard />
-      </main>
-    </>
+      <DashboardProfileHeader editHref="/profile" createHref="/create" />
+
+      <section className="w-full flex justify-center px-6">
+        <div className="w-full max-w-[1212px] py-[60px]">
+          <div className="text-[#A5A5A5] text-sm">No konfolios yet.</div>
+        </div>
+      </section>
+    </main>
   )
 }

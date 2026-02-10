@@ -1,4 +1,6 @@
 {
+  "/explore/page": "app/explore/page.js",
   "/my-portfolios/[konfolioId]/edit/page": "app/my-portfolios/[konfolioId]/edit/page.js",
-  "/my-portfolios/new/page": "app/my-portfolios/new/page.js"
+  "/my-portfolios/new/page": "app/my-portfolios/new/page.js",
+  "/my-portfolios/page": "app/my-portfolios/page.js"
 }

@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabaseClient"
 
 type Profile = {
   first_name: string | null
+  preferred_name: string | null
   profile_image_url: string | null
 }
 
@@ -67,7 +68,7 @@ export default function Navbar() {
   const pathname = normalizePath(pathnameRaw)
 
   const [signedIn, setSignedIn] = useState(false)
-  const [firstName, setFirstName] = useState<string>("")
+  const [displayName, setDisplayName] = useState<string>("")
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null)
 
   const isExploreActive = pathname === "/explore" || pathname.startsWith("/explore/")
@@ -75,50 +76,54 @@ export default function Navbar() {
     pathname === "/my-portfolios" || pathname.startsWith("/my-portfolios/")
   const isSupportActive = pathname === "/support" || pathname.startsWith("/support/")
 
+  const hideAccountOnMyPortfolios = pathname === "/my-portfolios"
+
   // Pull session + profile (and keep in sync with auth events)
   useEffect(() => {
     let mounted = true
 
     async function load() {
-      const { data } = await supabase.auth.getSession()
-      const user = data.session?.user
+      const sessionRes = await supabase.auth.getSession()
+      const user = sessionRes.data.session?.user
 
       if (!mounted) return
 
       if (!user) {
         setSignedIn(false)
-        setFirstName("")
+        setDisplayName("")
         setProfileImageUrl(null)
         return
       }
 
       setSignedIn(true)
 
-      const { data: profile, error } = await supabase
+      const profileRes = await supabase
         .from("profiles")
-        .select("first_name, profile_image_url")
+        .select("first_name, preferred_name, profile_image_url")
         .eq("id", user.id)
         .maybeSingle()
 
       if (!mounted) return
 
-      if (error) {
+      if (profileRes.error) {
         // If profile is blocked/missing, still consider the user signed in,
         // but fall back to initials.
-        setFirstName("")
+        setDisplayName("")
         setProfileImageUrl(null)
         return
       }
 
-      const p = profile as Profile | null
-      setFirstName((p?.first_name || "").trim())
+      const p = profileRes.data as Profile | null
+      const preferred = (p?.preferred_name || "").trim()
+      const first = (p?.first_name || "").trim()
+
+      setDisplayName(preferred || first)
       setProfileImageUrl(p?.profile_image_url ?? null)
     }
 
     load()
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, _session) => {
-      // reload state when user signs in/out
       load()
     })
 
@@ -129,9 +134,9 @@ export default function Navbar() {
   }, [])
 
   const initials = useMemo(() => {
-    const c = firstName?.[0]?.toUpperCase()
+    const c = displayName?.[0]?.toUpperCase()
     return c && c.length ? c : "U"
-  }, [firstName])
+  }, [displayName])
 
   return (
     <nav className="w-full h-[61px] bg-white">
@@ -182,53 +187,55 @@ export default function Navbar() {
           {/* RIGHT GROUP */}
           <div className="flex items-center">
             {signedIn ? (
-              <Link
-                href="/account"
-                className="
-                  hidden lg:flex
-                  items-center justify-end
-                  gap-[10px]
-                  h-[35px]
-                "
-              >
-                {/* Avatar */}
-                <span
+              hideAccountOnMyPortfolios ? null : (
+                <Link
+                  href="/account"
                   className="
-                    w-[35px] h-[35px]
-                    rounded-full
-                    overflow-hidden
-                    bg-[#EDEDED]
-                    flex items-center justify-center
-                    flex-shrink-0
+                    hidden lg:flex
+                    items-center justify-end
+                    gap-[10px]
+                    h-[35px]
                   "
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {profileImageUrl ? (
-                    <img
-                      src={profileImageUrl}
-                      alt="Profile"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-[12px] font-inter text-[#262626]">
-                      {initials}
-                    </span>
-                  )}
-                </span>
+                  {/* Avatar */}
+                  <span
+                    className="
+                      w-[35px] h-[35px]
+                      rounded-full
+                      overflow-hidden
+                      bg-[#EDEDED]
+                      flex items-center justify-center
+                      flex-shrink-0
+                    "
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    {profileImageUrl ? (
+                      <img
+                        src={profileImageUrl}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-[12px] font-inter text-[#262626]">
+                        {initials}
+                      </span>
+                    )}
+                  </span>
 
-                {/* Name */}
-                <span
-                  className="
-                    font-inter font-normal
-                    text-[17px] leading-[140%]
-                    text-[#262626]
-                    text-right
-                    whitespace-nowrap
-                  "
-                >
-                  {firstName || "Account"}
-                </span>
-              </Link>
+                  {/* Name */}
+                  <span
+                    className="
+                      font-inter font-normal
+                      text-[17px] leading-[140%]
+                      text-[#262626]
+                      text-right
+                      whitespace-nowrap
+                    "
+                  >
+                    {displayName || "Account"}
+                  </span>
+                </Link>
+              )
             ) : (
               <Link
                 href="/login"

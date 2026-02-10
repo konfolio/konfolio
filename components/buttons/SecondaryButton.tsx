@@ -60,7 +60,9 @@ export default function SecondaryButton({
         ${className}
       `}
     >
-      <span className="h-[10px] leading-[10px]">{children}</span>
+      <span className="flex items-center gap-[7px] leading-none">
+        {children}
+      </span>
       {showDiamond ? <DiamondIcon /> : null}
     </button>
   )
