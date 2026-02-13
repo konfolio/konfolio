@@ -1,5 +1,5 @@
 import AuthHeader from "@/components/onboarding/AuthHeader"
-import PrevConsCard from "@/components/onboarding/PrevConsCard"
+import PrevConsCard from "@/components/onboarding/PrevVendsCard"
 
 export default function PrevConsPage() {
   return (

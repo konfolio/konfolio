@@ -123,7 +123,6 @@ type Props = {
   maxTags?: number
   onMerchClick?: () => void
 
-  /** Controlled mode (optional): */
   value?: string[]
   onChange?: (next: string[]) => void
 
@@ -151,6 +150,9 @@ export default function MerchTagPicker({
 
   const wrapRef = useRef<HTMLDivElement | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null)
+
+  const plusBtnRef = useRef<HTMLButtonElement | null>(null)
+  const [anchor, setAnchor] = useState<Anchor | null>(null)
 
   const limitReached = selected.length >= maxTags
   const selectedSet = useMemo(() => new Set(selected.map(keyify)), [selected])
@@ -377,16 +379,53 @@ export default function MerchTagPicker({
       </div>
     ) : null
 
-  // ===== Inline-left layout (portrait header) =====
+  const measureAnchor = (): Anchor | null => {
+    const wrap = wrapRef.current
+    const btn = plusBtnRef.current
+    if (!wrap || !btn) return null
+
+    const wrapRect = wrap.getBoundingClientRect()
+    const btnRect = btn.getBoundingClientRect()
+
+    const left = btnRect.left - wrapRect.left + btnRect.width / 2
+    const top = btnRect.bottom - wrapRect.top + 10
+    return { left, top }
+  }
+
+  const openDropdownInlineLeft = () => {
+    const nextAnchor = measureAnchor()
+    if (!nextAnchor) {
+      setAnchor(null)
+      setOpen(true)
+      requestAnimationFrame(() => inputRef.current?.focus())
+      return
+    }
+    setAnchor(nextAnchor)
+    setOpen(true)
+    requestAnimationFrame(() => inputRef.current?.focus())
+  }
+
+  const closeDropdownInlineLeft = () => {
+    setOpen(false)
+    setAnchor(null)
+  }
+
+  useEffect(() => {
+    if (layout !== "inlineLeft") return
+    if (!open) return
+
+    const onResize = () => {
+      const next = measureAnchor()
+      if (next) setAnchor(next)
+    }
+    window.addEventListener("resize", onResize)
+    return () => window.removeEventListener("resize", onResize)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [layout, open])
+
   if (layout === "inlineLeft") {
-    const plusBtnRef = useRef<HTMLButtonElement | null>(null)
-    const [anchor, setAnchor] = useState<Anchor | null>(null)
-
-    const row1 = selected.slice(0, 6)
-    const row2 = selected.slice(6)
-
     const TagChip = (label: string) => (
-      <div key={label} className="relative group shrink-0">
+      <div key={label} className="relative group">
         <Tag label={label} />
         <button
           type="button"
@@ -411,51 +450,6 @@ export default function MerchTagPicker({
       </div>
     )
 
-    const measureAnchor = (): Anchor | null => {
-      const wrap = wrapRef.current
-      const btn = plusBtnRef.current
-      if (!wrap || !btn) return null
-
-      const wrapRect = wrap.getBoundingClientRect()
-      const btnRect = btn.getBoundingClientRect()
-
-      const left = btnRect.left - wrapRect.left + btnRect.width / 2
-      const top = btnRect.bottom - wrapRect.top + 10
-      return { left, top }
-    }
-
-    const openDropdown = () => {
-      const nextAnchor = measureAnchor()
-      if (!nextAnchor) {
-        setAnchor(null)
-        setOpen(true)
-        requestAnimationFrame(() => inputRef.current?.focus())
-        return
-      }
-      setAnchor(nextAnchor)
-      setOpen(true)
-      requestAnimationFrame(() => inputRef.current?.focus())
-    }
-
-    const closeDropdown = () => {
-      setOpen(false)
-      setAnchor(null)
-    }
-
-    useEffect(() => {
-      if (!open) return
-      const onResize = () => {
-        const nextAnchor = measureAnchor()
-        if (nextAnchor) setAnchor(nextAnchor)
-      }
-      window.addEventListener("resize", onResize)
-      return () => window.removeEventListener("resize", onResize)
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [open])
-
-    const shouldPutPlusInRow1 = row2.length === 0
-
-    // Portrait: plus disappears once limit reached 
     const PlusTrigger = !limitReached ? (
       <button
         ref={plusBtnRef}
@@ -463,14 +457,16 @@ export default function MerchTagPicker({
         onClick={(e) => {
           e.preventDefault()
           e.stopPropagation()
+
           if (open) {
-            closeDropdown()
+            closeDropdownInlineLeft()
             return
           }
+
           onMerchClick?.()
-          openDropdown()
+          openDropdownInlineLeft()
         }}
-        className="shrink-0 hover:opacity-90"
+        className="hover:opacity-90"
         aria-label="Add merch tags"
       >
         {selected.length === 0 ? (
@@ -504,19 +500,12 @@ export default function MerchTagPicker({
     ) : null
 
     return (
-      <div className="w-full flex flex-col items-start gap-[10px]">
+      <div className="w-full">
         <div ref={wrapRef} className="relative w-full">
-          <div className="w-full flex flex-row flex-nowrap justify-start items-center gap-[10px] whitespace-nowrap">
-            {row1.map((label) => TagChip(label))}
-            {shouldPutPlusInRow1 ? PlusTrigger : null}
+          <div className="w-full flex flex-row flex-wrap items-center gap-[10px]">
+            {selected.map((label) => TagChip(label))}
+            {PlusTrigger}
           </div>
-
-          {row2.length > 0 ? (
-            <div className="w-full flex flex-row flex-nowrap justify-start items-center gap-[10px] whitespace-nowrap mt-[10px]">
-              {row2.map((label) => TagChip(label))}
-              {PlusTrigger}
-            </div>
-          ) : null}
 
           {open && !limitReached && anchor ? (
             <div
@@ -535,8 +524,6 @@ export default function MerchTagPicker({
     )
   }
 
-  // ===== Default layout (square sidebar) =====
-  // hide the plus trigger when limitReached (so it never appears after 8)
   return (
     <div className="w-[276px] flex flex-col items-center gap-[12px]">
       {selected.length > 0 ? (
@@ -612,7 +599,9 @@ export default function MerchTagPicker({
             )}
           </button>
 
-          {open ? <div className="absolute left-1/2 -translate-x-1/2 top-[34px]">{Dropdown}</div> : null}
+          {open ? (
+            <div className="absolute left-1/2 -translate-x-1/2 top-[34px]">{Dropdown}</div>
+          ) : null}
         </div>
       ) : null}
     </div>

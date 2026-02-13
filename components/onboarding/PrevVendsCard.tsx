@@ -45,11 +45,11 @@ export default function PrevConsCard({
   title = "Tell us where you’ve been!",
   maxPastVends = 4,
 }: Props) {
-  // ✅ Zustand state
+  // Zustand state
   const firstVend = useOnboardingDraft((s) => s.firstVend)
   const prevVends = useOnboardingDraft((s) => s.prevVends)
 
-  // ✅ Zustand setters (these must exist in your store)
+  // Zustand setters 
   const setFirstVend = useOnboardingDraft((s) => s.setFirstVend)
   const setPrevVends = useOnboardingDraft((s) => s.setPrevVends)
 

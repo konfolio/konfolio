@@ -436,6 +436,7 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/node_modules/zustand/esm/react.mjs [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$zustand$2f$esm$2f$middleware$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/node_modules/zustand/esm/middleware.mjs [app-ssr] (ecmascript)");
+// stores/onboardingDraft.ts
 "use client";
 ;
 ;
@@ -450,6 +451,7 @@ const emptyLinks = {
     bluesky: ""
 };
 const initialDraft = {
+    hasHydrated: false,
     mode: undefined,
     firstName: "",
     lastName: "",
@@ -473,8 +475,50 @@ const initialDraft = {
     profileFile: null,
     profilePreviewUrl: ""
 };
-const useOnboardingDraft = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["create"])()((0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$zustand$2f$esm$2f$middleware$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["persist"])((set, get)=>({
+// ---- Safe LOCAL storage wrapper (never undefined) ----
+// This is the key change vs sessionStorage.
+const safeLocalStorage = {
+    getItem: (name)=>{
+        try {
+            if ("TURBOPACK compile-time truthy", 1) return null;
+            //TURBOPACK unreachable
+            ;
+        } catch  {
+            return null;
+        }
+    },
+    setItem: (name, value)=>{
+        try {
+            if ("TURBOPACK compile-time truthy", 1) return;
+            //TURBOPACK unreachable
+            ;
+        } catch  {
+        // ignore
+        }
+    },
+    removeItem: (name)=>{
+        try {
+            if ("TURBOPACK compile-time truthy", 1) return;
+            //TURBOPACK unreachable
+            ;
+        } catch  {
+        // ignore
+        }
+    }
+};
+const useOnboardingDraft = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["create"])()((0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$zustand$2f$esm$2f$middleware$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["persist"])((set, get, api)=>({
         ...initialDraft,
+        // manual rehydrate helper
+        forceHydrate: async ()=>{
+            try {
+                const p = api.persist;
+                if (p?.rehydrate) await p.rehydrate();
+            } finally{
+                set({
+                    hasHydrated: true
+                });
+            }
+        },
         // audience
         setMode: (mode)=>set({
                 mode
@@ -608,18 +652,26 @@ const useOnboardingDraft = (0, __TURBOPACK__imported__module__$5b$project$5d2f$D
         resetDraft: ()=>{
             const url = get().profilePreviewUrl;
             if (url) URL.revokeObjectURL(url);
+            // keep store "hydrated" after reset so UI doesn't hang
             set({
-                ...initialDraft
+                ...initialDraft,
+                hasHydrated: true
             });
         }
     }), {
     name: "konfolio-onboarding-draft",
-    storage: (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$zustand$2f$esm$2f$middleware$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createJSONStorage"])(()=>sessionStorage),
+    storage: (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$zustand$2f$esm$2f$middleware$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createJSONStorage"])(()=>safeLocalStorage),
     // File objects can't be serialized; do not persist them
     partialize: (state)=>{
         const { profileFile, profilePreviewUrl, ...rest } = state;
         return rest;
-    }
+    },
+    // Set hasHydrated once rehydration completes (even if it errors)
+    onRehydrateStorage: ()=>(_state, _error)=>{
+            useOnboardingDraft.setState({
+                hasHydrated: true
+            });
+        }
 }));
 }),
 "[project]/Downloads/konfolio/components/onboarding/BusinessInfoArtistCard.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {

@@ -8,6 +8,11 @@ import SecondaryButton from "@/components/buttons/SecondaryButton"
 import PencilIcon from "@/components/icons/PencilIcon"
 import { supabase } from "@/lib/supabaseClient"
 
+// NEW: popover import
+import ArtistProfileEditPopover, {
+  type ArtistProfilePopupData,
+} from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+
 type Profile = {
   first_name: string | null
   last_name: string | null
@@ -54,6 +59,9 @@ export default function DashboardProfileHeader({
   const [signedIn, setSignedIn] = useState(false)
   const [profile, setProfile] = useState<Profile | null>(null)
 
+  // NEW: popover open
+  const [profilePopoverOpen, setProfilePopoverOpen] = useState(false)
+
   useEffect(() => {
     let mounted = true
 
@@ -73,9 +81,7 @@ export default function DashboardProfileHeader({
 
       const profileRes = await supabase
         .from("profiles")
-        .select(
-          "first_name,last_name,preferred_name,business_name,profile_image_url"
-        )
+        .select("first_name,last_name,preferred_name,business_name,profile_image_url")
         .eq("id", user.id)
         .maybeSingle()
 
@@ -113,102 +119,145 @@ export default function DashboardProfileHeader({
     fullName ||
     "Business Name"
 
-    const resolvedDisplayNameLine =
+  const resolvedDisplayNameLine =
     (displayNameLineOverride?.trim() || "") ||
     (() => {
       const preferred = (profile?.preferred_name || "").trim()
-  
       if (preferred) return preferred
-  
       return fullName
     })()
-  
 
   const resolvedCount = konfolioCountOverride ?? 0 // keep as-is for now
   const showChecker = !resolvedProfileImageUrl
 
+  // NEW: popover data
+  const popoverData: ArtistProfilePopupData = useMemo(
+    () => ({
+      profileImageUrl: resolvedProfileImageUrl,
+      businessName: resolvedBusinessName,
+      locationText: "City, State",
+      firstName: (profile?.first_name || "").trim() || "First",
+      lastName: (profile?.last_name || "").trim() || "Last",
+      preferredName: (profile?.preferred_name || "").trim() || "Preferred Name",
+
+      formsFilled: 0,
+      visitors: 0,
+
+      // show none by default (only show icons when link exists)
+      links: {},
+
+      // empty by default for now
+      merchTags: [],
+      previousVends: [],
+      salesPermits: [],
+    }),
+    [
+      resolvedProfileImageUrl,
+      resolvedBusinessName,
+      profile?.first_name,
+      profile?.last_name,
+      profile?.preferred_name,
+    ],
+  )
+
   return (
-    <section
-      className={[
-        "w-full bg-white",
-        "flex flex-col items-center",
-        "pb-[25px]",
-        className,
-      ].join(" ")}
-    >
-      <div className="w-full flex items-center justify-center px-[150px] pt-[15px]">
-        <div className="w-full max-w-[1212px] h-[80px] flex items-end justify-between gap-[15px]">
-          {/* Profile */}
-          <div className="flex items-center gap-[19px] h-[80px] flex-1 min-w-0">
-            {/* Avatar */}
-            <div className="relative w-[80px] h-[80px] rounded-[71.4286px] overflow-hidden bg-[#F7F7F7] shrink-0">
-              {!showChecker ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={resolvedProfileImageUrl}
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(45deg, #E9E9E9 25%, transparent 25%), linear-gradient(-45deg, #E9E9E9 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #E9E9E9 75%), linear-gradient(-45deg, transparent 75%, #E9E9E9 75%)",
-                    backgroundSize: "20px 20px",
-                    backgroundPosition: "0 0, 0 10px, 10px -10px, -10px 0px",
-                  }}
-                />
-              )}
-            </div>
-
-            {/* Info */}
-            <div className="flex flex-col items-start py-[5px] h-[80px] flex-1 min-w-0">
-              {/* less gap between business name and name */}
-              <div className="flex flex-col items-start gap-[4px] w-full">
-                <div className="text-[20px] leading-[28px] font-normal text-[#262626] truncate">
-                  {resolvedBusinessName}
-                </div>
-
-                {resolvedDisplayNameLine ? (
-                  <div className="text-[14px] leading-[18px] font-normal text-[#A5A5A5] truncate">
-                    {resolvedDisplayNameLine}
-                  </div>
-                ) : null}
+    <>
+      <section
+        className={[
+          "w-full bg-white",
+          "flex flex-col items-center",
+          "pb-[25px]",
+          className,
+        ].join(" ")}
+      >
+        <div className="w-full flex items-center justify-center px-[150px] pt-[15px]">
+          <div className="w-full max-w-[1212px] h-[80px] flex items-end justify-between gap-[15px]">
+            {/* Profile */}
+            <div className="flex items-center gap-[19px] h-[80px] flex-1 min-w-0">
+              {/* Avatar */}
+              <div className="relative w-[80px] h-[80px] rounded-[71.4286px] overflow-hidden bg-[#F7F7F7] shrink-0">
+                {!showChecker ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={resolvedProfileImageUrl}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(45deg, #E9E9E9 25%, transparent 25%), linear-gradient(-45deg, #E9E9E9 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #E9E9E9 75%), linear-gradient(-45deg, transparent 75%, #E9E9E9 75%)",
+                      backgroundSize: "20px 20px",
+                      backgroundPosition: "0 0, 0 10px, 10px -10px, -10px 0px",
+                    }}
+                  />
+                )}
               </div>
 
-              {/* bigger gap between name and edit profile */}
-              <Link
-                href={editHref}
-                className="mt-[15px] inline-flex items-center gap-[4px] h-[16px] rounded-full hover:opacity-80 active:opacity-70"
-              >
-                <PencilIcon className="w-[16px] h-[16px]" />
-                <span className="text-[12px] leading-[130%] font-normal text-[#262626]">
+              {/* Info */}
+              <div className="flex flex-col items-start py-[5px] h-[80px] flex-1 min-w-0">
+                {/* less gap between business name and name */}
+                <div className="flex flex-col items-start gap-[4px] w-full">
+                  <div className="text-[20px] leading-[28px] font-normal text-[#262626] truncate">
+                    {resolvedBusinessName}
+                  </div>
+
+                  {resolvedDisplayNameLine ? (
+                    <div className="text-[14px] leading-[18px] font-normal text-[#A5A5A5] truncate">
+                      {resolvedDisplayNameLine}
+                    </div>
+                  ) : null}
+                </div>
+
+                {/* bigger gap between name and edit profile */}
+                {/* CHANGED: button opens popover */}
+                <button
+                  type="button"
+                  onClick={() => setProfilePopoverOpen(true)}
+                  className="mt-[15px] inline-flex items-center gap-[4px] h-[16px] rounded-full hover:opacity-80 active:opacity-70"
+                >
+                  <PencilIcon className="w-[16px] h-[16px]" />
+                  <span className="text-[12px] leading-[130%] font-normal text-[#262626]">
+                    Edit Profile
+                  </span>
+                </button>
+
+                {/* If you still need the route, keep it hidden for now */}
+                <Link href={editHref} className="hidden">
                   Edit Profile
+                </Link>
+              </div>
+            </div>
+
+            {/* Create Field */}
+            <div className="flex flex-col items-end gap-[14px] w-[150px] h-[54px] shrink-0">
+              <div className="text-right text-[14px] leading-[130%] font-normal text-[#A5A5A5] w-full">
+                {pad2(resolvedCount)} konfolios
+              </div>
+
+              <SecondaryButton
+                onClick={() => router.push(createHref)}
+                className="w-[150px] min-w-[150px] h-[30px] px-[40px] py-[10px] gap-[7px]"
+                disabled={!signedIn}
+              >
+                <span className="inline-flex items-center gap-[7px]">
+                  <span className="text-[14px] leading-[14px] font-normal">+</span>
+                  <span>Create</span>
                 </span>
-              </Link>
+              </SecondaryButton>
             </div>
-          </div>
-
-          {/* Create Field */}
-          <div className="flex flex-col items-end gap-[14px] w-[150px] h-[54px] shrink-0">
-            <div className="text-right text-[14px] leading-[130%] font-normal text-[#A5A5A5] w-full">
-              {pad2(resolvedCount)} konfolios
-            </div>
-
-            <SecondaryButton
-              onClick={() => router.push(createHref)}
-              className="w-[150px] min-w-[150px] h-[30px] px-[40px] py-[10px] gap-[7px]"
-              disabled={!signedIn}
-            >
-              <span className="inline-flex items-center gap-[7px]">
-                <span className="text-[14px] leading-[14px] font-normal">+</span>
-                <span>Create</span>
-              </span>
-            </SecondaryButton>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Popover */}
+      <ArtistProfileEditPopover
+        open={profilePopoverOpen}
+        onClose={() => setProfilePopoverOpen(false)}
+        data={popoverData}
+      />
+    </>
   )
 }
