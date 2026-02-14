@@ -1588,6 +1588,10 @@
     width: 408px;
   }
 
+  .w-\[415px\] {
+    width: 415px;
+  }
+
   .w-\[426px\] {
     width: 426px;
   }
@@ -1821,6 +1825,10 @@
 
   .animate-pulse {
     animation: var(--animate-pulse);
+  }
+
+  .cursor-default {
+    cursor: default;
   }
 
   .cursor-not-allowed {
@@ -2197,7 +2205,15 @@
     border-color: lab(67.7442% .0000298023 0 / .5);
   }
 
-  .border-\[\#A5A5A566\], .border-\[rgba\(165\,165\,165\,0\.4\)\] {
+  .border-\[\#A5A5A566\] {
+    border-color: #a5a5a566;
+  }
+
+  .border-\[\#D3D3D3\] {
+    border-color: #d3d3d3;
+  }
+
+  .border-\[rgba\(165\,165\,165\,0\.4\)\] {
     border-color: #a5a5a566;
   }
 

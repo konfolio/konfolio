@@ -11415,3 +11415,1124 @@ Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
 [52:42:05.698] Server  LOG     ✓ Compiled in 5.4s
 [52:46:48.183] Server  LOG     ✓ Compiled in 1920ms
 [53:01:37.883] Server  LOG     ✓ Compiled in 3.4s
+[53:03:33.167] Browser LOG     [DashboardProfileHeader] profile error: {"code":"","details":"TypeError: Failed to fetch\n    at http://localhost:3000/_next/static/chunks/33d88_ae1650ee._.js:16614:23\n    at http://localhost:3000/_next/static/chunks/33d88_ae1650ee._.js:16628:16\n    at async load (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__61775741._.js:3376:36)","hint":"","message":"TypeError: Failed to fetch"}
+[73:35:09.059] Server  LOG     ✓ Finished writing to filesystem cache in 11.0s
+[73:52:11.251] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:11.372] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:11.446] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:11.486] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:11.876] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:11.888] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:11.925] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:11.955] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:11.976] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.000] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.020] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.033] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.047] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.073] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.092] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.104] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.158] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.169] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.190] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.213] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.227] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.673] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.685] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.698] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.714] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.730] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.747] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.763] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.778] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.792] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.801] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.812] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.825] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.834] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.844] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.854] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[73:52:12.886] Server  LOG     ✓ Compiled in 13.3s
+[73:52:13.791] Browser ERROR   ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx:15:1
+Module not found: Can't resolve '@/components/icons/TrashIcon'
+  13 |
+  14 | import PencilIcon from "@/components/icons/PencilIcon"
+> 15 | import TrashIcon from "@/components/icons/TrashIcon"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | import HomeIcon from "@/components/icons/HomeIcon"
+  18 | import ShopIcon from "@/components/icons/ShopIcon"
+
+Import map: aliased to relative './components/icons/TrashIcon' inside of [project]/Downloads/konfolio
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+[73:54:59.769] Server  LOG     ✓ Compiled in 6.9s
+[73:55:05.722] Browser LOG     [ArtistProfileEditPopover] profile meta error: {"code":"42703","details":null,"hint":null,"message":"column profiles.email does not exist"}
+[73:56:13.946] Server  LOG     ✓ Finished filesystem cache database compaction in 67s
+[73:56:14.619] Server  LOG     ✓ Compiled in 6.8s
+[74:04:50.643] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/my-portfo..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/Downloads...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" className="inter_e8e5...">
+                          <body
+                            className="antialiased"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[74:04:53.651] Browser LOG     [ArtistProfileEditPopover] profile meta error: {"code":"42703","details":null,"hint":null,"message":"column profiles.email does not exist"}
+[74:07:54.206] Server  LOG     ✓ Compiled in 1609ms
+[74:56:17.971] Server  LOG     ✓ Compiled in 3.5s
+[74:56:23.104] Browser LOG     [ArtistProfileEditPopover] profile meta error: {"code":"42703","details":null,"hint":null,"message":"column profiles.email does not exist"}
+[75:03:08.716] Server  LOG     ✓ Compiled in 2.4s
+[75:15:13.418] Server  LOG     ✓ Compiled in 2.2s
+[75:15:35.509] Server  LOG     ✓ Compiled in 560ms
+[76:16:32.468] Server  LOG     ✓ Compiled in 4.4s
+[76:33:15.581] Server  LOG     ✓ Compiled in 1504ms
