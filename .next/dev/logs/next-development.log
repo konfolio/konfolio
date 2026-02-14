@@ -12536,3 +12536,1727 @@ It can also happen if the client has a browser extension installed which messes 
 [75:15:35.509] Server  LOG     ✓ Compiled in 560ms
 [76:16:32.468] Server  LOG     ✓ Compiled in 4.4s
 [76:33:15.581] Server  LOG     ✓ Compiled in 1504ms
+[76:43:24.839] Server  LOG     ✓ Compiled in 1130ms
+[77:10:41.145] Server  LOG     ✓ Finished writing to filesystem cache in 12.0s
+[77:10:50.590] Server  LOG     ✓ Compiled in 1053ms
+[77:18:08.222] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.280] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.285] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.295] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.371] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.377] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.380] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.382] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.401] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.402] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.405] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.409] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.418] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.425] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.435] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.439] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.454] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.474] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.475] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.489] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.512] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.515] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.531] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.540] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.546] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.547] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.549] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.550] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.557] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.560] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.562] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:08.564] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:18:09.638] Browser ERROR   ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashboard/CreateKonfolioPopover'
+  13 | } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+  14 |
+> 15 | import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type Profile = {
+  18 |   first_name: string | null
+
+Import map: aliased to relative './components/my-portfolios/dashboard/CreateKonfolioPopover' inside of [project]/Downloads/konfolio
+
+Import trace:
+  Server Component:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx
+    ./Downloads/konfolio/app/my-portfolios/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+[77:18:56.836] Server  LOG     ✓ Finished filesystem cache database compaction in 43s
+[77:19:35.184] Server  LOG     ✓ Compiled in 3.4s
+[77:19:53.214] Server  LOG     ✓ Compiled in 27ms
+[77:20:03.677] Server  LOG     ✓ Finished writing to filesystem cache in 22.8s
+[77:20:22.576] Server  LOG     ✓ Finished writing to filesystem cache in 16.5s
+[77:20:22.615] Browser ERROR   uncaughtError: Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check the render method of `DashboardProfileHeader`.
+[77:20:22.617] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[77:23:47.351] Server  LOG     ✓ Compiled in 2.6s
+[77:24:17.294] Server  LOG     ✓ Finished filesystem cache database compaction in 27.4s
+[77:25:43.929] Server  LOG     ✓ Compiled in 2.2s
+[77:26:16.403] Server  LOG     ✓ Compiled in 655ms
+[77:27:16.075] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.254] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.259] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.261] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.290] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.292] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.299] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.302] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.308] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.309] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.315] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.317] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.319] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.320] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.322] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.323] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.325] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.328] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.330] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.331] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.333] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.335] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.336] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.337] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.340] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.342] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.356] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.359] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.363] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.367] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.378] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:16.385] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[77:27:17.652] Browser ERROR   ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+[77:27:40.737] Server  LOG     ✓ Compiled in 9.5s
+[77:27:43.747] Browser ERROR   ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+[77:27:43.747] Browser ERROR   ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx:6:1
+Module not found: Can't resolve '@/components/useClickOutside'
+  4 |
+  5 | import DeleteIcon from "@/components/icons/DeleteIcon"
+> 6 | import useClickOutside from "@/components/useClickOutside"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 |
+  8 | import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
+  9 |
+
+Import map: aliased to relative './components/useClickOutside' inside of [project]/Downloads/konfolio
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/DashboardProfileHeader.tsx [Server Component]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+[77:27:55.249] Browser LOG     [NEW] createAndGo {"hasOnboardingHydrated":true,"onboardingSnapshot":{"acceptedTerms":false,"activeLinkKeys":[],"attendees":"","businessName":"","collabs":[],"eventLocation":"","firstName":"","firstVend":false,"hasHydrated":true,"hostWebsite":"","lastName":"","links":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""},"location":"","merchTags":[],"orgSize":"","organization":"","preferredName":"","prevVends":[],"profileFile":null,"profilePreviewUrl":"","salesPermit":"","willApply":false},"source":"query","template":"square"}
+[77:27:55.249] Browser LOG     [NEW] hasMeaningfulOnboarding? false
+[77:27:55.249] Browser LOG     [NEW] draft built: {"activeLinksCount":0,"businessName":"Business Name","debugSource":"createDraftFromProfile","displayName":"Name","email":"myemailaddress@konfolio.com","locationText":"City, State","merchTagsCount":0,"prevVendsCount":0,"profileImageUrl":""}
+[77:27:56.174] Browser LOG     [SQUARE] mount {"draftId":"f87ad3d5-426d-4e25-afb2-9e80b07686e0"}
+[77:27:56.174] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"f87ad3d5-426d-4e25-afb2-9e80b07686e0","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771033345438}
+[77:27:56.174] Browser LOG     [SQUARE] draft changed: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"f87ad3d5-426d-4e25-afb2-9e80b07686e0","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771033345438}
+[77:27:56.174] Browser LOG     [SQUARE] draft source: undefined
+[77:27:56.174] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"f87ad3d5-426d-4e25-afb2-9e80b07686e0"}
+[77:27:56.174] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"f87ad3d5-426d-4e25-afb2-9e80b07686e0","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771033345438}
+[77:27:56.174] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] draft changed: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"f87ad3d5-426d-4e25-afb2-9e80b07686e0","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771033345438}
+[77:27:56.174] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] draft source: undefined

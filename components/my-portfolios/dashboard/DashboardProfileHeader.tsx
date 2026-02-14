@@ -8,10 +8,11 @@ import SecondaryButton from "@/components/buttons/SecondaryButton"
 import PencilIcon from "@/components/icons/PencilIcon"
 import { supabase } from "@/lib/supabaseClient"
 
-// NEW: popover import
 import ArtistProfileEditPopover, {
   type ArtistProfilePopupData,
 } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
+
+import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
 
 type Profile = {
   first_name: string | null
@@ -22,7 +23,7 @@ type Profile = {
 }
 
 type Props = {
-  // Optional overrides (if you pass these, they win)
+  // Optional overrides
   profileImageUrl?: string
   businessName?: string
   displayNameLine?: string
@@ -59,8 +60,9 @@ export default function DashboardProfileHeader({
   const [signedIn, setSignedIn] = useState(false)
   const [profile, setProfile] = useState<Profile | null>(null)
 
-  // NEW: popover open
+  // popovers
   const [profilePopoverOpen, setProfilePopoverOpen] = useState(false)
+  const [createPopoverOpen, setCreatePopoverOpen] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -130,7 +132,7 @@ export default function DashboardProfileHeader({
   const resolvedCount = konfolioCountOverride ?? 0 // keep as-is for now
   const showChecker = !resolvedProfileImageUrl
 
-  // NEW: popover data
+  // popover data
   const popoverData: ArtistProfilePopupData = useMemo(
     () => ({
       profileImageUrl: resolvedProfileImageUrl,
@@ -212,7 +214,6 @@ export default function DashboardProfileHeader({
                 </div>
 
                 {/* bigger gap between name and edit profile */}
-                {/* CHANGED: button opens popover */}
                 <button
                   type="button"
                   onClick={() => setProfilePopoverOpen(true)}
@@ -224,7 +225,7 @@ export default function DashboardProfileHeader({
                   </span>
                 </button>
 
-                {/* If you still need the route, keep it hidden for now */}
+                {/* keep route if you still need it */}
                 <Link href={editHref} className="hidden">
                   Edit Profile
                 </Link>
@@ -238,7 +239,10 @@ export default function DashboardProfileHeader({
               </div>
 
               <SecondaryButton
-                onClick={() => router.push(createHref)}
+                onClick={() => {
+                  if (!signedIn) return
+                  setCreatePopoverOpen(true)
+                }}
                 className="w-[150px] min-w-[150px] h-[30px] px-[40px] py-[10px] gap-[7px]"
                 disabled={!signedIn}
               >
@@ -247,16 +251,31 @@ export default function DashboardProfileHeader({
                   <span>Create</span>
                 </span>
               </SecondaryButton>
+
+              {/* fallback route (hidden) */}
+              <Link href={createHref} className="hidden">
+                Create
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Popover */}
+      {/* Profile Popover */}
       <ArtistProfileEditPopover
         open={profilePopoverOpen}
         onClose={() => setProfilePopoverOpen(false)}
         data={popoverData}
+      />
+
+      {/* Create Popover */}
+      <CreateKonfolioPopover
+        open={createPopoverOpen}
+        onClose={() => setCreatePopoverOpen(false)}
+        onPickTemplate={(t) => {
+          setCreatePopoverOpen(false)
+          router.push(`/my-portfolios/new?template=${t}`)
+        }}
       />
     </>
   )
