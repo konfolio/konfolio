@@ -67,9 +67,8 @@ export default function GoogleSignInButton() {
           disabled={loading}
           className="
             box-border
-            flex flex-row
-            justify-center
-            items-center
+            flex items-center
+            justify-start
             gap-[13px]
 
             w-[600px]
@@ -86,18 +85,17 @@ export default function GoogleSignInButton() {
             disabled:opacity-60
           "
         >
-          <GoogleLogo />
+          {/* Left icon */}
+          <div className="flex-none w-[25px] h-[25.51px] flex items-center justify-center">
+            <GoogleLogo />
+          </div>
 
-          <span
-            className="
-              text-[17px]
-              leading-[140%]
-              text-[#3C4043]
-              font-normal
-            "
-          >
-            {loading ? "Signing in..." : "Sign in with Google"}
-          </span>
+          {/* Centered text */}
+          <div className="flex-1 text-center">
+            <span className="text-[17px] leading-[140%] text-[#3C4043] font-normal">
+              {loading ? "Signing in..." : "Sign in with Google"}
+            </span>
+          </div>
         </button>
 
         {/* OR + Create Account */}
