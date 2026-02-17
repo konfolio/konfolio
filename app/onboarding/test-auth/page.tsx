@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function TestAuthPage() {
@@ -8,6 +8,27 @@ export default function TestAuthPage() {
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState("");
   const [profileImageUrl, setProfileImageUrl] = useState<string>("");
+
+  
+  useEffect(() => {
+    const run = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) return;
+      const userId = data.user?.id;
+      if (!userId) return;
+
+      const key = `test-viewed-${userId}`;
+      if (sessionStorage.getItem(key)) return;
+
+      await supabase.rpc("increment_profile_views", {
+        p_profile_id: userId,
+      });
+
+      sessionStorage.setItem(key, "true");
+    };
+
+    run();
+  }, []);
 
 
   async function signUp() {
