@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { inknut } from "@/app/fonts" // rename to whatever you exported
+import { inknut } from "@/app/fonts" 
 
 export default function AuthHeader() {
   return (

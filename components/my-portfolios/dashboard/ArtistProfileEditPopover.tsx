@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react"
 import type React from "react"
 import useClickOutside from "@/components/hooks/useClickOutside"
 import { supabase } from "@/lib/supabaseClient"
+import { useRouter } from "next/navigation"
 
 import DeleteIcon from "@/components/icons/DeleteIcon"
 import PlusIcon from "@/components/icons/PlusIcon"
@@ -206,7 +207,22 @@ export default function ArtistProfileEditPopover({
   onSignOut,
 }: Props) {
   const modalRef = useRef<HTMLDivElement | null>(null)
+  const router = useRouter()
 
+  async function handleSignOut() {
+    setSaveError("")
+    try {
+      await supabase.auth.signOut()
+    } catch (e: any) {
+      setSaveError(e?.message ?? "Failed to sign out")
+      return
+    }
+  
+    onClose()
+    router.push("/")
+    router.refresh()
+  }
+  
   useClickOutside(modalRef, () => {
     if (open) onClose()
   })
@@ -978,7 +994,14 @@ export default function ArtistProfileEditPopover({
               <div className="flex flex-col items-start w-full">
                 <AsideRow label="Support" onClick={onSupport} />
                 <AsideRow label="Report issue" onClick={onReportIssue} />
-                <AsideRow label="Sign out" danger onClick={onSignOut} />
+                <AsideRow
+                    label="Sign out"
+                    danger
+                    onClick={() => {
+                        onSignOut?.()
+                        handleSignOut()
+                    }}
+                />
               </div>
 
               <p className="text-[15px] leading-[150%] text-[#A5A5A5] pb-[40px]">{betaText}</p>

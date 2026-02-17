@@ -997,7 +997,7 @@ function PencilIcon({ className = "" }) {
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                         d: "M5.79313 13.5H3C2.86739 13.5 2.74021 13.4473 2.64645 13.3535C2.55268 13.2598 2.5 13.1326 2.5 13V10.2069C2.50006 10.0744 2.55266 9.94743 2.64625 9.85374L10.3538 2.14624C10.4475 2.05254 10.5746 1.99991 10.7072 1.99991C10.8397 1.99991 10.9669 2.05254 11.0606 2.14624L13.8538 4.93749C13.9474 5.03125 14.0001 5.15837 14.0001 5.29093C14.0001 5.42348 13.9474 5.55061 13.8538 5.64436L6.14625 13.3537C6.05255 13.4473 5.92556 13.4999 5.79313 13.5Z",
-                        stroke: "#262626",
+                        stroke: "currentColor",
                         strokeLinecap: "round",
                         strokeLinejoin: "round"
                     }, void 0, false, {
@@ -1007,7 +1007,7 @@ function PencilIcon({ className = "" }) {
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                         d: "M8.5 4L12 7.5",
-                        stroke: "#262626",
+                        stroke: "currentColor",
                         strokeLinecap: "round",
                         strokeLinejoin: "round"
                     }, void 0, false, {
@@ -1017,22 +1017,22 @@ function PencilIcon({ className = "" }) {
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                         d: "M10.25 5.75L4.25 11.75",
-                        stroke: "#262626",
+                        stroke: "currentColor",
                         strokeLinecap: "round",
                         strokeLinejoin: "round"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/icons/PencilIcon.tsx",
-                        lineNumber: 29,
+                        lineNumber: 24,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                         d: "M5.96848 13.4681L2.53223 10.0319",
-                        stroke: "#262626",
+                        stroke: "currentColor",
                         strokeLinecap: "round",
                         strokeLinejoin: "round"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/icons/PencilIcon.tsx",
-                        lineNumber: 35,
+                        lineNumber: 30,
                         columnNumber: 9
                     }, this)
                 ]
@@ -1050,17 +1050,17 @@ function PencilIcon({ className = "" }) {
                         fill: "white"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/icons/PencilIcon.tsx",
-                        lineNumber: 44,
+                        lineNumber: 39,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/Downloads/konfolio/components/icons/PencilIcon.tsx",
-                    lineNumber: 43,
+                    lineNumber: 38,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/icons/PencilIcon.tsx",
-                lineNumber: 42,
+                lineNumber: 37,
                 columnNumber: 7
             }, this)
         ]
