@@ -9,7 +9,7 @@ export default function UploadProfilePage() {
       <main className="flex-1 flex items-center justify-center px-[25px] sm:px-10 pt-[100px] pb-[120px]">
         <UploadProfileCard
           backHref="/onboarding/links/host"
-          nextHref="/onboarding/finish"
+          nextHref="/my-forms"
           title="Last step!"
           displayName="Organization Name"
           locationText="City, Country"

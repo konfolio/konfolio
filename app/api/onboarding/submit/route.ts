@@ -1,40 +1,47 @@
-import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from "next/server"
+import { createClient } from "@supabase/supabase-js"
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+)
 
 export async function POST(req: Request) {
   try {
-    const authHeader = req.headers.get("authorization");
-    const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
+    const authHeader = req.headers.get("authorization")
+    const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null
     if (!token) {
-      return NextResponse.json({ error: "Missing Authorization Bearer token" }, { status: 401 });
+      return NextResponse.json({ error: "Missing Authorization Bearer token" }, { status: 401 })
     }
 
-    const { data: userData, error: userErr } = await supabaseAdmin.auth.getUser(token);
+    const { data: userData, error: userErr } = await supabaseAdmin.auth.getUser(token)
     if (userErr || !userData.user) {
-      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 })
     }
-    const userId = userData.user.id;
+    const userId = userData.user.id
 
-    const payload = await req.json();
+    const payload = await req.json()
 
     if (!payload.mode || !payload.firstName || !payload.lastName) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
+    if (payload.mode !== "artist" && payload.mode !== "host") {
+      return NextResponse.json({ error: "Invalid mode" }, { status: 400 })
+    }
+
+    // DB allows only 'artist' | 'vendor'
+    const role: "artist" | "vendor" = payload.mode === "artist" ? "artist" : "vendor"
+
     const baseUpdate: any = {
-      role: payload.mode,
+      role,
       first_name: payload.firstName,
       last_name: payload.lastName,
       accepted_terms: !!payload.acceptedTerms,
       profile_image_url: payload.profileImageUrl ?? null,
       links: payload.links ?? {},
       onboarding_complete: true,
-    };
+    }
 
     const artistUpdate =
       payload.mode === "artist"
@@ -54,7 +61,7 @@ export async function POST(req: Request) {
             attendees: null,
             event_location: null,
           }
-        : {};
+        : {}
 
     const hostUpdate =
       payload.mode === "host"
@@ -74,20 +81,20 @@ export async function POST(req: Request) {
             first_vend: null,
             prev_vends: [],
           }
-        : {};
+        : {}
 
-    const update = { ...baseUpdate, ...artistUpdate, ...hostUpdate };
+    const update = { ...baseUpdate, ...artistUpdate, ...hostUpdate }
 
     const { error } = await supabaseAdmin
       .from("profiles")
-      .upsert({ id: userId, ...update }, { onConflict: "id" });
+      .upsert({ id: userId, ...update }, { onConflict: "id" })
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true })
   } catch (e: any) {
-    return NextResponse.json({ error: e?.message ?? "Unknown error" }, { status: 500 });
+    return NextResponse.json({ error: e?.message ?? "Unknown error" }, { status: 500 })
   }
 }

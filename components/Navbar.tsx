@@ -7,10 +7,11 @@ import { inknut } from "@/app/fonts"
 import { supabase } from "@/lib/supabaseClient"
 
 type Profile = {
-  role?: string | null // "artist" | "host" (or "organizer")
+  role?: string | null // "artist" | "vendor"
   first_name: string | null
   preferred_name: string | null
   business_name?: string | null
+  organization?: string | null
   profile_image_url: string | null
 }
 
@@ -64,9 +65,12 @@ function NavItem({
   )
 }
 
-function isHostRole(roleRaw: string | null | undefined) {
-  const r = String(roleRaw ?? "").trim().toLowerCase()
-  return r === "host" || r === "organizer"
+function normRole(roleRaw: string | null | undefined) {
+  return String(roleRaw ?? "").trim().toLowerCase()
+}
+
+function isVendorRole(roleRaw: string | null | undefined) {
+  return normRole(roleRaw) === "vendor"
 }
 
 export default function Navbar() {
@@ -76,7 +80,7 @@ export default function Navbar() {
   const [signedIn, setSignedIn] = useState(false)
   const [displayName, setDisplayName] = useState<string>("")
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null)
-  const [isHost, setIsHost] = useState(false)
+  const [isVendor, setIsVendor] = useState(false)
 
   const isExploreActive = pathname === "/explore" || pathname.startsWith("/explore/")
   const isSupportActive = pathname === "/support" || pathname.startsWith("/support/")
@@ -85,10 +89,10 @@ export default function Navbar() {
     pathname === "/my-portfolios" || pathname.startsWith("/my-portfolios/")
   const isMyFormsActive = pathname === "/my-forms" || pathname.startsWith("/my-forms/")
 
-  const myPrimaryHref = isHost ? "/my-forms" : "/my-portfolios"
-  const myPrimaryLabel = isHost ? "My Forms" : "My Portfolios"
-  const myPrimaryWidthClass = isHost ? "w-[85px]" : "w-[110px]"
-  const isPrimaryActive = isHost ? isMyFormsActive : isMyPortfoliosActive
+  const myPrimaryHref = isVendor ? "/my-forms" : "/my-portfolios"
+  const myPrimaryLabel = isVendor ? "My Forms" : "My Portfolios"
+  const myPrimaryWidthClass = isVendor ? "w-[85px]" : "w-[110px]"
+  const isPrimaryActive = isVendor ? isMyFormsActive : isMyPortfoliosActive
 
   // Hide account on the main dashboard pages (per your earlier requirement)
   const hideAccountOnDashboardRoot =
@@ -107,7 +111,7 @@ export default function Navbar() {
         setSignedIn(false)
         setDisplayName("")
         setProfileImageUrl(null)
-        setIsHost(false)
+        setIsVendor(false)
         return
       }
 
@@ -115,7 +119,7 @@ export default function Navbar() {
 
       const profileRes = await supabase
         .from("profiles")
-        .select("role, first_name, preferred_name, business_name, profile_image_url")
+        .select("role, first_name, preferred_name, business_name, organization, profile_image_url")
         .eq("id", user.id)
         .maybeSingle()
 
@@ -124,22 +128,26 @@ export default function Navbar() {
       if (profileRes.error) {
         setDisplayName("")
         setProfileImageUrl(null)
-        setIsHost(false)
+        setIsVendor(false)
         return
       }
 
       const p = profileRes.data as Profile | null
-      const host = isHostRole(p?.role)
-      setIsHost(host)
+      const vendor = isVendorRole(p?.role)
+      setIsVendor(vendor)
 
       const preferred = (p?.preferred_name || "").trim()
       const first = (p?.first_name || "").trim()
       const business = String(p?.business_name ?? "").trim()
+      const org = String(p?.organization ?? "").trim()
 
       // Display name rule:
-      // - host/organizer: business_name
+      // - vendor: organization (fallback to business_name, then name)
       // - artist: preferred_name fallback first_name
-      setDisplayName(host ? business : preferred || first)
+      const vendorName = org || business || first || "Account"
+      const artistName = preferred || first || "Account"
+
+      setDisplayName(vendor ? vendorName : artistName)
       setProfileImageUrl(p?.profile_image_url ?? null)
     }
 
