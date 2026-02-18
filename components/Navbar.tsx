@@ -1,14 +1,16 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 import { inknut } from "@/app/fonts"
 import { supabase } from "@/lib/supabaseClient"
 
 type Profile = {
+  role?: string | null // "artist" | "host" (or "organizer")
   first_name: string | null
   preferred_name: string | null
+  business_name?: string | null
   profile_image_url: string | null
 }
 
@@ -62,23 +64,36 @@ function NavItem({
   )
 }
 
+function isHostRole(roleRaw: string | null | undefined) {
+  const r = String(roleRaw ?? "").trim().toLowerCase()
+  return r === "host" || r === "organizer"
+}
+
 export default function Navbar() {
-  const router = useRouter()
   const pathnameRaw = usePathname() || ""
   const pathname = normalizePath(pathnameRaw)
 
   const [signedIn, setSignedIn] = useState(false)
   const [displayName, setDisplayName] = useState<string>("")
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null)
+  const [isHost, setIsHost] = useState(false)
 
   const isExploreActive = pathname === "/explore" || pathname.startsWith("/explore/")
-  const isPortfoliosActive =
-    pathname === "/my-portfolios" || pathname.startsWith("/my-portfolios/")
   const isSupportActive = pathname === "/support" || pathname.startsWith("/support/")
 
-  const hideAccountOnMyPortfolios = pathname === "/my-portfolios"
+  const isMyPortfoliosActive =
+    pathname === "/my-portfolios" || pathname.startsWith("/my-portfolios/")
+  const isMyFormsActive = pathname === "/my-forms" || pathname.startsWith("/my-forms/")
 
-  // Pull session + profile (and keep in sync with auth events)
+  const myPrimaryHref = isHost ? "/my-forms" : "/my-portfolios"
+  const myPrimaryLabel = isHost ? "My Forms" : "My Portfolios"
+  const myPrimaryWidthClass = isHost ? "w-[85px]" : "w-[110px]"
+  const isPrimaryActive = isHost ? isMyFormsActive : isMyPortfoliosActive
+
+  // Hide account on the main dashboard pages (per your earlier requirement)
+  const hideAccountOnDashboardRoot =
+    pathname === "/my-portfolios" || pathname === "/my-forms"
+
   useEffect(() => {
     let mounted = true
 
@@ -92,6 +107,7 @@ export default function Navbar() {
         setSignedIn(false)
         setDisplayName("")
         setProfileImageUrl(null)
+        setIsHost(false)
         return
       }
 
@@ -99,31 +115,37 @@ export default function Navbar() {
 
       const profileRes = await supabase
         .from("profiles")
-        .select("first_name, preferred_name, profile_image_url")
+        .select("role, first_name, preferred_name, business_name, profile_image_url")
         .eq("id", user.id)
         .maybeSingle()
 
       if (!mounted) return
 
       if (profileRes.error) {
-        // If profile is blocked/missing, still consider the user signed in,
-        // but fall back to initials.
         setDisplayName("")
         setProfileImageUrl(null)
+        setIsHost(false)
         return
       }
 
       const p = profileRes.data as Profile | null
+      const host = isHostRole(p?.role)
+      setIsHost(host)
+
       const preferred = (p?.preferred_name || "").trim()
       const first = (p?.first_name || "").trim()
+      const business = String(p?.business_name ?? "").trim()
 
-      setDisplayName(preferred || first)
+      // Display name rule:
+      // - host/organizer: business_name
+      // - artist: preferred_name fallback first_name
+      setDisplayName(host ? business : preferred || first)
       setProfileImageUrl(p?.profile_image_url ?? null)
     }
 
     load()
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, _session) => {
+    const { data: sub } = supabase.auth.onAuthStateChange(() => {
       load()
     })
 
@@ -152,14 +174,13 @@ export default function Navbar() {
               </span>
             </Link>
 
-            {/* Desktop nav items */}
             {signedIn ? (
               <>
                 <NavItem
-                  href="/my-portfolios"
-                  label="My Portfolios"
-                  active={isPortfoliosActive}
-                  widthClass="w-[110px]"
+                  href={myPrimaryHref}
+                  label={myPrimaryLabel}
+                  active={isPrimaryActive}
+                  widthClass={myPrimaryWidthClass}
                 />
                 <NavItem
                   href="/explore"
@@ -187,7 +208,7 @@ export default function Navbar() {
           {/* RIGHT GROUP */}
           <div className="flex items-center">
             {signedIn ? (
-              hideAccountOnMyPortfolios ? null : (
+              hideAccountOnDashboardRoot ? null : (
                 <Link
                   href="/account"
                   className="
@@ -197,7 +218,6 @@ export default function Navbar() {
                     h-[35px]
                   "
                 >
-                  {/* Avatar */}
                   <span
                     className="
                       w-[35px] h-[35px]
@@ -222,7 +242,6 @@ export default function Navbar() {
                     )}
                   </span>
 
-                  {/* Name */}
                   <span
                     className="
                       font-inter font-normal

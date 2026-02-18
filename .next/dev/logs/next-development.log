@@ -77,3 +77,63 @@ It can also happen if the client has a browser extension installed which messes 
 [02:16:41.254] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"08a01e9d-8166-41e4-957c-26125a24e207","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771372937834}
 [02:16:41.254] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] draft changed: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"08a01e9d-8166-41e4-957c-26125a24e207","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771372937834}
 [02:16:41.254] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] draft source: undefined
+[02:30:47.973] Server  LOG     ✓ Compiled in 611ms
+[02:30:48.263] Server  LOG     ✓ Compiled in 0ms
+[02:31:34.337] Server  LOG     ✓ Compiled in 1244ms
+[02:45:23.113] Browser LOG     [NEW] createAndGo {"hasOnboardingHydrated":true,"onboardingSnapshot":{"acceptedTerms":false,"activeLinkKeys":[],"attendees":"","businessName":"","collabs":[],"eventLocation":"","firstName":"","firstVend":false,"hasHydrated":true,"hostWebsite":"","lastName":"","links":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""},"location":"","merchTags":[],"orgSize":"","organization":"","preferredName":"","prevVends":[],"profileFile":null,"profilePreviewUrl":"","salesPermit":"","willApply":false},"source":"query","template":"square"}
+[02:45:23.114] Browser LOG     [NEW] hasMeaningfulOnboarding? false
+[02:45:23.114] Browser LOG     [NEW] draft built: {"activeLinksCount":0,"businessName":"Business Name","debugSource":"createDraftFromProfile","displayName":"Name","email":"myemailaddress@konfolio.com","locationText":"City, State","merchTagsCount":0,"prevVendsCount":0,"profileImageUrl":""}
+[02:45:23.798] Browser LOG     [SQUARE] mount {"draftId":"b6c9357e-c203-4dcf-adb6-e52d7ecda760"}
+[02:45:23.798] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"b6c9357e-c203-4dcf-adb6-e52d7ecda760","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771374661426}
+[02:45:23.798] Browser LOG     [SQUARE] draft changed: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"b6c9357e-c203-4dcf-adb6-e52d7ecda760","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771374661426}
+[02:45:23.798] Browser LOG     [SQUARE] draft source: undefined
+[02:45:23.798] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"b6c9357e-c203-4dcf-adb6-e52d7ecda760"}
+[02:45:23.798] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"b6c9357e-c203-4dcf-adb6-e52d7ecda760","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771374661426}
+[02:45:23.798] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] draft changed: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"b6c9357e-c203-4dcf-adb6-e52d7ecda760","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771374661426}
+[02:45:23.798] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] draft source: undefined
+[02:46:30.162] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[02:46:30.162] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[02:46:30.162] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[02:46:30.162] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[02:46:30.162] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[02:46:49.844] Browser LOG     [callback] sessionErr: null
+[02:46:49.844] Browser LOG     [callback] user: 805adce4-3914-4b33-8a74-56da2ba4b779
+[02:46:50.188] Browser LOG     [callback] profileErr: null
+[02:46:50.188] Browser LOG     [callback] profile: {"id":"805adce4-3914-4b33-8a74-56da2ba4b779","onboarding_complete":true}
+[02:51:28.546] Server  LOG     ✓ Compiled in 786ms
+[03:03:02.206] Server  LOG     ○ Compiling /konfolio-test ...
+[03:03:03.668] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/konfolio-..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/Downloads...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" className="inter_e8e5...">
+                          <body
+                            className="antialiased"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
