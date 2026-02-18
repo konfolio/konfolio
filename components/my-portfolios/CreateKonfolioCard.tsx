@@ -4,6 +4,9 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+
+import { supabase } from "@/lib/supabaseClient"
 
 import Tag from "@/components/onboarding/Tag"
 import InfoIcon from "@/components/icons/InfoIcon"
@@ -41,6 +44,11 @@ type Props = {
   primaryLoadingLabel?: string
 }
 
+async function getAccessToken(): Promise<string | null> {
+  const { data } = await supabase.auth.getSession()
+  return data.session?.access_token ?? null
+}
+
 export default function CreateKonfolioCard({
   title = "Create your first Konfolio",
   infoText = "We work with templates to reduce variety and support our auto-fill system.",
@@ -74,6 +82,8 @@ export default function CreateKonfolioCard({
   disabled = false,
   primaryLoadingLabel,
 }: Props) {
+  const router = useRouter()
+
   const [infoOpen, setInfoOpen] = useState(false)
 
   const sectionRef = useRef<HTMLElement | null>(null)
@@ -81,6 +91,60 @@ export default function CreateKonfolioCard({
 
   const [popoverStyle, setPopoverStyle] = useState<CSSProperties>({ display: "none" })
   const [iconShiftX, setIconShiftX] = useState(0)
+
+  const [isCreating, setIsCreating] = useState(false)
+  const [createError, setCreateError] = useState("")
+
+  const effectiveDisabled = disabled || isCreating
+  const effectiveLoadingLabel = primaryLoadingLabel ?? (isCreating ? "Creating..." : undefined)
+
+  async function createAndGo(template: TemplateType) {
+    setCreateError("")
+    setIsCreating(true)
+
+    try {
+      const token = await getAccessToken()
+      if (!token) {
+        setCreateError("Not signed in")
+        return
+      }
+
+      const res = await fetch("/api/konfolios/create-from-template", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ template }),
+      })
+
+      if (!res.ok) {
+        let msg = "Failed to create Konfolio"
+        try {
+          const j = await res.json()
+          if (j?.error) msg = String(j.error)
+        } catch {
+          // ignore
+        }
+        setCreateError(msg)
+        return
+      }
+
+      const data = (await res.json()) as { id?: string }
+      const id = String(data?.id ?? "").trim()
+      if (!id) {
+        setCreateError("Create succeeded but no id returned")
+        return
+      }
+
+      router.push(`/my-portfolios/${id}/edit`)
+      router.refresh()
+    } catch (e: any) {
+      setCreateError(e?.message ?? "Failed to create Konfolio")
+    } finally {
+      setIsCreating(false)
+    }
+  }
 
   useLayoutEffect(() => {
     const compute = () => {
@@ -183,20 +247,31 @@ export default function CreateKonfolioCard({
         </div>
       </div>
 
+      {/* Optional inline error (keeps layout clean) */}
+      {createError ? (
+        <p className="m-0 w-full text-center text-[12px] leading-[130%] text-[#FF4603]">{createError}</p>
+      ) : null}
+
       <div className="relative w-[1254px] h-[707px] bg-white rounded-[15px] shadow-[4px_4px_15px_rgba(0,0,0,0.1)]">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-full px-[67px] flex items-center justify-between">
             <TemplateColumn
               t={templates[0]}
-              onPickTemplate={onPickTemplate}
-              disabled={disabled}
-              loadingLabel={primaryLoadingLabel}
+              onPickTemplate={(t) => {
+                if (onPickTemplate) return onPickTemplate(t)
+                void createAndGo(t)
+              }}
+              disabled={effectiveDisabled}
+              loadingLabel={effectiveLoadingLabel}
             />
             <TemplateColumn
               t={templates[1]}
-              onPickTemplate={onPickTemplate}
-              disabled={disabled}
-              loadingLabel={primaryLoadingLabel}
+              onPickTemplate={(t) => {
+                if (onPickTemplate) return onPickTemplate(t)
+                void createAndGo(t)
+              }}
+              disabled={effectiveDisabled}
+              loadingLabel={effectiveLoadingLabel}
             />
           </div>
         </div>

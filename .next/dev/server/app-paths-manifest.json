@@ -1,5 +1,7 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
+  "/api/konfolios/[id]/route": "app/api/konfolios/[id]/route.js",
+  "/api/konfolios/create-from-template/route": "app/api/konfolios/create-from-template/route.js",
   "/auth/callback/page": "app/auth/callback/page.js",
   "/konfolio-test/page": "app/konfolio-test/page.js",
   "/login/page": "app/login/page.js",

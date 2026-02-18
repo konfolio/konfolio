@@ -16,6 +16,7 @@ type OpenPicker = "banner" | "background" | null
 
 type Props = {
   backHref: string
+  onBack?: () => void
 
   bannerColor?: string
   backgroundColor?: string
@@ -66,6 +67,7 @@ const EMAIL_PLACEHOLDER = "myemailaddress@konfolio.com"
 
 export default function EditPortraitProfile({
   backHref,
+  onBack,
 
   bannerColor = "#FFFFFF",
   backgroundColor = "#F7F7F7",
@@ -255,7 +257,13 @@ export default function EditPortraitProfile({
       style={{ backgroundColor: localBanner }}
     >
       <div className="absolute left-[105px] top-1/2 -translate-y-1/2 z-[2]">
-        <ArrowLeft href={backHref} className="w-[30px] h-[30px]" />
+        {onBack ? (
+          <button type="button" onClick={onBack} aria-label="Back">
+            <ArrowLeft href={backHref} className="w-[30px] h-[30px]" />
+          </button>
+        ) : (
+          <ArrowLeft href={backHref} className="w-[30px] h-[30px]" />
+        )}
       </div>
 
       <div className="w-[1182px] h-[102px] flex items-center gap-[20px]">
@@ -307,7 +315,12 @@ export default function EditPortraitProfile({
                   })
                 }
                 onBlur={() =>
-                  blurRestoreIfEmpty(localBusiness, BUSINESS_PLACEHOLDER, (v) => setLocalBusiness(v), onChangeBusinessName)
+                  blurRestoreIfEmpty(
+                    localBusiness,
+                    BUSINESS_PLACEHOLDER,
+                    (v) => setLocalBusiness(v),
+                    onChangeBusinessName
+                  )
                 }
                 onChange={(e) => {
                   setLocalBusiness(e.target.value)
@@ -337,10 +350,7 @@ export default function EditPortraitProfile({
           {/* Right column */}
           <div className="w-[220px] h-[105px] flex flex-col items-end gap-[15px]">
             <div className="w-[205px] h-[36px] flex items-center justify-end gap-[30px]">
-              <div
-                ref={colorButtonsWrapRef}
-                className="relative w-[98px] h-[36px] flex items-center justify-end gap-[5px]"
-              >
+              <div ref={colorButtonsWrapRef} className="relative w-[98px] h-[36px] flex items-center justify-end gap-[5px]">
                 <div className="w-[16px] h-[16px] flex items-center justify-center text-[#A5A5A5]">
                   <BrushIcon className="w-[16px] h-[16px]" />
                 </div>
@@ -436,7 +446,12 @@ export default function EditPortraitProfile({
                       })
                     }
                     onBlur={() =>
-                      blurRestoreIfEmpty(localLocation, LOCATION_PLACEHOLDER, (v) => setLocalLocation(v), onChangeLocationText)
+                      blurRestoreIfEmpty(
+                        localLocation,
+                        LOCATION_PLACEHOLDER,
+                        (v) => setLocalLocation(v),
+                        onChangeLocationText
+                      )
                     }
                     onChange={(e) => {
                       setLocalLocation(e.target.value)

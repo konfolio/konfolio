@@ -1,13 +1,18 @@
 "use client"
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { useRouter } from "next/navigation"
 
 import DeleteIcon from "@/components/icons/DeleteIcon"
 import useClickOutside from "@/components/hooks/useClickOutside"
-
 import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
 
+import { supabase } from "@/lib/supabaseClient"
+import { useKonfolioDraftStore } from "@/stores/konfolioDraftStore"
+import type { KonfolioDraft } from "@/components/my-portfolios/editor/editorTypes"
+
 type TemplateType = "square" | "portrait"
+type SocialKey = "website" | "shop" | "instagram" | "x" | "facebook" | "tumblr" | "pixiv" | "bluesky"
 
 type Props = {
   open: boolean
@@ -19,6 +24,70 @@ type Props = {
   viewportPadding?: number
 }
 
+async function getAccessToken(): Promise<string | null> {
+  const { data } = await supabase.auth.getSession()
+  return data.session?.access_token ?? null
+}
+
+function defaultLinks() {
+  return {
+    activeKeys: [] as SocialKey[],
+    linksByKey: {
+      website: "",
+      shop: "",
+      instagram: "",
+      x: "",
+      facebook: "",
+      tumblr: "",
+      pixiv: "",
+      bluesky: "",
+    } as Record<SocialKey, string>,
+  }
+}
+
+// Convert create-from-template response -> KonfolioDraft (same shape your editor expects)
+function draftFromCreateResponse(data: any): KonfolioDraft | null {
+  const id = String(data?.id ?? "").trim()
+  const template = data?.template
+
+  if (!id) return null
+  if (template !== "square" && template !== "portrait") return null
+
+  const content = data?.content && typeof data.content === "object" ? data.content : {}
+
+  const links =
+    content.links && typeof content.links === "object" && Array.isArray(content.links.activeKeys)
+      ? content.links
+      : defaultLinks()
+
+  const merchTags = Array.isArray(content.merchTags) ? content.merchTags : []
+  const previousVends = Array.isArray(content.previousVends) ? content.previousVends : []
+  const images = Array.isArray(content.images) ? content.images : []
+
+  return {
+    id,
+    template,
+    status: data?.status === "published" ? "published" : "draft",
+    updatedAt: typeof data?.updatedAt === "number" ? data.updatedAt : Date.now(),
+
+    bannerColor: String(content.bannerColor ?? "#FFFFFF"),
+    backgroundColor: String(content.backgroundColor ?? "#F7F7F7"),
+    bannerSwatches: Array.isArray(content.bannerSwatches) ? content.bannerSwatches : [],
+    backgroundSwatches: Array.isArray(content.backgroundSwatches) ? content.backgroundSwatches : [],
+
+    profileImageUrl: String(content.profileImageUrl ?? ""),
+    businessName: String(content.businessName ?? "Business Name"),
+    displayName: String(content.displayName ?? "Name"),
+    locationText: String(content.locationText ?? "City, State"),
+    email: String(content.email ?? "myemailaddress@konfolio.com"),
+
+    links,
+    merchTags,
+    previousVends,
+    images,
+  } as KonfolioDraft
+}
+
 export default function CreateKonfolioPopover({
   open,
   onClose,
@@ -27,8 +96,15 @@ export default function CreateKonfolioPopover({
   primaryLoadingLabel,
   viewportPadding = 24,
 }: Props) {
+  const router = useRouter()
+
   const panelRef = useRef<HTMLDivElement | null>(null)
   const [scale, setScale] = useState(1)
+  const [isCreating, setIsCreating] = useState(false)
+
+  const hasKonfolioHydrated = useKonfolioDraftStore((s) => s.hasHydrated)
+  const forceKonfolioHydrate = useKonfolioDraftStore((s) => s.forceHydrate)
+  const setDraft = useKonfolioDraftStore((s) => s.setDraft)
 
   const BASE_W = 1254
   const BASE_H = 766
@@ -71,6 +147,55 @@ export default function CreateKonfolioPopover({
     return () => window.removeEventListener("keydown", onKeyDown)
   }, [open, onClose])
 
+  async function handlePickTemplate(t: TemplateType) {
+    if (isCreating) return
+    setIsCreating(true)
+
+    try {
+      // Make sure draft store is ready before we seed it
+      if (!hasKonfolioHydrated) {
+        try {
+          await forceKonfolioHydrate()
+        } catch {}
+      }
+
+      const token = await getAccessToken()
+      if (!token) return
+
+      const res = await fetch("/api/konfolios/create-from-template", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ template: t }),
+      })
+
+      if (!res.ok) {
+        // eslint-disable-next-line no-console
+        console.log("[CreateKonfolioPopover] create-from-template failed:", res.status, await res.text())
+        return
+      }
+
+      const data = await res.json()
+
+      const draft = draftFromCreateResponse(data)
+      if (!draft) return
+
+      // Seed Zustand immediately so /edit renders instantly (no stuck skeleton)
+      setDraft(draft.id, draft)
+
+      // optional parent callback
+      onPickTemplate(t)
+
+      onClose()
+      router.push(`/my-portfolios/${draft.id}/edit`)
+      router.refresh()
+    } finally {
+      setIsCreating(false)
+    }
+  }
+
   if (!open) return null
 
   return (
@@ -106,11 +231,11 @@ export default function CreateKonfolioPopover({
         </button>
 
         <CreateKonfolioCard
-          title="" 
+          title=""
           infoText="We work with templates to reduce variety and support our auto-fill system."
-          disabled={disabled}
+          disabled={disabled || isCreating}
           primaryLoadingLabel={primaryLoadingLabel}
-          onPickTemplate={(t) => onPickTemplate(t)}
+          onPickTemplate={(t) => handlePickTemplate(t)}
         />
       </div>
     </div>

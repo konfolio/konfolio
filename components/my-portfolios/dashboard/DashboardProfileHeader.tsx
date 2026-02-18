@@ -272,9 +272,9 @@ export default function DashboardProfileHeader({
       <CreateKonfolioPopover
         open={createPopoverOpen}
         onClose={() => setCreatePopoverOpen(false)}
-        onPickTemplate={(t) => {
+        onPickTemplate={() => {
+          // Optional callback only. Do NOT route.
           setCreatePopoverOpen(false)
-          router.push(`/my-portfolios/new?template=${t}`)
         }}
       />
     </>

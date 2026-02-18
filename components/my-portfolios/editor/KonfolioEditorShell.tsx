@@ -6,15 +6,82 @@ import { useKonfolioDraftStore } from "@/stores/konfolioDraftStore"
 import type { KonfolioDraft } from "@/components/my-portfolios/editor/editorTypes"
 import SquareEditor from "@/components/my-portfolios/editor/SquareEditor"
 import PortraitEditor from "@/components/my-portfolios/editor/PortraitEditor"
+import { supabase } from "@/lib/supabaseClient"
 
 type Props = {
   konfolioId: string
   initialDraft?: KonfolioDraft
 }
 
+type SocialKey = "website" | "shop" | "instagram" | "x" | "facebook" | "tumblr" | "pixiv" | "bluesky"
+
+function defaultLinks() {
+  return {
+    activeKeys: [] as SocialKey[],
+    linksByKey: {
+      website: "",
+      shop: "",
+      instagram: "",
+      x: "",
+      facebook: "",
+      tumblr: "",
+      pixiv: "",
+      bluesky: "",
+    } as Record<SocialKey, string>,
+  }
+}
+
+/**
+ * Your GET route returns:
+ * { id, template, status, updatedAt, content }
+ * We normalize that into a KonfolioDraft for the editor.
+ */
+function draftFromGetResponse(data: any): KonfolioDraft | null {
+  const id = String(data?.id ?? "").trim()
+  const template = data?.template
+
+  if (!id) return null
+  if (template !== "square" && template !== "portrait") return null
+
+  const content = data?.content && typeof data.content === "object" ? data.content : {}
+
+  const links =
+    content.links && typeof content.links === "object" && Array.isArray(content.links.activeKeys)
+      ? content.links
+      : defaultLinks()
+
+  const merchTags = Array.isArray(content.merchTags) ? content.merchTags : []
+  const previousVends = Array.isArray(content.previousVends) ? content.previousVends : []
+  const images = Array.isArray(content.images) ? content.images : []
+
+  const draft: KonfolioDraft = {
+    id,
+    template,
+    status: data?.status === "published" ? "published" : "draft",
+    updatedAt: typeof data?.updatedAt === "number" ? data.updatedAt : Date.now(),
+
+    bannerColor: String(content.bannerColor ?? "#FFFFFF"),
+    backgroundColor: String(content.backgroundColor ?? "#F7F7F7"),
+    bannerSwatches: Array.isArray(content.bannerSwatches) ? content.bannerSwatches : [],
+    backgroundSwatches: Array.isArray(content.backgroundSwatches) ? content.backgroundSwatches : [],
+
+    profileImageUrl: String(content.profileImageUrl ?? ""),
+    businessName: String(content.businessName ?? "Business Name"),
+    displayName: String(content.displayName ?? "Name"),
+    locationText: String(content.locationText ?? "City, State"),
+    email: String(content.email ?? "myemailaddress@konfolio.com"),
+
+    links,
+    merchTags,
+    previousVends,
+    images,
+  } as KonfolioDraft
+
+  return draft
+}
+
 export default function KonfolioEditorShell({ konfolioId, initialDraft }: Props) {
   const draftsHydrated = useKonfolioDraftStore((s) => s.hasHydrated)
-
   const draft = useKonfolioDraftStore((s) => s.draftsById[konfolioId])
   const setDraft = useKonfolioDraftStore((s) => s.setDraft)
 
@@ -41,17 +108,34 @@ export default function KonfolioEditorShell({ konfolioId, initialDraft }: Props)
         return
       }
 
-      // 3) Load from backend
+      // 3) Load from backend (AUTHED)
       try {
-        const res = await fetch(`/api/konfolios/${konfolioId}`, { method: "GET" })
-        if (res.ok) {
-          const data = (await res.json()) as { draft: KonfolioDraft }
-          if (data?.draft) {
-            setDraft(konfolioId, data.draft)
-          }
+        const sessionRes = await supabase.auth.getSession()
+        const token = sessionRes.data.session?.access_token
+        if (!token) {
+          if (!alive) return
+          setBooting(false)
+          return
         }
-      } catch {
-        // ignore; UI will still show skeleton until we have a draft
+
+        const res = await fetch(`/api/konfolios/${konfolioId}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        if (res.ok) {
+          const data = await res.json()
+          const nextDraft = draftFromGetResponse(data)
+          if (nextDraft) setDraft(konfolioId, nextDraft)
+        } else {
+          // eslint-disable-next-line no-console
+          console.log("[KonfolioEditorShell] GET failed", res.status)
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log("[KonfolioEditorShell] GET error", e)
       }
 
       if (!alive) return

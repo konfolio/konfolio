@@ -175,7 +175,7 @@ export default function NewKonfolioPage() {
     <>
       <Navbar />
       <main className="min-h-[calc(100vh-61px)] flex justify-center pt-[60px] pb-[80px]">
-        <CreateKonfolioCard title="Create your first Konfolio" onPickTemplate={(t) => createAndGo(t, "click")} />
+      <CreateKonfolioCard title="Create your first Konfolio" />
       </main>
     </>
   )

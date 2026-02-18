@@ -1,4 +1,3 @@
-// components/my-portfolios/square/EditSquareProfileSidebar.tsx
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
@@ -17,6 +16,7 @@ import ColorPicker from "@/components/my-portfolios/ColorPicker"
 
 type Props = {
   backHref: string
+  onBack?: () => void
 
   bannerColor?: string
   backgroundColor?: string
@@ -80,6 +80,7 @@ type OpenPicker = "banner" | "background" | null
 
 export default function EditSquareProfileSidebar({
   backHref,
+  onBack,
 
   bannerColor = "#FFFFFF",
   backgroundColor = "#F7F7F7",
@@ -287,7 +288,13 @@ export default function EditSquareProfileSidebar({
       {/* TOP ROW */}
       <div className="relative w-[276px] h-[36px] flex items-center justify-center gap-[40px]">
         <div className="absolute left-0 top-1/2 -translate-y-1/2">
-          <ArrowLeft href={backHref} className="w-[30px] h-[30px]" />
+          {onBack ? (
+            <button type="button" onClick={onBack} aria-label="Back">
+              <ArrowLeft href={backHref} className="w-[30px] h-[30px]" />
+            </button>
+          ) : (
+            <ArrowLeft href={backHref} className="w-[30px] h-[30px]" />
+          )}
         </div>
 
         <div ref={colorButtonsWrapRef} className="relative flex items-center justify-end gap-[5px] w-[98px] h-[36px]">
@@ -332,7 +339,7 @@ export default function EditSquareProfileSidebar({
       <div className="w-[276px] flex-1 flex flex-col items-center justify-center gap-[30px]">
         {/* Profile picture */}
         <div
-          className="relative w-[189px] h-[189px] bg-white border border-[#A5A5A5] border-[0.5px] rounded-[15px] overflow-hidden"
+          className="relative w-[189px] h-[189px] bg-white border border-[#A5A5A5] border-[#A5A5A5] border-[0.5px] rounded-[15px] overflow-hidden"
           onDrop={onDrop}
           onDragOver={onDragOver}
         >
@@ -389,7 +396,9 @@ export default function EditSquareProfileSidebar({
 
         {/* Social */}
         <div className="w-[276px] flex items-center justify-center">
-          {showAddLink ? <LinkPicker onAddLinkClick={onAddLinkClick} value={linksValue} onChange={onChangeLinks} /> : null}
+          {showAddLink ? (
+            <LinkPicker onAddLinkClick={onAddLinkClick} value={linksValue} onChange={onChangeLinks} />
+          ) : null}
         </div>
 
         {/* Merch */}
@@ -407,7 +416,9 @@ export default function EditSquareProfileSidebar({
             {parsedPrevVends.map((ev, i) => (
               <div key={`${ev.title}-${ev.year ?? ""}-${i}`} className="group relative w-full flex justify-center">
                 <div className="flex items-baseline gap-[6px]">
-                  <span className="font-inter font-normal text-[15px] leading-[140%] text-[#262626]">{ev.title || ""}</span>
+                  <span className="font-inter font-normal text-[15px] leading-[140%] text-[#262626]">
+                    {ev.title || ""}
+                  </span>
                   {ev.year ? (
                     <span className="font-inter italic font-normal text-[12px] leading-[140%] text-[#A5A5A5]">
                       {ev.year}
