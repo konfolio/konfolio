@@ -170,7 +170,7 @@ export default function LinkDropdown({
   }
 
   function removeKey(key: MediaKey) {
-    clearLinkKey(key) // removes from active + clears its value
+    clearLinkKey(key)
   }
 
   // close on outside click / esc
@@ -293,8 +293,8 @@ export default function LinkDropdown({
         </span>
       </div>
 
-      {/* Spawned link inputs */}
-      {activeKeys.length > 0 && (
+      {/* Spawned link inputs + limit text */}
+      {activeKeys.length > 0 ? (
         <div className="w-[426px] flex flex-col gap-[16px] pt-[6px]">
           {activeKeys.map((key) => {
             const opt = options.find((o) => o.key === key)!
@@ -313,8 +313,16 @@ export default function LinkDropdown({
               />
             )
           })}
+
+          {limitReached ? (
+            <div className="w-[426px] flex items-center pl-[37px]">
+              <span className="font-inter font-normal text-[12px] leading-[130%] text-[#FF4603]">
+                Limit Reached
+              </span>
+            </div>
+          ) : null}
         </div>
-      )}
+      ) : null}
     </div>
   )
 }

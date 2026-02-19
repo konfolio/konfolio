@@ -1,3 +1,4 @@
+// components/my-portfolios/LinkPicker.tsx
 "use client"
 
 import { useMemo, useRef, useState } from "react"
@@ -19,7 +20,15 @@ import BlueskyIcon from "@/components/icons/BlueskyIcon"
 
 import useClickOutside from "@/components/hooks/useClickOutside"
 
-export type LinkKey = "website" | "shop" | "instagram" | "x" | "facebook" | "tumblr" | "pixiv" | "bluesky"
+export type LinkKey =
+  | "website"
+  | "shop"
+  | "instagram"
+  | "x"
+  | "facebook"
+  | "tumblr"
+  | "pixiv"
+  | "bluesky"
 
 type LinkOption = {
   key: LinkKey
@@ -39,6 +48,9 @@ type Props = {
   /** Controlled mode (optional): */
   value?: LinkPickerValue
   onChange?: (next: LinkPickerValue) => void
+
+  /** Max number of total active links (default 5) */
+  maxLinks?: number
 }
 
 const EMPTY: LinkPickerValue = {
@@ -55,7 +67,12 @@ const EMPTY: LinkPickerValue = {
   },
 }
 
-export default function LinkPicker({ onAddLinkClick, value, onChange }: Props) {
+export default function LinkPicker({
+  onAddLinkClick,
+  value,
+  onChange,
+  maxLinks = 5,
+}: Props) {
   // internal fallback (uncontrolled mode)
   const [internal, setInternal] = useState<LinkPickerValue>(EMPTY)
 
@@ -119,10 +136,19 @@ export default function LinkPicker({ onAddLinkClick, value, onChange }: Props) {
     []
   )
 
+  const atMax = state.activeKeys.length >= maxLinks
+
   const addKey = (key: LinkKey) => {
+    // if already active, just focus that input
     if (state.activeKeys.includes(key)) {
       setLinksOpen(false)
       setActiveInputKey(key)
+      return
+    }
+
+    // enforce limit
+    if (state.activeKeys.length >= maxLinks) {
+      setLinksOpen(false)
       return
     }
 
@@ -231,22 +257,24 @@ export default function LinkPicker({ onAddLinkClick, value, onChange }: Props) {
         )
       })}
 
-      {/* Add link button */}
-      <button
-        type="button"
-        onClick={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          setActiveInputKey(null)
-          setLinksOpen((v) => !v)
-        }}
-        className="w-[18px] h-[18px] flex items-center justify-center text-[#A5A5A5]"
-        aria-label="Add link"
-      >
-        <LinkIcon className="w-[18px] h-[18px]" />
-      </button>
+      {/* Add link button (hide at max) */}
+      {!atMax ? (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            setActiveInputKey(null)
+            setLinksOpen((v) => !v)
+          }}
+          className="w-[18px] h-[18px] flex items-center justify-center text-[#A5A5A5]"
+          aria-label="Add link"
+        >
+          <LinkIcon className="w-[18px] h-[18px]" />
+        </button>
+      ) : null}
 
-      {/* Dropdown (keep original styling) */}
+      {/* Dropdown (ALL options stay visible; selected ones disabled) */}
       {linksOpen ? (
         <div
           className="
@@ -264,31 +292,46 @@ export default function LinkPicker({ onAddLinkClick, value, onChange }: Props) {
             <PopoverArrow className="w-[27px] h-[8px] block" />
           </div>
 
-          {linkOptions.map((opt) => (
-            <button
-              key={opt.key}
-              type="button"
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                addKey(opt.key)
-                onAddLinkClick?.()
-              }}
-              className="
-                w-[274px] h-[30px]
-                flex items-center justify-between
-                px-[10px]
-                rounded-[10px]
-                hover:bg-[#F7F7F7]
-                text-left
-              "
-            >
-              <span className="font-inter font-normal text-[14px] leading-[140%] text-[#262626]">{opt.label}</span>
-              <span className="font-inter font-normal text-[14px] leading-[140%] text-[#A5A5A5]">
-                {opt.rightText ?? ""}
-              </span>
-            </button>
-          ))}
+          {linkOptions.map((opt) => {
+            const alreadySelected = state.activeKeys.includes(opt.key)
+            const disabled = alreadySelected || atMax
+
+            return (
+              <button
+                key={opt.key}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  if (disabled) return
+                  addKey(opt.key)
+                  onAddLinkClick?.()
+                }}
+                className={`
+                  w-[274px] h-[30px]
+                  flex items-center justify-between
+                  px-[10px]
+                  rounded-[10px]
+                  text-left
+                  ${disabled ? "cursor-not-allowed" : "hover:bg-[#F7F7F7]"}
+                `}
+                aria-disabled={disabled}
+              >
+                <span
+                  className={`
+                    font-inter font-normal text-[14px] leading-[140%]
+                    ${disabled ? "text-[#A5A5A5]" : "text-[#262626]"}
+                  `}
+                >
+                  {opt.label}
+                </span>
+
+                <span className="font-inter font-normal text-[14px] leading-[140%] text-[#A5A5A5]">
+                  {opt.rightText ?? ""}
+                </span>
+              </button>
+            )
+          })}
         </div>
       ) : null}
 

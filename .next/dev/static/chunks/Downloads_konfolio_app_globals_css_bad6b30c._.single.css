@@ -342,6 +342,10 @@
     pointer-events: none;
   }
 
+  .visible {
+    visibility: visible;
+  }
+
   .sr-only {
     clip-path: inset(50%);
     white-space: nowrap;
@@ -1374,6 +1378,10 @@
 
   .w-\[65px\] {
     width: 65px;
+  }
+
+  .w-\[70px\] {
+    width: 70px;
   }
 
   .w-\[80px\] {

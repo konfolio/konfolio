@@ -134,8 +134,8 @@ function normalizeStringArray(v: any): string[] {
 }
 
 function isNonEmptyString(v: any): v is string {
-    return typeof v === "string" && v.trim().length > 0
-}  
+  return typeof v === "string" && v.trim().length > 0
+}
 
 function normalizeLinksMap(v: any): LinksMap {
   if (!v || typeof v !== "object" || Array.isArray(v)) return {}
@@ -196,6 +196,23 @@ function pickFallbackLinkKey(current: LinksMap): SocialKey {
   return "website"
 }
 
+function countLinks(m: LinksMap) {
+  return Object.values(m).filter((v) => isNonEmptyString(v)).length
+}
+
+function limitLinksToMax(m: LinksMap, max: number): LinksMap {
+  const out: LinksMap = {}
+  let n = 0
+  for (const row of SOCIAL_ROWS) {
+    const v = m[row.key]
+    if (!isNonEmptyString(v)) continue
+    out[row.key] = v
+    n += 1
+    if (n >= max) break
+  }
+  return out
+}
+
 export default function ArtistProfileEditPopover({
   open,
   onClose,
@@ -217,12 +234,12 @@ export default function ArtistProfileEditPopover({
       setSaveError(e?.message ?? "Failed to sign out")
       return
     }
-  
+
     onClose()
     router.push("/")
     router.refresh()
   }
-  
+
   useClickOutside(modalRef, () => {
     if (open) onClose()
   })
@@ -289,6 +306,9 @@ export default function ArtistProfileEditPopover({
   } | null>(null)
 
   const saveTimeoutRef = useRef<number | null>(null)
+
+  const linksCount = countLinks(linksMap)
+  const canAddLink = linksCount < 5
 
   useEffect(() => setBusinessNameText(businessName), [businessName])
   useEffect(() => setLocationText(locationTextFromProps), [locationTextFromProps])
@@ -360,7 +380,8 @@ export default function ArtistProfileEditPopover({
       const spYes = sp === "yes"
       setSalesPermitYes(spYes)
 
-      const nextLinks = normalizeLinksMap(row.links)
+      const rawLinks = normalizeLinksMap(row.links)
+      const nextLinks = limitLinksToMax(rawLinks, 5)
       setLinksMap(nextLinks)
 
       let nextCollabs: string[] = []
@@ -523,11 +544,14 @@ export default function ArtistProfileEditPopover({
         collabs,
         merch_tags: merchTags,
         prev_vends: previousVends,
-        links: linksMap,
+        links: limitLinksToMax(linksMap, 5),
       }
 
       const res = await supabase.from("profiles").update(payload).eq("id", userId)
       if (res.error) throw res.error
+
+      const savedLinks = limitLinksToMax(linksMap, 5)
+      setLinksMap(savedLinks)
 
       initialRef.current = {
         businessNameText: String(payload.business_name ?? "").trim(),
@@ -539,7 +563,7 @@ export default function ArtistProfileEditPopover({
         collabs,
         merchTags,
         previousVends,
-        linksMap,
+        linksMap: savedLinks,
       }
 
       setIsDirty(false)
@@ -621,7 +645,11 @@ export default function ArtistProfileEditPopover({
                   aria-label="Save changes"
                 >
                   <span>
-                    {saveStatus === "saving" ? "Saving..." : saveStatus === "saved" ? "Saved!" : "Save"}
+                    {saveStatus === "saving"
+                      ? "Saving..."
+                      : saveStatus === "saved"
+                        ? "Saved!"
+                        : "Save"}
                   </span>
                 </button>
               </div>
@@ -850,52 +878,61 @@ export default function ArtistProfileEditPopover({
                     )
                   })}
 
-                  <div className="flex items-center gap-[10px] w-full">
-                    <LinkIcon className="w-[16px] h-[16px] text-[#D3D3D3] shrink-0" />
+                  {canAddLink ? (
+                    <div className="flex items-center gap-[10px] w-full">
+                      <LinkIcon className="w-[16px] h-[16px] text-[#D3D3D3] shrink-0" />
 
-                    <div className="flex-1 min-w-0">
-                      <input
-                        value={linkValue}
-                        onChange={(e) => setLinkValue(e.target.value)}
-                        onFocus={() => setLinkFocused(true)}
-                        onBlur={() => setLinkFocused(false)}
-                        onKeyDown={(e) => {
-                          if (e.key !== "Enter") return
-                          e.preventDefault()
+                      <div className="flex-1 min-w-0">
+                        <input
+                          value={linkValue}
+                          onChange={(e) => setLinkValue(e.target.value)}
+                          onFocus={() => setLinkFocused(true)}
+                          onBlur={() => setLinkFocused(false)}
+                          onKeyDown={(e) => {
+                            if (e.key !== "Enter") return
+                            e.preventDefault()
 
-                          const raw = linkValue.trim()
-                          if (!raw) return
+                            if (countLinks(linksMap) >= 5) return
 
-                          const url = normalizeUrlInput(raw)
-                          const key = inferSocialKey(url)
+                            const raw = linkValue.trim()
+                            if (!raw) return
 
-                          setLinksMap((prev) => {
-                            const chosen = key ?? pickFallbackLinkKey(prev)
-                            return { ...prev, [chosen]: url }
-                          })
+                            const url = normalizeUrlInput(raw)
+                            const key = inferSocialKey(url)
 
-                          setLinkValue("")
-                          setLinkFocused(false)
-                        }}
-                        placeholder="Add Link"
-                        className={[
-                          "w-full bg-transparent outline-none",
-                          "text-[15px] leading-[150%]",
-                          linkValue ? "text-[#262626]" : "text-[#D3D3D3]",
-                          "placeholder:text-[#D3D3D3]",
-                          "pb-[4px]",
-                        ].join(" ")}
-                        aria-label="Add Link"
-                      />
+                            setLinksMap((prev) => {
+                              if (countLinks(prev) >= 5) return prev
 
-                      <div
-                        className={[
-                          "h-[1px] w-full",
-                          linkFocused ? "bg-[#D3D3D3]" : "bg-transparent",
-                        ].join(" ")}
-                      />
+                              const chosen = key ?? pickFallbackLinkKey(prev)
+                              const next = { ...prev, [chosen]: url }
+
+                              if (countLinks(next) > 5) return prev
+                              return next
+                            })
+
+                            setLinkValue("")
+                            setLinkFocused(false)
+                          }}
+                          placeholder="Add Link"
+                          className={[
+                            "w-full bg-transparent outline-none",
+                            "text-[15px] leading-[150%]",
+                            linkValue ? "text-[#262626]" : "text-[#D3D3D3]",
+                            "placeholder:text-[#D3D3D3]",
+                            "pb-[4px]",
+                          ].join(" ")}
+                          aria-label="Add Link"
+                        />
+
+                        <div
+                          className={[
+                            "h-[1px] w-full",
+                            linkFocused ? "bg-[#D3D3D3]" : "bg-transparent",
+                          ].join(" ")}
+                        />
+                      </div>
                     </div>
-                  </div>
+                  ) : null}
                 </div>
               </div>
 
@@ -944,48 +981,47 @@ export default function ArtistProfileEditPopover({
                     ))
                   )}
 
-                    {previousVends.length < 4 ? (
+                  {previousVends.length < 4 ? (
                     <div className="w-full">
-                        <input
+                      <input
                         value={eventValue}
                         onChange={(e) => setEventValue(e.target.value)}
                         onFocus={() => setEventFocused(true)}
                         onBlur={() => setEventFocused(false)}
                         onKeyDown={(e) => {
-                            if (e.key !== "Enter") return
-                            e.preventDefault()
+                          if (e.key !== "Enter") return
+                          e.preventDefault()
 
-                            const next = eventValue.trim()
-                            if (!next) return
+                          const next = eventValue.trim()
+                          if (!next) return
 
-                            setPreviousVends((prev) => {
+                          setPreviousVends((prev) => {
                             if (prev.length >= 4) return prev
                             return [...prev, next]
-                            })
+                          })
 
-                            setEventValue("")
-                            setEventFocused(false)
+                          setEventValue("")
+                          setEventFocused(false)
                         }}
                         placeholder="Add Event (Event 2026)"
                         className={[
-                            "w-full bg-transparent outline-none",
-                            "text-[15px] leading-[150%]",
-                            eventValue ? "text-[#262626]" : "text-[#D3D3D3]",
-                            "placeholder:text-[#D3D3D3]",
-                            "pb-[4px]",
+                          "w-full bg-transparent outline-none",
+                          "text-[15px] leading-[150%]",
+                          eventValue ? "text-[#262626]" : "text-[#D3D3D3]",
+                          "placeholder:text-[#D3D3D3]",
+                          "pb-[4px]",
                         ].join(" ")}
                         aria-label="Add Event"
-                        />
+                      />
 
-                        <div
+                      <div
                         className={[
-                            "h-[1px] w-full",
-                            eventFocused ? "bg-[#D3D3D3]" : "bg-transparent",
+                          "h-[1px] w-full",
+                          eventFocused ? "bg-[#D3D3D3]" : "bg-transparent",
                         ].join(" ")}
-                        />
+                      />
                     </div>
-                    ) : null}
-
+                  ) : null}
                 </div>
               </div>
 
@@ -995,12 +1031,12 @@ export default function ArtistProfileEditPopover({
                 <AsideRow label="Support" onClick={onSupport} />
                 <AsideRow label="Report issue" onClick={onReportIssue} />
                 <AsideRow
-                    label="Sign out"
-                    danger
-                    onClick={() => {
-                        onSignOut?.()
-                        handleSignOut()
-                    }}
+                  label="Sign out"
+                  danger
+                  onClick={() => {
+                    onSignOut?.()
+                    handleSignOut()
+                  }}
                 />
               </div>
 
@@ -1060,7 +1096,10 @@ function EditableInline({
                 }
               }}
               placeholder={placeholder}
-              className={["w-full bg-transparent outline-none placeholder:text-[#D3D3D3]", textClassName].join(" ")}
+              className={[
+                "w-full bg-transparent outline-none placeholder:text-[#D3D3D3]",
+                textClassName,
+              ].join(" ")}
             />
           ) : (
             <span className={["block w-full min-w-0 truncate", textClassName].join(" ")}>
@@ -1301,7 +1340,9 @@ function EditableVendRow({
           ) : (
             <p className="m-0 font-inter font-normal text-[15px] leading-[140%] text-[#262626] truncate">
               <span>{name}</span>
-              {year ? <span className="ml-[6px] italic text-[12px] text-[#A5A5A5]">{year}</span> : null}
+              {year ? (
+                <span className="ml-[6px] italic text-[12px] text-[#A5A5A5]">{year}</span>
+              ) : null}
               {tail ? <span className="ml-[6px]">{tail}</span> : null}
             </p>
           )}

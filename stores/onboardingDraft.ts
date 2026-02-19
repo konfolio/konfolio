@@ -1,4 +1,3 @@
-// stores/onboardingDraft.ts
 "use client"
 
 import { create } from "zustand"
@@ -22,6 +21,8 @@ export type MediaKey =
   | "tumblr"
   | "pixiv"
   | "bluesky"
+
+const MAX_LINKS = 5
 
 type Draft = {
   /** true once storage rehydrate has completed (success OR failure) */
@@ -166,7 +167,6 @@ const initialDraft: Draft = {
 }
 
 // ---- Safe LOCAL storage wrapper (never undefined) ----
-// This is the key change vs sessionStorage.
 const safeLocalStorage: StateStorage = {
   getItem: (name) => {
     try {
@@ -194,6 +194,19 @@ const safeLocalStorage: StateStorage = {
   },
 }
 
+// Ensure keys are unique, in-order, and capped
+function clampActiveLinkKeys(keys: MediaKey[]) {
+  const out: MediaKey[] = []
+  const seen = new Set<MediaKey>()
+  for (const k of keys) {
+    if (seen.has(k)) continue
+    seen.add(k)
+    out.push(k)
+    if (out.length >= MAX_LINKS) break
+  }
+  return out
+}
+
 export const useOnboardingDraft = create<Draft & Actions>()(
   persist(
     (set, get, api) => ({
@@ -216,11 +229,9 @@ export const useOnboardingDraft = create<Draft & Actions>()(
         const prevMode = get().mode
         set({ mode })
 
-        // if first time setting, or no change, don't wipe anything
         if (!prevMode || prevMode === mode) return
 
         if (mode === "artist") {
-          // switched to ARTIST -> clear host-only fields
           set({
             organization: "",
             hostWebsite: "",
@@ -229,7 +240,6 @@ export const useOnboardingDraft = create<Draft & Actions>()(
             eventLocation: "",
           })
         } else {
-          // switched to HOST -> clear artist-only fields
           set({
             preferredName: "",
 
@@ -270,9 +280,16 @@ export const useOnboardingDraft = create<Draft & Actions>()(
       setCollabs: (v) => set({ collabs: v }),
 
       // links
-      setActiveLinkKeys: (keys) => set({ activeLinkKeys: keys }),
+      setActiveLinkKeys: (keys) => set({ activeLinkKeys: clampActiveLinkKeys(keys) }),
 
-      setLinkValue: (key, value) => set({ links: { ...get().links, [key]: value } }),
+      setLinkValue: (key, value) => {
+        const nextLinks = { ...get().links, [key]: value }
+        // If they typed into a link that isn't active yet, auto-activate it (still capped).
+        // This helps prevent "value set but key not visible" edge cases.
+        const curKeys = get().activeLinkKeys
+        const nextKeys = curKeys.includes(key) ? curKeys : clampActiveLinkKeys([...curKeys, key])
+        set({ links: nextLinks, activeLinkKeys: nextKeys })
+      },
 
       clearLinkKey: (key) => {
         const { links, activeLinkKeys } = get()
@@ -304,7 +321,6 @@ export const useOnboardingDraft = create<Draft & Actions>()(
       resetDraft: () => {
         const url = get().profilePreviewUrl
         if (url) URL.revokeObjectURL(url)
-        // keep store "hydrated" after reset so UI doesn't hang
         set({ ...initialDraft, hasHydrated: true })
       },
     }),
@@ -312,15 +328,18 @@ export const useOnboardingDraft = create<Draft & Actions>()(
       name: "konfolio-onboarding-draft",
       storage: createJSONStorage(() => safeLocalStorage),
 
-      // File objects can't be serialized; do not persist them
       partialize: (state) => {
         const { profileFile, profilePreviewUrl, ...rest } = state
         return rest
       },
 
-      // Set hasHydrated once rehydration completes (even if it errors)
       onRehydrateStorage: () => (_state, _error) => {
-        useOnboardingDraft.setState({ hasHydrated: true })
+        // ensure link keys are clamped after hydrate too
+        const s = useOnboardingDraft.getState()
+        useOnboardingDraft.setState({
+          hasHydrated: true,
+          activeLinkKeys: clampActiveLinkKeys(s.activeLinkKeys),
+        })
       },
     }
   )

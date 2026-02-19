@@ -77,10 +77,15 @@ export default function Navbar() {
   const pathnameRaw = usePathname() || ""
   const pathname = normalizePath(pathnameRaw)
 
-  const [signedIn, setSignedIn] = useState(false)
+  // 3-state auth:
+  // null = unknown/loading, false = signed out, true = signed in
+  const [signedIn, setSignedIn] = useState<boolean | null>(null)
+
   const [displayName, setDisplayName] = useState<string>("")
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null)
+
   const [isVendor, setIsVendor] = useState(false)
+  const [roleReady, setRoleReady] = useState(false)
 
   const isExploreActive = pathname === "/explore" || pathname.startsWith("/explore/")
   const isSupportActive = pathname === "/support" || pathname.startsWith("/support/")
@@ -89,12 +94,6 @@ export default function Navbar() {
     pathname === "/my-portfolios" || pathname.startsWith("/my-portfolios/")
   const isMyFormsActive = pathname === "/my-forms" || pathname.startsWith("/my-forms/")
 
-  const myPrimaryHref = isVendor ? "/my-forms" : "/my-portfolios"
-  const myPrimaryLabel = isVendor ? "My Forms" : "My Portfolios"
-  const myPrimaryWidthClass = isVendor ? "w-[85px]" : "w-[110px]"
-  const isPrimaryActive = isVendor ? isMyFormsActive : isMyPortfoliosActive
-
-  // Hide account on the main dashboard pages (per your earlier requirement)
   const hideAccountOnDashboardRoot =
     pathname === "/my-portfolios" || pathname === "/my-forms"
 
@@ -102,6 +101,10 @@ export default function Navbar() {
     let mounted = true
 
     async function load() {
+      // start in “unknown” for each load to avoid showing wrong UI
+      setSignedIn(null)
+      setRoleReady(false)
+
       const sessionRes = await supabase.auth.getSession()
       const user = sessionRes.data.session?.user
 
@@ -112,6 +115,7 @@ export default function Navbar() {
         setDisplayName("")
         setProfileImageUrl(null)
         setIsVendor(false)
+        setRoleReady(true)
         return
       }
 
@@ -129,6 +133,7 @@ export default function Navbar() {
         setDisplayName("")
         setProfileImageUrl(null)
         setIsVendor(false)
+        setRoleReady(true)
         return
       }
 
@@ -141,14 +146,13 @@ export default function Navbar() {
       const business = String(p?.business_name ?? "").trim()
       const org = String(p?.organization ?? "").trim()
 
-      // Display name rule:
-      // - vendor: organization (fallback to business_name, then name)
-      // - artist: preferred_name fallback first_name
       const vendorName = org || business || first || "Account"
       const artistName = preferred || first || "Account"
 
       setDisplayName(vendor ? vendorName : artistName)
       setProfileImageUrl(p?.profile_image_url ?? null)
+
+      setRoleReady(true)
     }
 
     load()
@@ -168,6 +172,15 @@ export default function Navbar() {
     return c && c.length ? c : "U"
   }, [displayName])
 
+  const myPrimaryHref = isVendor ? "/my-forms" : "/my-portfolios"
+  const myPrimaryLabel = isVendor ? "My Forms" : "My Portfolios"
+  const myPrimaryWidthClass = isVendor ? "w-[85px]" : "w-[110px]"
+  const isPrimaryActive = isVendor ? isMyFormsActive : isMyPortfoliosActive
+
+  const showSignedInUI = signedIn === true
+  const showSignedOutUI = signedIn === false
+  const authUnknown = signedIn === null
+
   return (
     <nav className="w-full h-[61px] bg-white">
       <div className="h-full px-[25px] sm:px-10 lg:px-[150px] pt-[15px] pb-[10px] flex items-center">
@@ -182,14 +195,20 @@ export default function Navbar() {
               </span>
             </Link>
 
-            {signedIn ? (
+            {showSignedInUI ? (
               <>
-                <NavItem
-                  href={myPrimaryHref}
-                  label={myPrimaryLabel}
-                  active={isPrimaryActive}
-                  widthClass={myPrimaryWidthClass}
-                />
+                {/* ✅ No wrong label flash while role loads */}
+                {roleReady ? (
+                  <NavItem
+                    href={myPrimaryHref}
+                    label={myPrimaryLabel}
+                    active={isPrimaryActive}
+                    widthClass={myPrimaryWidthClass}
+                  />
+                ) : (
+                  <div className="hidden lg:flex w-[110px] h-[24px]" />
+                )}
+
                 <NavItem
                   href="/explore"
                   label="Explore"
@@ -203,19 +222,26 @@ export default function Navbar() {
                   widthClass="w-[65px]"
                 />
               </>
-            ) : (
+            ) : showSignedOutUI ? (
               <NavItem
                 href="/explore"
                 label="Explore"
                 active={isExploreActive}
                 widthClass="w-[62px]"
               />
+            ) : (
+              // ✅ authUnknown: render placeholders so nothing flashes to signed-out version
+              <div className="hidden lg:flex items-center gap-[50px]">
+                <div className="w-[110px] h-[24px]" />
+                <div className="w-[60px] h-[24px]" />
+                <div className="w-[65px] h-[24px]" />
+              </div>
             )}
           </div>
 
           {/* RIGHT GROUP */}
           <div className="flex items-center">
-            {signedIn ? (
+            {showSignedInUI ? (
               hideAccountOnDashboardRoot ? null : (
                 <Link
                   href="/account"
@@ -263,7 +289,7 @@ export default function Navbar() {
                   </span>
                 </Link>
               )
-            ) : (
+            ) : showSignedOutUI ? (
               <Link
                 href="/login"
                 className="
@@ -280,6 +306,9 @@ export default function Navbar() {
               >
                 Sign In
               </Link>
+            ) : (
+              // authUnknown placeholder
+              <div className="hidden lg:flex w-[70px] h-[24px]" />
             )}
 
             {/* Mobile: keep simple */}
