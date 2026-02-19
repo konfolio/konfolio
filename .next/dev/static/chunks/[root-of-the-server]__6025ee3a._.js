@@ -542,10 +542,10 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/node_modules/zustand/esm/react.mjs [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$zustand$2f$esm$2f$middleware$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/node_modules/zustand/esm/middleware.mjs [app-client] (ecmascript)");
-// stores/onboardingDraft.ts
 "use client";
 ;
 ;
+const MAX_LINKS = 5;
 const emptyLinks = {
     website: "",
     shop: "",
@@ -582,7 +582,6 @@ const initialDraft = {
     profilePreviewUrl: ""
 };
 // ---- Safe LOCAL storage wrapper (never undefined) ----
-// This is the key change vs sessionStorage.
 const safeLocalStorage = {
     getItem: (name)=>{
         try {
@@ -612,6 +611,18 @@ const safeLocalStorage = {
         }
     }
 };
+// Ensure keys are unique, in-order, and capped
+function clampActiveLinkKeys(keys) {
+    const out = [];
+    const seen = new Set();
+    for (const k of keys){
+        if (seen.has(k)) continue;
+        seen.add(k);
+        out.push(k);
+        if (out.length >= MAX_LINKS) break;
+    }
+    return out;
+}
 const useOnboardingDraft = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["create"])()((0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$zustand$2f$esm$2f$middleware$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["persist"])((set, get, api)=>({
         ...initialDraft,
         // manual rehydrate helper
@@ -634,10 +645,8 @@ const useOnboardingDraft = (0, __TURBOPACK__imported__module__$5b$project$5d2f$D
             set({
                 mode
             });
-            // if first time setting, or no change, don't wipe anything
             if (!prevMode || prevMode === mode) return;
             if (mode === "artist") {
-                // switched to ARTIST -> clear host-only fields
                 set({
                     organization: "",
                     hostWebsite: "",
@@ -646,7 +655,6 @@ const useOnboardingDraft = (0, __TURBOPACK__imported__module__$5b$project$5d2f$D
                     eventLocation: ""
                 });
             } else {
-                // switched to HOST -> clear artist-only fields
                 set({
                     preferredName: "",
                     businessName: "",
@@ -708,14 +716,25 @@ const useOnboardingDraft = (0, __TURBOPACK__imported__module__$5b$project$5d2f$D
             }),
         // links
         setActiveLinkKeys: (keys)=>set({
-                activeLinkKeys: keys
+                activeLinkKeys: clampActiveLinkKeys(keys)
             }),
-        setLinkValue: (key, value)=>set({
-                links: {
-                    ...get().links,
-                    [key]: value
-                }
-            }),
+        setLinkValue: (key, value)=>{
+            const nextLinks = {
+                ...get().links,
+                [key]: value
+            };
+            // If they typed into a link that isn't active yet, auto-activate it (still capped).
+            // This helps prevent "value set but key not visible" edge cases.
+            const curKeys = get().activeLinkKeys;
+            const nextKeys = curKeys.includes(key) ? curKeys : clampActiveLinkKeys([
+                ...curKeys,
+                key
+            ]);
+            set({
+                links: nextLinks,
+                activeLinkKeys: nextKeys
+            });
+        },
         clearLinkKey: (key)=>{
             const { links, activeLinkKeys } = get();
             set({
@@ -758,7 +777,6 @@ const useOnboardingDraft = (0, __TURBOPACK__imported__module__$5b$project$5d2f$D
         resetDraft: ()=>{
             const url = get().profilePreviewUrl;
             if (url) URL.revokeObjectURL(url);
-            // keep store "hydrated" after reset so UI doesn't hang
             set({
                 ...initialDraft,
                 hasHydrated: true
@@ -767,15 +785,16 @@ const useOnboardingDraft = (0, __TURBOPACK__imported__module__$5b$project$5d2f$D
     }), {
     name: "konfolio-onboarding-draft",
     storage: (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$zustand$2f$esm$2f$middleware$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createJSONStorage"])(()=>safeLocalStorage),
-    // File objects can't be serialized; do not persist them
     partialize: (state)=>{
         const { profileFile, profilePreviewUrl, ...rest } = state;
         return rest;
     },
-    // Set hasHydrated once rehydration completes (even if it errors)
     onRehydrateStorage: ()=>(_state, _error)=>{
+            // ensure link keys are clamped after hydrate too
+            const s = useOnboardingDraft.getState();
             useOnboardingDraft.setState({
-                hasHydrated: true
+                hasHydrated: true,
+                activeLinkKeys: clampActiveLinkKeys(s.activeLinkKeys)
             });
         }
 }));
@@ -2354,6 +2373,7 @@ const reduxImpl = (reducer, initial)=>(set, _get, api)=>{
         };
     };
 const redux = reduxImpl;
+const shouldDispatchFromDevtools = (api)=>!!api.dispatchFromDevtools && typeof api.dispatch === "function";
 const trackedConnections = /* @__PURE__ */ new Map();
 const getTrackedConnectionState = (name)=>{
     const api = trackedConnections.get(name);
@@ -2463,7 +2483,7 @@ const devtoolsImpl = (fn, devtoolsOptions = {})=>(set, get, api)=>{
                     key === connectionInformation.store ? initialState : store2.getState()
                 ])));
         }
-        if (api.dispatchFromDevtools && typeof api.dispatch === "function") {
+        if (shouldDispatchFromDevtools(api)) {
             let didWarnAboutReservedActionType = false;
             const originalDispatch = api.dispatch;
             api.dispatch = (...args)=>{
@@ -2504,9 +2524,9 @@ const devtoolsImpl = (fn, devtoolsOptions = {})=>(set, get, api)=>{
                             }
                             return;
                         }
-                        if (!api.dispatchFromDevtools) return;
-                        if (typeof api.dispatch !== "function") return;
-                        api.dispatch(action);
+                        if (shouldDispatchFromDevtools(api)) {
+                            api.dispatch(action);
+                        }
                     });
                 case "DISPATCH":
                     switch(message.payload.type){
@@ -2656,7 +2676,7 @@ const toThenable = (fn)=>(input)=>{
     };
 const persistImpl = (config, baseOptions)=>(set, get, api)=>{
         let options = {
-            storage: createJSONStorage(()=>localStorage),
+            storage: createJSONStorage(()=>window.localStorage),
             partialize: (state)=>state,
             version: 0,
             merge: (persistedState, currentState)=>({

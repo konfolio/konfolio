@@ -1,19 +1,109 @@
-[00:00:10.828] Server  LOG     ✓ Ready in 9.1s
-[00:01:48.188] Server  LOG     ○ Compiling /login ...
-[01:41:02.503] Server  LOG     ✓ Compiled in 3s
-[01:41:40.678] Browser LOG     [callback] sessionErr: null
-[01:41:40.678] Browser LOG     [callback] user: 805adce4-3914-4b33-8a74-56da2ba4b779
-[01:41:41.404] Browser LOG     [callback] profileErr: null
-[01:41:41.404] Browser LOG     [callback] profile: {"id":"805adce4-3914-4b33-8a74-56da2ba4b779","onboarding_complete":true}
-[01:41:48.634] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[01:41:48.634] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[01:41:48.634] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[01:41:48.634] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[01:41:48.634] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[01:44:07.449] Server  LOG     ✓ Compiled in 771ms
-[01:57:38.191] Server  LOG     ✓ Compiled in 509ms
-[02:00:29.351] Server  LOG     ✓ Compiled in 100ms
-[02:00:38.226] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+[00:00:04.546] Server  LOG     ✓ Ready in 3.6s
+[00:00:11.059] Server  LOG     ○ Compiling / ...
+[00:00:16.295] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/Downloads...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" className="inter_e8e5...">
+                          <body
+                            className="antialiased"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[00:00:16.295] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:16.299] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:16.299] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:16.300] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:16.479] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:01:46.516] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/Downloads...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" className="inter_e8e5...">
+                          <body
+                            className="antialiased"
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[00:01:46.516] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:01:46.516] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:01:46.516] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:01:46.516] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:01:46.516] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:01:50.958] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:01:50.958] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:01:50.958] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:01:50.958] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:01:50.958] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:02:02.406] Browser LOG     [callback] sessionErr: null
+[00:02:02.406] Browser LOG     [callback] user: 805adce4-3914-4b33-8a74-56da2ba4b779
+[00:02:02.944] Browser LOG     [callback] profileErr: null
+[00:02:02.944] Browser LOG     [callback] profile: {"id":"805adce4-3914-4b33-8a74-56da2ba4b779","onboarding_complete":true}
+[00:02:09.110] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:02:09.110] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:02:09.110] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:02:09.110] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:02:09.110] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:02:16.362] Browser LOG     [callback] sessionErr: null
+[00:02:16.363] Browser LOG     [callback] user: a0d1b45e-e482-4eba-ba34-54a4c88d33d4
+[00:02:16.641] Browser LOG     [callback] profileErr: null
+[00:02:16.641] Browser LOG     [callback] profile: {"id":"a0d1b45e-e482-4eba-ba34-54a4c88d33d4","onboarding_complete":true}
+[00:02:43.300] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:02:43.300] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:02:43.300] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:02:43.300] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:02:43.300] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:02:48.692] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
 
 - A server/client branch `if (typeof window !== 'undefined')`.
 - Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
@@ -48,636 +138,17 @@ It can also happen if the client has a browser extension installed which messes 
                           >
                   ...
 
-[02:00:38.584] Browser LOG     [callback] sessionErr: null
-[02:00:38.584] Browser LOG     [callback] user: 805adce4-3914-4b33-8a74-56da2ba4b779
-[02:00:39.025] Browser LOG     [callback] profileErr: null
-[02:00:39.025] Browser LOG     [callback] profile: {"id":"805adce4-3914-4b33-8a74-56da2ba4b779","onboarding_complete":true}
-[02:08:57.424] Server  LOG     ✓ Compiled in 133ms
-[02:10:40.566] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./Downloads/konfolio/app/my-portfolios/page.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
-[02:13:01.198] Server  LOG     ✓ Compiled in 395ms
-[02:15:03.107] Server  LOG     ✓ Compiled in 106ms
-[02:15:03.232] Browser ERROR   uncaughtError: ReferenceError: createPopoverOpen is not defined
-[02:16:15.503] Server  ERROR   ⨯ ReferenceError: createPopoverOpen is not defined
-[02:16:15.527] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[02:16:16.220] Browser ERROR   uncaughtError: ReferenceError: createPopoverOpen is not defined
-[02:16:21.035] Server  ERROR   ⨯ ReferenceError: createPopoverOpen is not defined
-[02:16:21.071] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[02:16:21.393] Server  LOG     ✓ Compiled in 14ms
-[02:16:22.220] Browser ERROR   uncaughtError: ReferenceError: createPopoverOpen is not defined
-[02:16:25.481] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[02:16:25.606] Server  LOG     ✓ Compiled in 89ms
-[02:16:39.419] Browser LOG     [NEW] createAndGo {"hasOnboardingHydrated":true,"onboardingSnapshot":{"acceptedTerms":false,"activeLinkKeys":[],"attendees":"","businessName":"","collabs":[],"eventLocation":"","firstName":"","firstVend":false,"hasHydrated":true,"hostWebsite":"","lastName":"","links":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""},"location":"","merchTags":[],"orgSize":"","organization":"","preferredName":"","prevVends":[],"profileFile":null,"profilePreviewUrl":"","salesPermit":"","willApply":false},"source":"query","template":"square"}
-[02:16:39.419] Browser LOG     [NEW] hasMeaningfulOnboarding? false
-[02:16:39.419] Browser LOG     [NEW] draft built: {"activeLinksCount":0,"businessName":"Business Name","debugSource":"createDraftFromProfile","displayName":"Name","email":"myemailaddress@konfolio.com","locationText":"City, State","merchTagsCount":0,"prevVendsCount":0,"profileImageUrl":""}
-[02:16:41.253] Browser LOG     [SQUARE] mount {"draftId":"08a01e9d-8166-41e4-957c-26125a24e207"}
-[02:16:41.253] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"08a01e9d-8166-41e4-957c-26125a24e207","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771372937834}
-[02:16:41.253] Browser LOG     [SQUARE] draft changed: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"08a01e9d-8166-41e4-957c-26125a24e207","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771372937834}
-[02:16:41.253] Browser LOG     [SQUARE] draft source: undefined
-[02:16:41.253] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"08a01e9d-8166-41e4-957c-26125a24e207"}
-[02:16:41.254] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"08a01e9d-8166-41e4-957c-26125a24e207","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771372937834}
-[02:16:41.254] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] draft changed: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"08a01e9d-8166-41e4-957c-26125a24e207","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771372937834}
-[02:16:41.254] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] draft source: undefined
-[02:30:47.973] Server  LOG     ✓ Compiled in 611ms
-[02:30:48.263] Server  LOG     ✓ Compiled in 0ms
-[02:31:34.337] Server  LOG     ✓ Compiled in 1244ms
-[02:45:23.113] Browser LOG     [NEW] createAndGo {"hasOnboardingHydrated":true,"onboardingSnapshot":{"acceptedTerms":false,"activeLinkKeys":[],"attendees":"","businessName":"","collabs":[],"eventLocation":"","firstName":"","firstVend":false,"hasHydrated":true,"hostWebsite":"","lastName":"","links":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""},"location":"","merchTags":[],"orgSize":"","organization":"","preferredName":"","prevVends":[],"profileFile":null,"profilePreviewUrl":"","salesPermit":"","willApply":false},"source":"query","template":"square"}
-[02:45:23.114] Browser LOG     [NEW] hasMeaningfulOnboarding? false
-[02:45:23.114] Browser LOG     [NEW] draft built: {"activeLinksCount":0,"businessName":"Business Name","debugSource":"createDraftFromProfile","displayName":"Name","email":"myemailaddress@konfolio.com","locationText":"City, State","merchTagsCount":0,"prevVendsCount":0,"profileImageUrl":""}
-[02:45:23.798] Browser LOG     [SQUARE] mount {"draftId":"b6c9357e-c203-4dcf-adb6-e52d7ecda760"}
-[02:45:23.798] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"b6c9357e-c203-4dcf-adb6-e52d7ecda760","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771374661426}
-[02:45:23.798] Browser LOG     [SQUARE] draft changed: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"b6c9357e-c203-4dcf-adb6-e52d7ecda760","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771374661426}
-[02:45:23.798] Browser LOG     [SQUARE] draft source: undefined
-[02:45:23.798] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"b6c9357e-c203-4dcf-adb6-e52d7ecda760"}
-[02:45:23.798] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"b6c9357e-c203-4dcf-adb6-e52d7ecda760","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771374661426}
-[02:45:23.798] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] draft changed: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"b6c9357e-c203-4dcf-adb6-e52d7ecda760","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771374661426}
-[02:45:23.798] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] draft source: undefined
-[02:46:30.162] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[02:46:30.162] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[02:46:30.162] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[02:46:30.162] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[02:46:30.162] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[02:46:49.844] Browser LOG     [callback] sessionErr: null
-[02:46:49.844] Browser LOG     [callback] user: 805adce4-3914-4b33-8a74-56da2ba4b779
-[02:46:50.188] Browser LOG     [callback] profileErr: null
-[02:46:50.188] Browser LOG     [callback] profile: {"id":"805adce4-3914-4b33-8a74-56da2ba4b779","onboarding_complete":true}
-[02:51:28.546] Server  LOG     ✓ Compiled in 786ms
-[03:03:02.206] Server  LOG     ○ Compiling /konfolio-test ...
-[03:03:03.668] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/konfolio-..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
-
-[08:36:38.316] Browser LOG     [NEW] createAndGo {"hasOnboardingHydrated":true,"onboardingSnapshot":{"acceptedTerms":false,"activeLinkKeys":[],"attendees":"","businessName":"","collabs":[],"eventLocation":"","firstName":"","firstVend":false,"hasHydrated":true,"hostWebsite":"","lastName":"","links":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""},"location":"","merchTags":[],"orgSize":"","organization":"","preferredName":"","prevVends":[],"profileFile":null,"profilePreviewUrl":"","salesPermit":"","willApply":false},"source":"query","template":"square"}
-[08:36:38.316] Browser LOG     [NEW] hasMeaningfulOnboarding? false
-[08:36:38.317] Browser LOG     [NEW] draft built: {"activeLinksCount":0,"businessName":"Business Name","debugSource":"createDraftFromProfile","displayName":"Name","email":"myemailaddress@konfolio.com","locationText":"City, State","merchTagsCount":0,"prevVendsCount":0,"profileImageUrl":""}
-[08:36:39.701] Browser LOG     [SQUARE] mount {"draftId":"42bb6d43-eaee-4a43-b65f-a4536915591f"}
-[08:36:39.701] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"42bb6d43-eaee-4a43-b65f-a4536915591f","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771395737195}
-[08:36:39.701] Browser LOG     [SQUARE] draft changed: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"42bb6d43-eaee-4a43-b65f-a4536915591f","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771395737195}
-[08:36:39.701] Browser LOG     [SQUARE] draft source: undefined
-[08:36:39.701] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"42bb6d43-eaee-4a43-b65f-a4536915591f"}
-[08:36:39.701] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"42bb6d43-eaee-4a43-b65f-a4536915591f","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771395737195}
-[08:36:39.701] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] draft changed: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"42bb6d43-eaee-4a43-b65f-a4536915591f","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771395737195}
-[08:36:39.701] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] draft source: undefined
-[09:08:18.801] Server  LOG     ✓ Compiled in 1570ms
-[09:08:26.167] Server  LOG     ✓ Compiled in 122ms
-[09:09:00.287] Browser LOG     [NEW] createAndGo {"hasOnboardingHydrated":true,"onboardingSnapshot":{"acceptedTerms":false,"activeLinkKeys":[],"attendees":"","businessName":"","collabs":[],"eventLocation":"","firstName":"","firstVend":false,"hasHydrated":true,"hostWebsite":"","lastName":"","links":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""},"location":"","merchTags":[],"orgSize":"","organization":"","preferredName":"","prevVends":[],"profileFile":null,"profilePreviewUrl":"","salesPermit":"","willApply":false},"source":"query","template":"square"}
-[09:09:00.287] Browser LOG     [NEW] hasMeaningfulOnboarding? false
-[09:09:00.287] Browser LOG     [NEW] draft built: {"activeLinksCount":0,"businessName":"Business Name","debugSource":"createDraftFromProfile","displayName":"Name","email":"myemailaddress@konfolio.com","locationText":"City, State","merchTagsCount":0,"prevVendsCount":0,"profileImageUrl":""}
-[09:09:00.769] Browser LOG     [SQUARE] mount {"draftId":"d52a8096-0ec7-4378-bf67-106d6584007b"}
-[09:09:00.769] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"d52a8096-0ec7-4378-bf67-106d6584007b","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771397678347}
-[09:09:00.769] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"d52a8096-0ec7-4378-bf67-106d6584007b"}
-[09:09:00.769] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"d52a8096-0ec7-4378-bf67-106d6584007b","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771397678347}
-[09:26:35.613] Server  LOG     ✓ Compiled in 756ms
-[09:26:56.645] Server  LOG     ✓ Compiled in 126ms
-[09:27:16.749] Server  LOG     ✓ Compiled in 134ms
-[09:27:21.969] Browser LOG     [NEW] createAndGo {"hasOnboardingHydrated":true,"onboardingSnapshot":{"acceptedTerms":false,"activeLinkKeys":[],"attendees":"","businessName":"","collabs":[],"eventLocation":"","firstName":"","firstVend":false,"hasHydrated":true,"hostWebsite":"","lastName":"","links":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""},"location":"","merchTags":[],"orgSize":"","organization":"","preferredName":"","prevVends":[],"profileFile":null,"profilePreviewUrl":"","salesPermit":"","willApply":false},"source":"query","template":"square"}
-[09:27:21.970] Browser LOG     [NEW] hasMeaningfulOnboarding? false
-[09:27:21.970] Browser LOG     [NEW] draft built: {"activeLinksCount":0,"businessName":"Business Name","debugSource":"createDraftFromProfile","displayName":"Name","email":"myemailaddress@konfolio.com","locationText":"City, State","merchTagsCount":0,"prevVendsCount":0,"profileImageUrl":""}
-[09:27:22.184] Browser LOG     [SQUARE] mount {"draftId":"03d37e2c-aab4-4a52-9ad3-eda3bea107e5"}
-[09:27:22.184] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"03d37e2c-aab4-4a52-9ad3-eda3bea107e5","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771398780086}
-[09:27:22.184] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"03d37e2c-aab4-4a52-9ad3-eda3bea107e5"}
-[09:27:22.184] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"03d37e2c-aab4-4a52-9ad3-eda3bea107e5","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771398780086}
-[10:25:36.194] Server  LOG     ✓ Compiled in 2.3s
-[10:25:40.281] Browser LOG     [NEW] createAndGo {"hasOnboardingHydrated":true,"onboardingSnapshot":{"acceptedTerms":false,"activeLinkKeys":[],"attendees":"","businessName":"","collabs":[],"eventLocation":"","firstName":"","firstVend":false,"hasHydrated":true,"hostWebsite":"","lastName":"","links":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""},"location":"","merchTags":[],"orgSize":"","organization":"","preferredName":"","prevVends":[],"profileFile":null,"profilePreviewUrl":"","salesPermit":"","willApply":false},"source":"query","template":"square"}
-[10:25:40.281] Browser LOG     [NEW] hasMeaningfulOnboarding? false
-[10:25:40.281] Browser LOG     [NEW] draft built: {"activeLinksCount":0,"businessName":"Business Name","debugSource":"createDraftFromProfile","displayName":"Name","email":"myemailaddress@konfolio.com","locationText":"City, State","merchTagsCount":0,"prevVendsCount":0,"profileImageUrl":""}
-[10:25:40.564] Browser LOG     [SQUARE] mount {"draftId":"68b48a46-f33c-45fe-ae0b-2d216a613367"}
-[10:25:40.564] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"68b48a46-f33c-45fe-ae0b-2d216a613367","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771402278808}
-[10:25:40.564] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"68b48a46-f33c-45fe-ae0b-2d216a613367"}
-[10:25:40.564] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"68b48a46-f33c-45fe-ae0b-2d216a613367","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771402278808}
-[10:31:44.599] Browser LOG     [NEW] createAndGo {"hasOnboardingHydrated":true,"onboardingSnapshot":{"acceptedTerms":false,"activeLinkKeys":[],"attendees":"","businessName":"","collabs":[],"eventLocation":"","firstName":"","firstVend":false,"hasHydrated":true,"hostWebsite":"","lastName":"","links":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""},"location":"","merchTags":[],"orgSize":"","organization":"","preferredName":"","prevVends":[],"profileFile":null,"profilePreviewUrl":"","salesPermit":"","willApply":false},"source":"query","template":"square"}
-[10:31:44.600] Browser LOG     [NEW] hasMeaningfulOnboarding? false
-[10:31:44.600] Browser LOG     [NEW] draft built: {"activeLinksCount":0,"businessName":"Business Name","debugSource":"createDraftFromProfile","displayName":"Name","email":"myemailaddress@konfolio.com","locationText":"City, State","merchTagsCount":0,"prevVendsCount":0,"profileImageUrl":""}
-[10:31:44.600] Browser LOG     [SQUARE] mount {"draftId":"c2f439e2-85ce-4dfa-a30d-4f364b881c7f"}
-[10:31:44.600] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"c2f439e2-85ce-4dfa-a30d-4f364b881c7f","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771402643469}
-[10:31:44.600] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"c2f439e2-85ce-4dfa-a30d-4f364b881c7f"}
-[10:31:44.600] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"c2f439e2-85ce-4dfa-a30d-4f364b881c7f","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771402643469}
-[10:34:28.221] Server  LOG     ✓ Compiled in 2.3s
-[10:34:28.335] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./Downloads/konfolio/app/my-portfolios/new/page.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
-[10:34:30.448] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/my-portfo..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
-
-[10:34:36.670] Browser LOG     [SQUARE] mount {"draftId":"c2f439e2-85ce-4dfa-a30d-4f364b881c7f"}
-[10:34:36.670] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"c2f439e2-85ce-4dfa-a30d-4f364b881c7f","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771402643469}
-[10:34:36.670] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"c2f439e2-85ce-4dfa-a30d-4f364b881c7f"}
-[10:34:36.670] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"c2f439e2-85ce-4dfa-a30d-4f364b881c7f","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771402643469}
-[10:35:13.532] Browser LOG     [SQUARE] mount {"draftId":"b031f061-dc7a-4052-8fba-d6cb853edd78"}
-[10:35:13.532] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Konfolio","displayName":"trinity","email":"trini.me28@gmail.com","id":"b031f061-dc7a-4052-8fba-d6cb853edd78","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":["website","instagram"],"linksByKey":{"bluesky":"","facebook":"","instagram":"instagram.com/trinwu","pixiv":"","shop":"","tumblr":"","website":"konfolio.com","x":""}},"locationText":"San Francisco, CA","merchTags":["Acrylic Charm","Vinyl Sticker","Stamp Rally","Print","Photocard","Enamel Pin","Phone Strap"],"previousVends":["Event 2026","Event 2025","Event 2024"],"profileImageUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/profile-images/805adce4-3914-4b33-8a74-56da2ba4b779/1770770724478.png","status":"draft","template":"square","updatedAt":1771402851673}
-[10:35:13.532] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"b031f061-dc7a-4052-8fba-d6cb853edd78"}
-[10:35:13.532] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Konfolio","displayName":"trinity","email":"trini.me28@gmail.com","id":"b031f061-dc7a-4052-8fba-d6cb853edd78","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":["website","instagram"],"linksByKey":{"bluesky":"","facebook":"","instagram":"instagram.com/trinwu","pixiv":"","shop":"","tumblr":"","website":"konfolio.com","x":""}},"locationText":"San Francisco, CA","merchTags":["Acrylic Charm","Vinyl Sticker","Stamp Rally","Print","Photocard","Enamel Pin","Phone Strap"],"previousVends":["Event 2026","Event 2025","Event 2024"],"profileImageUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/profile-images/805adce4-3914-4b33-8a74-56da2ba4b779/1770770724478.png","status":"draft","template":"square","updatedAt":1771402851673}
-[10:35:20.334] Browser LOG     [SQUARE] mount {"draftId":"d539b14c-6459-469d-9ba5-2dda3e8db3d0"}
-[10:35:20.334] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Konfolio","displayName":"trinity","email":"trini.me28@gmail.com","id":"d539b14c-6459-469d-9ba5-2dda3e8db3d0","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":["website","instagram"],"linksByKey":{"bluesky":"","facebook":"","instagram":"instagram.com/trinwu","pixiv":"","shop":"","tumblr":"","website":"konfolio.com","x":""}},"locationText":"San Francisco, CA","merchTags":["Acrylic Charm","Vinyl Sticker","Stamp Rally","Print","Photocard","Enamel Pin","Phone Strap"],"previousVends":["Event 2026","Event 2025","Event 2024"],"profileImageUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/profile-images/805adce4-3914-4b33-8a74-56da2ba4b779/1770770724478.png","status":"draft","template":"square","updatedAt":1771402858444}
-[10:35:20.334] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"d539b14c-6459-469d-9ba5-2dda3e8db3d0"}
-[10:35:20.334] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Konfolio","displayName":"trinity","email":"trini.me28@gmail.com","id":"d539b14c-6459-469d-9ba5-2dda3e8db3d0","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":["website","instagram"],"linksByKey":{"bluesky":"","facebook":"","instagram":"instagram.com/trinwu","pixiv":"","shop":"","tumblr":"","website":"konfolio.com","x":""}},"locationText":"San Francisco, CA","merchTags":["Acrylic Charm","Vinyl Sticker","Stamp Rally","Print","Photocard","Enamel Pin","Phone Strap"],"previousVends":["Event 2026","Event 2025","Event 2024"],"profileImageUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/profile-images/805adce4-3914-4b33-8a74-56da2ba4b779/1770770724478.png","status":"draft","template":"square","updatedAt":1771402858444}
-[10:35:26.463] Server  LOG     ✓ Compiled in 380ms
-[10:35:26.485] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./Downloads/konfolio/app/my-portfolios/new/page.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
-[10:35:28.175] Browser LOG     [SQUARE] mount {"draftId":"d539b14c-6459-469d-9ba5-2dda3e8db3d0"}
-[10:35:28.175] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Konfolio","displayName":"trinity","email":"trini.me28@gmail.com","id":"d539b14c-6459-469d-9ba5-2dda3e8db3d0","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":["website","instagram"],"linksByKey":{"bluesky":"","facebook":"","instagram":"instagram.com/trinwu","pixiv":"","shop":"","tumblr":"","website":"konfolio.com","x":""}},"locationText":"San Francisco, CA","merchTags":["Acrylic Charm","Vinyl Sticker","Stamp Rally","Print","Photocard","Enamel Pin","Phone Strap"],"previousVends":["Event 2026","Event 2025","Event 2024"],"profileImageUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/profile-images/805adce4-3914-4b33-8a74-56da2ba4b779/1770770724478.png","status":"draft","template":"square","updatedAt":1771402858444}
-[10:35:28.175] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"d539b14c-6459-469d-9ba5-2dda3e8db3d0"}
-[10:35:28.175] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Konfolio","displayName":"trinity","email":"trini.me28@gmail.com","id":"d539b14c-6459-469d-9ba5-2dda3e8db3d0","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":["website","instagram"],"linksByKey":{"bluesky":"","facebook":"","instagram":"instagram.com/trinwu","pixiv":"","shop":"","tumblr":"","website":"konfolio.com","x":""}},"locationText":"San Francisco, CA","merchTags":["Acrylic Charm","Vinyl Sticker","Stamp Rally","Print","Photocard","Enamel Pin","Phone Strap"],"previousVends":["Event 2026","Event 2025","Event 2024"],"profileImageUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/profile-images/805adce4-3914-4b33-8a74-56da2ba4b779/1770770724478.png","status":"draft","template":"square","updatedAt":1771402858444}
-[10:35:39.703] Browser WARN    Image with src "/images/template-2.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
-Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[10:39:16.267] Server  LOG     ✓ Compiled in 1132ms
-[10:39:20.541] Browser LOG     [NEW] createAndGo {"hasOnboardingHydrated":true,"onboardingSnapshot":{"acceptedTerms":false,"activeLinkKeys":[],"attendees":"","businessName":"","collabs":[],"eventLocation":"","firstName":"","firstVend":false,"hasHydrated":true,"hostWebsite":"","lastName":"","links":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""},"location":"","merchTags":[],"orgSize":"","organization":"","preferredName":"","prevVends":[],"profileFile":null,"profilePreviewUrl":"","salesPermit":"","willApply":false},"source":"click","template":"square"}
-[10:39:20.541] Browser LOG     [NEW] hasMeaningfulOnboarding? false
-[10:39:20.541] Browser LOG     [NEW] draft built: {"activeLinksCount":0,"businessName":"Business Name","debugSource":"createDraftFromProfile","displayName":"Name","email":"myemailaddress@konfolio.com","locationText":"City, State","merchTagsCount":0,"prevVendsCount":0,"profileImageUrl":""}
-[10:39:51.936] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/my-portfo..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
-
-[10:39:52.120] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
-Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[10:39:56.759] Browser LOG     [NEW] createAndGo {"hasOnboardingHydrated":true,"onboardingSnapshot":{"acceptedTerms":false,"activeLinkKeys":[],"attendees":"","businessName":"","collabs":[],"eventLocation":"","firstName":"","firstVend":false,"hasHydrated":true,"hostWebsite":"","lastName":"","links":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""},"location":"","merchTags":[],"orgSize":"","organization":"","preferredName":"","prevVends":[],"profileFile":null,"profilePreviewUrl":"","salesPermit":"","willApply":false},"source":"click","template":"square"}
-[10:39:56.759] Browser LOG     [NEW] hasMeaningfulOnboarding? false
-[10:39:56.759] Browser LOG     [NEW] draft built: {"activeLinksCount":0,"businessName":"Business Name","debugSource":"createDraftFromProfile","displayName":"Name","email":"myemailaddress@konfolio.com","locationText":"City, State","merchTagsCount":0,"prevVendsCount":0,"profileImageUrl":""}
-[10:40:01.617] Browser LOG     [NEW] createAndGo {"hasOnboardingHydrated":true,"onboardingSnapshot":{"acceptedTerms":false,"activeLinkKeys":[],"attendees":"","businessName":"","collabs":[],"eventLocation":"","firstName":"","firstVend":false,"hasHydrated":true,"hostWebsite":"","lastName":"","links":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""},"location":"","merchTags":[],"orgSize":"","organization":"","preferredName":"","prevVends":[],"profileFile":null,"profilePreviewUrl":"","salesPermit":"","willApply":false},"source":"click","template":"square"}
-[10:40:01.617] Browser LOG     [NEW] hasMeaningfulOnboarding? false
-[10:40:01.617] Browser LOG     [NEW] draft built: {"activeLinksCount":0,"businessName":"Business Name","debugSource":"createDraftFromProfile","displayName":"Name","email":"myemailaddress@konfolio.com","locationText":"City, State","merchTagsCount":0,"prevVendsCount":0,"profileImageUrl":""}
-[10:40:06.008] Browser LOG     [NEW] createAndGo {"hasOnboardingHydrated":true,"onboardingSnapshot":{"acceptedTerms":false,"activeLinkKeys":[],"attendees":"","businessName":"","collabs":[],"eventLocation":"","firstName":"","firstVend":false,"hasHydrated":true,"hostWebsite":"","lastName":"","links":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""},"location":"","merchTags":[],"orgSize":"","organization":"","preferredName":"","prevVends":[],"profileFile":null,"profilePreviewUrl":"","salesPermit":"","willApply":false},"source":"click","template":"square"}
-[10:40:06.008] Browser LOG     [NEW] hasMeaningfulOnboarding? false
-[10:40:06.008] Browser LOG     [NEW] draft built: {"activeLinksCount":0,"businessName":"Business Name","debugSource":"createDraftFromProfile","displayName":"Name","email":"myemailaddress@konfolio.com","locationText":"City, State","merchTagsCount":0,"prevVendsCount":0,"profileImageUrl":""}
-[10:40:10.893] Server  LOG     ✓ Compiled in 238ms
-[10:41:50.016] Server  LOG     ✓ Compiled in 662ms
-[10:41:53.937] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/my-portfo..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
-
-[10:41:54.204] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
-Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[10:42:01.251] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
-Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[10:42:05.836] Browser LOG     [NEW] createAndGo {"hasOnboardingHydrated":true,"onboardingSnapshot":{"acceptedTerms":false,"activeLinkKeys":[],"attendees":"","businessName":"","collabs":[],"eventLocation":"","firstName":"","firstVend":false,"hasHydrated":true,"hostWebsite":"","lastName":"","links":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""},"location":"","merchTags":[],"orgSize":"","organization":"","preferredName":"","prevVends":[],"profileFile":null,"profilePreviewUrl":"","salesPermit":"","willApply":false},"source":"click","template":"square"}
-[10:42:05.836] Browser LOG     [NEW] hasMeaningfulOnboarding? false
-[10:42:05.836] Browser LOG     [NEW] draft built: {"activeLinksCount":0,"businessName":"Business Name","debugSource":"createDraftFromProfile","displayName":"Name","email":"myemailaddress@konfolio.com","locationText":"City, State","merchTagsCount":0,"prevVendsCount":0,"profileImageUrl":""}
-[10:42:06.356] Browser LOG     [SQUARE] mount {"draftId":"ffb742ff-2701-42f1-965c-6156f15717c7"}
-[10:42:06.356] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"ffb742ff-2701-42f1-965c-6156f15717c7","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771403264602}
-[10:42:06.356] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"ffb742ff-2701-42f1-965c-6156f15717c7"}
-[10:42:06.356] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"ffb742ff-2701-42f1-965c-6156f15717c7","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771403264602}
-[10:46:00.628] Server  LOG     ✓ Compiled in 679ms
-[10:46:10.497] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
-Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
-[10:48:30.202] Browser LOG     [SQUARE] mount {"draftId":"2dfb9566-464d-4476-8b48-e5ac6d47f1ef"}
-[10:48:30.202] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Konfolio","displayName":"trinity","email":"trini.me28@gmail.com","id":"2dfb9566-464d-4476-8b48-e5ac6d47f1ef","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":["website","instagram"],"linksByKey":{"bluesky":"","facebook":"","instagram":"instagram.com/trinwu","pixiv":"","shop":"","tumblr":"","website":"konfolio.com","x":""}},"locationText":"San Francisco, CA","merchTags":["Acrylic Charm","Vinyl Sticker","Stamp Rally","Print","Photocard","Enamel Pin","Phone Strap"],"previousVends":["Event 2026","Event 2025","Event 2024"],"profileImageUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/profile-images/805adce4-3914-4b33-8a74-56da2ba4b779/1770770724478.png","status":"draft","template":"square","updatedAt":1771403649173}
-[10:48:30.202] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"2dfb9566-464d-4476-8b48-e5ac6d47f1ef"}
-[10:48:30.202] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Konfolio","displayName":"trinity","email":"trini.me28@gmail.com","id":"2dfb9566-464d-4476-8b48-e5ac6d47f1ef","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":["website","instagram"],"linksByKey":{"bluesky":"","facebook":"","instagram":"instagram.com/trinwu","pixiv":"","shop":"","tumblr":"","website":"konfolio.com","x":""}},"locationText":"San Francisco, CA","merchTags":["Acrylic Charm","Vinyl Sticker","Stamp Rally","Print","Photocard","Enamel Pin","Phone Strap"],"previousVends":["Event 2026","Event 2025","Event 2024"],"profileImageUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/profile-images/805adce4-3914-4b33-8a74-56da2ba4b779/1770770724478.png","status":"draft","template":"square","updatedAt":1771403649173}
-[10:51:11.874] Browser LOG     [NEW] createAndGo {"hasOnboardingHydrated":true,"onboardingSnapshot":{"acceptedTerms":false,"activeLinkKeys":[],"attendees":"","businessName":"","collabs":[],"eventLocation":"","firstName":"","firstVend":false,"hasHydrated":true,"hostWebsite":"","lastName":"","links":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""},"location":"","merchTags":[],"orgSize":"","organization":"","preferredName":"","prevVends":[],"profileFile":null,"profilePreviewUrl":"","salesPermit":"","willApply":false},"source":"query","template":"square"}
-[10:51:11.875] Browser LOG     [NEW] hasMeaningfulOnboarding? false
-[10:51:11.875] Browser LOG     [NEW] draft built: {"activeLinksCount":0,"businessName":"Business Name","debugSource":"createDraftFromProfile","displayName":"Name","email":"myemailaddress@konfolio.com","locationText":"City, State","merchTagsCount":0,"prevVendsCount":0,"profileImageUrl":""}
-[10:51:11.875] Browser LOG     [SQUARE] mount {"draftId":"c5d91deb-2d49-4acc-9ca8-eac94aa829b7"}
-[10:51:11.875] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"c5d91deb-2d49-4acc-9ca8-eac94aa829b7","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771403810749}
-[10:51:11.875] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"c5d91deb-2d49-4acc-9ca8-eac94aa829b7"}
-[10:51:11.875] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"c5d91deb-2d49-4acc-9ca8-eac94aa829b7","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771403810749}
-[10:52:52.656] Server  LOG     ✓ Compiled in 678ms
-[10:52:58.658] Browser LOG     [NEW] createAndGo {"hasOnboardingHydrated":true,"onboardingSnapshot":{"acceptedTerms":false,"activeLinkKeys":[],"attendees":"","businessName":"","collabs":[],"eventLocation":"","firstName":"","firstVend":false,"hasHydrated":true,"hostWebsite":"","lastName":"","links":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""},"location":"","merchTags":[],"orgSize":"","organization":"","preferredName":"","prevVends":[],"profileFile":null,"profilePreviewUrl":"","salesPermit":"","willApply":false},"source":"query","template":"square"}
-[10:52:58.658] Browser LOG     [NEW] hasMeaningfulOnboarding? false
-[10:52:58.661] Browser LOG     [NEW] draft built: {"activeLinksCount":0,"businessName":"Business Name","debugSource":"createDraftFromProfile","displayName":"Name","email":"myemailaddress@konfolio.com","locationText":"City, State","merchTagsCount":0,"prevVendsCount":0,"profileImageUrl":""}
-[10:52:58.820] Browser LOG     [SQUARE] mount {"draftId":"0dd39f3d-f50e-4a21-b3dd-773b0f66493b"}
-[10:52:58.820] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"0dd39f3d-f50e-4a21-b3dd-773b0f66493b","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771403917685}
-[10:52:58.820] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"0dd39f3d-f50e-4a21-b3dd-773b0f66493b"}
-[10:52:58.820] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Business Name","displayName":"Name","email":"myemailaddress@konfolio.com","id":"0dd39f3d-f50e-4a21-b3dd-773b0f66493b","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":[],"linksByKey":{"bluesky":"","facebook":"","instagram":"","pixiv":"","shop":"","tumblr":"","website":"","x":""}},"locationText":"City, State","merchTags":[],"previousVends":[],"profileImageUrl":"","status":"draft","template":"square","updatedAt":1771403917685}
-[10:54:54.460] Server  LOG     ✓ Compiled in 690ms
-[10:55:08.008] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/my-portfo..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
-
-[10:55:52.004] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/my-portfo..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
-
-[23:46:34.904] Server  LOG     ✓ Compiled in 2.4s
-[23:46:40.301] Server  LOG     ✓ Compiled in 159ms
-[23:50:37.524] Server  LOG     ✓ Compiled in 810ms
-[23:51:23.198] Server  LOG     ✓ Compiled in 589ms
-[23:51:49.397] Browser LOG     [SQUARE] mount {"draftId":"a6622a0d-e250-475c-a8a5-719582c9eab0"}
-[23:51:49.397] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Konfolio","displayName":"trinity","email":"trini.me28@gmail.com","id":"a6622a0d-e250-475c-a8a5-719582c9eab0","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":["website","instagram"],"linksByKey":{"bluesky":"","facebook":"","instagram":"instagram.com/trinwu","pixiv":"","shop":"","tumblr":"","website":"konfolio.com","x":""}},"locationText":"San Francisco, CA","merchTags":["Acrylic Charm","Vinyl Sticker","Stamp Rally","Print","Photocard","Enamel Pin","Phone Strap"],"previousVends":["Event 2026","Event 2025","Event 2024"],"profileImageUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/profile-images/805adce4-3914-4b33-8a74-56da2ba4b779/1770770724478.png","status":"draft","template":"square","updatedAt":1771450648710}
-[23:51:49.397] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"a6622a0d-e250-475c-a8a5-719582c9eab0"}
-[23:51:49.397] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Konfolio","displayName":"trinity","email":"trini.me28@gmail.com","id":"a6622a0d-e250-475c-a8a5-719582c9eab0","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":["website","instagram"],"linksByKey":{"bluesky":"","facebook":"","instagram":"instagram.com/trinwu","pixiv":"","shop":"","tumblr":"","website":"konfolio.com","x":""}},"locationText":"San Francisco, CA","merchTags":["Acrylic Charm","Vinyl Sticker","Stamp Rally","Print","Photocard","Enamel Pin","Phone Strap"],"previousVends":["Event 2026","Event 2025","Event 2024"],"profileImageUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/profile-images/805adce4-3914-4b33-8a74-56da2ba4b779/1770770724478.png","status":"draft","template":"square","updatedAt":1771450648710}
-[23:51:56.026] Browser LOG     [SQUARE] mount {"draftId":"5a3f207a-aebb-4329-817b-d6f63ed04569"}
-[23:51:56.026] Browser LOG     [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Konfolio","displayName":"trinity","email":"trini.me28@gmail.com","id":"5a3f207a-aebb-4329-817b-d6f63ed04569","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":["website","instagram"],"linksByKey":{"bluesky":"","facebook":"","instagram":"instagram.com/trinwu","pixiv":"","shop":"","tumblr":"","website":"konfolio.com","x":""}},"locationText":"San Francisco, CA","merchTags":["Acrylic Charm","Vinyl Sticker","Stamp Rally","Print","Photocard","Enamel Pin","Phone Strap"],"previousVends":["Event 2026","Event 2025","Event 2024"],"profileImageUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/profile-images/805adce4-3914-4b33-8a74-56da2ba4b779/1770770724478.png","status":"draft","template":"square","updatedAt":1771450655740}
-[23:51:56.026] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] mount {"draftId":"5a3f207a-aebb-4329-817b-d6f63ed04569"}
-[23:51:56.026] Browser LOG     [2;38;2;124;124;124m%s[0m [SQUARE] store draft on mount: {"backgroundColor":"#F7F7F7","backgroundSwatches":[],"bannerColor":"#FFFFFF","bannerSwatches":[],"businessName":"Konfolio","displayName":"trinity","email":"trini.me28@gmail.com","id":"5a3f207a-aebb-4329-817b-d6f63ed04569","images":[{"description":"Short description","id":"cell-1","src":"","title":"Title"},{"description":"Short description","id":"cell-2","src":"","title":"Title"},{"description":"Short description","id":"cell-3","src":"","title":"Title"},{"description":"Short description","id":"cell-4","src":"","title":"Title"},{"description":"Short description","id":"cell-5","src":"","title":"Title"},{"description":"Short description","id":"cell-6","src":"","title":"Title"},{"description":"Short description","id":"cell-7","src":"","title":"Title"},{"description":"Short description","id":"cell-8","src":"","title":"Title"},{"description":"Short description","id":"cell-9","src":"","title":"Title"}],"links":{"activeKeys":["website","instagram"],"linksByKey":{"bluesky":"","facebook":"","instagram":"instagram.com/trinwu","pixiv":"","shop":"","tumblr":"","website":"konfolio.com","x":""}},"locationText":"San Francisco, CA","merchTags":["Acrylic Charm","Vinyl Sticker","Stamp Rally","Print","Photocard","Enamel Pin","Phone Strap"],"previousVends":["Event 2026","Event 2025","Event 2024"],"profileImageUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/profile-images/805adce4-3914-4b33-8a74-56da2ba4b779/1770770724478.png","status":"draft","template":"square","updatedAt":1771450655740}
-[23:59:27.351] Server  LOG     ✓ Compiled in 1723ms
-[24:02:24.422] Server  LOG     ✓ Compiled in 1400ms
-[24:06:25.947] Server  LOG     ✓ Compiled in 1838ms
-[24:06:45.210] Server  LOG     ✓ Compiled in 434ms
-[24:35:02.097] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[24:35:02.097] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[24:35:02.097] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[24:35:02.097] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[24:35:02.097] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[24:35:25.234] Browser LOG     [callback] sessionErr: null
-[24:35:25.234] Browser LOG     [callback] user: a0d1b45e-e482-4eba-ba34-54a4c88d33d4
-[24:35:25.678] Browser LOG     [callback] profileErr: null
-[24:35:25.678] Browser LOG     [callback] profile: {"id":"a0d1b45e-e482-4eba-ba34-54a4c88d33d4","onboarding_complete":false}
-[24:43:30.681] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/onboardin..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
-
-[24:44:10.263] Server  LOG     ✓ Compiled in 210ms
-[24:44:10.765] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/onboardin..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
-
-[24:45:32.236] Server  ERROR   ⨯ Error: The default export is not a React Component in "/my-forms/page"
-[24:45:32.532] Server  ERROR   ⨯ Error: The default export is not a React Component in "/my-forms/page"
-[24:45:34.626] Server  ERROR   ⨯ Error: The default export is not a React Component in "/my-forms/page"
-[24:45:34.958] Server  ERROR   ⨯ Error: The default export is not a React Component in "/my-forms/page"
-[24:45:35.603] Browser ERROR   uncaughtError: Error: The default export is not a React Component in "/my-forms/page"
-[24:47:52.148] Server  LOG     ✓ Compiled in 873ms
-[24:47:55.772] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/my-forms" notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
-
-[24:58:11.818] Server  LOG     ✓ Compiled in 634ms
-[25:06:18.876] Server  LOG     ✓ Compiled in 1027ms
-[25:21:24.622] Server  LOG     ✓ Compiled in 2.9s
-[25:28:10.761] Server  LOG     ✓ Compiled in 1125ms
-[25:30:48.512] Server  LOG     ✓ Compiled in 955ms
-[25:30:51.743] Server  ERROR   ⨯ ReferenceError: React is not defined
-[25:30:55.344] Browser ERROR   uncaughtError: ReferenceError: React is not defined
-[25:31:03.897] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[25:31:03.897] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./Downloads/konfolio/components/my-forms/dashboard/OrganizerProfileEditPopover.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
-[25:31:03.898] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[25:31:03.898] Server  LOG     ✓ Compiled in 345ms
-[25:36:58.307] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[25:36:58.307] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[25:36:58.307] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[25:36:58.307] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[25:36:58.307] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[25:40:53.175] Server  LOG     ✓ Compiled in 895ms
-[25:44:59.749] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./Downloads/konfolio/node_modules/next/dist/client/image-component.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
-[25:45:04.142] Server  LOG     ✓ Compiled in 6.6s
-[25:45:04.169] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/my-forms" notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
-
-[25:45:22.928] Server  LOG     ✓ Compiled in 1594ms
-[25:45:23.745] Server  LOG     ✓ Finished filesystem cache database compaction in 12.9s
-[25:46:36.216] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/my-forms" notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="/Downloads...">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <RootLayout>
-                        <html lang="en" className="inter_e8e5...">
-                          <body
-                            className="antialiased"
--                           cz-shortcut-listen="true"
-                          >
-                  ...
-
-[25:53:43.949] Server  LOG     ✓ Compiled in 1340ms
-[25:53:51.101] Server  LOG     ✓ Compiled in 1051ms
-[25:54:07.294] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[25:54:07.294] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[25:54:07.294] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[25:54:07.294] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[25:54:07.294] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[25:56:33.940] Browser LOG     [callback] sessionErr: null
-[25:56:33.940] Browser LOG     [callback] user: 805adce4-3914-4b33-8a74-56da2ba4b779
-[25:56:34.198] Browser LOG     [callback] profileErr: null
-[25:56:34.198] Browser LOG     [callback] profile: {"id":"805adce4-3914-4b33-8a74-56da2ba4b779","onboarding_complete":true}
-[25:56:48.745] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[25:56:48.745] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[25:56:48.745] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[25:56:48.745] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[25:56:48.745] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[26:02:37.342] Browser LOG     [callback] sessionErr: null
-[26:02:37.342] Browser LOG     [callback] user: 805adce4-3914-4b33-8a74-56da2ba4b779
-[26:02:37.806] Browser LOG     [callback] profileErr: null
-[26:02:37.806] Browser LOG     [callback] profile: {"id":"805adce4-3914-4b33-8a74-56da2ba4b779","onboarding_complete":true}
-[26:07:42.777] Server  LOG     ✓ Compiled in 1428ms
-[26:08:09.876] Server  LOG     ✓ Compiled in 460ms
-[26:25:28.276] Server  LOG     ✓ Compiled in 3.1s
+[00:02:48.816] Browser LOG     [callback] sessionErr: null
+[00:02:48.816] Browser LOG     [callback] user: 40802402-f2c4-4c15-86b7-24da5249115d
+[00:02:49.078] Browser LOG     [callback] profileErr: null
+[00:02:49.078] Browser LOG     [callback] profile: null
+[00:03:18.928] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:03:18.928] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:03:18.928] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:03:18.928] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:03:18.928] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:03:26.874] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:03:26.874] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:03:26.874] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:03:26.874] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:03:26.874] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.

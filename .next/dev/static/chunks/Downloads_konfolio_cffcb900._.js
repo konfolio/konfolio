@@ -993,10 +993,10 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/node_modules/zustand/esm/react.mjs [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$zustand$2f$esm$2f$middleware$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/node_modules/zustand/esm/middleware.mjs [app-client] (ecmascript)");
-// stores/onboardingDraft.ts
 "use client";
 ;
 ;
+const MAX_LINKS = 5;
 const emptyLinks = {
     website: "",
     shop: "",
@@ -1033,7 +1033,6 @@ const initialDraft = {
     profilePreviewUrl: ""
 };
 // ---- Safe LOCAL storage wrapper (never undefined) ----
-// This is the key change vs sessionStorage.
 const safeLocalStorage = {
     getItem: (name)=>{
         try {
@@ -1063,6 +1062,18 @@ const safeLocalStorage = {
         }
     }
 };
+// Ensure keys are unique, in-order, and capped
+function clampActiveLinkKeys(keys) {
+    const out = [];
+    const seen = new Set();
+    for (const k of keys){
+        if (seen.has(k)) continue;
+        seen.add(k);
+        out.push(k);
+        if (out.length >= MAX_LINKS) break;
+    }
+    return out;
+}
 const useOnboardingDraft = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["create"])()((0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$zustand$2f$esm$2f$middleware$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["persist"])((set, get, api)=>({
         ...initialDraft,
         // manual rehydrate helper
@@ -1085,10 +1096,8 @@ const useOnboardingDraft = (0, __TURBOPACK__imported__module__$5b$project$5d2f$D
             set({
                 mode
             });
-            // if first time setting, or no change, don't wipe anything
             if (!prevMode || prevMode === mode) return;
             if (mode === "artist") {
-                // switched to ARTIST -> clear host-only fields
                 set({
                     organization: "",
                     hostWebsite: "",
@@ -1097,7 +1106,6 @@ const useOnboardingDraft = (0, __TURBOPACK__imported__module__$5b$project$5d2f$D
                     eventLocation: ""
                 });
             } else {
-                // switched to HOST -> clear artist-only fields
                 set({
                     preferredName: "",
                     businessName: "",
@@ -1159,14 +1167,25 @@ const useOnboardingDraft = (0, __TURBOPACK__imported__module__$5b$project$5d2f$D
             }),
         // links
         setActiveLinkKeys: (keys)=>set({
-                activeLinkKeys: keys
+                activeLinkKeys: clampActiveLinkKeys(keys)
             }),
-        setLinkValue: (key, value)=>set({
-                links: {
-                    ...get().links,
-                    [key]: value
-                }
-            }),
+        setLinkValue: (key, value)=>{
+            const nextLinks = {
+                ...get().links,
+                [key]: value
+            };
+            // If they typed into a link that isn't active yet, auto-activate it (still capped).
+            // This helps prevent "value set but key not visible" edge cases.
+            const curKeys = get().activeLinkKeys;
+            const nextKeys = curKeys.includes(key) ? curKeys : clampActiveLinkKeys([
+                ...curKeys,
+                key
+            ]);
+            set({
+                links: nextLinks,
+                activeLinkKeys: nextKeys
+            });
+        },
         clearLinkKey: (key)=>{
             const { links, activeLinkKeys } = get();
             set({
@@ -1209,7 +1228,6 @@ const useOnboardingDraft = (0, __TURBOPACK__imported__module__$5b$project$5d2f$D
         resetDraft: ()=>{
             const url = get().profilePreviewUrl;
             if (url) URL.revokeObjectURL(url);
-            // keep store "hydrated" after reset so UI doesn't hang
             set({
                 ...initialDraft,
                 hasHydrated: true
@@ -1218,15 +1236,16 @@ const useOnboardingDraft = (0, __TURBOPACK__imported__module__$5b$project$5d2f$D
     }), {
     name: "konfolio-onboarding-draft",
     storage: (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$zustand$2f$esm$2f$middleware$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createJSONStorage"])(()=>safeLocalStorage),
-    // File objects can't be serialized; do not persist them
     partialize: (state)=>{
         const { profileFile, profilePreviewUrl, ...rest } = state;
         return rest;
     },
-    // Set hasHydrated once rehydration completes (even if it errors)
     onRehydrateStorage: ()=>(_state, _error)=>{
+            // ensure link keys are clamped after hydrate too
+            const s = useOnboardingDraft.getState();
             useOnboardingDraft.setState({
-                hasHydrated: true
+                hasHydrated: true,
+                activeLinkKeys: clampActiveLinkKeys(s.activeLinkKeys)
             });
         }
 }));
@@ -1259,6 +1278,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$com
 var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/stores/onboardingDraft.ts [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
+// components/onboarding/LinkDropdown.tsx
 "use client";
 ;
 ;
@@ -1336,7 +1356,7 @@ function isValidLinkForKey(key, raw) {
             return false;
     }
 }
-function LinkDropdown({ noteText = "Recommended: 1 website, 2 social media, and 1 shop", maxLinks = 8 }) {
+function LinkDropdown({ noteText = "Recommended: 1 website, 2 social media, and 1 shop", maxLinks = 5 }) {
     _s();
     // Local UI state only
     const [open, setOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
@@ -1368,7 +1388,7 @@ function LinkDropdown({ noteText = "Recommended: 1 website, 2 social media, and 
                         className: "text-[#262626]"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                        lineNumber: 112,
+                        lineNumber: 113,
                         columnNumber: 15
                     }, this),
                     placeholder: "https://yourwebsite.com"
@@ -1381,7 +1401,7 @@ function LinkDropdown({ noteText = "Recommended: 1 website, 2 social media, and 
                         className: "text-[#262626]"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                        lineNumber: 119,
+                        lineNumber: 120,
                         columnNumber: 15
                     }, this),
                     placeholder: "https://yourshop.com"
@@ -1394,7 +1414,7 @@ function LinkDropdown({ noteText = "Recommended: 1 website, 2 social media, and 
                         className: "text-[#262626]"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                        lineNumber: 126,
+                        lineNumber: 127,
                         columnNumber: 15
                     }, this),
                     placeholder: "https://instagram.com/username"
@@ -1406,7 +1426,7 @@ function LinkDropdown({ noteText = "Recommended: 1 website, 2 social media, and 
                         className: "text-[#262626]"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                        lineNumber: 132,
+                        lineNumber: 133,
                         columnNumber: 15
                     }, this),
                     placeholder: "https://x.com/username"
@@ -1418,7 +1438,7 @@ function LinkDropdown({ noteText = "Recommended: 1 website, 2 social media, and 
                         className: "text-[#262626]"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                        lineNumber: 138,
+                        lineNumber: 139,
                         columnNumber: 15
                     }, this),
                     placeholder: "https://facebook.com/..."
@@ -1430,7 +1450,7 @@ function LinkDropdown({ noteText = "Recommended: 1 website, 2 social media, and 
                         className: "text-[#262626]"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                        lineNumber: 144,
+                        lineNumber: 145,
                         columnNumber: 15
                     }, this),
                     placeholder: "https://tumblr.com/..."
@@ -1442,7 +1462,7 @@ function LinkDropdown({ noteText = "Recommended: 1 website, 2 social media, and 
                         className: "text-[#262626]"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                        lineNumber: 150,
+                        lineNumber: 151,
                         columnNumber: 15
                     }, this),
                     placeholder: "https://pixiv.net/..."
@@ -1454,7 +1474,7 @@ function LinkDropdown({ noteText = "Recommended: 1 website, 2 social media, and 
                         className: "text-[#262626]"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                        lineNumber: 156,
+                        lineNumber: 157,
                         columnNumber: 15
                     }, this),
                     placeholder: "https://bsky.app/profile/..."
@@ -1505,12 +1525,12 @@ function LinkDropdown({ noteText = "Recommended: 1 website, 2 social media, and 
                         className: "w-[24px] h-[24px] flex items-center justify-center text-[#A5A5A5]",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$LinkIcon$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                             fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                            lineNumber: 198,
+                            lineNumber: 199,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                        lineNumber: 197,
+                        lineNumber: 198,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1534,28 +1554,28 @@ function LinkDropdown({ noteText = "Recommended: 1 website, 2 social media, and 
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         className: "font-inter text-[12px] leading-[140%] text-[#A5A5A5]",
-                                        children: limitReached ? "Max links reached" : "Select a media"
+                                        children: "Select a media"
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                                        lineNumber: 219,
+                                        lineNumber: 220,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         className: open ? "text-[#262626]" : "text-[#A5A5A5]",
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$ArrowDown$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                             fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                                            lineNumber: 223,
+                                            lineNumber: 224,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                                        lineNumber: 222,
+                                        lineNumber: 223,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                                lineNumber: 203,
+                                lineNumber: 204,
                                 columnNumber: 11
                             }, this),
                             open && !limitReached && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1569,25 +1589,25 @@ function LinkDropdown({ noteText = "Recommended: 1 website, 2 social media, and 
                                                 children: "Select a media"
                                             }, void 0, false, {
                                                 fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                                                lineNumber: 243,
+                                                lineNumber: 244,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 className: "text-[#262626]",
                                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$icons$2f$ArrowDown$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                                     fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                                                    lineNumber: 247,
+                                                    lineNumber: 248,
                                                     columnNumber: 19
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                                                lineNumber: 246,
+                                                lineNumber: 247,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                                        lineNumber: 242,
+                                        lineNumber: 243,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1611,7 +1631,7 @@ function LinkDropdown({ noteText = "Recommended: 1 website, 2 social media, and 
                                                         children: opt.label
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                                                        lineNumber: 269,
+                                                        lineNumber: 270,
                                                         columnNumber: 23
                                                     }, this),
                                                     opt.recommended ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1619,41 +1639,41 @@ function LinkDropdown({ noteText = "Recommended: 1 website, 2 social media, and 
                                                         children: "Recommended"
                                                     }, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                                                        lineNumber: 274,
+                                                        lineNumber: 275,
                                                         columnNumber: 25
                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {}, void 0, false, {
                                                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                                                        lineNumber: 278,
+                                                        lineNumber: 279,
                                                         columnNumber: 25
                                                     }, this)
                                                 ]
                                             }, opt.key, true, {
                                                 fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                                                lineNumber: 256,
+                                                lineNumber: 257,
                                                 columnNumber: 21
                                             }, this);
                                         })
                                     }, void 0, false, {
                                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                                        lineNumber: 252,
+                                        lineNumber: 253,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                                lineNumber: 229,
+                                lineNumber: 230,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                        lineNumber: 201,
+                        lineNumber: 202,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                lineNumber: 196,
+                lineNumber: 197,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1663,42 +1683,59 @@ function LinkDropdown({ noteText = "Recommended: 1 website, 2 social media, and 
                     children: noteText
                 }, void 0, false, {
                     fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                    lineNumber: 291,
+                    lineNumber: 292,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                lineNumber: 290,
+                lineNumber: 291,
                 columnNumber: 7
             }, this),
             activeKeys.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "w-[426px] flex flex-col gap-[16px] pt-[6px]",
-                children: activeKeys.map((key)=>{
-                    const opt = options.find((o)=>o.key === key);
-                    const value = links[key];
-                    const valid = isValidLinkForKey(key, value);
-                    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$onboarding$2f$RemovableLinkInput$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                        icon: opt.icon,
-                        value: value,
-                        onChange: (v)=>setLinkValue(key, v),
-                        placeholder: opt.placeholder,
-                        isValid: valid,
-                        onRemove: ()=>removeKey(key)
-                    }, key, false, {
+                children: [
+                    activeKeys.map((key)=>{
+                        const opt = options.find((o)=>o.key === key);
+                        const value = links[key];
+                        const valid = isValidLinkForKey(key, value);
+                        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$onboarding$2f$RemovableLinkInput$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                            icon: opt.icon,
+                            value: value,
+                            onChange: (v)=>setLinkValue(key, v),
+                            placeholder: opt.placeholder,
+                            isValid: valid,
+                            onRemove: ()=>removeKey(key)
+                        }, key, false, {
+                            fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
+                            lineNumber: 306,
+                            columnNumber: 15
+                        }, this);
+                    }),
+                    limitReached ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "w-[426px] flex justify-center items-center -mt-[6px]",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                            className: "font-inter font-normal text-[12px] leading-[130%] text-[#FF4603]",
+                            children: "Limit Reached"
+                        }, void 0, false, {
+                            fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
+                            lineNumber: 321,
+                            columnNumber: 15
+                        }, this)
+                    }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                        lineNumber: 305,
-                        columnNumber: 15
-                    }, this);
-                })
-            }, void 0, false, {
+                        lineNumber: 320,
+                        columnNumber: 13
+                    }, this) : null
+                ]
+            }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-                lineNumber: 298,
+                lineNumber: 299,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Downloads/konfolio/components/onboarding/LinkDropdown.tsx",
-        lineNumber: 194,
+        lineNumber: 195,
         columnNumber: 5
     }, this);
 }
@@ -1733,6 +1770,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$com
 var __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$stores$2f$onboardingDraft$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Downloads/konfolio/stores/onboardingDraft.ts [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
+// components/onboarding/LinksCard.tsx
 "use client";
 ;
 ;
@@ -1769,7 +1807,7 @@ function LinksCard({ mode, backHref, nextHref }) {
                         className: "absolute left-0"
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinksCard.tsx",
-                        lineNumber: 44,
+                        lineNumber: 45,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1777,13 +1815,13 @@ function LinksCard({ mode, backHref, nextHref }) {
                         children: title
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinksCard.tsx",
-                        lineNumber: 45,
+                        lineNumber: 46,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/LinksCard.tsx",
-                lineNumber: 43,
+                lineNumber: 44,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1792,24 +1830,26 @@ function LinksCard({ mode, backHref, nextHref }) {
                     className: "w-full flex justify-center pt-[60px] pb-[33px]",
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "w-[426px]",
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$onboarding$2f$LinkDropdown$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$onboarding$2f$LinkDropdown$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                            maxLinks: 5
+                        }, void 0, false, {
                             fileName: "[project]/Downloads/konfolio/components/onboarding/LinksCard.tsx",
-                            lineNumber: 54,
+                            lineNumber: 56,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/Downloads/konfolio/components/onboarding/LinksCard.tsx",
-                        lineNumber: 53,
+                        lineNumber: 54,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/Downloads/konfolio/components/onboarding/LinksCard.tsx",
-                    lineNumber: 52,
+                    lineNumber: 53,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/LinksCard.tsx",
-                lineNumber: 51,
+                lineNumber: 52,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Downloads$2f$konfolio$2f$components$2f$buttons$2f$PrimaryButton$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -1818,13 +1858,13 @@ function LinksCard({ mode, backHref, nextHref }) {
                 children: "Next"
             }, void 0, false, {
                 fileName: "[project]/Downloads/konfolio/components/onboarding/LinksCard.tsx",
-                lineNumber: 60,
+                lineNumber: 62,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Downloads/konfolio/components/onboarding/LinksCard.tsx",
-        lineNumber: 29,
+        lineNumber: 30,
         columnNumber: 5
     }, this);
 }

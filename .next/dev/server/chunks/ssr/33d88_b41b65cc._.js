@@ -10806,6 +10806,7 @@ const reduxImpl = (reducer, initial)=>(set, _get, api)=>{
         };
     };
 const redux = reduxImpl;
+const shouldDispatchFromDevtools = (api)=>!!api.dispatchFromDevtools && typeof api.dispatch === "function";
 const trackedConnections = /* @__PURE__ */ new Map();
 const getTrackedConnectionState = (name)=>{
     const api = trackedConnections.get(name);
@@ -10915,7 +10916,7 @@ const devtoolsImpl = (fn, devtoolsOptions = {})=>(set, get, api)=>{
                     key === connectionInformation.store ? initialState : store2.getState()
                 ])));
         }
-        if (api.dispatchFromDevtools && typeof api.dispatch === "function") {
+        if (shouldDispatchFromDevtools(api)) {
             let didWarnAboutReservedActionType = false;
             const originalDispatch = api.dispatch;
             api.dispatch = (...args)=>{
@@ -10956,9 +10957,9 @@ const devtoolsImpl = (fn, devtoolsOptions = {})=>(set, get, api)=>{
                             }
                             return;
                         }
-                        if (!api.dispatchFromDevtools) return;
-                        if (typeof api.dispatch !== "function") return;
-                        api.dispatch(action);
+                        if (shouldDispatchFromDevtools(api)) {
+                            api.dispatch(action);
+                        }
                     });
                 case "DISPATCH":
                     switch(message.payload.type){
@@ -11108,7 +11109,7 @@ const toThenable = (fn)=>(input)=>{
     };
 const persistImpl = (config, baseOptions)=>(set, get, api)=>{
         let options = {
-            storage: createJSONStorage(()=>localStorage),
+            storage: createJSONStorage(()=>window.localStorage),
             partialize: (state)=>state,
             version: 0,
             merge: (persistedState, currentState)=>({

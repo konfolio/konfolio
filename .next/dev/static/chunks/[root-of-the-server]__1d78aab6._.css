@@ -66,8 +66,6 @@
     --color-black: #000;
     --color-white: #fff;
     --spacing: .25rem;
-    --text-sm: .875rem;
-    --text-sm--line-height: calc(1.25 / .875);
     --font-weight-light: 300;
     --font-weight-normal: 400;
     --font-weight-medium: 500;
@@ -378,6 +376,14 @@
     inset: calc(var(--spacing) * 0);
   }
 
+  .start {
+    inset-inline-start: var(--spacing);
+  }
+
+  .end {
+    inset-inline-end: var(--spacing);
+  }
+
   .-top-\[6px\] {
     top: -6px;
   }
@@ -424,10 +430,6 @@
 
   .top-\[15px\] {
     top: 15px;
-  }
-
-  .top-\[18px\] {
-    top: 18px;
   }
 
   .top-\[20px\] {
@@ -744,6 +746,10 @@
     margin-inline: auto;
   }
 
+  .-mt-\[6px\] {
+    margin-top: -6px;
+  }
+
   .-mt-\[10px\] {
     margin-top: -10px;
   }
@@ -814,10 +820,6 @@
 
   .inline-flex {
     display: inline-flex;
-  }
-
-  .table {
-    display: table;
   }
 
   .h-0 {
@@ -1200,10 +1202,6 @@
     height: 1023.67px;
   }
 
-  .h-auto {
-    height: auto;
-  }
-
   .h-full {
     height: 100%;
   }
@@ -1238,14 +1236,6 @@
 
   .min-h-\[193px\] {
     min-height: 193px;
-  }
-
-  .min-h-\[440px\] {
-    min-height: 440px;
-  }
-
-  .min-h-\[600px\] {
-    min-height: 600px;
   }
 
   .min-h-\[630px\] {
@@ -1354,10 +1344,6 @@
 
   .w-\[40px\] {
     width: 40px;
-  }
-
-  .w-\[42px\] {
-    width: 42px;
   }
 
   .w-\[47px\] {
@@ -1596,10 +1582,6 @@
     width: 480px;
   }
 
-  .w-\[502px\] {
-    width: 502px;
-  }
-
   .w-\[505px\] {
     width: 505px;
   }
@@ -1728,14 +1710,6 @@
     max-width: 193px;
   }
 
-  .max-w-\[600px\] {
-    max-width: 600px;
-  }
-
-  .max-w-\[802px\] {
-    max-width: 802px;
-  }
-
   .max-w-\[900px\] {
     max-width: 900px;
   }
@@ -1746,10 +1720,6 @@
 
   .max-w-\[1512px\] {
     max-width: 1512px;
-  }
-
-  .max-w-\[calc\(100\%-32px\)\] {
-    max-width: calc(100% - 32px);
   }
 
   .max-w-\[calc\(100vw-40px\)\] {
@@ -1927,10 +1897,6 @@
     justify-items: center;
   }
 
-  .gap-3 {
-    gap: calc(var(--spacing) * 3);
-  }
-
   .gap-\[4px\] {
     gap: 4px;
   }
@@ -2049,10 +2015,6 @@
 
   .gap-\[70px\] {
     gap: 70px;
-  }
-
-  .gap-\[150px\] {
-    gap: 150px;
   }
 
   .gap-x-\[15px\] {
@@ -2691,11 +2653,6 @@
 
   .text-right {
     text-align: right;
-  }
-
-  .text-sm {
-    font-size: var(--text-sm);
-    line-height: var(--tw-leading, var(--text-sm--line-height));
   }
 
   .text-\[9px\] {
@@ -3429,18 +3386,6 @@
   @media (min-width: 40rem) {
     .sm\:px-10 {
       padding-inline: calc(var(--spacing) * 10);
-    }
-  }
-
-  @media (min-width: 48rem) {
-    .md\:h-\[440px\] {
-      height: 440px;
-    }
-  }
-
-  @media (min-width: 48rem) {
-    .md\:w-\[802px\] {
-      width: 802px;
     }
   }
 

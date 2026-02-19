@@ -1,22 +1,12 @@
 {
-  "/(app)/my-forms/page": "app/(app)/my-forms/page.js",
   "/_not-found/page": "app/_not-found/page.js",
-  "/api/konfolios/[id]/route": "app/api/konfolios/[id]/route.js",
-  "/api/konfolios/create-from-template/route": "app/api/konfolios/create-from-template/route.js",
-  "/api/onboarding/submit/route": "app/api/onboarding/submit/route.js",
-  "/api/profile-image/upload/route": "app/api/profile-image/upload/route.js",
   "/auth/callback/page": "app/auth/callback/page.js",
-  "/explore/page": "app/explore/page.js",
-  "/konfolio-test/page": "app/konfolio-test/page.js",
   "/login/page": "app/login/page.js",
   "/my-forms/page": "app/my-forms/page.js",
-  "/my-portfolios/[konfolioId]/edit/page": "app/my-portfolios/[konfolioId]/edit/page.js",
-  "/my-portfolios/new/page": "app/my-portfolios/new/page.js",
   "/my-portfolios/page": "app/my-portfolios/page.js",
   "/onboarding/audience/page": "app/onboarding/audience/page.js",
   "/onboarding/business-info/host/page": "app/onboarding/business-info/host/page.js",
   "/onboarding/links/host/page": "app/onboarding/links/host/page.js",
   "/onboarding/name/host/page": "app/onboarding/name/host/page.js",
-  "/onboarding/profile-pic/host/page": "app/onboarding/profile-pic/host/page.js",
   "/page": "app/page.js"
 }

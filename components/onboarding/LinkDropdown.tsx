@@ -1,3 +1,4 @@
+// components/onboarding/LinkDropdown.tsx
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
@@ -88,7 +89,7 @@ export function isValidLinkForKey(key: MediaKey, raw: string) {
 
 export default function LinkDropdown({
   noteText = "Recommended: 1 website, 2 social media, and 1 shop",
-  maxLinks = 8,
+  maxLinks = 5,
 }: Props) {
   // Local UI state only
   const [open, setOpen] = useState(false)
@@ -170,7 +171,7 @@ export default function LinkDropdown({
   }
 
   function removeKey(key: MediaKey) {
-    clearLinkKey(key)
+    clearLinkKey(key) // removes from active + clears its value
   }
 
   // close on outside click / esc
@@ -217,7 +218,7 @@ export default function LinkDropdown({
             `}
           >
             <span className="font-inter text-[12px] leading-[140%] text-[#A5A5A5]">
-              {limitReached ? "Max links reached" : "Select a media"}
+              {"Select a media"}
             </span>
             <span className={open ? "text-[#262626]" : "text-[#A5A5A5]"}>
               <ArrowDown />
@@ -293,8 +294,8 @@ export default function LinkDropdown({
         </span>
       </div>
 
-      {/* Spawned link inputs + limit text */}
-      {activeKeys.length > 0 ? (
+      {/* Spawned link inputs */}
+      {activeKeys.length > 0 && (
         <div className="w-[426px] flex flex-col gap-[16px] pt-[6px]">
           {activeKeys.map((key) => {
             const opt = options.find((o) => o.key === key)!
@@ -314,15 +315,16 @@ export default function LinkDropdown({
             )
           })}
 
+          {/* LIMIT REACHED (appears under the last listed link) */}
           {limitReached ? (
-            <div className="w-[426px] flex items-center pl-[37px]">
+            <div className="w-[426px] flex justify-center items-center -mt-[6px]">
               <span className="font-inter font-normal text-[12px] leading-[130%] text-[#FF4603]">
                 Limit Reached
               </span>
             </div>
           ) : null}
         </div>
-      ) : null}
+      )}
     </div>
   )
 }

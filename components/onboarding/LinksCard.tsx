@@ -1,3 +1,4 @@
+// components/onboarding/LinksCard.tsx
 "use client"
 
 import { useMemo } from "react"
@@ -51,7 +52,8 @@ export default function LinksCard({ mode, backHref, nextHref }: Props) {
       <div className="flex-1 min-h-0 w-full overflow-y-auto">
         <div className="w-full flex justify-center pt-[60px] pb-[33px]">
           <div className="w-[426px]">
-            <LinkDropdown />
+            {/* Force the limit to 5 for onboarding */}
+            <LinkDropdown maxLinks={5} />
           </div>
         </div>
       </div>
