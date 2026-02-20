@@ -1,7 +1,6 @@
-// components/my-portfolios/CreateKonfolioCard.tsx
 "use client"
 
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react"
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -13,6 +12,7 @@ import InfoIcon from "@/components/icons/InfoIcon"
 import ArrowRight from "@/components/icons/ArrowRight"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
 import InfoPopover from "@/components/icons/InfoPopover"
+import PortfolioNameCard from "@/components/my-portfolios/dashboard/PortfolioNameCard"
 
 type TemplateType = "square" | "portrait"
 
@@ -34,8 +34,11 @@ type Props = {
   infoText?: string
   title?: string
 
-  /** If provided, buttons become callback-driven instead of href navigation. */
-  onPickTemplate?: (t: TemplateType) => void
+  /**
+   * If provided, template selection becomes callback-driven (parent handles creation / routing).
+   * We'll still show the Name Card first, then call onPickTemplate(t, portfolioName).
+   */
+  onPickTemplate?: (t: TemplateType, portfolioName: string) => void
 
   /** Disable primary template buttons */
   disabled?: boolean
@@ -47,6 +50,16 @@ type Props = {
 async function getAccessToken(): Promise<string | null> {
   const { data } = await supabase.auth.getSession()
   return data.session?.access_token ?? null
+}
+
+function slugify(input: string) {
+  return input
+    .trim()
+    .toLowerCase()
+    .replace(/['"]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 50)
 }
 
 export default function CreateKonfolioCard({
@@ -95,10 +108,46 @@ export default function CreateKonfolioCard({
   const [isCreating, setIsCreating] = useState(false)
   const [createError, setCreateError] = useState("")
 
+  // NEW: name flow
+  const [nameCardOpen, setNameCardOpen] = useState(false)
+  const [pendingTemplate, setPendingTemplate] = useState<TemplateType | null>(null)
+
   const effectiveDisabled = disabled || isCreating
   const effectiveLoadingLabel = primaryLoadingLabel ?? (isCreating ? "Creating..." : undefined)
 
-  async function createAndGo(template: TemplateType) {
+  // Fetch business_name for URL preview (slug)
+  const [businessSlug, setBusinessSlug] = useState("businessname")
+
+  useEffect(() => {
+    let mounted = true
+
+    async function loadBusinessName() {
+      const sessionRes = await supabase.auth.getSession()
+      const user = sessionRes.data.session?.user
+      if (!mounted) return
+      if (!user) return
+
+      const profileRes = await supabase
+        .from("profiles")
+        .select("business_name")
+        .eq("id", user.id)
+        .maybeSingle()
+
+      if (!mounted) return
+      const bn = String(profileRes.data?.business_name ?? "").trim()
+      setBusinessSlug(bn ? slugify(bn) : "businessname")
+    }
+
+    loadBusinessName()
+    const { data: sub } = supabase.auth.onAuthStateChange(() => loadBusinessName())
+
+    return () => {
+      mounted = false
+      sub.subscription.unsubscribe()
+    }
+  }, [])
+
+  async function createAndGo(template: TemplateType, portfolioName: string) {
     setCreateError("")
     setIsCreating(true)
 
@@ -115,7 +164,10 @@ export default function CreateKonfolioCard({
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ template }),
+        body: JSON.stringify({
+          template,
+          portfolioName: portfolioName.trim(),
+        }),
       })
 
       if (!res.ok) {
@@ -144,6 +196,18 @@ export default function CreateKonfolioCard({
     } finally {
       setIsCreating(false)
     }
+  }
+
+  function handleTemplateClick(t: TemplateType) {
+    if (effectiveDisabled) return
+    setPendingTemplate(t)
+    setNameCardOpen(true)
+  }
+
+  function closeNameCard() {
+    setNameCardOpen(false)
+    setPendingTemplate(null)
+    // Do not persist any typed name: PortfolioNameCard already resets itself on open/close.
   }
 
   useLayoutEffect(() => {
@@ -212,71 +276,92 @@ export default function CreateKonfolioCard({
   }, [])
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative w-[1254px] h-[766px] flex flex-col items-end gap-[41px] max-w-[calc(100vw-40px)]"
-    >
-      <div className="relative w-full h-[18px] flex items-center justify-center">
-        <p className="m-0 font-inter font-normal text-[25px] leading-[30px] text-[#262626] text-center">{title}</p>
+    <>
+      <section
+        ref={sectionRef}
+        className="relative w-[1254px] h-[766px] flex flex-col items-end gap-[41px] max-w-[calc(100vw-40px)]"
+      >
+        <div className="relative w-full h-[18px] flex items-center justify-center">
+          <p className="m-0 font-inter font-normal text-[25px] leading-[30px] text-[#262626] text-center">
+            {title}
+          </p>
 
-        <button
-          ref={infoBtnRef}
-          type="button"
-          onClick={() => setInfoOpen((v) => !v)}
-          className="
-            absolute right-0 top-1/2
-            w-[36px] h-[36px]
-            flex items-center justify-center
-            rounded-[10px]
-            hover:bg-black/5
-            transition-colors
-            focus:outline-none focus-visible:outline-none
-            focus:ring-0 focus-visible:ring-0
-          "
-          style={{ transform: `translate(${iconShiftX}px, -50%)` }}
-          aria-label="Info"
-          aria-expanded={infoOpen}
-        >
-          <InfoIcon />
-        </button>
-      </div>
-
-      <div style={popoverStyle}>
-        <div id="create-konfolio-info-popover">
-          <InfoPopover open={infoOpen} text={infoText} onClose={() => setInfoOpen(false)} />
+          <button
+            ref={infoBtnRef}
+            type="button"
+            onClick={() => setInfoOpen((v) => !v)}
+            className="
+              absolute right-0 top-1/2
+              w-[36px] h-[36px]
+              flex items-center justify-center
+              rounded-[10px]
+              hover:bg-black/5
+              transition-colors
+              focus:outline-none focus-visible:outline-none
+              focus:ring-0 focus-visible:ring-0
+            "
+            style={{ transform: `translate(${iconShiftX}px, -50%)` }}
+            aria-label="Info"
+            aria-expanded={infoOpen}
+          >
+            <InfoIcon />
+          </button>
         </div>
-      </div>
 
-      {/* Optional inline error (keeps layout clean) */}
-      {createError ? (
-        <p className="m-0 w-full text-center text-[12px] leading-[130%] text-[#FF4603]">{createError}</p>
-      ) : null}
-
-      <div className="relative w-[1254px] h-[707px] bg-white rounded-[15px] shadow-[4px_4px_15px_rgba(0,0,0,0.1)]">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-full px-[67px] flex items-center justify-between">
-            <TemplateColumn
-              t={templates[0]}
-              onPickTemplate={(t) => {
-                if (onPickTemplate) return onPickTemplate(t)
-                void createAndGo(t)
-              }}
-              disabled={effectiveDisabled}
-              loadingLabel={effectiveLoadingLabel}
-            />
-            <TemplateColumn
-              t={templates[1]}
-              onPickTemplate={(t) => {
-                if (onPickTemplate) return onPickTemplate(t)
-                void createAndGo(t)
-              }}
-              disabled={effectiveDisabled}
-              loadingLabel={effectiveLoadingLabel}
-            />
+        <div style={popoverStyle}>
+          <div id="create-konfolio-info-popover">
+            <InfoPopover open={infoOpen} text={infoText} onClose={() => setInfoOpen(false)} />
           </div>
         </div>
-      </div>
-    </section>
+
+        {createError ? (
+          <p className="m-0 w-full text-center text-[12px] leading-[130%] text-[#FF4603]">{createError}</p>
+        ) : null}
+
+        <div className="relative w-[1254px] h-[707px] bg-white rounded-[15px] shadow-[4px_4px_15px_rgba(0,0,0,0.1)]">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-full px-[67px] flex items-center justify-between">
+              <TemplateColumn
+                t={templates[0]}
+                onPickTemplate={(t) => handleTemplateClick(t)}
+                disabled={effectiveDisabled}
+                loadingLabel={effectiveLoadingLabel}
+              />
+              <TemplateColumn
+                t={templates[1]}
+                onPickTemplate={(t) => handleTemplateClick(t)}
+                disabled={effectiveDisabled}
+                loadingLabel={effectiveLoadingLabel}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Name Card comes AFTER selecting template, BEFORE creating / routing */}
+      <PortfolioNameCard
+        isOpen={nameCardOpen}
+        businessSlug={businessSlug}
+        onClose={closeNameCard}
+        onContinue={(portfolioName) => {
+          const t = pendingTemplate
+          if (!t) return
+
+          // If parent wants to handle creation/routing, call them.
+          if (onPickTemplate) {
+            setNameCardOpen(false)
+            setPendingTemplate(null)
+            onPickTemplate(t, portfolioName)
+            return
+          }
+
+          // Otherwise, Create here then route.
+          setNameCardOpen(false)
+          setPendingTemplate(null)
+          void createAndGo(t, portfolioName)
+        }}
+      />
+    </>
   )
 }
 

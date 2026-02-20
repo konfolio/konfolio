@@ -466,3 +466,971 @@ https://nextjs.org/docs/messages/module-not-found
 [05:47:15.298] Server  LOG     ✓ Compiled in 1005ms
 [05:47:40.346] Server  LOG     ✓ Compiled in 640ms
 [05:52:39.735] Server  LOG     ✓ Compiled in 782ms
+[06:05:02.338] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:02.494] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:02.688] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:02.694] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:02.762] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:02.771] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:02.778] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:02.788] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:02.807] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:02.831] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:02.841] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:02.846] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:02.857] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:02.905] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:02.913] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:03.057] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:03.129] Browser ERROR   ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+[06:05:19.574] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashbaord/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/dashbaord/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/dashbaord/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:19.583] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashbaord/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/dashbaord/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/dashbaord/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:19.615] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashbaord/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/dashbaord/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/dashbaord/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:19.625] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashbaord/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/dashbaord/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/dashbaord/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:19.632] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashbaord/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/dashbaord/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/dashbaord/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:19.641] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashbaord/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/dashbaord/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/dashbaord/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:19.644] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashbaord/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/dashbaord/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/dashbaord/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:19.648] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashbaord/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/dashbaord/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/dashbaord/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:19.658] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashbaord/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/dashbaord/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/dashbaord/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:19.667] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashbaord/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/dashbaord/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/dashbaord/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:19.672] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashbaord/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/dashbaord/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/dashbaord/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:19.679] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashbaord/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/dashbaord/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/dashbaord/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:19.688] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashbaord/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/dashbaord/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/dashbaord/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:19.691] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashbaord/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/dashbaord/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/dashbaord/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:19.701] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashbaord/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/dashbaord/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/dashbaord/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:19.704] Server  ERROR   ⨯ ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashbaord/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/dashbaord/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/dashbaord/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[06:05:19.713] Server  LOG     ✓ Compiled in 306ms
+[06:05:19.818] Browser ERROR   ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx:15:1
+Module not found: Can't resolve '@/components/my-portfolios/dashbaord/PortfolioNameCard'
+  13 | import PrimaryButton from "@/components/buttons/PrimaryButton"
+  14 | import InfoPopover from "@/components/icons/InfoPopover"
+> 15 | import PortfolioNameCard from "@/components/my-portfolios/dashbaord/PortfolioNameCard"
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |
+  17 | type TemplateType = "square" | "portrait"
+  18 |
+
+Import map: aliased to relative './components/my-portfolios/dashbaord/PortfolioNameCard' inside of [project]/Downloads/konfolio
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component Browser]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component Browser]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/konfolio/components/my-portfolios/CreateKonfolioCard.tsx [Client Component SSR]
+    ./Downloads/konfolio/components/my-portfolios/dashboard/CreateKonfolioPopover.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Client Component SSR]
+    ./Downloads/konfolio/app/my-portfolios/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+[06:05:25.023] Server  LOG     ✓ Compiled in 444ms
+[06:05:31.269] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
