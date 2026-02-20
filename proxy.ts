@@ -23,22 +23,31 @@ export async function proxy(req: NextRequest) {
   )
 
   const pathname = req.nextUrl.pathname
+
+  const isOnboarding =
+    pathname === "/onboarding" || pathname.startsWith("/onboarding/")
   const isMyPortfolios =
     pathname === "/my-portfolios" || pathname.startsWith("/my-portfolios/")
-  const isMyForms =
-    pathname === "/my-forms" || pathname.startsWith("/my-forms/")
+  const isMyForms = pathname === "/my-forms" || pathname.startsWith("/my-forms/")
+
+  const isProtected = isOnboarding || isMyPortfolios || isMyForms
 
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) {
+  // Require sign-in for onboarding + dashboards
+  if (!user && isProtected) {
     const url = req.nextUrl.clone()
     url.pathname = "/login"
     url.searchParams.set("returnTo", pathname)
     return NextResponse.redirect(url)
   }
 
+  // If not logged in and not protected, allow
+  if (!user) return res
+
+  // Load profile fields
   const { data: profile } = await supabase
     .from("profiles")
     .select("role,onboarding_complete")
@@ -46,30 +55,40 @@ export async function proxy(req: NextRequest) {
     .maybeSingle()
 
   const onboardingComplete = Boolean(profile?.onboarding_complete)
+  const role = profile?.role as string | null
 
+  // If user completed onboarding, they should not be in onboarding anymore
+  if (isOnboarding && onboardingComplete) {
+    const url = req.nextUrl.clone()
+    url.pathname = role === "vendor" ? "/my-forms" : "/my-portfolios"
+    return NextResponse.redirect(url)
+  }
+
+  // If user NOT completed onboarding, they can only access onboarding
   if (!onboardingComplete && (isMyPortfolios || isMyForms)) {
     const url = req.nextUrl.clone()
     url.pathname = "/onboarding/audience"
     return NextResponse.redirect(url)
   }
 
-  const role = profile?.role as string | null
+  // Role-based access control once onboarding is complete
+  if (onboardingComplete) {
+    if (role === "vendor" && isMyPortfolios) {
+      const url = req.nextUrl.clone()
+      url.pathname = "/my-forms"
+      return NextResponse.redirect(url)
+    }
 
-  if (role === "vendor" && isMyPortfolios) {
-    const url = req.nextUrl.clone()
-    url.pathname = "/my-forms"
-    return NextResponse.redirect(url)
-  }
-
-  if (role !== "vendor" && isMyForms) {
-    const url = req.nextUrl.clone()
-    url.pathname = "/my-portfolios"
-    return NextResponse.redirect(url)
+    if (role === "artist" && isMyForms) {
+      const url = req.nextUrl.clone()
+      url.pathname = "/my-portfolios"
+      return NextResponse.redirect(url)
+    }
   }
 
   return res
 }
 
 export const config = {
-  matcher: ["/my-portfolios/:path*", "/my-forms/:path*"],
+  matcher: ["/my-portfolios/:path*", "/my-forms/:path*", "/onboarding/:path*"],
 }

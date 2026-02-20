@@ -22,5 +22,6 @@
   "/onboarding/name/host/page": "app/onboarding/name/host/page.js",
   "/onboarding/prev-vends/page": "app/onboarding/prev-vends/page.js",
   "/onboarding/profile-pic/artist/page": "app/onboarding/profile-pic/artist/page.js",
+  "/onboarding/profile-pic/host/page": "app/onboarding/profile-pic/host/page.js",
   "/page": "app/page.js"
 }
