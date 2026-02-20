@@ -8,7 +8,7 @@ import ArrowRight from "@/components/icons/ArrowRight"
 import OpenTabIcon from "@/components/icons/OpenTabIcon"
 import ImageIcon from "@/components/icons/ImageIcon"
 import { useOnboardingDraft } from "@/stores/onboardingDraft"
-import { supabase } from "@/lib/supabaseClient"
+import { supabase } from "@/lib/supabase/browser"
 
 import type { MediaKey } from "@/stores/onboardingDraft"
 

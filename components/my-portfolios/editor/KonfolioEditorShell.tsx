@@ -6,7 +6,7 @@ import { useKonfolioDraftStore } from "@/stores/konfolioDraftStore"
 import type { KonfolioDraft } from "@/components/my-portfolios/editor/editorTypes"
 import SquareEditor from "@/components/my-portfolios/editor/SquareEditor"
 import PortraitEditor from "@/components/my-portfolios/editor/PortraitEditor"
-import { supabase } from "@/lib/supabaseClient"
+import { supabase } from "@/lib/supabase/browser"
 
 type Props = {
   konfolioId: string

@@ -7,7 +7,7 @@ import DeleteIcon from "@/components/icons/DeleteIcon"
 import useClickOutside from "@/components/hooks/useClickOutside"
 import CreateKonfolioCard from "@/components/my-portfolios/CreateKonfolioCard"
 
-import { supabase } from "@/lib/supabaseClient"
+import { supabase } from "@/lib/supabase/browser"
 import { useKonfolioDraftStore } from "@/stores/konfolioDraftStore"
 import type { KonfolioDraft } from "@/components/my-portfolios/editor/editorTypes"
 

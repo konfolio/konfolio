@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 import { inknut } from "@/app/fonts"
-import { supabase } from "@/lib/supabaseClient"
+import { supabase } from "@/lib/supabase/browser"
 
 type Profile = {
   role?: string | null // "artist" | "vendor"
@@ -197,7 +197,7 @@ export default function Navbar() {
 
             {showSignedInUI ? (
               <>
-                {/* ✅ No wrong label flash while role loads */}
+                {/* No wrong label flash while role loads */}
                 {roleReady ? (
                   <NavItem
                     href={myPrimaryHref}
@@ -230,7 +230,7 @@ export default function Navbar() {
                 widthClass="w-[62px]"
               />
             ) : (
-              // ✅ authUnknown: render placeholders so nothing flashes to signed-out version
+              // authUnknown: render placeholders so nothing flashes to signed-out version
               <div className="hidden lg:flex items-center gap-[50px]">
                 <div className="w-[110px] h-[24px]" />
                 <div className="w-[60px] h-[24px]" />

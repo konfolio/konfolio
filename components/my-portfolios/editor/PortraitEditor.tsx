@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabaseClient"
+import { supabase } from "@/lib/supabase/browser"
 
 import { useKonfolioDraftStore } from "@/stores/konfolioDraftStore"
 import EditPortraitProfile from "@/components/my-portfolios/portrait/EditPortraitProfile"

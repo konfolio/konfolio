@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react"
 
 import SecondaryButton from "@/components/buttons/SecondaryButton"
 import PencilIcon from "@/components/icons/PencilIcon"
-import { supabase } from "@/lib/supabaseClient"
+import { supabase } from "@/lib/supabase/browser"
 
 import ArtistProfileEditPopover, {
   type ArtistProfilePopupData,

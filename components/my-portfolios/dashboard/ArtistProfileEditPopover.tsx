@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState } from "react"
 import type React from "react"
 import useClickOutside from "@/components/hooks/useClickOutside"
-import { supabase } from "@/lib/supabaseClient"
+import { supabase } from "@/lib/supabase/browser"
 import { useRouter } from "next/navigation"
 
 import DeleteIcon from "@/components/icons/DeleteIcon"

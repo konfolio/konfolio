@@ -1,12 +1,11 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
+  "/api/auth/sync/route": "app/api/auth/sync/route.js",
   "/auth/callback/page": "app/auth/callback/page.js",
   "/login/page": "app/login/page.js",
   "/my-forms/page": "app/my-forms/page.js",
   "/my-portfolios/page": "app/my-portfolios/page.js",
   "/onboarding/audience/page": "app/onboarding/audience/page.js",
   "/onboarding/business-info/host/page": "app/onboarding/business-info/host/page.js",
-  "/onboarding/links/host/page": "app/onboarding/links/host/page.js",
   "/onboarding/name/host/page": "app/onboarding/name/host/page.js",
   "/page": "app/page.js"
 }

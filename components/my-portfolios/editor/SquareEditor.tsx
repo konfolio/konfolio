@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabaseClient"
+import { supabase } from "@/lib/supabase/browser"
 import { useKonfolioDraftStore } from "@/stores/konfolioDraftStore"
 import EditSquareProfileSidebar from "@/components/my-portfolios/square/EditSquareProfileSidebar"
 import EditSquareImageGrid from "@/components/my-portfolios/square/EditSquareImageGrid"

@@ -1,25 +1,36 @@
 "use client"
 
 import { useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { inknut } from "@/app/fonts"
 import { supabase } from "@/lib/supabaseClient"
 import GoogleLogo from "@/components/icons/GoogleLogo"
 
 export default function GoogleSignInButton() {
   const [loading, setLoading] = useState(false)
+  const params = useSearchParams()
 
   async function handleGoogleSignIn() {
     try {
       setLoading(true)
+
+      // Prefer the returnTo from the URL (?returnTo=/my-portfolios), otherwise go home
+      const returnTo = params.get("returnTo") || "/"
+
+      const redirectTo =
+        typeof window !== "undefined"
+          ? `${window.location.origin}/auth/callback?returnTo=${encodeURIComponent(returnTo)}`
+          : undefined
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo:
-            typeof window !== "undefined"
-              ? `${window.location.origin}/auth/callback`
-              : undefined,
+          redirectTo,
+          // optional: helps ensure refresh tokens in some setups
+          queryParams: { access_type: "offline", prompt: "consent" },
         },
       })
+
       if (error) throw error
     } catch (e) {
       console.error("Google sign-in failed:", e)
@@ -34,10 +45,8 @@ export default function GoogleSignInButton() {
           bg-white
           shadow-[8px_8px_50px_rgba(0,0,0,0.05)]
           rounded-[15px]
-
           w-[802px]
           h-[440px]
-
           flex flex-col
           justify-between
           items-center
@@ -70,18 +79,14 @@ export default function GoogleSignInButton() {
             flex items-center
             justify-start
             gap-[13px]
-
             w-[600px]
             h-[65.51px]
-
             px-[30px]
             py-[20px]
-
             border-[0.5px]
             border-[#A5A5A5]
             rounded-[100px]
             bg-white
-
             disabled:opacity-60
           "
         >
@@ -100,9 +105,7 @@ export default function GoogleSignInButton() {
 
         {/* OR + Create Account */}
         <div className="flex flex-col items-center gap-[20px] w-[122px]">
-          <div className="text-[14px] leading-[130%] text-[#A5A5A5]">
-            – OR –
-          </div>
+          <div className="text-[14px] leading-[130%] text-[#A5A5A5]">– OR –</div>
 
           <a
             href="https://accounts.google.com/signup"

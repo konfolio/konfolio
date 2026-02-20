@@ -6,7 +6,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
-import { supabase } from "@/lib/supabaseClient"
+import { supabase } from "@/lib/supabase/browser"
 
 import Tag from "@/components/onboarding/Tag"
 import InfoIcon from "@/components/icons/InfoIcon"
