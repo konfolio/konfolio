@@ -1,4 +1,6 @@
 import Link from "next/link"
+import type React from "react"
+
 import ArrowRight from "@/components/icons/ArrowRight"
 import OpenTabIcon from "@/components/icons/OpenTabIcon"
 
@@ -7,6 +9,9 @@ type Props = {
   children: React.ReactNode
   className?: string
   icon?: "arrow" | "open" | "none"
+
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>
+  ariaLabel?: string
 }
 
 export default function PrimaryButton({
@@ -14,10 +19,14 @@ export default function PrimaryButton({
   children,
   className = "",
   icon = "arrow",
+  onClick,
+  ariaLabel,
 }: Props) {
   return (
     <Link
       href={href}
+      onClick={onClick}
+      aria-label={ariaLabel}
       className={`
         group
         flex items-center justify-center

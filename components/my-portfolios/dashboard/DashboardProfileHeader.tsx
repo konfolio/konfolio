@@ -12,8 +12,6 @@ import ArtistProfileEditPopover, {
   type ArtistProfilePopupData,
 } from "@/components/my-portfolios/dashboard/ArtistProfileEditPopover"
 
-import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
-
 type Profile = {
   first_name: string | null
   last_name: string | null
@@ -32,6 +30,8 @@ type Props = {
   editHref?: string
   createHref?: string
   className?: string
+
+  onClickCreate?: () => void
 }
 
 function pad2(n: number) {
@@ -54,6 +54,8 @@ export default function DashboardProfileHeader({
   editHref = "/profile",
   createHref = "/create",
   className = "",
+
+  onClickCreate,
 }: Props) {
   const router = useRouter()
 
@@ -62,7 +64,6 @@ export default function DashboardProfileHeader({
 
   // popovers
   const [profilePopoverOpen, setProfilePopoverOpen] = useState(false)
-  const [createPopoverOpen, setCreatePopoverOpen] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -200,7 +201,6 @@ export default function DashboardProfileHeader({
 
               {/* Info */}
               <div className="flex flex-col items-start py-[5px] h-[80px] flex-1 min-w-0">
-                {/* less gap between business name and name */}
                 <div className="flex flex-col items-start gap-[4px] w-full">
                   <div className="text-[20px] leading-[28px] font-normal text-[#262626] truncate">
                     {resolvedBusinessName}
@@ -213,7 +213,6 @@ export default function DashboardProfileHeader({
                   ) : null}
                 </div>
 
-                {/* bigger gap between name and edit profile */}
                 <button
                   type="button"
                   onClick={() => setProfilePopoverOpen(true)}
@@ -225,7 +224,6 @@ export default function DashboardProfileHeader({
                   </span>
                 </button>
 
-                {/* keep route if you still need it */}
                 <Link href={editHref} className="hidden">
                   Edit Profile
                 </Link>
@@ -241,7 +239,7 @@ export default function DashboardProfileHeader({
               <SecondaryButton
                 onClick={() => {
                   if (!signedIn) return
-                  setCreatePopoverOpen(true)
+                  onClickCreate?.()
                 }}
                 className="w-[150px] min-w-[150px] h-[30px] px-[40px] py-[10px] gap-[7px]"
                 disabled={!signedIn}
@@ -252,7 +250,6 @@ export default function DashboardProfileHeader({
                 </span>
               </SecondaryButton>
 
-              {/* fallback route (hidden) */}
               <Link href={createHref} className="hidden">
                 Create
               </Link>
@@ -261,21 +258,10 @@ export default function DashboardProfileHeader({
         </div>
       </section>
 
-      {/* Profile Popover */}
       <ArtistProfileEditPopover
         open={profilePopoverOpen}
         onClose={() => setProfilePopoverOpen(false)}
         data={popoverData}
-      />
-
-      {/* Create Popover */}
-      <CreateKonfolioPopover
-        open={createPopoverOpen}
-        onClose={() => setCreatePopoverOpen(false)}
-        onPickTemplate={() => {
-          // Optional callback only. Do NOT route.
-          setCreatePopoverOpen(false)
-        }}
       />
     </>
   )

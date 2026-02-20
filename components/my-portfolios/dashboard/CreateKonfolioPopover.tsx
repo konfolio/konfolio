@@ -12,12 +12,22 @@ import { useKonfolioDraftStore } from "@/stores/konfolioDraftStore"
 import type { KonfolioDraft } from "@/components/my-portfolios/editor/editorTypes"
 
 type TemplateType = "square" | "portrait"
-type SocialKey = "website" | "shop" | "instagram" | "x" | "facebook" | "tumblr" | "pixiv" | "bluesky"
+type SocialKey =
+  | "website"
+  | "shop"
+  | "instagram"
+  | "x"
+  | "facebook"
+  | "tumblr"
+  | "pixiv"
+  | "bluesky"
 
 type Props = {
   open: boolean
   onClose: () => void
   onPickTemplate: (t: TemplateType) => void
+
+  portfolioName?: string
 
   disabled?: boolean
   primaryLoadingLabel?: string
@@ -92,6 +102,7 @@ export default function CreateKonfolioPopover({
   open,
   onClose,
   onPickTemplate,
+  portfolioName,
   disabled,
   primaryLoadingLabel,
   viewportPadding = 24,
@@ -168,12 +179,19 @@ export default function CreateKonfolioPopover({
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ template: t }),
+        body: JSON.stringify({
+          template: t,
+          portfolioName: (portfolioName || "").trim() || null,
+        }),
       })
 
       if (!res.ok) {
         // eslint-disable-next-line no-console
-        console.log("[CreateKonfolioPopover] create-from-template failed:", res.status, await res.text())
+        console.log(
+          "[CreateKonfolioPopover] create-from-template failed:",
+          res.status,
+          await res.text(),
+        )
         return
       }
 
