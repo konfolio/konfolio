@@ -272,6 +272,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../../app/api/auth/abandon-onboarding/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/auth/abandon-onboarding">> = Specific
+  const handler = {} as typeof import("../../../app/api/auth/abandon-onboarding/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../../app/api/auth/sync/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/auth/sync">> = Specific
@@ -325,6 +334,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   type __IsExpected<Specific extends LayoutConfig<"/">> = Specific
   const handler = {} as typeof import("../../../app/layout.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/onboarding/layout.tsx
+{
+  type __IsExpected<Specific extends LayoutConfig<"/onboarding">> = Specific
+  const handler = {} as typeof import("../../../app/onboarding/layout.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

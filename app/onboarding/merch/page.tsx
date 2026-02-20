@@ -13,7 +13,7 @@ export default function ArtistMerchTypePage() {
         <MerchTypeCard
           businessName={businessName}
           backHref="/onboarding/links/artist"
-          nextHref="/onboarding/prev-cons"
+          nextHref="/onboarding/prev-vends"
         />
       </main>
     </div>
