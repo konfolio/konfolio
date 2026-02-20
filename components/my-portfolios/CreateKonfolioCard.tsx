@@ -55,7 +55,7 @@ export default function CreateKonfolioCard({
   templates = [
     {
       title: "3x3 Square Template",
-      subtitle: "4 Art Work, 4 Product, 1 Table Display",
+      subtitle: "4 Artwork, 4 Product, 1 Table Display",
       tagLabel: "Best For Product Variety",
       imageSrc: "/images/template-1.png",
       imageAlt: "Square template preview",
@@ -67,7 +67,7 @@ export default function CreateKonfolioCard({
     },
     {
       title: "4x2 Portrait Template",
-      subtitle: "4 Art Work, 3 Product, 1 Table Display",
+      subtitle: "4 Artwork, 3 Product, 1 Table Display",
       tagLabel: "Best For Art & Print Showcase",
       imageSrc: "/images/template-2.png",
       imageAlt: "Portrait template preview",

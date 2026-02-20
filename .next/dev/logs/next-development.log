@@ -123,3 +123,12 @@ Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
 [00:39:25.981] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
 [00:39:25.981] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
 [00:39:25.981] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[05:19:03.301] Browser WARN    [callback] exchange failed, trying session fallback: {"__isAuthError":true,"code":"pkce_code_verifier_not_found","name":"AuthPKCECodeVerifierMissingError","status":400}
+[05:19:05.999] Browser WARN    Image with src "/images/penelope_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[05:19:05.999] Browser WARN    Image with src "/images/linvaniin_home.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[05:19:05.999] Browser WARN    Image with src "/images/linvaniin_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[05:19:05.999] Browser WARN    Image with src "/images/sayoran_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[05:19:05.999] Browser WARN    Image with src "/images/califlair_home.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[05:19:05.999] Browser WARN    Image with src "/images/sayoran_home.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[05:20:30.925] Server  LOG     ✓ Compiled in 4.6s
