@@ -1434,3 +1434,56 @@ https://nextjs.org/docs/messages/module-not-found
 [06:05:25.023] Server  LOG     ✓ Compiled in 444ms
 [06:05:31.269] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
 Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[19:54:07.059] Server  LOG     ○ Compiling /explore ...
+[19:54:42.752] Server  LOG     ✓ Finished filesystem cache database compaction in 17.7s
+[19:54:44.119] Server  LOG     ✓ Finished writing to filesystem cache in 17.1s
+[19:55:01.133] Browser WARN    Image with src "/images/califlair_home.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[20:33:18.680] Server  LOG     ✓ Compiled in 1293ms
+[20:33:32.223] Server  LOG     ✓ Compiled in 3.4s
+[20:35:15.643] Browser ERROR   Cannot update a component (`%s`) while rendering a different component (`%s`). To locate the bad setState() call inside `%s`, follow the stack trace as described in https://react.dev/link/setstate-in-render KonfolioEditorShell EditSquareImageGrid EditSquareImageGrid
+[20:39:09.637] Server  LOG     ✓ Compiled in 1304ms
+[20:39:44.205] Server  LOG     ✓ Compiled in 1031ms
+[20:47:40.638] Server  LOG     ✓ Compiled in 617ms
+[20:55:02.496] Server  LOG     ✓ Compiled in 2.2s
+[21:00:57.010] Server  LOG     ✓ Compiled in 441ms
+[21:01:22.559] Server  LOG     ✓ Compiled in 1261ms
+[21:01:42.167] Server  LOG     ✓ Finished filesystem cache database compaction in 16.9s
+[21:09:18.068] Server  LOG     ✓ Compiled in 2.9s
+[21:16:48.852] Server  LOG     ✓ Compiled in 7.9s
+[21:37:00.270] Server  LOG     ✓ Compiled in 5s
+[21:39:37.402] Server  LOG     ✓ Compiled in 1820ms
+[21:43:45.845] Server  LOG     ✓ Compiled in 1119ms
+[21:47:26.584] Server  LOG     ✓ Compiled in 2.6s
+[21:51:34.923] Server  LOG     ✓ Compiled in 4.7s
+[21:55:01.330] Server  LOG     ✓ Compiled in 1649ms
+[21:55:48.530] Server  LOG     ✓ Compiled in 745ms
+[22:03:12.047] Server  LOG     ✓ Compiled in 2.5s
+[22:10:31.111] Server  LOG     ✓ Compiled in 1628ms
+[22:12:33.823] Server  LOG     ✓ Compiled in 500ms
+[22:16:59.983] Server  LOG     ✓ Compiled in 380ms
+[22:20:24.340] Server  LOG     ✓ Compiled in 2.3s
+[23:29:00.249] Server  LOG     ✓ Finished filesystem cache database compaction in 48s
+[23:29:02.976] Server  LOG     ✓ Finished writing to filesystem cache in 47s
+[23:30:47.539] Server  LOG     ✓ Finished filesystem cache database compaction in 19.3s
+[29:18:49.071] Server  LOG     ✓ Compiled in 8.8s
+[29:19:05.318] Server  LOG     ✓ Compiled in 2.2s
+[29:20:27.392] Browser ERROR   Cannot update a component (`%s`) while rendering a different component (`%s`). To locate the bad setState() call inside `%s`, follow the stack trace as described in https://react.dev/link/setstate-in-render KonfolioEditorShell EditPortraitImageGrid EditPortraitImageGrid
+[30:01:45.973] Server  LOG     ✓ Compiled in 3.6s
+[30:07:12.919] Server  LOG     ✓ Compiled in 939ms
+[30:08:21.887] Browser WARN    Image with src "/images/template-1.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[30:19:41.037] Server  LOG     ✓ Compiled in 1261ms
+[30:42:14.512] Server  LOG     ✓ Compiled in 2.1s
+[30:48:37.063] Server  LOG     ✓ Compiled in 5.3s
+[30:56:03.059] Server  LOG     ✓ Compiled in 2s
+[30:56:19.569] Server  LOG     ✓ Compiled in 831ms
+[31:01:22.346] Server  LOG     ✓ Compiled in 984ms
+[31:12:37.448] Server  LOG     ✓ Finished filesystem cache database compaction in 20.7s
+[31:13:33.321] Server  LOG     ✓ Compiled in 2.1s
+[31:16:45.074] Server  WARN    Error: Route "/api/konfolios/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[31:18:40.313] Server  WARN    Error: Route "/api/konfolios/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[31:19:09.658] Server  WARN    Error: Route "/api/konfolios/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[31:20:15.771] Server  WARN    Error: Route "/api/konfolios/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[31:23:03.881] Server  LOG     ✓ Compiled in 613ms
+[31:24:09.178] Server  LOG     ✓ Compiled in 3.5s

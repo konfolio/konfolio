@@ -1,8 +1,5 @@
 "use client"
 
-import { useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabase/browser"
-
 import { useKonfolioDraftStore } from "@/stores/konfolioDraftStore"
 import EditPortraitProfile from "@/components/my-portfolios/portrait/EditPortraitProfile"
 import EditPortraitImageGrid from "@/components/my-portfolios/portrait/EditPortraitImageGrid"
@@ -10,46 +7,13 @@ import EditPortraitImageGrid from "@/components/my-portfolios/portrait/EditPortr
 type Props = { draftId: string }
 
 export default function PortraitEditor({ draftId }: Props) {
-  const router = useRouter()
-
   const draft = useKonfolioDraftStore((s) => s.draftsById[draftId])
   const patchDraft = useKonfolioDraftStore((s) => s.patchDraft)
-  const deleteDraft = useKonfolioDraftStore((s) => s.deleteDraft)
 
   if (!draft || draft.template !== "portrait") return null
 
   const bannerSwatches = Array.isArray((draft as any).bannerSwatches) ? (draft as any).bannerSwatches : []
   const backgroundSwatches = Array.isArray((draft as any).backgroundSwatches) ? (draft as any).backgroundSwatches : []
-
-  const handleExit = async () => {
-    // If published, just leave (keep row)
-    if (draft.status === "published") {
-      router.push("/my-portfolios")
-      return
-    }
-
-    // Draft: delete row so it doesn't linger if they exit without saving
-    try {
-      const sessionRes = await supabase.auth.getSession()
-      const token = sessionRes.data.session?.access_token
-
-      if (token) {
-        await fetch(`/api/konfolios/${draftId}`, {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        })
-      }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log("[PortraitEditor] exit delete failed", e)
-      // still continue navigation
-    }
-
-    // Always clear local store draft so UI doesn't resurrect it
-    deleteDraft?.(draftId)
-
-    router.push("/my-portfolios")
-  }
 
   return (
     <main className="w-full min-h-[982px]" style={{ backgroundColor: draft.backgroundColor }}>
@@ -58,7 +22,6 @@ export default function PortraitEditor({ draftId }: Props) {
           <div className="flex flex-col items-center">
             <EditPortraitProfile
               backHref="/my-portfolios"
-              onBack={handleExit}
               bannerColor={draft.bannerColor}
               backgroundColor={draft.backgroundColor}
               onChangeBannerColor={(hex) => patchDraft(draftId, { bannerColor: hex })}

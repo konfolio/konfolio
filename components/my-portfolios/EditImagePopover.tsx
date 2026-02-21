@@ -1,6 +1,7 @@
+// components/my-portfolios/EditImagePopover.tsx
 "use client"
 
-import { useMemo, useRef, useState } from "react"
+import { useMemo, useRef } from "react"
 import useClickOutside from "@/components/hooks/useClickOutside"
 
 import DeleteIcon from "@/components/icons/DeleteIcon"
@@ -17,22 +18,42 @@ import RevertIcon from "@/components/icons/RevertIcon"
 
 import SliderField from "@/components/my-portfolios/SliderField"
 
+export type ImageEdits = {
+  rotate: number
+  zoom: number
+  brightness: number
+  contrast: number
+  saturation: number
+  temperature: number
+}
+
 type Variant = "square" | "portrait"
 
 type Props = {
   title?: string
   imageSrc?: string
   onClose: () => void
+
   /**
    * right = image on left, sliders on right (default)
    * left  = sliders on left, image on right (for right-most column cells)
    */
   placement?: "right" | "left"
+
   /**
    * square = 284x284 preview, 515x314 popover (default)
-   * portrait = 274x345 preview, 505x375 popover (Figma)
+   * portrait = 274x345 preview, 505x375 popover
    */
   variant?: Variant
+
+  // Editable meta overlay
+  titleText?: string
+  descriptionText?: string
+  onChangeMeta?: (next: { title: string; description: string }) => void
+
+  // Controlled edits
+  edits?: ImageEdits
+  onChangeEdits?: (next: ImageEdits) => void
 }
 
 type SliderRowProps = {
@@ -44,14 +65,7 @@ type SliderRowProps = {
   fillMode?: "start" | "center"
 }
 
-function SliderRow({
-  icon,
-  value,
-  onChange,
-  ariaLabel,
-  showFill = false,
-  fillMode = "start",
-}: SliderRowProps) {
+function SliderRow({ icon, value, onChange, ariaLabel, showFill = false, fillMode = "start" }: SliderRowProps) {
   return (
     <div className="w-[181px] h-[16px] flex flex-row items-center gap-[16px]">
       <div className="w-[16px] h-[16px] text-[#262626] flex items-center justify-center overflow-visible shrink-0">
@@ -88,11 +102,19 @@ const VARIANT_STYLES: Record<
     controls: { xFromLeft: "left-[319px]", h: "h-[284px]" },
   },
   portrait: {
-    // Matches your Figma styling
-    popover: { w: "w-[505px]", h: "h-[375px]" },
+    popover: { w: "w-[500px]", h: "h-[375px]" },
     image: { w: "w-[274px]", h: "h-[345px]" },
     controls: { xFromLeft: "left-[309px]", h: "h-[345px]" },
   },
+}
+
+const DEFAULT_EDITS: ImageEdits = {
+  rotate: 50,
+  zoom: 0,
+  brightness: 50,
+  contrast: 50,
+  saturation: 50,
+  temperature: 50,
 }
 
 export default function EditImagePopover({
@@ -101,96 +123,64 @@ export default function EditImagePopover({
   onClose,
   placement = "right",
   variant = "square",
+
+  titleText = "Title",
+  descriptionText = "Short description",
+  onChangeMeta,
+
+  edits,
+  onChangeEdits,
 }: Props) {
   const popoverRef = useRef<HTMLDivElement | null>(null)
   useClickOutside(popoverRef, onClose, { enabled: true, closeOnEsc: true })
 
-  // --- Slider UI state (0..100) ---
-  const [rotate, setRotate] = useState(50) // neutral at 50
-  const [zoom, setZoom] = useState(0) // starts at left
-  const [brightness, setBrightness] = useState(50)
-  const [contrast, setContrast] = useState(50)
-  const [saturation, setSaturation] = useState(50)
-  const [temperature, setTemperature] = useState(50)
+  const mergedEdits = edits ?? DEFAULT_EDITS
+  const setEdit = (patch: Partial<ImageEdits>) => {
+    const next: ImageEdits = { ...mergedEdits, ...patch }
+    onChangeEdits?.(next)
+  }
 
-  // --- Map sliders -> CSS ---
-  const rotateDeg = useMemo(() => {
-    const t = clamp(rotate, 0, 100)
-    return ((t - 50) / 50) * 180
-  }, [rotate])
-
-  const zoomScale = useMemo(() => {
-    const t = clamp(zoom, 0, 100)
-    return 1 + (t / 100) * 1.0
-  }, [zoom])
-
-  const brightnessVal = useMemo(() => {
-    const t = clamp(brightness, 0, 100)
-    return 0.5 + (t / 100) * 1.0
-  }, [brightness])
-
-  const contrastVal = useMemo(() => {
-    const t = clamp(contrast, 0, 100)
-    return 0.5 + (t / 100) * 1.0
-  }, [contrast])
-
-  const saturateVal = useMemo(() => {
-    const t = clamp(saturation, 0, 100)
-    return (t / 50) * 1.0 // 0->0, 50->1, 100->2
-  }, [saturation])
-
-  const hueRotateDeg = useMemo(() => {
-    const t = clamp(temperature, 0, 100)
-    return ((t - 50) / 50) * 30
-  }, [temperature])
-
+  const rotateDeg = useMemo(() => ((clamp(mergedEdits.rotate, 0, 100) - 50) / 50) * 180, [mergedEdits.rotate])
+  const zoomScale = useMemo(() => 1 + (clamp(mergedEdits.zoom, 0, 100) / 100) * 1.0, [mergedEdits.zoom])
+  const brightnessVal = useMemo(
+    () => 0.5 + (clamp(mergedEdits.brightness, 0, 100) / 100) * 1.0,
+    [mergedEdits.brightness]
+  )
+  const contrastVal = useMemo(
+    () => 0.5 + (clamp(mergedEdits.contrast, 0, 100) / 100) * 1.0,
+    [mergedEdits.contrast]
+  )
+  const saturateVal = useMemo(() => clamp(mergedEdits.saturation, 0, 100) / 50, [mergedEdits.saturation])
+  const hueRotateDeg = useMemo(
+    () => ((clamp(mergedEdits.temperature, 0, 100) - 50) / 50) * 30,
+    [mergedEdits.temperature]
+  )
   const sepiaVal = useMemo(() => {
-    const t = clamp(temperature, 0, 100)
+    const t = clamp(mergedEdits.temperature, 0, 100)
     const warm = Math.max(0, t - 50) / 50
     return warm * 0.25
-  }, [temperature])
+  }, [mergedEdits.temperature])
 
   const imgStyle = useMemo<React.CSSProperties>(() => {
     return {
       transformOrigin: "center",
-      transform: `scale(${zoomScale}) rotate(${rotateDeg}deg)`,
+      // add a tiny extra scale so corners never peek through the rim
+      transform: `scale(${zoomScale}) rotate(${rotateDeg}deg) scale(1.02)`,
       filter: `brightness(${brightnessVal}) contrast(${contrastVal}) saturate(${saturateVal}) sepia(${sepiaVal}) hue-rotate(${hueRotateDeg}deg)`,
       transition: "transform 120ms linear, filter 120ms linear",
       willChange: "transform, filter",
     }
   }, [zoomScale, rotateDeg, brightnessVal, contrastVal, saturateVal, sepiaVal, hueRotateDeg])
 
-  const preview = useMemo(() => {
-    if (!imageSrc) return null
-    // eslint-disable-next-line @next/next/no-img-element
-    return (
-      <img
-        src={imageSrc}
-        alt=""
-        className="absolute inset-0 w-full h-full object-cover"
-        style={imgStyle}
-        draggable={false}
-      />
-    )
-  }, [imageSrc, imgStyle])
-
   const isFlipped = placement === "left"
   const v = VARIANT_STYLES[variant]
 
-  // anchor stays the same between variants (matches both of your Figma: left -16, top -15)
   const popoverAnchorClass = isFlipped ? "right-[-16px] top-[-15px]" : "left-[-16px] top-[-15px]"
   const imagePosClass = isFlipped ? "absolute right-[15px] top-[15px]" : "absolute left-[15px] top-[15px]"
-
-  // controls: when flipped, it’s always left:15; otherwise uses variant x
   const controlsPosClass = isFlipped ? "absolute left-[15px] top-[15px]" : `absolute ${v.controls.xFromLeft} top-[15px]`
 
   const onReset = () => {
-    setRotate(50)
-    setZoom(0)
-    setBrightness(50)
-    setContrast(50)
-    setSaturation(50)
-    setTemperature(50)
+    onChangeEdits?.({ ...DEFAULT_EDITS })
   }
 
   return (
@@ -204,27 +194,95 @@ export default function EditImagePopover({
         bg-[rgba(255,255,255,0.9)]
         shadow-[4px_4px_15px_rgba(0,0,0,0.05)]
         backdrop-blur-[5px]
-        z-[20]
+        z-[50]
       `}
       onClick={(e) => e.stopPropagation()}
       role="dialog"
       aria-label="Edit image"
     >
-      {/* Image preview (square or portrait) */}
+      {/* Preview area (diffused white rim + white glow, no overlay seam) */}
       <div
         className={`
           ${imagePosClass}
           ${v.image.w} ${v.image.h}
+          relative
           rounded-[15px]
           overflow-hidden
           bg-[rgba(165,165,165,0.068)]
-          shadow-[2px_4px_25px_rgba(165,165,165,0.1),
-                  inset_2.14645px_2.00046px_9.24px_rgba(255,255,255,0.126),
-                  inset_1.21725px_1.13446px_4.62px_rgba(255,255,255,0.126)]
           backdrop-blur-[7.58px]
         `}
+        style={{
+          boxShadow: [
+            // outer white rim + glow (diffused)
+            "0 0 0 1.25px rgba(255,255,255,0.95)",
+            "0 0 18px rgba(255,255,255,0.55)",
+            "0 0 40px rgba(255,255,255,0.25)",
+            // original soft drop shadow
+            "2px 4px 25px rgba(165, 165, 165, 0.10)",
+            // subtle inner white rim so border “covers” edges
+            "inset 0 0 0 2px rgba(255,255,255,0.88)",
+            // keep your inner depth
+            "inset 2.14645px 2.00046px 9.24px rgba(165,165,165,0.126)",
+            "inset 1.21725px 1.13446px 4.62px rgba(165,165,165,0.126)",
+          ].join(", "),
+        }}
       >
-        {preview}
+        {imageSrc ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={imageSrc} alt="" className="absolute inset-0 w-full h-full object-cover" style={imgStyle} draggable={false} />
+        ) : null}
+
+        {/* Editable overlay — single gradient layer, no blur seam, covers bottom corners */}
+        <div className="absolute left-0 right-0 bottom-0 z-[2]">
+          {/* gradient sheet with slight bleed so no corner slivers */}
+          <div
+            className="absolute left-[-2px] right-[-2px] bottom-[-2px]"
+            style={{
+              height: 76, // slightly > 70 so the fade begins earlier without moving text
+              borderBottomLeftRadius: 16,
+              borderBottomRightRadius: 16,
+              background:
+                "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.92) 70%, rgba(255,255,255,1) 100%)",
+            }}
+          />
+
+          {/* subtle rim continuation so overlay feels like part of the border */}
+          <div
+            className="absolute left-0 right-0 bottom-0"
+            style={{
+              height: 72,
+              borderBottomLeftRadius: 15,
+              borderBottomRightRadius: 15,
+              boxShadow: "inset 0 -2px 0 rgba(255,255,255,0.88)",
+            }}
+          />
+
+          {/* text inputs stay exactly 70px */}
+          <div className="relative h-[70px] px-[15px] py-[15px] flex flex-col justify-end items-start">
+            <input
+              value={titleText}
+              onChange={(e) => onChangeMeta?.({ title: e.target.value, description: descriptionText })}
+              className="
+                w-full
+                bg-transparent
+                outline-none
+                font-inter font-normal text-[17px] leading-[140%]
+                text-[#262626]
+              "
+            />
+            <input
+              value={descriptionText}
+              onChange={(e) => onChangeMeta?.({ title: titleText, description: e.target.value })}
+              className="
+                w-full
+                bg-transparent
+                outline-none
+                font-inter font-normal text-[15px] leading-[150%]
+                text-[#262626]
+              "
+            />
+          </div>
+        </div>
       </div>
 
       {/* Interaction field */}
@@ -251,8 +309,8 @@ export default function EditImagePopover({
         <div className="w-[181px] h-[186px] flex flex-col items-start gap-[18px]">
           <SliderRow
             icon={<ArrowRotateIcon />}
-            value={rotate}
-            onChange={setRotate}
+            value={mergedEdits.rotate}
+            onChange={(v2) => setEdit({ rotate: v2 })}
             ariaLabel="Rotate"
             showFill
             fillMode="center"
@@ -260,8 +318,8 @@ export default function EditImagePopover({
 
           <SliderRow
             icon={<ZoomInIcon />}
-            value={zoom}
-            onChange={setZoom}
+            value={mergedEdits.zoom}
+            onChange={(v2) => setEdit({ zoom: v2 })}
             ariaLabel="Zoom"
             showFill
             fillMode="start"
@@ -269,8 +327,8 @@ export default function EditImagePopover({
 
           <SliderRow
             icon={<SunIcon />}
-            value={brightness}
-            onChange={setBrightness}
+            value={mergedEdits.brightness}
+            onChange={(v2) => setEdit({ brightness: v2 })}
             ariaLabel="Brightness"
             showFill
             fillMode="start"
@@ -278,8 +336,8 @@ export default function EditImagePopover({
 
           <SliderRow
             icon={<CircleHalfIcon />}
-            value={contrast}
-            onChange={setContrast}
+            value={mergedEdits.contrast}
+            onChange={(v2) => setEdit({ contrast: v2 })}
             ariaLabel="Contrast"
             showFill
             fillMode="start"
@@ -287,8 +345,8 @@ export default function EditImagePopover({
 
           <SliderRow
             icon={<PaletteIcon size={16} className="block" />}
-            value={saturation}
-            onChange={setSaturation}
+            value={mergedEdits.saturation}
+            onChange={(v2) => setEdit({ saturation: v2 })}
             ariaLabel="Saturation"
             showFill
             fillMode="start"
@@ -296,8 +354,8 @@ export default function EditImagePopover({
 
           <SliderRow
             icon={<ThermometerIcon />}
-            value={temperature}
-            onChange={setTemperature}
+            value={mergedEdits.temperature}
+            onChange={(v2) => setEdit({ temperature: v2 })}
             ariaLabel="Temperature"
             showFill
             fillMode="start"
@@ -307,29 +365,16 @@ export default function EditImagePopover({
         {/* Aside */}
         <div className="w-[181px] h-[16px] flex flex-row justify-between items-center">
           <div className="w-[47px] h-[16px] flex flex-row justify-between items-center gap-[15px]">
-            <button
-              type="button"
-              aria-label="Images"
-              className="w-[16px] h-[16px] text-[#262626] cursor-pointer"
-            >
+            <button type="button" aria-label="Images" className="w-[16px] h-[16px] text-[#262626] cursor-pointer">
               <ImagesIcon />
             </button>
 
-            <button
-              type="button"
-              aria-label="Magic wand"
-              className="w-[16px] h-[16px] text-[#262626] cursor-pointer"
-            >
+            <button type="button" aria-label="Magic wand" className="w-[16px] h-[16px] text-[#262626] cursor-pointer">
               <WandIcon />
             </button>
           </div>
 
-          <button
-            type="button"
-            aria-label="Revert"
-            className="w-[16px] h-[16px] text-[#262626] cursor-pointer"
-            onClick={onReset}
-          >
+          <button type="button" aria-label="Revert" className="w-[16px] h-[16px] text-[#262626] cursor-pointer" onClick={onReset}>
             <RevertIcon />
           </button>
         </div>

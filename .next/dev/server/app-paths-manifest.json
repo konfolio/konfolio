@@ -7,6 +7,7 @@
   "/api/onboarding/submit/route": "app/api/onboarding/submit/route.js",
   "/api/profile-image/upload/route": "app/api/profile-image/upload/route.js",
   "/auth/callback/page": "app/auth/callback/page.js",
+  "/explore/page": "app/explore/page.js",
   "/login/page": "app/login/page.js",
   "/my-forms/page": "app/my-forms/page.js",
   "/my-portfolios/[konfolioId]/edit/page": "app/my-portfolios/[konfolioId]/edit/page.js",

@@ -1,15 +1,16 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import ImageIcon from "@/components/icons/ImageIcon"
 import SlidersIcon from "@/components/icons/SlidersIcon"
-import EditImagePopover from "@/components/my-portfolios/EditImagePopover"
+import EditImagePopover, { type ImageEdits } from "@/components/my-portfolios/EditImagePopover"
 
 type Cell = {
   id: string
   src?: string
   title?: string
   description?: string
+  edits?: ImageEdits
 }
 
 type Props = {
@@ -29,13 +30,49 @@ const RECOMMENDED = [
   "Your Product",
 ]
 
+const DEFAULT_EDITS: ImageEdits = {
+  rotate: 50,
+  zoom: 0,
+  brightness: 50,
+  contrast: 50,
+  saturation: 50,
+  temperature: 50,
+}
+
 function makeDefaultCells(): Cell[] {
   return Array.from({ length: 9 }).map((_, i) => ({
     id: String(i),
     src: "",
     title: "Title",
     description: "Short description",
+    edits: { ...DEFAULT_EDITS },
   }))
+}
+
+function clamp(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, n))
+}
+
+function editsToImgStyle(edits?: ImageEdits): React.CSSProperties {
+  const e = edits ?? DEFAULT_EDITS
+
+  const rotateDeg = ((clamp(e.rotate, 0, 100) - 50) / 50) * 180
+  const zoomScale = 1 + (clamp(e.zoom, 0, 100) / 100) * 1.0
+
+  const brightnessVal = 0.5 + (clamp(e.brightness, 0, 100) / 100) * 1.0
+  const contrastVal = 0.5 + (clamp(e.contrast, 0, 100) / 100) * 1.0
+  const saturateVal = clamp(e.saturation, 0, 100) / 50
+
+  const hueRotateDeg = ((clamp(e.temperature, 0, 100) - 50) / 50) * 30
+  const warm = Math.max(0, clamp(e.temperature, 0, 100) - 50) / 50
+  const sepiaVal = warm * 0.25
+
+  return {
+    transformOrigin: "center",
+    transform: `scale(${zoomScale}) rotate(${rotateDeg}deg)`,
+    filter: `brightness(${brightnessVal}) contrast(${contrastVal}) saturate(${saturateVal}) sepia(${sepiaVal}) hue-rotate(${hueRotateDeg}deg)`,
+    willChange: "transform, filter",
+  }
 }
 
 export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
@@ -46,8 +83,11 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
       : makeDefaultCells()
   })
 
+  const syncingFromPropsRef = useRef(false)
   useEffect(() => {
     if (!images) return
+    syncingFromPropsRef.current = true
+
     const incoming = images.slice(0, 9)
     const next =
       incoming.length > 0
@@ -67,13 +107,32 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
     }
   }, [])
 
+  // --- IMPORTANT FIX: don't emit to parent inside setCells updater ---
+  const pendingEmitRef = useRef<Cell[] | null>(null)
+
   const updateCells = (updater: (prev: Cell[]) => Cell[]) => {
     setCells((prev) => {
       const next = updater(prev)
-      onChangeImages?.(next)
+      pendingEmitRef.current = next
       return next
     })
   }
+
+  useEffect(() => {
+    if (syncingFromPropsRef.current) {
+      syncingFromPropsRef.current = false
+      pendingEmitRef.current = null
+      return
+    }
+
+    const pending = pendingEmitRef.current
+    if (!pending) return
+
+    if (pending === cells) {
+      onChangeImages?.(pending)
+      pendingEmitRef.current = null
+    }
+  }, [cells, onChangeImages])
 
   const openFilePicker = (idx: number) => {
     inputsRef.current[idx]?.click()
@@ -86,11 +145,13 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
 
     updateCells((prev) => {
       const next = [...prev]
+      const existing = next[idx] ?? { id: String(idx) }
       next[idx] = {
-        ...next[idx],
+        ...existing,
         src: url,
-        title: next[idx]?.title ?? "Title",
-        description: next[idx]?.description ?? "Short description",
+        title: existing.title ?? "Title",
+        description: existing.description ?? "Short description",
+        edits: existing.edits ?? { ...DEFAULT_EDITS },
       }
       return next
     })
@@ -135,30 +196,16 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
             const isDragOver = dragOverIdx === idx
             const isEditorOpen = openEditorIdx === idx
 
-            // right-most column => flip popover (sliders left, image right)
             const col = idx % 3
             const placement: "right" | "left" = col === 2 ? "left" : "right"
+
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            const imgStyle = useMemo(() => editsToImgStyle(cell.edits), [cell.edits])
 
             return (
               <div
                 key={cell.id ?? String(idx)}
-                className={`
-                  group
-                  relative
-                  rounded-[15px]
-                  overflow-visible
-                  bg-[rgba(165,165,165,0.068)]
-                  shadow-[2px_4px_25px_rgba(165,165,165,0.1),
-                          inset_2.14645px_2.00046px_9.24px_rgba(165,165,165,0.126),
-                          inset_1.21725px_1.13446px_4.62px_rgba(165,165,165,0.126)]
-                  border border-white
-                  transition
-                  ${isDragOver ? "border-dashed" : ""}
-                `}
-                style={{
-                  boxShadow:
-                    "2px 4px 25px rgba(165,165,165,0.1), inset 2.14645px 2.00046px 9.24px rgba(165,165,165,0.126), inset 1.21725px 1.13446px 4.62px rgba(165,165,165,0.126), inset 0 0 0 1px rgba(255,255,255,0.9)",
-                }}
+                className="group relative rounded-[15px] overflow-visible"
                 onDragOver={(e) => onDragOver(idx, e)}
                 onDragLeave={(e) => onDragLeave(idx, e)}
                 onDrop={(e) => onDrop(idx, e)}
@@ -173,20 +220,120 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                   onChange={(e) => onInputChange(idx, e)}
                 />
 
-                {/* Click target (transparent, behind buttons/popover) */}
-                <button
-                  type="button"
-                  className="absolute inset-0 z-[0] bg-transparent"
-                  aria-label={`Upload image ${idx + 1}`}
-                  onClick={() => {
-                    if (isEditorOpen) return
-                    openFilePicker(idx)
+                {/* Inner clipped visual card */}
+                <div
+                  className="
+                    relative
+                    w-full h-full
+                    rounded-[15px]
+                    overflow-hidden
+                    bg-[rgba(165,165,165,0.068)]
+                    backdrop-blur-[7.58px]
+                  "
+                  style={{
+                    boxShadow: [
+                      "0 0 0 1.25px rgba(255,255,255,0.95)",
+                      "0 0 18px rgba(255,255,255,0.55)",
+                      "0 0 40px rgba(255,255,255,0.25)",
+                      "2px 4px 25px rgba(165, 165, 165, 0.10)",
+                      "inset 2.14645px 2.00046px 9.24px rgba(165, 165, 165, 0.126)",
+                      "inset 1.21725px 1.13446px 4.62px rgba(165, 165, 165, 0.126)",
+                      "inset 0 0 0 2px rgba(255,255,255,0.88)",
+                    ].join(", "),
                   }}
                 >
-                  <span className="sr-only">Upload</span>
-                </button>
+                  {/* Click target */}
+                  <button
+                    type="button"
+                    className="absolute inset-0 z-[0] bg-transparent"
+                    aria-label={`Upload image ${idx + 1}`}
+                    onClick={() => {
+                      if (isEditorOpen) return
+                      openFilePicker(idx)
+                    }}
+                  >
+                    <span className="sr-only">Upload</span>
+                  </button>
 
-                {/* Sliders icon (hover only) + pointer cursor */}
+                  {/* Image preview */}
+                  {hasImage ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={cell.src}
+                      alt=""
+                      className="absolute inset-0 w-full h-full object-cover pointer-events-none z-[1]"
+                      style={{
+                        ...imgStyle,
+                        transform: `${imgStyle.transform} scale(1.02)`,
+                        transformOrigin: "center",
+                      }}
+                      draggable={false}
+                    />
+                  ) : null}
+
+                  {/* Recommended content */}
+                  {!hasImage && (
+                    <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-[5px] z-[2]">
+                      <div className="w-[52px] h-[52px] flex items-center justify-center text-[#A5A5A5] [&_path]:stroke-[#A5A5A5] [&_path]:fill-[#A5A5A5]">
+                        <ImageIcon />
+                      </div>
+
+                      <div className="flex flex-col items-center gap-[7px]">
+                        <p className="m-0 font-roboto text-[12px] leading-[14px] text-[#A5A5A5] text-center">
+                          Recommended:
+                        </p>
+
+                        <p className="m-0 font-roboto text-[17px] leading-[20px] text-[#A5A5A5] text-center">
+                          {RECOMMENDED[idx]}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Hover overlay:
+                      - smaller height (closer to Figma 70)
+                      - NO backdrop blur (removes “clear vs suddenly blurry seam”)
+                      - fade starts a bit above the overlay so there's no hard line
+                  */}
+                  <div className="pointer-events-none absolute left-0 right-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity z-[3]">
+                    {/* single gradient layer */}
+                    <div
+                      className="absolute left-[-2px] right-[-2px] bottom-[-2px]"
+                      style={{
+                        height: 76, // slightly > 70 so the fade begins earlier without moving text
+                        borderBottomLeftRadius: 16,
+                        borderBottomRightRadius: 16,
+                        background:
+                          "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.92) 70%, rgba(255,255,255,1) 100%)",
+                      }}
+                    />
+
+                    {/* subtle white rim so overlay feels like it merges with border */}
+                    <div
+                      className="absolute left-0 right-0 bottom-0"
+                      style={{
+                        height: 72,
+                        borderBottomLeftRadius: 15,
+                        borderBottomRightRadius: 15,
+                        boxShadow: "inset 0 -2px 0 rgba(255,255,255,0.88)",
+                      }}
+                    />
+
+                    {/* text container stays exactly 70px like Figma */}
+                    <div className="absolute left-0 right-0 bottom-0 h-[70px] px-[15px] py-[15px] flex flex-col justify-end items-start">
+                      <p className="m-0 w-full font-inter font-normal text-[17px] leading-[140%] text-[#262626]">
+                        {cell.title ?? "Title"}
+                      </p>
+                      <p className="m-0 w-full font-inter font-normal text-[15px] leading-[150%] text-[#262626]">
+                        {cell.description ?? "Short description"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {isDragOver ? <div className="pointer-events-none absolute inset-0 z-[4] bg-white/20" /> : null}
+                </div>
+
+                {/* Sliders icon (hover only) */}
                 <button
                   type="button"
                   aria-label="Image settings"
@@ -215,74 +362,27 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                     imageSrc={cell.src}
                     onClose={() => setOpenEditorIdx(null)}
                     placement={placement}
+                    variant="square"
+                    titleText={cell.title ?? "Title"}
+                    descriptionText={cell.description ?? "Short description"}
+                    edits={cell.edits ?? { ...DEFAULT_EDITS }}
+                    onChangeMeta={({ title, description }) => {
+                      updateCells((prev) => {
+                        const next = [...prev]
+                        const existing = next[idx] ?? { id: String(idx) }
+                        next[idx] = { ...existing, title, description }
+                        return next
+                      })
+                    }}
+                    onChangeEdits={(nextEdits) => {
+                      updateCells((prev) => {
+                        const next = [...prev]
+                        const existing = next[idx] ?? { id: String(idx) }
+                        next[idx] = { ...existing, edits: nextEdits }
+                        return next
+                      })
+                    }}
                   />
-                )}
-
-                {/* Image preview */}
-                {hasImage ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={cell.src}
-                    alt=""
-                    className="absolute inset-0 w-full h-full object-cover pointer-events-none z-[1] rounded-[15px]"
-                    draggable={false}
-                  />
-                ) : null}
-
-                {/* Recommended content */}
-                {!hasImage && (
-                  <div
-                    className="
-                      pointer-events-none
-                      absolute inset-0
-                      flex flex-col items-center justify-center
-                      gap-[5px]
-                      z-[1]
-                    "
-                  >
-                    <div className="w-[52px] h-[52px] flex items-center justify-center text-[#A5A5A5] [&_path]:stroke-[#A5A5A5] [&_path]:fill-[#A5A5A5]">
-                      <ImageIcon />
-                    </div>
-
-                    <div className="flex flex-col items-center gap-[7px]">
-                      <p className="m-0 font-roboto text-[12px] leading-[14px] text-[#A5A5A5] text-center">
-                        Recommended:
-                      </p>
-
-                      <p className="m-0 font-roboto text-[17px] leading-[20px] text-[#A5A5A5] text-center">
-                        {RECOMMENDED[idx]}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Hover description overlay */}
-                <div
-                  className="
-                    pointer-events-none
-                    absolute bottom-0 left-0 right-0
-                    h-[70px]
-                    px-[15px] pt-[12px] pb-[10px]
-                    flex flex-col justify-end items-start
-                    opacity-0
-                    group-hover:opacity-100
-                    transition-opacity
-                    bg-[linear-gradient(180deg,rgba(255,255,255,0)_0%,rgba(255,255,255,0.9)_70%,#FFFFFF_100%)]
-                    backdrop-blur-[3px]
-                    rounded-b-[15px]
-                    z-[2]
-                  "
-                >
-                  <p className="m-0 w-full font-inter font-normal text-[17px] leading-[140%] text-[#262626]">
-                    {cell.title ?? "Title"}
-                  </p>
-                  <p className="m-0 w-full font-inter font-normal text-[15px] leading-[140%] text-[#262626]">
-                    {cell.description ?? "Short description"}
-                  </p>
-                </div>
-
-                {isDragOver && (
-                  <div className="pointer-events-none absolute inset-0 z-[4] bg-white/20 rounded-[15px]" />
                 )}
               </div>
             )

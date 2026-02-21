@@ -3,13 +3,14 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import ImageIcon from "@/components/icons/ImageIcon"
 import SlidersIcon from "@/components/icons/SlidersIcon"
-import EditImagePopover from "@/components/my-portfolios/EditImagePopover"
+import EditImagePopover, { type ImageEdits } from "@/components/my-portfolios/EditImagePopover"
 
 type Cell = {
   id: string
   src?: string
   title?: string
   description?: string
+  edits?: ImageEdits
 }
 
 type Props = {
@@ -35,13 +36,49 @@ const RECOMMENDED = [
   "Most Recent Work",
 ] as const
 
+const DEFAULT_EDITS: ImageEdits = {
+  rotate: 50,
+  zoom: 0,
+  brightness: 50,
+  contrast: 50,
+  saturation: 50,
+  temperature: 50,
+}
+
 function makeDefaultCells(): Cell[] {
   return Array.from({ length: 8 }).map((_, i) => ({
     id: String(i),
     src: "",
     title: "Title",
     description: "Short description",
+    edits: { ...DEFAULT_EDITS },
   }))
+}
+
+function clamp(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, n))
+}
+
+function editsToImgStyle(edits?: ImageEdits): React.CSSProperties {
+  const e = edits ?? DEFAULT_EDITS
+
+  const rotateDeg = ((clamp(e.rotate, 0, 100) - 50) / 50) * 180
+  const zoomScale = 1 + (clamp(e.zoom, 0, 100) / 100) * 1.0
+
+  const brightnessVal = 0.5 + (clamp(e.brightness, 0, 100) / 100) * 1.0
+  const contrastVal = 0.5 + (clamp(e.contrast, 0, 100) / 100) * 1.0
+  const saturateVal = clamp(e.saturation, 0, 100) / 50
+
+  const hueRotateDeg = ((clamp(e.temperature, 0, 100) - 50) / 50) * 30
+  const warm = Math.max(0, clamp(e.temperature, 0, 100) - 50) / 50
+  const sepiaVal = warm * 0.25
+
+  return {
+    transformOrigin: "center",
+    transform: `scale(${zoomScale}) rotate(${rotateDeg}deg)`,
+    filter: `brightness(${brightnessVal}) contrast(${contrastVal}) saturate(${saturateVal}) sepia(${sepiaVal}) hue-rotate(${hueRotateDeg}deg)`,
+    willChange: "transform, filter",
+  }
 }
 
 function parseEventLine(line: string): { title: string; year?: string } {
@@ -77,14 +114,27 @@ export default function EditPortraitImageGrid({
       : makeDefaultCells()
   })
 
+  const syncingFromPropsRef = useRef(false)
   useEffect(() => {
     if (!images) return
+    syncingFromPropsRef.current = true
+
     const incoming = images.slice(0, 8)
     const next =
       incoming.length > 0
         ? incoming.concat(makeDefaultCells()).slice(0, 8)
         : makeDefaultCells()
-    setCells(next)
+
+    // ensure edits exist
+    const normalized = next.map((c, i) => ({
+      id: c.id ?? String(i),
+      src: c.src ?? "",
+      title: c.title ?? "Title",
+      description: c.description ?? "Short description",
+      edits: c.edits ?? { ...DEFAULT_EDITS },
+    }))
+
+    setCells(normalized)
   }, [images])
 
   const inputsRef = useRef<(HTMLInputElement | null)[]>([])
@@ -98,9 +148,7 @@ export default function EditPortraitImageGrid({
 
   useEffect(() => {
     const incoming = splitPrevVendsValue(previousVendsValue)
-    const isJustSample =
-      incoming.length === 1 && incoming[0]?.toLowerCase() === "vended event 2026".toLowerCase()
-
+    const isJustSample = incoming.length === 1 && incoming[0]?.toLowerCase() === "vended event 2026"
     setLocalPrevVends(isJustSample ? [] : incoming.slice(0, 4))
   }, [previousVendsValue])
 
@@ -127,13 +175,32 @@ export default function EditPortraitImageGrid({
     }
   }, [])
 
+  // --- IMPORTANT FIX: don't emit to parent inside setCells updater ---
+  const pendingEmitRef = useRef<Cell[] | null>(null)
+
   const updateCells = (updater: (prev: Cell[]) => Cell[]) => {
     setCells((prev) => {
       const next = updater(prev)
-      onChangeImages?.(next)
+      pendingEmitRef.current = next
       return next
     })
   }
+
+  useEffect(() => {
+    if (syncingFromPropsRef.current) {
+      syncingFromPropsRef.current = false
+      pendingEmitRef.current = null
+      return
+    }
+
+    const pending = pendingEmitRef.current
+    if (!pending) return
+
+    if (pending === cells) {
+      onChangeImages?.(pending)
+      pendingEmitRef.current = null
+    }
+  }, [cells, onChangeImages])
 
   const openFilePicker = (idx: number) => inputsRef.current[idx]?.click()
 
@@ -144,11 +211,13 @@ export default function EditPortraitImageGrid({
 
     updateCells((prev) => {
       const next = [...prev]
+      const existing = next[idx] ?? { id: String(idx) }
       next[idx] = {
-        ...next[idx],
+        ...existing,
         src: url,
-        title: next[idx]?.title ?? "Title",
-        description: next[idx]?.description ?? "Short description",
+        title: existing.title ?? "Title",
+        description: existing.description ?? "Short description",
+        edits: existing.edits ?? { ...DEFAULT_EDITS },
       }
       return next
     })
@@ -198,12 +267,14 @@ export default function EditPortraitImageGrid({
               const col = idx % 4
               const placement: "right" | "left" = col === 3 ? "left" : "right"
 
+              const imgStyle = useMemo(() => editsToImgStyle(cell.edits), [cell.edits])
+
               return (
                 <div
                   key={cell.id ?? String(idx)}
                   className={`
                     group relative
-                    w-[284.32px] h-[358px]
+                    w-[274px] h-[345px]
                     rounded-[15px]
                     overflow-visible
                     bg-[rgba(165,165,165,0.068)]
@@ -213,7 +284,6 @@ export default function EditPortraitImageGrid({
                     ${isEditorOpen ? "z-[200]" : "z-[0]"}
                   `}
                   style={{
-                    // border/shadow from your square grid
                     boxShadow:
                       "2px 4px 25px rgba(165,165,165,0.1), inset 2.14645px 2.00046px 9.24px rgba(165,165,165,0.126), inset 1.21725px 1.13446px 4.62px rgba(165,165,165,0.126), inset 0 0 0 1px rgba(255,255,255,0.9)",
                     backdropFilter: "blur(7.58px)",
@@ -263,7 +333,7 @@ export default function EditPortraitImageGrid({
                     <SlidersIcon />
                   </button>
 
-                  {/* Popover: now the whole CELL is raised, so it can’t be under neighbors */}
+                  {/* Popover */}
                   {isEditorOpen && (
                     <EditImagePopover
                       title={`Recommended - ${RECOMMENDED[idx] ?? "Image"}`}
@@ -271,6 +341,25 @@ export default function EditPortraitImageGrid({
                       onClose={() => setOpenEditorIdx(null)}
                       placement={placement}
                       variant="portrait"
+                      titleText={cell.title ?? "Title"}
+                      descriptionText={cell.description ?? "Short description"}
+                      edits={cell.edits ?? { ...DEFAULT_EDITS }}
+                      onChangeMeta={({ title, description }) => {
+                        updateCells((prev) => {
+                          const next = [...prev]
+                          const existing = next[idx] ?? { id: String(idx) }
+                          next[idx] = { ...existing, title, description }
+                          return next
+                        })
+                      }}
+                      onChangeEdits={(nextEdits) => {
+                        updateCells((prev) => {
+                          const next = [...prev]
+                          const existing = next[idx] ?? { id: String(idx) }
+                          next[idx] = { ...existing, edits: nextEdits }
+                          return next
+                        })
+                      }}
                     />
                   )}
 
@@ -281,11 +370,12 @@ export default function EditPortraitImageGrid({
                       src={cell.src}
                       alt=""
                       className="absolute inset-0 w-full h-full object-cover pointer-events-none z-[1] rounded-[15px]"
+                      style={imgStyle}
                       draggable={false}
                     />
                   ) : null}
 
-                  {/* Recommended state (do NOT disappear on hover) */}
+                  {/* Recommended state */}
                   {!hasImage && (
                     <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-[5px] z-[1]">
                       <div className="w-[52px] h-[52px] flex items-center justify-center text-[#A5A5A5] [&_path]:stroke-[#A5A5A5] [&_path]:fill-[#A5A5A5]">
@@ -352,7 +442,9 @@ export default function EditPortraitImageGrid({
                   <span className="font-inter font-normal text-[16px] leading-[19px] text-[#A5A5A5]">|</span>
                 ) : null}
 
-                <span className="font-inter font-normal text-[16px] leading-[19px] text-[#262626]">{ev.title || ""}</span>
+                <span className="font-inter font-normal text-[16px] leading-[19px] text-[#262626]">
+                  {ev.title || ""}
+                </span>
 
                 {ev.year ? (
                   <span className="font-inter italic font-normal text-[12px] leading-[140%] text-[#A5A5A5]">

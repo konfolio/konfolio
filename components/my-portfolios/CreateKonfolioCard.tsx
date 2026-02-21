@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react"
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -34,17 +34,22 @@ type Props = {
   infoText?: string
   title?: string
 
-  /**
-   * If provided, template selection becomes callback-driven (parent handles creation / routing).
-   * We'll still show the Name Card first, then call onPickTemplate(t, portfolioName).
-   */
-  onPickTemplate?: (t: TemplateType, portfolioName: string) => void
+  /** If provided, buttons become callback-driven instead of href navigation. */
+  onPickTemplate?: (t: TemplateType) => void
 
   /** Disable primary template buttons */
   disabled?: boolean
 
   /** Optional override label while creating */
   primaryLoadingLabel?: string
+
+  /**
+   * When true, selecting a template opens the Name Card next,
+   * and only after naming do we create + route.
+   *
+   * Default false so popover behavior stays unchanged.
+   */
+  enableNameStep?: boolean
 }
 
 async function getAccessToken(): Promise<string | null> {
@@ -94,6 +99,7 @@ export default function CreateKonfolioCard({
   onPickTemplate,
   disabled = false,
   primaryLoadingLabel,
+  enableNameStep = false,
 }: Props) {
   const router = useRouter()
 
@@ -108,17 +114,17 @@ export default function CreateKonfolioCard({
   const [isCreating, setIsCreating] = useState(false)
   const [createError, setCreateError] = useState("")
 
-  // NEW: name flow
-  const [nameCardOpen, setNameCardOpen] = useState(false)
-  const [pendingTemplate, setPendingTemplate] = useState<TemplateType | null>(null)
-
   const effectiveDisabled = disabled || isCreating
   const effectiveLoadingLabel = primaryLoadingLabel ?? (isCreating ? "Creating..." : undefined)
 
-  // Fetch business_name for URL preview (slug)
+  // Name-step state (only used when enableNameStep=true)
+  const [nameCardOpen, setNameCardOpen] = useState(false)
+  const [pendingTemplate, setPendingTemplate] = useState<TemplateType | null>(null)
   const [businessSlug, setBusinessSlug] = useState("businessname")
 
   useEffect(() => {
+    if (!enableNameStep) return
+
     let mounted = true
 
     async function loadBusinessName() {
@@ -145,9 +151,9 @@ export default function CreateKonfolioCard({
       mounted = false
       sub.subscription.unsubscribe()
     }
-  }, [])
+  }, [enableNameStep])
 
-  async function createAndGo(template: TemplateType, portfolioName: string) {
+  async function createAndGo(template: TemplateType, portfolioName?: string) {
     setCreateError("")
     setIsCreating(true)
 
@@ -166,7 +172,7 @@ export default function CreateKonfolioCard({
         },
         body: JSON.stringify({
           template,
-          portfolioName: portfolioName.trim(),
+          portfolioName: (portfolioName || "").trim() || null,
         }),
       })
 
@@ -198,16 +204,14 @@ export default function CreateKonfolioCard({
     }
   }
 
-  function handleTemplateClick(t: TemplateType) {
-    if (effectiveDisabled) return
-    setPendingTemplate(t)
+  function openNameStep(template: TemplateType) {
+    setPendingTemplate(template)
     setNameCardOpen(true)
   }
 
-  function closeNameCard() {
+  function closeNameStep() {
     setNameCardOpen(false)
     setPendingTemplate(null)
-    // Do not persist any typed name: PortfolioNameCard already resets itself on open/close.
   }
 
   useLayoutEffect(() => {
@@ -323,13 +327,31 @@ export default function CreateKonfolioCard({
             <div className="w-full px-[67px] flex items-center justify-between">
               <TemplateColumn
                 t={templates[0]}
-                onPickTemplate={(t) => handleTemplateClick(t)}
+                onPickTemplate={(t) => {
+                  if (effectiveDisabled) return
+
+                  // ✅ POPUP MODE: if parent handles selection, call parent immediately.
+                  if (onPickTemplate) return onPickTemplate(t)
+
+                  // ✅ Name-step mode (only when enabled)
+                  if (enableNameStep) return openNameStep(t)
+
+                  // ✅ Default: create + route immediately
+                  void createAndGo(t)
+                }}
                 disabled={effectiveDisabled}
                 loadingLabel={effectiveLoadingLabel}
               />
+
               <TemplateColumn
                 t={templates[1]}
-                onPickTemplate={(t) => handleTemplateClick(t)}
+                onPickTemplate={(t) => {
+                  if (effectiveDisabled) return
+
+                  if (onPickTemplate) return onPickTemplate(t)
+                  if (enableNameStep) return openNameStep(t)
+                  void createAndGo(t)
+                }}
                 disabled={effectiveDisabled}
                 loadingLabel={effectiveLoadingLabel}
               />
@@ -338,29 +360,21 @@ export default function CreateKonfolioCard({
         </div>
       </section>
 
-      {/* Name Card comes AFTER selecting template, BEFORE creating / routing */}
-      <PortfolioNameCard
-        isOpen={nameCardOpen}
-        businessSlug={businessSlug}
-        onClose={closeNameCard}
-        onContinue={(portfolioName) => {
-          const t = pendingTemplate
-          if (!t) return
+      {/* Only render Name Card if name-step is enabled */}
+      {enableNameStep ? (
+        <PortfolioNameCard
+          isOpen={nameCardOpen}
+          businessSlug={businessSlug}
+          onClose={closeNameStep}
+          onContinue={(portfolioName) => {
+            const t = pendingTemplate
+            if (!t) return
 
-          // If parent wants to handle creation/routing, call them.
-          if (onPickTemplate) {
-            setNameCardOpen(false)
-            setPendingTemplate(null)
-            onPickTemplate(t, portfolioName)
-            return
-          }
-
-          // Otherwise, Create here then route.
-          setNameCardOpen(false)
-          setPendingTemplate(null)
-          void createAndGo(t, portfolioName)
-        }}
-      />
+            closeNameStep()
+            void createAndGo(t, portfolioName)
+          }}
+        />
+      ) : null}
     </>
   )
 }
