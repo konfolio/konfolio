@@ -258,8 +258,17 @@ export default function EditPortraitProfile({
     >
       <div className="absolute left-[105px] top-1/2 -translate-y-1/2 z-[2]">
         {onBack ? (
-          <button type="button" onClick={onBack} aria-label="Back">
-            <ArrowLeft href={backHref} className="w-[30px] h-[30px]" />
+          <button
+            type="button"
+            aria-label="Back"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              onBack()
+            }}
+            className="w-[30px] h-[30px] flex items-center justify-center"
+          >
+            <ArrowLeft className="w-[30px] h-[30px]" />
           </button>
         ) : (
           <ArrowLeft href={backHref} className="w-[30px] h-[30px]" />

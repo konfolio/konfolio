@@ -289,8 +289,17 @@ export default function EditSquareProfileSidebar({
       <div className="relative w-[276px] h-[36px] flex items-center justify-center gap-[40px]">
         <div className="absolute left-0 top-1/2 -translate-y-1/2">
           {onBack ? (
-            <button type="button" onClick={onBack} aria-label="Back">
-              <ArrowLeft href={backHref} className="w-[30px] h-[30px]" />
+            <button
+              type="button"
+              aria-label="Back"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                onBack()
+              }}
+              className="w-[30px] h-[30px] flex items-center justify-center"
+            >
+              <ArrowLeft className="w-[30px] h-[30px]" />
             </button>
           ) : (
             <ArrowLeft href={backHref} className="w-[30px] h-[30px]" />

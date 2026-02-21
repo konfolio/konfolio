@@ -1487,3 +1487,11 @@ Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
 [31:20:15.771] Server  WARN    Error: Route "/api/konfolios/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
 [31:23:03.881] Server  LOG     ✓ Compiled in 613ms
 [31:24:09.178] Server  LOG     ✓ Compiled in 3.5s
+[42:38:29.954] Server  LOG     ✓ Compiled in 2.2s
+[42:39:00.836] Server  LOG     ✓ Compiled in 369ms
+[45:13:52.199] Server  LOG     ✓ Compiled in 6.1s
+[45:14:36.850] Server  LOG     ✓ Compiled in 805ms
+[45:14:48.256] Server  LOG     ✓ Compiled in 215ms
+[45:15:16.080] Server  LOG     ✓ Compiled in 274ms
+[45:57:02.530] Server  LOG     ✓ Compiled in 911ms
+[45:57:55.282] Browser LOG     [KonfolioExitGuard] DELETE 200 {"deletedCount":1,"deletedIds":["6ed7a72d-54f3-4a87-95cc-6e5fe1ae9783"],"ok":true}

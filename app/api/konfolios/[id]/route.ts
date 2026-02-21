@@ -142,3 +142,42 @@ export async function PATCH(
     content: data.content,
   });
 }
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const token = getBearerToken(req)
+  if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  const { id } = await params
+  if (!id) return NextResponse.json({ error: "Missing id param" }, { status: 400 })
+
+  // Use service role on the server so auth verification is reliable
+  const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
+  const { data: userRes, error: userErr } = await supabaseAdmin.auth.getUser(token)
+  const user = userRes?.user
+  if (userErr || !user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  // Only allow deleting your own *draft* konfolio.
+  // Use .select("id") so we can confirm something was actually deleted.
+  const { data, error } = await supabaseAdmin
+    .from("konfolios")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .eq("status", "draft")
+    .select("id")
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  return NextResponse.json({
+    ok: true,
+    deletedCount: data?.length ?? 0,
+    deletedIds: data?.map((r) => r.id) ?? [],
+  })
+}
