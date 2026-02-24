@@ -7,6 +7,8 @@ import Section3Example from "@/components/Section3Example"
 import Section4Example from "@/components/Section4Example"
 import Section5Example from "@/components/Section5"
 import { roboto } from "@/app/fonts"
+import HomeViewTracker from "@/components/HomeViewTracker";
+import HomeAnalyticsDisplay from "@/components/HomeAnalyticsDisplay";
 
 function Section({
   children,
@@ -29,6 +31,8 @@ function Section({
 export default function Home() {
   return (
     <main className="min-h-screen">
+      <HomeViewTracker />
+      <HomeAnalyticsDisplay />
       <Navbar />
 
       <Section index={0}>

@@ -40,6 +40,16 @@ function isNonEmptyString(v: any): v is string {
   return typeof v === "string" && v.trim().length > 0
 }
 
+function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .trim()
+    .replace(/['"]/g, "")            
+    .replace(/[^a-z0-9]+/g, "-")     
+    .replace(/-+/g, "-")             
+    .replace(/^-|-$/g, "");          
+}
+
 function normalizeStringArray(v: any): string[] {
   if (!Array.isArray(v)) return []
   return v.map((x) => (typeof x === "string" ? x.trim() : "")).filter(Boolean)
@@ -146,19 +156,17 @@ export async function POST(req: Request) {
 
   const template: Template = isTemplate(body?.template) ? body.template : "square"
 
-  // Start with template defaults; overlay profile autofill.
+  // template defaults
   let content: Record<string, any> = makeBaseContent(template)
 
-  // Prefer auth email (profiles columns list you gave doesn't include email)
+  // prefer auth email 
   if (auth.user.email) content.email = String(auth.user.email).trim()
 
-  // Autofill from profiles (matches your schema)
+  // Autofill 
   try {
     const { data: profile, error: profErr } = await supabase
       .from("profiles")
-      .select(
-        "first_name, last_name, profile_image_url, preferred_name, business_name, location, merch_tags, prev_vends, links"
-      )
+      .select("first_name, last_name, profile_image_url, preferred_name, business_name, location, merch_tags, prev_vends, links")
       .eq("id", auth.user.id)
       .maybeSingle()
 
@@ -187,31 +195,41 @@ export async function POST(req: Request) {
         ...(profileImageUrl ? { profileImageUrl } : {}),
         merchTags,
         previousVends,
-        links, // editor-friendly LinkPickerValue shape
+        links, 
       }
     }
   } catch {
-    // ignore autofill failures
+    
   }
+
+  const portfolioName: string = isNonEmptyString(body?.portfolioName)
+  ? body.portfolioName.trim()
+  : "Untitled Portfolio";
+
+  const portfolioSlug: string = slugify(portfolioName) || `portfolio-${Date.now()}`;
 
   const { data, error } = await supabase
     .from("konfolios")
     .insert({
-      user_id: auth.user.id,
-      template,
-      status: "draft" as Status,
-      content,
+    user_id: auth.user.id,
+    template,
+    status: "draft" as Status,
+    portfolio_name: portfolioName,
+    portfolio_slug: portfolioSlug,
+    content,
     })
-    .select("id, template, status, updated_at, content")
+    .select("id, template, status, updated_at, content, portfolio_name, portfolio_slug")
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   return NextResponse.json({
-    id: data.id,
-    template: data.template,
-    status: data.status,
-    updatedAt: data.updated_at,
-    content: data.content ?? {},
-  })
+  id: data.id,
+  template: data.template,
+  status: data.status,
+  updatedAt: data.updated_at,
+  portfolioName: data.portfolio_name,
+  portfolioSlug: data.portfolio_slug,
+  content: data.content ?? {},
+  });
 }

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 
 type Template = "square" | "portrait";
 type Status = "draft" | "published";
@@ -143,6 +145,45 @@ export async function PATCH(
   });
 }
 
+async function deleteStoragePrefix(
+  supabaseAdmin: SupabaseClient,
+  bucket: string,
+  prefix: string
+) {
+  const toDelete: string[] = [];
+
+  async function walk(path: string) {
+    const { data, error } = await supabaseAdmin.storage.from(bucket).list(path, {
+      limit: 1000,
+      offset: 0,
+      sortBy: { column: "name", order: "asc" },
+    });
+
+    if (error) throw error;
+    if (!data) return;
+
+    for (const item of data) {
+      const full = path ? `${path}/${item.name}` : item.name;
+
+      // Files typically have an `id`. Folders usually don't.
+      if ((item as any).id) {
+        toDelete.push(full);
+      } else {
+        await walk(full);
+      }
+    }
+  }
+
+  await walk(prefix);
+
+  if (toDelete.length === 0) return { deleted: 0 };
+
+  const { error: removeErr } = await supabaseAdmin.storage.from(bucket).remove(toDelete);
+  if (removeErr) throw removeErr;
+
+  return { deleted: toDelete.length };
+}
+
 export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -153,7 +194,6 @@ export async function DELETE(
   const { id } = await params
   if (!id) return NextResponse.json({ error: "Missing id param" }, { status: 400 })
 
-  // Use service role on the server so auth verification is reliable
   const supabaseAdmin = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -163,14 +203,36 @@ export async function DELETE(
   const user = userRes?.user
   if (userErr || !user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  // Only allow deleting your own *draft* konfolio.
-  // Use .select("id") so we can confirm something was actually deleted.
+  // Ownership check (draft OR published)
+  const { data: k, error: kErr } = await supabaseAdmin
+    .from("konfolios")
+    .select("id, user_id, status")
+    .eq("id", id)
+    .maybeSingle()
+
+  if (kErr) return NextResponse.json({ error: kErr.message }, { status: 500 })
+  if (!k || k.user_id !== user.id) {
+    return NextResponse.json({ error: "Konfolio not found" }, { status: 404 })
+  }
+
+  // Delete storage folder: konfolio-images/{userId}/{konfolioId}/...
+  const prefix = `${user.id}/${id}`
+  let deletedStorageObjects = 0
+
+  try {
+    const res = await deleteStoragePrefix(supabaseAdmin, "konfolio-images", prefix)
+    deletedStorageObjects = res.deleted
+  } catch (e: any) {
+    // If you want to fail hard instead, return 500 here.
+    console.warn("Storage cleanup failed:", e?.message ?? e)
+  }
+
+  // Delete DB row (any status)
   const { data, error } = await supabaseAdmin
     .from("konfolios")
     .delete()
     .eq("id", id)
     .eq("user_id", user.id)
-    .eq("status", "draft")
     .select("id")
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -179,5 +241,6 @@ export async function DELETE(
     ok: true,
     deletedCount: data?.length ?? 0,
     deletedIds: data?.map((r) => r.id) ?? [],
+    deletedStorageObjects,
   })
 }
