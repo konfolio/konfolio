@@ -78,7 +78,8 @@ function draftFromCreateResponse(data: any): KonfolioDraft | null {
     id,
     template,
     status: data?.status === "published" ? "published" : "draft",
-    updatedAt: typeof data?.updatedAt === "number" ? data.updatedAt : Date.now(),
+    // your API returns updatedAt as string currently; fall back safely
+    updatedAt: Date.now(),
 
     bannerColor: String(content.bannerColor ?? "#FFFFFF"),
     backgroundColor: String(content.backgroundColor ?? "#F7F7F7"),
@@ -112,6 +113,7 @@ export default function CreateKonfolioPopover({
   const panelRef = useRef<HTMLDivElement | null>(null)
   const [scale, setScale] = useState(1)
   const [isCreating, setIsCreating] = useState(false)
+  const [errorMsg, setErrorMsg] = useState("")
 
   const hasKonfolioHydrated = useKonfolioDraftStore((s) => s.hasHydrated)
   const forceKonfolioHydrate = useKonfolioDraftStore((s) => s.forceHydrate)
@@ -151,6 +153,7 @@ export default function CreateKonfolioPopover({
 
   useEffect(() => {
     if (!open) return
+    setErrorMsg("")
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose()
     }
@@ -161,17 +164,24 @@ export default function CreateKonfolioPopover({
   async function handlePickTemplate(t: TemplateType) {
     if (isCreating) return
     setIsCreating(true)
+    setErrorMsg("")
 
     try {
       // Make sure draft store is ready before we seed it
       if (!hasKonfolioHydrated) {
         try {
           await forceKonfolioHydrate()
-        } catch {}
+        } catch (e: any) {
+          // not fatal, but helpful to know
+          console.warn("[CreateKonfolioPopover] forceHydrate failed:", e?.message ?? e)
+        }
       }
 
       const token = await getAccessToken()
-      if (!token) return
+      if (!token) {
+        setErrorMsg("You must be signed in to create a Konfolio.")
+        return
+      }
 
       const res = await fetch("/api/konfolios/create-from-template", {
         method: "POST",
@@ -186,29 +196,44 @@ export default function CreateKonfolioPopover({
       })
 
       if (!res.ok) {
-        // eslint-disable-next-line no-console
-        console.log(
-          "[CreateKonfolioPopover] create-from-template failed:",
-          res.status,
-          await res.text(),
+        const text = await res.text().catch(() => "")
+        console.log("[CreateKonfolioPopover] create-from-template failed:", res.status, text)
+        setErrorMsg(
+          res.status === 404
+            ? "Create endpoint not found (404). Check that the route exists and you restarted the dev server."
+            : "Failed to create Konfolio. See console logs for details."
         )
         return
       }
 
-      const data = await res.json()
+      const data = await res.json().catch(() => null)
+      if (!data) {
+        setErrorMsg("Create succeeded but response JSON was invalid.")
+        return
+      }
 
       const draft = draftFromCreateResponse(data)
-      if (!draft) return
+      if (!draft) {
+        console.log("[CreateKonfolioPopover] invalid create response:", data)
+        setErrorMsg("Create succeeded but response was missing required fields (id/template/content).")
+        return
+      }
 
-      // Seed Zustand immediately so /edit renders instantly (no stuck skeleton)
+      // Seed Zustand immediately so editor renders instantly
       setDraft(draft.id, draft)
 
       // optional parent callback
       onPickTemplate(t)
 
+      // Close popover BEFORE navigating (prevents “stuck overlay” feeling)
       onClose()
+
+      // Navigate to editor route
       router.push(`/my-portfolios/${draft.id}/edit`)
       router.refresh()
+    } catch (e: any) {
+      console.error("[CreateKonfolioPopover] unexpected error:", e)
+      setErrorMsg(e?.message ?? "Unexpected error creating Konfolio.")
     } finally {
       setIsCreating(false)
     }
@@ -253,8 +278,16 @@ export default function CreateKonfolioPopover({
           infoText="We work with templates to reduce variety and support our auto-fill system."
           disabled={disabled || isCreating}
           primaryLoadingLabel={primaryLoadingLabel}
-          onPickTemplate={(t) => handlePickTemplate(t)}
+          onPickTemplate={(t) => void handlePickTemplate(t as TemplateType)}
         />
+
+        {errorMsg ? (
+          <div className="absolute left-1/2 -translate-x-1/2 top-full mt-[12px] w-[640px]">
+            <div className="rounded-[12px] bg-white shadow-[0_4px_25px_rgba(0,0,0,0.08)] border border-[#D3D3D3] px-[16px] py-[12px]">
+              <p className="m-0 font-inter text-[13px] leading-[150%] text-[#262626]">{errorMsg}</p>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   )

@@ -1,6 +1,7 @@
+// components/my-portfolios/square/EditSquareImageGrid.tsx
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import ImageIcon from "@/components/icons/ImageIcon"
 import SlidersIcon from "@/components/icons/SlidersIcon"
 import EditImagePopover, { type ImageEdits } from "@/components/my-portfolios/EditImagePopover"
@@ -107,7 +108,7 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
     }
   }, [])
 
-  // --- IMPORTANT FIX: don't emit to parent inside setCells updater ---
+  // Avoid emitting to parent inside setState updater
   const pendingEmitRef = useRef<Cell[] | null>(null)
 
   const updateCells = (updater: (prev: Cell[]) => Cell[]) => {
@@ -199,8 +200,11 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
             const col = idx % 3
             const placement: "right" | "left" = col === 2 ? "left" : "right"
 
-            // eslint-disable-next-line react-hooks/rules-of-hooks
-            const imgStyle = useMemo(() => editsToImgStyle(cell.edits), [cell.edits])
+            // FIX: for right-most column, put the sliders trigger on the LEFT corner
+            const slidersPosClass = col === 2 ? "left-[10px]" : "right-[10px]"
+
+            // NOTE: do not use hooks inside map
+            const imgStyle = editsToImgStyle(cell.edits)
 
             return (
               <div
@@ -290,17 +294,12 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                     </div>
                   )}
 
-                  {/* Hover overlay:
-                      - smaller height (closer to Figma 70)
-                      - NO backdrop blur (removes “clear vs suddenly blurry seam”)
-                      - fade starts a bit above the overlay so there's no hard line
-                  */}
+                  {/* Hover overlay */}
                   <div className="pointer-events-none absolute left-0 right-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity z-[3]">
-                    {/* single gradient layer */}
                     <div
                       className="absolute left-[-2px] right-[-2px] bottom-[-2px]"
                       style={{
-                        height: 76, // slightly > 70 so the fade begins earlier without moving text
+                        height: 76,
                         borderBottomLeftRadius: 16,
                         borderBottomRightRadius: 16,
                         background:
@@ -308,7 +307,6 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                       }}
                     />
 
-                    {/* subtle white rim so overlay feels like it merges with border */}
                     <div
                       className="absolute left-0 right-0 bottom-0"
                       style={{
@@ -319,7 +317,6 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                       }}
                     />
 
-                    {/* text container stays exactly 70px like Figma */}
                     <div className="absolute left-0 right-0 bottom-0 h-[70px] px-[15px] py-[15px] flex flex-col justify-end items-start">
                       <p className="m-0 w-full font-inter font-normal text-[17px] leading-[140%] text-[#262626]">
                         {cell.title ?? "Title"}

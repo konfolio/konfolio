@@ -1,3 +1,4 @@
+// components/my-portfolios/KonfolioExitGuard.tsx
 "use client"
 
 import { useEffect, useRef, useState } from "react"
@@ -44,44 +45,44 @@ export default function KonfolioExitGuard({
     setOpen(false)
     setPending(null)
 
-    // If we intercepted browser back, keep user on the same page
     try {
       history.pushState({ konfolio_guard: true }, "", pathname)
     } catch {}
   }
 
-  async function abandonDraftIfNeeded() {
-    // Only abandon/delete if it's still a draft
-    if (!draft || draft.status !== "draft") return
+  async function discardUnsavedChangesAndMaybeDeleteDraft() {
+    // If draft: delete the row so it does not persist
+    if (draft?.status === "draft") {
+      const token = await getAccessToken()
+      if (!token) {
+        deleteDraft?.(draftId)
+        return
+      }
 
-    const token = await getAccessToken()
-    if (!token) {
-      console.log("[KonfolioExitGuard] no token; skipping delete")
-      deleteDraft?.(draftId)
+      const controller = new AbortController()
+      const t = setTimeout(() => controller.abort(), 4000)
+
+      try {
+        const res = await fetch(`/api/konfolios/${draftId}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+          signal: controller.signal,
+          keepalive: true,
+        })
+        const json = await res.json().catch(() => ({}))
+        console.log("[KonfolioExitGuard] DELETE", res.status, json)
+      } catch (e) {
+        console.log("[KonfolioExitGuard] delete failed", e)
+      } finally {
+        clearTimeout(t)
+        deleteDraft?.(draftId)
+      }
+
       return
     }
 
-    const controller = new AbortController()
-    const t = setTimeout(() => controller.abort(), 4000)
-
-    try {
-      const res = await fetch(`/api/konfolios/${draftId}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-        signal: controller.signal,
-        keepalive: true,
-      })
-
-      const json = await res.json().catch(() => ({}))
-      console.log("[KonfolioExitGuard] DELETE", res.status, json)
-    } catch (e) {
-      console.log("[KonfolioExitGuard] delete failed", e)
-    } finally {
-      clearTimeout(t)
-
-      // Always clear local draft so it doesn't resurrect
-      deleteDraft?.(draftId)
-    }
+    // If published: do not delete the row. Discard local unsaved edits only.
+    deleteDraft?.(draftId)
   }
 
   async function confirmExit() {
@@ -89,13 +90,12 @@ export default function KonfolioExitGuard({
     const next = pending
     setPending(null)
 
-    await abandonDraftIfNeeded()
+    await discardUnsavedChangesAndMaybeDeleteDraft()
 
     const target = next?.kind === "href" ? next.href : backHref
     router.replace(target)
   }
 
-  // Intercept refresh/close (native browser prompt)
   useEffect(() => {
     if (!enabled) return
 
@@ -108,7 +108,6 @@ export default function KonfolioExitGuard({
     return () => window.removeEventListener("beforeunload", onBeforeUnload)
   }, [enabled])
 
-  // Intercept browser back button with popstate
   useEffect(() => {
     if (!enabled) return
 
@@ -122,7 +121,6 @@ export default function KonfolioExitGuard({
 
       requestExit({ kind: "back" })
 
-      // Re-push so user stays on page until they confirm
       try {
         history.pushState({ konfolio_guard: true }, "", pathname)
       } catch {}
@@ -136,13 +134,22 @@ export default function KonfolioExitGuard({
     return () => window.removeEventListener("popstate", onPopState)
   }, [enabled, pathname])
 
-  // Optional global hook so any component can call it without prop drilling
   useEffect(() => {
+    if (!enabled) {
+      try {
+        delete (window as any).__konfolio_attempt_exit
+      } catch {}
+      return
+    }
+
     ;(window as any).__konfolio_attempt_exit = (href?: string) => {
       return requestExit(href ? { kind: "href", href } : { kind: "back" })
     }
+
     return () => {
-      delete (window as any).__konfolio_attempt_exit
+      try {
+        delete (window as any).__konfolio_attempt_exit
+      } catch {}
     }
   }, [enabled])
 
@@ -156,17 +163,19 @@ export default function KonfolioExitGuard({
           <div className="relative w-[420px] rounded-[16px] bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
             <div className="text-[18px] font-semibold text-[#262626]">Leave editor?</div>
             <div className="mt-2 text-[14px] leading-[140%] text-[#6B6B6B]">
-              Your changes won’t be saved. If you leave now, this draft will be discarded.
+              If you leave now, your unsaved changes will be discarded.
             </div>
 
             <div className="mt-6 flex justify-end gap-3">
               <button
+                type="button"
                 onClick={cancelExit}
                 className="h-[40px] rounded-[999px] border border-[#DADADA] px-4 text-[14px] text-[#262626]"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={confirmExit}
                 className="h-[40px] rounded-[999px] bg-[#262626] px-4 text-[14px] text-white"
               >

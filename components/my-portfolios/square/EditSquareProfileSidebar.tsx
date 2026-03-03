@@ -1,3 +1,4 @@
+// components/my-portfolios/square/EditSquareProfileSidebar.tsx
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
@@ -23,7 +24,6 @@ type Props = {
   onChangeBannerColor?: (hex: string) => void
   onChangeBackgroundColor?: (hex: string) => void
 
-  /** Persisted palettes */
   bannerSwatches?: string[]
   backgroundSwatches?: string[]
   onChangeBannerSwatches?: (next: string[]) => void
@@ -122,7 +122,6 @@ export default function EditSquareProfileSidebar({
   onPublish,
   onOpenPreview,
 }: Props) {
-  // local editable state
   const [localBusiness, setLocalBusiness] = useState(businessName)
   const [localDisplay, setLocalDisplay] = useState(displayName)
   const [localLocation, setLocalLocation] = useState(locationText)
@@ -133,7 +132,6 @@ export default function EditSquareProfileSidebar({
   useEffect(() => setLocalLocation(locationText), [locationText])
   useEffect(() => setLocalEmail(email), [email])
 
-  // events
   const [localPrevVends, setLocalPrevVends] = useState<string[]>([])
   const [newVend, setNewVend] = useState("")
   const addInputRef = useRef<HTMLInputElement | null>(null)
@@ -165,25 +163,21 @@ export default function EditSquareProfileSidebar({
 
   const parsedPrevVends = useMemo(() => localPrevVends.map(parseEventLine), [localPrevVends])
 
-  // colors
   const [localBanner, setLocalBanner] = useState(bannerColor)
   const [localBg, setLocalBg] = useState(backgroundColor)
   useEffect(() => setLocalBanner(bannerColor), [bannerColor])
   useEffect(() => setLocalBg(backgroundColor), [backgroundColor])
 
-  // local swatches (so UI updates instantly)
   const [localBannerSwatches, setLocalBannerSwatches] = useState<string[]>(bannerSwatches)
   const [localBgSwatches, setLocalBgSwatches] = useState<string[]>(backgroundSwatches)
   useEffect(() => setLocalBannerSwatches(bannerSwatches), [bannerSwatches])
   useEffect(() => setLocalBgSwatches(backgroundSwatches), [backgroundSwatches])
 
-  // expanded color picker popover
   const [openPicker, setOpenPicker] = useState<OpenPicker>(null)
 
   const colorPopoverRef = useRef<HTMLDivElement | null>(null)
   const colorButtonsWrapRef = useRef<HTMLDivElement | null>(null)
 
-  // close on outside click
   useEffect(() => {
     if (!openPicker) return
 
@@ -231,7 +225,6 @@ export default function EditSquareProfileSidebar({
     }
   }
 
-  // profile image upload
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [localImgUrl, setLocalImgUrl] = useState(profileImageUrl || "")
   const objectUrls = useRef<string[]>([])
@@ -275,8 +268,6 @@ export default function EditSquareProfileSidebar({
     e.stopPropagation()
   }
 
-  const locationSize = Math.max(localLocation.length || 0, 8)
-
   const hasAnyEvents = localPrevVends.length > 0
   const vendPlaceholder = hasAnyEvents ? "Type an event..." : "Vended Event 2026"
 
@@ -285,28 +276,27 @@ export default function EditSquareProfileSidebar({
       className="w-[316px] h-[982px] px-[20px] py-[40px] flex flex-col items-center gap-[10px]"
       style={{ backgroundColor: localBanner }}
     >
-      {/* TOP ROW */}
       <div className="relative w-[276px] h-[36px] flex items-center justify-center gap-[40px]">
         <div className="absolute left-0 top-1/2 -translate-y-1/2">
-          {onBack ? (
-            <button
-              type="button"
-              aria-label="Back"
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                onBack()
-              }}
-              className="w-[30px] h-[30px] flex items-center justify-center"
-            >
-              <ArrowLeft className="w-[30px] h-[30px]" />
-            </button>
-          ) : (
-            <ArrowLeft href={backHref} className="w-[30px] h-[30px]" />
-          )}
+          <button
+            type="button"
+            aria-label="Back"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              if (onBack) onBack()
+              else window.location.href = backHref
+            }}
+            className="w-[30px] h-[30px] flex items-center justify-center cursor-pointer"
+          >
+            <ArrowLeft className="w-[30px] h-[30px]" />
+          </button>
         </div>
 
-        <div ref={colorButtonsWrapRef} className="relative flex items-center justify-end gap-[5px] w-[98px] h-[36px]">
+        <div
+          ref={colorButtonsWrapRef}
+          className="relative flex items-center justify-end gap-[5px] w-[98px] h-[36px]"
+        >
           <div className="w-[16px] h-[16px] flex items-center justify-center text-[#A5A5A5]">
             <BrushIcon className="w-[16px] h-[16px]" />
           </div>
@@ -330,7 +320,10 @@ export default function EditSquareProfileSidebar({
           </button>
 
           {openPicker ? (
-            <div ref={colorPopoverRef} className="absolute z-50 top-[52px] left-1/2 -translate-x-1/2 w-[276px]">
+            <div
+              ref={colorPopoverRef}
+              className="absolute z-50 top-[52px] left-1/2 -translate-x-1/2 w-[276px]"
+            >
               <ColorPicker
                 label={pickerLabel}
                 valueHex={pickerHex}
@@ -344,15 +337,19 @@ export default function EditSquareProfileSidebar({
         </div>
       </div>
 
-      {/* MIDDLE */}
       <div className="w-[276px] flex-1 flex flex-col items-center justify-center gap-[30px]">
-        {/* Profile picture */}
         <div
-          className="relative w-[189px] h-[189px] bg-white border border-[#A5A5A5] border-[#A5A5A5] border-[0.5px] rounded-[15px] overflow-hidden"
+          className="relative w-[189px] h-[189px] bg-white border border-[#A5A5A5] border-[0.5px] rounded-[15px] overflow-hidden"
           onDrop={onDrop}
           onDragOver={onDragOver}
         >
-          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={onFileInputChange} />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={onFileInputChange}
+          />
 
           <button type="button" className="absolute inset-0" aria-label="Upload profile image" onClick={openFilePicker}>
             <span className="sr-only">Upload</span>
@@ -380,7 +377,6 @@ export default function EditSquareProfileSidebar({
           )}
         </div>
 
-        {/* Names */}
         <div className="w-[276px] flex flex-col items-center gap-[12px]">
           <input
             value={localBusiness}
@@ -403,26 +399,23 @@ export default function EditSquareProfileSidebar({
           />
         </div>
 
-        {/* Social */}
         <div className="w-[276px] flex items-center justify-center">
           {showAddLink ? (
             <LinkPicker onAddLinkClick={onAddLinkClick} value={linksValue} onChange={onChangeLinks} />
           ) : null}
         </div>
 
-        {/* Merch */}
         {showMerchTag ? (
           <MerchTagPicker maxTags={8} onMerchClick={onMerchClick} value={merchTags} onChange={onChangeMerchTags} />
         ) : null}
 
-        {/* Previous Vends */}
         <div className="w-[276px] flex flex-col items-center gap-[12px]">
           <p className="m-0 w-full text-center font-inter font-normal text-[15px] leading-[140%] text-[#A5A5A5]">
             Previous Vends
           </p>
 
           <div className="w-full flex flex-col items-center gap-[6px]">
-            {parsedPrevVends.map((ev, i) => (
+            {useMemo(() => localPrevVends.map(parseEventLine), [localPrevVends]).map((ev, i) => (
               <div key={`${ev.title}-${ev.year ?? ""}-${i}`} className="group relative w-full flex justify-center">
                 <div className="flex items-baseline gap-[6px]">
                   <span className="font-inter font-normal text-[15px] leading-[140%] text-[#262626]">
@@ -445,6 +438,7 @@ export default function EditSquareProfileSidebar({
                     text-[#A5A5A5]
                     [&_path]:fill-[#A5A5A5]
                     [&_path]:stroke-[#A5A5A5]
+                    cursor-pointer
                   "
                   onClick={(e) => {
                     e.stopPropagation()
@@ -483,7 +477,6 @@ export default function EditSquareProfileSidebar({
           ) : null}
         </div>
 
-        {/* Location + email */}
         <div className="w-[276px] flex flex-col items-center gap-[12px]">
           <div className="flex justify-center">
             <div className="inline-flex items-center gap-[5px]">
@@ -498,7 +491,7 @@ export default function EditSquareProfileSidebar({
                   onChangeLocationText?.(e.target.value)
                 }}
                 placeholder="City, State"
-                size={locationSize}
+                size={Math.max(localLocation.length || 0, 8)}
                 className="
                   w-auto
                   text-center
@@ -534,7 +527,6 @@ export default function EditSquareProfileSidebar({
         </div>
       </div>
 
-      {/* BOTTOM */}
       <div className="w-[276px] h-[30px] flex items-center justify-center gap-[10px]">
         <SecondaryButton onClick={onPublish}>{publishLabel}</SecondaryButton>
 
@@ -542,7 +534,7 @@ export default function EditSquareProfileSidebar({
           type="button"
           aria-label="Open preview"
           onClick={onOpenPreview}
-          className="w-[30px] h-[30px] bg-white border border-[#262626] rounded-full flex items-center justify-center"
+          className="w-[30px] h-[30px] bg-white border border-[#262626] rounded-full flex items-center justify-center cursor-pointer"
         >
           <OpenTabIcon className="w-[16px] h-[16px] [&_path]:stroke-[#262626]" />
         </button>
