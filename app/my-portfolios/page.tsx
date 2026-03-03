@@ -1,3 +1,4 @@
+// /app/my-portfolios/page.tsx
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
@@ -5,6 +6,9 @@ import { useEffect, useMemo, useState } from "react"
 import Navbar from "@/components/Navbar"
 import DashboardProfileHeader from "@/components/my-portfolios/dashboard/DashboardProfileHeader"
 import DashPortfolioEmpty from "@/components/my-portfolios/dashboard/DashPortfolioEmpty"
+import DashPortfolioGrid, {
+  type DashboardKonfolio,
+} from "@/components/my-portfolios/dashboard/DashPortfolioGrid"
 import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKonfolioPopover"
 import PortfolioNameCard from "@/components/my-portfolios/dashboard/PortfolioNameCard"
 
@@ -22,11 +26,25 @@ function slugify(input: string) {
     .slice(0, 40)
 }
 
+type KonfolioRow = {
+  id: string
+  user_id: string
+  portfolio_name: string | null
+  portfolio_slug: string | null
+  status: "draft" | "published" | null
+  thumbnail_url: string | null
+  updated_at: string | null
+  published_at: string | null
+}
+
 export default function MyPortfoliosPage() {
   const [nameCardOpen, setNameCardOpen] = useState(false)
   const [createPopoverOpen, setCreatePopoverOpen] = useState(false)
   const [pendingPortfolioName, setPendingPortfolioName] = useState("")
   const [businessSlug, setBusinessSlug] = useState("businessname")
+
+  const [items, setItems] = useState<DashboardKonfolio[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let mounted = true
@@ -48,10 +66,59 @@ export default function MyPortfoliosPage() {
       setBusinessSlug(bn ? slugify(bn) : "businessname")
     }
 
+    async function loadKonfolios() {
+      setLoading(true)
+
+      const sessionRes = await supabase.auth.getSession()
+      const user = sessionRes.data.session?.user
+      if (!mounted) return
+
+      if (!user) {
+        setItems([])
+        setLoading(false)
+        return
+      }
+
+      const res = await supabase
+        .from("konfolios")
+        .select("id, user_id, portfolio_name, portfolio_slug, status, thumbnail_url, updated_at, published_at")
+        .eq("user_id", user.id)
+        .order("updated_at", { ascending: false })
+
+      if (!mounted) return
+
+      if (res.error) {
+        console.error("loadKonfolios error:", res.error)
+        setItems([])
+        setLoading(false)
+        return
+      }
+
+      const rows = (res.data ?? []) as KonfolioRow[]
+
+      const mapped: DashboardKonfolio[] = rows.map((r) => ({
+        id: r.id,
+        portfolioName: String(r.portfolio_name ?? "Untitled"),
+        portfolioSlug: String(r.portfolio_slug ?? r.id),
+        status: r.status === "published" ? "published" : "draft",
+        thumbnailUrl: r.thumbnail_url,
+        updatedAt: r.updated_at,
+        exploreEnabled: true,
+        views: 0,
+        uniqueViewers: 0,
+        linkClicks: 0,
+      }))
+
+      setItems(mapped)
+      setLoading(false)
+    }
+
     loadBusinessName()
+    loadKonfolios()
 
     const { data: sub } = supabase.auth.onAuthStateChange(() => {
       loadBusinessName()
+      loadKonfolios()
     })
 
     return () => {
@@ -59,6 +126,8 @@ export default function MyPortfoliosPage() {
       sub.subscription.unsubscribe()
     }
   }, [])
+
+  const hasPublished = useMemo(() => items.some((k) => k.status === "published"), [items])
 
   function openCreateFlow() {
     setPendingPortfolioName("")
@@ -87,11 +156,34 @@ export default function MyPortfoliosPage() {
 
       <section className="w-full flex justify-center px-6">
         <div className="w-full max-w-[1212px] py-[60px]">
-          <DashPortfolioEmpty onClick={openCreateFlow} />
+          {loading ? null : hasPublished ? (
+            <DashPortfolioGrid
+              items={items}
+              urlBase=""
+              urlPrefix={businessSlug}
+              onView={(id) => {
+                window.location.href = `/my-portfolios/${id}/preview`
+              }}
+              onEdit={(id) => {
+                window.location.href = `/my-portfolios/${id}/edit`
+              }}
+              onMore={(id) => {
+                console.log("more", id)
+              }}
+              onCopyUrl={async (url) => {
+                try {
+                  await navigator.clipboard.writeText(url)
+                } catch {
+                  // intentionally ignore
+                }
+              }}
+            />
+          ) : (
+            <DashPortfolioEmpty onClick={openCreateFlow} />
+          )}
         </div>
       </section>
 
-      {/* Step 1: Name */}
       <PortfolioNameCard
         isOpen={nameCardOpen}
         businessSlug={businessSlug}
@@ -103,7 +195,6 @@ export default function MyPortfoliosPage() {
         }}
       />
 
-      {/* Step 2: Template */}
       <CreateKonfolioPopover
         open={createPopoverOpen}
         onClose={closeTemplatePopover}

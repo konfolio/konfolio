@@ -5049,7 +5049,13 @@ function getImageProps(imgProps) {
             "dangerouslyAllowSVG": ("TURBOPACK compile-time value", false),
             "unoptimized": ("TURBOPACK compile-time value", false),
             "domains": ("TURBOPACK compile-time value", []),
-            "remotePatterns": ("TURBOPACK compile-time value", []),
+            "remotePatterns": ("TURBOPACK compile-time value", [
+                ("TURBOPACK compile-time value", {
+                    "protocol": ("TURBOPACK compile-time value", "https"),
+                    "hostname": ("TURBOPACK compile-time value", "jhocsvjoqsncizdsmyol.supabase.co"),
+                    "pathname": ("TURBOPACK compile-time value", "/storage/v1/object/public/**")
+                })
+            ]),
             "localPatterns": ("TURBOPACK compile-time value", [
                 ("TURBOPACK compile-time value", {
                     "pathname": ("TURBOPACK compile-time value", "**"),
