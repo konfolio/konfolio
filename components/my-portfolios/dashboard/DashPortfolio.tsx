@@ -13,6 +13,13 @@ import OpenTabIcon from "@/components/icons/OpenTabIcon"
 import ThreeDotsIcon from "@/components/icons/ThreeDotsIcon"
 import CheckIcon from "@/components/icons/CheckIcon"
 
+import PortfolioMoreMenu from "@/components/my-portfolios/dashboard/PortfolioMoreMenu"
+
+import PencilIcon from "@/components/icons/PencilIcon"
+import LinkIcon from "@/components/icons/LinkIcon"
+import ExportIcon from "@/components/icons/ExportIcon"
+import TrashIcon from "@/components/icons/TrashIcon"
+
 type Props = {
   portfolioName: string
   publicUrl: string
@@ -58,6 +65,8 @@ export default function DashPortfolio({
   onMore,
   onCopyUrl,
 }: Props) {
+  const [menuOpen, setMenuOpen] = React.useState(false)
+
   return (
     <div
       className={[
@@ -189,14 +198,38 @@ export default function DashPortfolio({
             <OpenTabIcon className="text-white w-[12px] h-[12px]" />
           </button>
 
-          <button
-            type="button"
-            onClick={onMore}
-            className="w-[22px] h-[22px] inline-flex items-center justify-center cursor-pointer"
-            aria-label="More actions"
-          >
-            <ThreeDotsIcon className="text-[#262626]" />
-          </button>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => {
+                setMenuOpen((v) => !v)
+                onMore?.()
+              }}
+              className="w-[22px] h-[22px] inline-flex items-center justify-center cursor-pointer"
+              aria-label="More actions"
+              aria-haspopup="menu"
+              aria-expanded={menuOpen}
+            >
+              <ThreeDotsIcon className="text-[#262626]" />
+            </button>
+
+            <PortfolioMoreMenu
+              open={menuOpen}
+              onClose={() => setMenuOpen(false)}
+              onAction={() => {
+                // intentionally no-op for now
+              }}
+              icons={{
+                editName: PencilIcon,
+                linkAccessOnly: LinkIcon,
+                duplicate: CopyIcon,
+                editUrl: PencilIcon,
+                export: ExportIcon,
+                delete: TrashIcon,
+              }}
+              figmaOffset={{ rightPx: 325, topPx: 97 }}
+            />
+          </div>
         </div>
       </div>
     </div>

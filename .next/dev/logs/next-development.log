@@ -10,3 +10,37 @@
 [01:12:11.843] Server  LOG     ✓ Compiled in 1364ms
 [01:13:36.925] Server  LOG     ✓ Compiled in 309ms
 [01:14:08.898] Server  LOG     ✓ Compiled in 166ms
+[01:19:07.753] Server  LOG     ✓ Compiled in 2.5s
+[01:19:09.385] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
+[01:23:48.281] Server  LOG     ✓ Compiled in 292ms
+[01:26:17.270] Server  LOG     ✓ Compiled in 953ms
+[01:26:19.480] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
+[01:29:29.560] Server  LOG     ✓ Compiled in 325ms
+[01:29:30.169] Browser ERROR   uncaughtError: TypeError: Cannot read properties of undefined (reading 'editName')
+[01:29:38.808] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[01:29:38.808] Server  LOG     ✓ Compiled in 392ms
+[01:29:46.517] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
+[01:30:23.329] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
+[01:33:32.942] Server  LOG     ✓ Compiled in 214ms
+[01:33:33.431] Browser ERROR   uncaughtError: Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check the render method of `MenuItem`.
+[01:34:16.727] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[01:34:16.823] Server  LOG     ✓ Compiled in 192ms
+[01:34:21.449] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
+[01:38:42.035] Server  LOG     ✓ Compiled in 222ms
+[01:39:11.429] Server  LOG     ✓ Compiled in 261ms
+[01:39:15.072] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
+[01:39:24.281] Browser LOG     more 6b285113-a150-4238-9334-b35ab46b8a6b
+[01:39:27.981] Browser LOG     more a3c1c86c-2507-4b59-8d7a-4ea27f9cf05c
+[01:40:11.963] Browser LOG     more 6b285113-a150-4238-9334-b35ab46b8a6b
+[01:52:49.289] Server  LOG     ✓ Compiled in 406ms
+[01:52:50.171] Browser ERROR   uncaughtError: Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check the render method of `MenuItem`.
+[01:53:35.854] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[01:53:35.856] Server  LOG     ✓ Compiled in 201ms
+[01:53:40.766] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
+[01:53:50.477] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
+[01:53:57.586] Browser LOG     more a3c1c86c-2507-4b59-8d7a-4ea27f9cf05c
+[01:53:59.771] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86

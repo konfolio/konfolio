@@ -519,6 +519,10 @@
     top: calc(50% - 256.44px);
   }
 
+  .top-\[calc\(100\%\+8px\)\] {
+    top: calc(100% + 8px);
+  }
+
   .top-full {
     top: 100%;
   }
@@ -823,6 +827,10 @@
 
   .mx-auto {
     margin-inline: auto;
+  }
+
+  .my-\[6px\] {
+    margin-block: 6px;
   }
 
   .-mt-\[6px\] {
@@ -1221,6 +1229,10 @@
     height: 236.12px;
   }
 
+  .h-\[250px\] {
+    height: 250px;
+  }
+
   .h-\[260px\] {
     height: 260px;
   }
@@ -1383,6 +1395,10 @@
 
   .h-full {
     height: 100%;
+  }
+
+  .h-px {
+    height: 1px;
   }
 
   .max-h-\[193px\] {
@@ -1641,8 +1657,16 @@
     width: 156px;
   }
 
+  .w-\[160px\] {
+    width: 160px;
+  }
+
   .w-\[166px\] {
     width: 166px;
+  }
+
+  .w-\[180px\] {
+    width: 180px;
   }
 
   .w-\[181px\] {
@@ -1983,6 +2007,10 @@
 
   .min-w-\[150px\] {
     min-width: 150px;
+  }
+
+  .min-w-\[160px\] {
+    min-width: 160px;
   }
 
   .min-w-\[193px\] {
@@ -2514,6 +2542,10 @@
     border-color: #e9e9e9;
   }
 
+  .border-\[\#FF4603\] {
+    border-color: #ff4603;
+  }
+
   .border-\[rgba\(165\,165\,165\,0\.3\)\] {
     border-color: #a5a5a54d;
   }
@@ -2526,8 +2558,16 @@
     border-color: #a5a5a580;
   }
 
+  .border-\[rgba\(165\,165\,165\,0\.35\)\] {
+    border-color: #a5a5a559;
+  }
+
   .border-white {
     border-color: var(--color-white);
+  }
+
+  .border-t-\[\#D3D3D3\] {
+    border-top-color: #d3d3d3;
   }
 
   .bg-\[\#4CAF50\] {
@@ -2740,6 +2780,10 @@
     padding: 50px;
   }
 
+  .px-0 {
+    padding-inline: calc(var(--spacing) * 0);
+  }
+
   .px-4 {
     padding-inline: calc(var(--spacing) * 4);
   }
@@ -2834,6 +2878,10 @@
 
   .py-10 {
     padding-block: calc(var(--spacing) * 10);
+  }
+
+  .py-\[2px\] {
+    padding-block: 2px;
   }
 
   .py-\[3px\] {
@@ -3456,6 +3504,11 @@
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
 
+  .shadow-\[2px_4px_25px_rgba\(165\,165\,165\,0\.18\)\] {
+    --tw-shadow: 2px 4px 25px var(--tw-shadow-color, #a5a5a52e);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+
   .shadow-\[3\.47px_3\.47px_12\.99px_rgba\(0\,0\,0\,0\.1\)\] {
     --tw-shadow: 3.47px 3.47px 12.99px var(--tw-shadow-color, #0000001a);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
@@ -3724,6 +3777,12 @@
   @media (hover: hover) {
     .hover\:bg-\[rgba\(38\,38\,38\,0\.2\)\]:hover {
       background-color: #26262633;
+    }
+  }
+
+  @media (hover: hover) {
+    .hover\:bg-\[rgba\(165\,165\,165\,0\.12\)\]:hover {
+      background-color: #a5a5a51f;
     }
   }
 
