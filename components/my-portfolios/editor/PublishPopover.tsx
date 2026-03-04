@@ -1,4 +1,4 @@
-// /components/my-portfolios/editor/PublishPopover.tsx
+// components/my-portfolios/editor/PublishPopover.tsx
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
@@ -72,6 +72,7 @@ export default function PublishPopover({
   errorMessage = "",
 }: Props) {
   const cardRef = useRef<HTMLDivElement | null>(null)
+
   useClickOutside(cardRef, () => {
     if (open) onClose()
   })
@@ -103,9 +104,7 @@ export default function PublishPopover({
       await navigator.clipboard.writeText(safeLiveUrl)
       setCopied(true)
       window.setTimeout(() => setCopied(false), 1200)
-    } catch {
-      // no-op
-    }
+    } catch {}
   }
 
   function handleOpenTab() {
@@ -118,9 +117,8 @@ export default function PublishPopover({
 
   if (!open) return null
 
-  // Show spinner while we’re not in a terminal state.
-  // This allows an initial "idle" render to still show loading until SquareEditor flips to success/error.
-  const isPublishing = status !== "success" && status !== "error"
+  // IMPORTANT FIX: Only show spinner when status === "publishing"
+  const isPublishing = status === "publishing"
 
   return (
     <div
@@ -137,43 +135,31 @@ export default function PublishPopover({
         className="absolute inset-0 bg-black/20"
       />
 
-      {/* Card: fixed size, NO SCROLL */}
+      {/* Card */}
       <div
         ref={cardRef}
-        className={[
-          "relative isolate",
-          "bg-white rounded-[15px]",
-          "shadow-[5px_5px_25px_rgba(0,0,0,0.1)]",
-          "w-[872px] h-[444px]",
-          "px-[111px] py-[25px]",
-          "flex flex-col items-center justify-between",
-        ].join(" ")}
+        className="relative isolate bg-white rounded-[15px] shadow-[5px_5px_25px_rgba(0,0,0,0.1)] w-[872px] h-[444px] px-[111px] py-[25px] flex flex-col items-center justify-between"
       >
-        {/* Close */}
+        {/* Close button (DeleteIcon, 2x, pointer on hover) */}
         <button
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="absolute right-5 top-5 h-[26px] w-[26px] flex items-center justify-center"
+          className="absolute right-5 top-5 w-[52px] h-[52px] flex items-center justify-center cursor-pointer"
         >
-          <DeleteIcon className="h-[26px] w-[26px]" />
+          <span className="scale-200">
+            <DeleteIcon />
+          </span>
         </button>
 
         {/* Logo */}
         <div className="relative h-[18px] w-[81px] select-none">
-          <div
-            className={[
-              "absolute left-[1.29px] top-[3.21px]",
-              "font-[Inknut_Antiqua] font-semibold",
-              "text-[17.4721px] leading-[45px] tracking-[-0.02em]",
-              "text-[#262626]",
-            ].join(" ")}
-          >
+          <div className="absolute left-[1.29px] top-[3.21px] font-[Inknut_Antiqua] font-semibold text-[17.4721px] leading-[45px] tracking-[-0.02em] text-[#262626]">
             konfolio
           </div>
         </div>
 
-        {/* Middle: Loading / Error / Success */}
+        {/* Publishing */}
         {isPublishing ? (
           <div className="w-[650px] flex-1 flex flex-col items-center justify-center">
             <div className="flex items-center gap-3 text-[#262626]">
@@ -190,25 +176,23 @@ export default function PublishPopover({
               {errorMessage || "Publish failed."}
             </div>
           </div>
-        ) : (
+        ) : status === "success" ? (
           <>
-            {/* Success (full components) */}
+            {/* Success */}
             <div className="w-[650px] h-[211px] flex flex-col items-center gap-[50px]">
               <div className="w-[650px] h-[16px] text-center font-semibold text-[22px] leading-[27px] text-[#262626]">
                 {captionName} has been published!
               </div>
 
               <div className="w-[650px] h-[145px] flex flex-col items-start gap-5">
-                {/* View it live */}
+                {/* View */}
                 <div className="w-[650px] h-[35px] flex items-center overflow-hidden rounded-[100px] border border-[#D3D3D3] bg-white">
                   <button
                     type="button"
                     onClick={handleOpenTab}
-                    className="h-full w-[156px] bg-[#F3F3FE] rounded-l-[100px] flex items-center justify-center"
+                    className="h-full w-[156px] bg-[#F3F3FE] rounded-l-[100px] flex items-center justify-center cursor-pointer"
                   >
-                    <span className="text-[15px] leading-[150%] text-[#262626]">
-                      View it live
-                    </span>
+                    <span className="text-[15px] leading-[150%] text-[#262626]">View it live</span>
                   </button>
 
                   <div className="h-full flex-1 flex items-center pl-5 pr-5">
@@ -220,19 +204,19 @@ export default function PublishPopover({
                       type="button"
                       onClick={handleOpenTab}
                       aria-label="Open in new tab"
-                      className="ml-[7px] h-4 w-4 shrink-0 flex items-center justify-center text-[#A5A5A5]"
+                      className="ml-[7px] h-4 w-4 flex items-center justify-center text-[#A5A5A5] cursor-pointer"
                     >
                       <OpenTabIcon className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
 
-                {/* Copy link */}
+                {/* Copy */}
                 <div className="w-[650px] h-[35px] flex items-center overflow-hidden rounded-[100px] border border-[#D3D3D3] bg-white">
                   <button
                     type="button"
                     onClick={handleCopy}
-                    className="h-full w-[156px] bg-[#F3F3FE] rounded-l-[100px] flex items-center justify-center"
+                    className="h-full w-[156px] bg-[#F3F3FE] rounded-l-[100px] flex items-center justify-center cursor-pointer"
                   >
                     <span className="text-[15px] leading-[150%] text-[#262626]">
                       {copied ? "Copied" : "Copy link"}
@@ -248,7 +232,7 @@ export default function PublishPopover({
                       type="button"
                       onClick={handleCopy}
                       aria-label="Copy link"
-                      className="ml-[7px] h-4 w-4 shrink-0 flex items-center justify-center text-[#A5A5A5]"
+                      className="ml-[7px] h-4 w-4 flex items-center justify-center text-[#A5A5A5] cursor-pointer"
                     >
                       <CopyIcon className="h-4 w-4" />
                     </button>
@@ -260,11 +244,9 @@ export default function PublishPopover({
                   <button
                     type="button"
                     onClick={handleExport}
-                    className="h-full w-[156px] bg-[#F3F3FE] rounded-l-[100px] flex items-center justify-center"
+                    className="h-full w-[156px] bg-[#F3F3FE] rounded-l-[100px] flex items-center justify-center cursor-pointer"
                   >
-                    <span className="text-[15px] leading-[150%] text-[#262626]">
-                      Export
-                    </span>
+                    <span className="text-[15px] leading-[150%] text-[#262626]">Export</span>
                   </button>
 
                   <div className="h-full flex-1 flex items-center pl-5 pr-5">
@@ -276,7 +258,7 @@ export default function PublishPopover({
                       type="button"
                       onClick={handleExport}
                       aria-label="Export"
-                      className="ml-[7px] h-4 w-4 shrink-0 flex items-center justify-center text-[#A5A5A5]"
+                      className="ml-[7px] h-4 w-4 flex items-center justify-center text-[#A5A5A5] cursor-pointer"
                     >
                       <ExportIcon className="h-4 w-4" />
                     </button>
@@ -285,17 +267,15 @@ export default function PublishPopover({
               </div>
             </div>
 
-            {/* Toggle section */}
+            {/* Explore toggle */}
             <div className="w-[258px] h-[49.5px] flex flex-col items-center justify-center gap-[15px]">
               <button
                 type="button"
                 onClick={() => onGoToExplore?.()}
-                className="w-[258px] h-[21px] flex items-center px-[5px]"
+                className="w-[258px] h-[21px] flex items-center px-[5px] cursor-pointer"
               >
                 <div className="flex items-center gap-[5px] text-[#A5A5A5]">
-                  <span className="text-[15px] leading-[150%]">
-                    Look for your portfolio in Explore
-                  </span>
+                  <span className="text-[15px] leading-[150%]">Look for your portfolio in Explore</span>
                   <ArrowRightIcon className="h-[11px] w-[11px]" />
                 </div>
               </button>
@@ -303,26 +283,27 @@ export default function PublishPopover({
               <button
                 type="button"
                 onClick={() => onToggleExploreSearch(!allowExploreSearch)}
-                className="h-[13.5px] min-w-[120px] flex items-center gap-[7px]"
+                className="h-[13.5px] min-w-[120px] flex items-center gap-[7px] cursor-pointer"
                 aria-pressed={allowExploreSearch}
               >
                 <span
                   className={[
                     "w-[22px] h-[13.5px] rounded-[5832.75px] p-[1.5px] flex items-center transition",
-                    allowExploreSearch
-                      ? "bg-[#262626] justify-end"
-                      : "bg-[#D3D3D3] justify-start",
+                    allowExploreSearch ? "bg-[#262626] justify-end" : "bg-[#D3D3D3] justify-start",
                   ].join(" ")}
                 >
                   <span className="w-[10.5px] h-[10.5px] rounded-full bg-white" />
                 </span>
 
-                <span className="text-[12px] leading-[130%] text-[#262626]">
-                  Allow Explore Search
-                </span>
+                <span className="text-[12px] leading-[130%] text-[#262626]">Allow Explore Search</span>
               </button>
             </div>
           </>
+        ) : (
+          // status === "idle" fallback (should rarely happen while open)
+          <div className="w-[650px] flex-1 flex flex-col items-center justify-center">
+            <div className="text-[15px] leading-[150%] text-[#262626]">Preparing publish…</div>
+          </div>
         )}
       </div>
     </div>

@@ -1,4 +1,3 @@
-// components/my-portfolios/KonfolioExitGuard.tsx
 "use client"
 
 import { useEffect, useRef, useState } from "react"
@@ -96,6 +95,20 @@ export default function KonfolioExitGuard({
     router.replace(target)
   }
 
+  function triggerPublishFlow() {
+    // Close the exit modal, keep the user on the page.
+    setOpen(false)
+
+    const fn = (window as any).__konfolio_attempt_publish
+    if (typeof fn === "function") {
+      fn()
+      return
+    }
+
+    // If not registered, do nothing (safe fallback).
+    console.log("[KonfolioExitGuard] __konfolio_attempt_publish not registered")
+  }
+
   useEffect(() => {
     if (!enabled) return
 
@@ -169,17 +182,18 @@ export default function KonfolioExitGuard({
             <div className="mt-6 flex justify-end gap-3">
               <button
                 type="button"
-                onClick={cancelExit}
-                className="h-[40px] rounded-[999px] border border-[#DADADA] px-4 text-[14px] text-[#262626]"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
                 onClick={confirmExit}
-                className="h-[40px] rounded-[999px] bg-[#262626] px-4 text-[14px] text-white"
+                className="h-[40px] rounded-[999px] border border-[#DADADA] px-4 text-[14px] text-[#262626] cursor-pointer"
               >
                 Leave
+              </button>
+
+              <button
+                type="button"
+                onClick={triggerPublishFlow}
+                className="h-[40px] rounded-[999px] bg-[#262626] px-4 text-[14px] text-white cursor-pointer"
+              >
+                Publish
               </button>
             </div>
           </div>

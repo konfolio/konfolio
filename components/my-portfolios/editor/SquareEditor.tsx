@@ -1,13 +1,14 @@
-// components/my-portfolios/square/SquareEditor.tsx
+// components/my-portfolios/editor/SquareEditor.tsx
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { useKonfolioDraftStore } from "@/stores/konfolioDraftStore"
 import KonfolioExitGuard from "@/components/my-portfolios/KonfolioExitGuard"
 import EditSquareProfileSidebar from "@/components/my-portfolios/square/EditSquareProfileSidebar"
 import EditSquareImageGrid from "@/components/my-portfolios/square/EditSquareImageGrid"
 import PublishPopover from "@/components/my-portfolios/editor/PublishPopover"
+import PublishMissingFieldsPopover from "@/components/my-portfolios/editor/PublishMissingFieldsPopover"
 
 import { supabase } from "@/lib/supabase/browser"
 
@@ -90,6 +91,147 @@ function snapshotForDirtyCheck(draft: any) {
   }
 }
 
+function cleanString(x: any): string {
+  return String(x ?? "").trim()
+}
+
+function isMeaningfulText(x: any): boolean {
+  const v = cleanString(x)
+  if (!v) return false
+
+  const lower = v.toLowerCase()
+
+  const bannedExact = new Set([
+    "your name",
+    "business name",
+    "city",
+    "state",
+    "city, state",
+    "myemailaddress@konfolio.com",
+    "email",
+    "email address",
+    "location",
+    "your location",
+    "add link",
+    "link",
+    "http://",
+    "https://",
+    "www.",
+  ])
+
+  if (bannedExact.has(lower)) return false
+
+  if (lower === "https://" || lower === "http://" || lower === "www.") return false
+  if (lower.startsWith("https://") && lower.length <= "https://".length + 2) return false
+  if (lower.startsWith("http://") && lower.length <= "http://".length + 2) return false
+
+  return true
+}
+
+function looksLikeRealUrl(x: any): boolean {
+  const v = cleanString(x)
+  if (!v) return false
+  const lower = v.toLowerCase()
+
+  if (lower === "https://" || lower === "http://" || lower === "www.") return false
+
+  const hasDot = v.includes(".")
+  const hasAlphaNum = /[a-z0-9]/i.test(v)
+  if (!hasDot || !hasAlphaNum) return false
+
+  if (lower.endsWith("instagram.com") || lower.endsWith("instagram.com/")) return false
+  if (lower.endsWith("tiktok.com") || lower.endsWith("tiktok.com/")) return false
+
+  return true
+}
+
+function looksLikeRealEmail(x: any): boolean {
+  const v = cleanString(x)
+  if (!v) return false
+  const lower = v.toLowerCase()
+
+  if (lower === "myemailaddress@konfolio.com") return false
+
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+}
+
+function isRealImageSrc(src: any): boolean {
+  const v = cleanString(src)
+  if (!v) return false
+
+  const lower = v.toLowerCase()
+  if (lower.includes("placeholder")) return false
+  if (lower === "about:blank") return false
+
+  return true
+}
+
+function hasAnyBusinessLink(links: any): boolean {
+  if (!links) return false
+
+  const activeKeys = Array.isArray(links?.activeKeys) ? links.activeKeys : []
+  const linksByKey = links?.linksByKey && typeof links.linksByKey === "object" ? links.linksByKey : null
+
+  if (activeKeys.length > 0 && linksByKey) {
+    for (const k of activeKeys) {
+      const url = (linksByKey as any)[k]
+      if (looksLikeRealUrl(url)) return true
+    }
+    return false
+  }
+
+  if (Array.isArray(links)) {
+    return links.some((l) => looksLikeRealUrl((l as any)?.url) || looksLikeRealUrl(l))
+  }
+
+  if (typeof links === "object") {
+    for (const v of Object.values(links)) {
+      if (looksLikeRealUrl(v)) return true
+      if (v && typeof v === "object" && looksLikeRealUrl((v as any).url)) return true
+    }
+  }
+
+  return false
+}
+
+function isGridFilled(images: any, requiredSlots: number): boolean {
+  const arr = Array.isArray(images) ? images : []
+  const n = Math.max(0, Math.floor(requiredSlots))
+  if (n === 0) return false
+  if (arr.length < n) return false
+
+  for (let i = 0; i < n; i++) {
+    if (!isRealImageSrc(arr[i]?.src)) return false
+  }
+  return true
+}
+
+function computeMissingLabelsSquare(draft: any) {
+  const required: string[] = []
+  const optional: string[] = []
+
+  if (!isRealImageSrc(draft?.profileImageUrl)) required.push("Profile Image")
+  if (!isMeaningfulText(draft?.businessName)) required.push("Business Name")
+  if (!isMeaningfulText(draft?.displayName)) required.push("Your Name")
+  if (!hasAnyBusinessLink(draft?.links)) required.push("Business Link")
+
+  const merch = Array.isArray(draft?.merchTags)
+    ? draft.merchTags.map((t: any) => cleanString(t)).filter(Boolean)
+    : []
+  if (merch.length === 0) required.push("Merchandise")
+
+  // square requires 9 images filled
+  if (!isGridFilled(draft?.images, 9)) required.push("Featured Image")
+
+  const prev = Array.isArray(draft?.previousVends) ? draft.previousVends : []
+  if (prev.length === 0) optional.push("Previous Vends")
+
+  if (!isMeaningfulText(draft?.locationText)) optional.push("Your Location")
+  if (!looksLikeRealEmail(draft?.email)) optional.push("Email Address")
+
+  return { required, optional }
+}
+
 export default function SquareEditor({ draftId }: Props) {
   const draft = useKonfolioDraftStore((s) => s.draftsById[draftId])
   const patchDraft = useKonfolioDraftStore((s) => s.patchDraft)
@@ -104,6 +246,10 @@ export default function SquareEditor({ draftId }: Props) {
   const [allowExploreSearch, setAllowExploreSearch] = useState(true)
 
   const [savedSnapshot, setSavedSnapshot] = useState<string>("")
+
+  const [missingOpen, setMissingOpen] = useState(false)
+  const [missingRequired, setMissingRequired] = useState<string[]>([])
+  const [missingOptional, setMissingOptional] = useState<string[]>([])
 
   if (!draft || draft.template !== "square") return null
 
@@ -128,9 +274,6 @@ export default function SquareEditor({ draftId }: Props) {
     return `${window.location.origin}/my-portfolios/${draftId}/preview`
   }, [publishedUrl, draftId])
 
-  // IMPORTANT:
-  // - If status is draft: always guard on exit (arrow press/back/refresh)
-  // - If status is published: guard only when there are unsaved edits after publish
   const exitGuardEnabled = draft.status === "draft" || hasUnsavedChanges
 
   async function handlePublish() {
@@ -140,8 +283,8 @@ export default function SquareEditor({ draftId }: Props) {
     setPublishedUrl("")
 
     const initialName =
-      String((draft as any).portfolioName ?? (draft as any).portfolio_name ?? "").trim() ||
-      String(draft.displayName ?? "").trim() ||
+      cleanString((draft as any).portfolioName ?? (draft as any).portfolio_name) ||
+      cleanString(draft.displayName) ||
       "Portfolio"
     setPublishedPortfolioName(initialName)
 
@@ -155,14 +298,14 @@ export default function SquareEditor({ draftId }: Props) {
 
       const images = Array.isArray(draft.images) ? [...(draft.images as any[])] : []
       for (let i = 0; i < images.length; i++) {
-        const src = String(images[i]?.src ?? "")
+        const src = cleanString(images[i]?.src)
         if (src.startsWith("blob:")) {
           const imageUrl = await uploadBlobSrcToStorage({ blobSrc: src, konfolioId: draftId, token })
           images[i] = { ...images[i], src: imageUrl }
         }
       }
 
-      let profileImageUrl = String(draft.profileImageUrl ?? "").trim()
+      let profileImageUrl = cleanString(draft.profileImageUrl)
       if (profileImageUrl.startsWith("blob:")) {
         profileImageUrl = await uploadBlobSrcToStorage({
           blobSrc: profileImageUrl,
@@ -202,7 +345,6 @@ export default function SquareEditor({ draftId }: Props) {
         return
       }
 
-      // After PATCH, this is now the saved baseline (publish flow always saves)
       setSavedSnapshot(JSON.stringify(snapshotForDirtyCheck({ ...draft, ...content, images, profileImageUrl })))
 
       const pubRes = await fetch(`/api/konfolios/${draftId}/publish`, {
@@ -223,17 +365,17 @@ export default function SquareEditor({ draftId }: Props) {
       })
       const getJson = await getRes.json().catch(() => ({}))
 
-      const portfolioNameFromDb = String(getJson?.portfolioName ?? getJson?.portfolio_name ?? "").trim()
+      const portfolioNameFromDb = cleanString(getJson?.portfolioName ?? getJson?.portfolio_name)
 
       const portfolioSlug =
-        String(getJson?.portfolioSlug ?? getJson?.portfolio_slug ?? "").trim() ||
+        cleanString(getJson?.portfolioSlug ?? getJson?.portfolio_slug) ||
         slugify(portfolioNameFromDb) ||
-        slugify(String(draft.displayName ?? "")) ||
+        slugify(cleanString(draft.displayName)) ||
         "portfolio"
 
       setPublishedPortfolioName(portfolioNameFromDb || initialName)
 
-      const businessSlug = slugify(String((content as any).businessName ?? "")) || "business"
+      const businessSlug = slugify(cleanString((content as any).businessName)) || "business"
       const origin = typeof window === "undefined" ? "" : window.location.origin
       setPublishedUrl(`${origin}/${businessSlug}/${portfolioSlug}`)
 
@@ -245,6 +387,40 @@ export default function SquareEditor({ draftId }: Props) {
       setPublishError(e?.message ?? "Publish failed.")
     }
   }
+
+  // Shows popover if ANY missing exist.
+  // - If required missing: blocks publish
+  // - If only optional missing: allows publish via popover button
+  const onPressPublishWithValidation = useCallback(() => {
+    const missing = computeMissingLabelsSquare(draft)
+
+    const hasRequired = missing.required.length > 0
+    const hasOptional = missing.optional.length > 0
+
+    if (hasRequired || hasOptional) {
+      // IMPORTANT: show BOTH lists, even in required mode
+      setMissingRequired(missing.required)
+      setMissingOptional(missing.optional)
+      setMissingOpen(true)
+      return
+    }
+
+    void handlePublish()
+  }, [draft])
+
+  useEffect(() => {
+    ;(window as any).__konfolio_attempt_publish = () => {
+      onPressPublishWithValidation()
+    }
+
+    return () => {
+      try {
+        delete (window as any).__konfolio_attempt_publish
+      } catch {}
+    }
+  }, [onPressPublishWithValidation])
+
+  const isOptionalOnlyMode = missingOpen && missingRequired.length === 0 && missingOptional.length > 0
 
   return (
     <KonfolioExitGuard enabled={exitGuardEnabled} draftId={draftId} backHref="/my-portfolios">
@@ -287,7 +463,7 @@ export default function SquareEditor({ draftId }: Props) {
                 merchTags={draft.merchTags}
                 onChangeMerchTags={(next) => patchDraft(draftId, { merchTags: next })}
                 publishLabel="Publish"
-                onPublish={() => void handlePublish()}
+                onPublish={() => onPressPublishWithValidation()}
                 onOpenPreview={() => window.open(`/my-portfolios/${draftId}/preview`, "_blank")}
               />
 
@@ -299,6 +475,22 @@ export default function SquareEditor({ draftId }: Props) {
           </div>
         </div>
 
+        <PublishMissingFieldsPopover
+          open={missingOpen}
+          requiredMissing={missingRequired}
+          optionalMissing={missingOptional}
+          onClose={() => setMissingOpen(false)}
+          onKeepEditing={() => setMissingOpen(false)}
+          onPublishAnyway={
+            isOptionalOnlyMode
+              ? () => {
+                  setMissingOpen(false)
+                  void handlePublish()
+                }
+              : undefined
+          }
+        />
+
         <PublishPopover
           open={publishOpen}
           onClose={() => {
@@ -306,7 +498,7 @@ export default function SquareEditor({ draftId }: Props) {
             setPublishStatus("idle")
             setPublishError("")
           }}
-          portfolioName={publishedPortfolioName || String(draft.displayName ?? "").trim() || "Portfolio"}
+          portfolioName={publishedPortfolioName || cleanString(draft.displayName) || "Portfolio"}
           liveUrl={liveUrl}
           onExport={() => {}}
           allowExploreSearch={allowExploreSearch}

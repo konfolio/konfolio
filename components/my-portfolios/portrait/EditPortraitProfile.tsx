@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
+
 import ArrowLeft from "@/components/icons/ArrowLeft"
 import ImageIcon from "@/components/icons/ImageIcon"
 import BrushIcon from "@/components/icons/BrushIcon"
@@ -16,6 +17,12 @@ type OpenPicker = "banner" | "background" | null
 
 type Props = {
   backHref: string
+
+  /**
+   * Match SquareEditor behavior:
+   * Parent should pass onBack that calls window.__konfolio_attempt_exit(backHref) (or fallback).
+   * If not provided, this component will attempt window.__konfolio_attempt_exit(backHref) itself.
+   */
   onBack?: () => void
 
   bannerColor?: string
@@ -107,6 +114,23 @@ export default function EditPortraitProfile({
   onPublish,
   onOpenPreview,
 }: Props) {
+  const handleBack = () => {
+    if (onBack) {
+      onBack()
+      return
+    }
+
+    const href = backHref || "/my-portfolios"
+
+    const fn = (window as any).__konfolio_attempt_exit
+    if (typeof fn === "function") {
+      fn(href)
+      return
+    }
+
+    window.location.href = href
+  }
+
   const [localBusiness, setLocalBusiness] = useState(businessName)
   const [localName, setLocalName] = useState(displayName)
   const [localLocation, setLocalLocation] = useState(locationText)
@@ -257,22 +281,18 @@ export default function EditPortraitProfile({
       style={{ backgroundColor: localBanner }}
     >
       <div className="absolute left-[105px] top-1/2 -translate-y-1/2 z-[2]">
-        {onBack ? (
-          <button
-            type="button"
-            aria-label="Back"
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              onBack()
-            }}
-            className="w-[30px] h-[30px] flex items-center justify-center"
-          >
-            <ArrowLeft className="w-[30px] h-[30px]" />
-          </button>
-        ) : (
-          <ArrowLeft href={backHref} className="w-[30px] h-[30px]" />
-        )}
+        <button
+          type="button"
+          aria-label="Back"
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            handleBack()
+          }}
+          className="w-[30px] h-[30px] flex items-center justify-center cursor-pointer"
+        >
+          <ArrowLeft className="w-[30px] h-[30px]" />
+        </button>
       </div>
 
       <div className="w-[1182px] h-[102px] flex items-center gap-[20px]">
@@ -286,7 +306,7 @@ export default function EditPortraitProfile({
 
           <button
             type="button"
-            className="absolute inset-0 z-[1] bg-transparent"
+            className="absolute inset-0 z-[1] bg-transparent cursor-pointer"
             aria-label="Upload profile image"
             onClick={openFilePicker}
           >
@@ -339,11 +359,7 @@ export default function EditPortraitProfile({
               />
             </div>
 
-            <div className="flex items-center gap-[10px]">
-              {showAddLink ? (
-                <LinkPicker onAddLinkClick={onAddLinkClick} value={linksValue} onChange={onChangeLinks} />
-              ) : null}
-            </div>
+            <div className="flex items-center gap-[10px]">{showAddLink ? <LinkPicker onAddLinkClick={onAddLinkClick} value={linksValue} onChange={onChangeLinks} /> : null}</div>
 
             <div className="w-full min-h-[25px] flex items-start">
               <MerchTagPicker
@@ -405,7 +421,7 @@ export default function EditPortraitProfile({
                   type="button"
                   aria-label="Open preview"
                   onClick={onOpenPreview}
-                  className="w-[30px] h-[30px] bg-white rounded-full border border-[#262626] flex items-center justify-center"
+                  className="w-[30px] h-[30px] bg-white rounded-full border border-[#262626] flex items-center justify-center cursor-pointer"
                 >
                   <OpenTabIcon className="w-[16px] h-[16px] [&_path]:stroke-[#262626]" />
                 </button>
