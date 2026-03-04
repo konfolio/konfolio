@@ -1,6 +1,8 @@
 {
+  "/api/konfolios/[id]/images/upload/route": "app/api/konfolios/[id]/images/upload/route.js",
   "/api/konfolios/[id]/publish/route": "app/api/konfolios/[id]/publish/route.js",
   "/api/konfolios/[id]/route": "app/api/konfolios/[id]/route.js",
+  "/api/konfolios/create-from-template/route": "app/api/konfolios/create-from-template/route.js",
   "/my-portfolios/[konfolioId]/edit/page": "app/my-portfolios/[konfolioId]/edit/page.js",
   "/my-portfolios/page": "app/my-portfolios/page.js"
 }

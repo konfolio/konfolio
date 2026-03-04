@@ -4,3 +4,9 @@
 [00:39:24.736] Server  LOG     ✓ Compiled in 2.1s
 [00:44:23.530] Server  LOG     ✓ Compiled in 764ms
 [00:45:48.699] Browser LOG     [PUBLISH] Success: {"ok":true,"publishedAt":"2026-03-04T22:16:42.923Z","status":"published","thumbnailUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/6b285113-a150-4238-9334-b35ab46b8a6b/thumbnail.png","thumbnailUrlWithBust":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/6b285113-a150-4238-9334-b35ab46b8a6b/thumbnail.png?t=2026-03-04T22%3A16%3A42.923Z"}
+[00:54:07.989] Browser LOG     [PUBLISH] Success: {"ok":true,"publishedAt":"2026-03-04T22:25:03.790Z","status":"published","thumbnailUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/344183b6-c9e5-4f69-8a22-87618f5cce86/thumbnail.png","thumbnailUrlWithBust":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/344183b6-c9e5-4f69-8a22-87618f5cce86/thumbnail.png?t=2026-03-04T22%3A25%3A03.790Z"}
+[00:58:19.432] Server  LOG     ✓ Compiled in 2s
+[01:06:40.180] Server  LOG     ✓ Compiled in 294ms
+[01:12:11.843] Server  LOG     ✓ Compiled in 1364ms
+[01:13:36.925] Server  LOG     ✓ Compiled in 309ms
+[01:14:08.898] Server  LOG     ✓ Compiled in 166ms

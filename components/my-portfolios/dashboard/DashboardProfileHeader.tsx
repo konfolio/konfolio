@@ -1,7 +1,7 @@
+// components/my-portfolios/dashboard/DashboardProfileHeader.tsx
 "use client"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 
 import SecondaryButton from "@/components/buttons/SecondaryButton"
@@ -34,6 +34,8 @@ type Props = {
   onClickCreate?: () => void
 }
 
+const MAX_PUBLISHED_KONFOLIOS = 3
+
 function pad2(n: number) {
   const s = String(Math.max(0, Math.floor(n)))
   return s.length >= 2 ? s : `0${s}`
@@ -57,13 +59,15 @@ export default function DashboardProfileHeader({
 
   onClickCreate,
 }: Props) {
-  const router = useRouter()
-
   const [signedIn, setSignedIn] = useState(false)
   const [profile, setProfile] = useState<Profile | null>(null)
 
+  // Published konfolio count from Supabase
+  const [publishedCount, setPublishedCount] = useState(0)
+
   // popovers
   const [profilePopoverOpen, setProfilePopoverOpen] = useState(false)
+  const [limitOpen, setLimitOpen] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -77,6 +81,7 @@ export default function DashboardProfileHeader({
       if (!user) {
         setSignedIn(false)
         setProfile(null)
+        setPublishedCount(0)
         return
       }
 
@@ -93,10 +98,26 @@ export default function DashboardProfileHeader({
       if (profileRes.error) {
         console.log("[DashboardProfileHeader] profile error:", profileRes.error)
         setProfile(null)
-        return
+      } else {
+        setProfile((profileRes.data as Profile | null) ?? null)
       }
 
-      setProfile((profileRes.data as Profile | null) ?? null)
+      // Count published konfolios for this user.
+      // If your schema differs, update user_id/status accordingly.
+      const countRes = await supabase
+        .from("konfolios")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .eq("status", "published")
+
+      if (!mounted) return
+
+      if (countRes.error) {
+        console.log("[DashboardProfileHeader] konfolio count error:", countRes.error)
+        setPublishedCount(0)
+      } else {
+        setPublishedCount(countRes.count ?? 0)
+      }
     }
 
     load()
@@ -130,8 +151,12 @@ export default function DashboardProfileHeader({
       return fullName
     })()
 
-  const resolvedCount = konfolioCountOverride ?? 0 // keep as-is for now
+  // If parent provides override, keep it; otherwise use publishedCount from supabase
+  const resolvedCount = konfolioCountOverride ?? publishedCount
   const showChecker = !resolvedProfileImageUrl
+
+  const limitReached = resolvedCount >= MAX_PUBLISHED_KONFOLIOS
+  const createBlocked = signedIn && limitReached
 
   // popover data
   const popoverData: ArtistProfilePopupData = useMemo(
@@ -146,10 +171,8 @@ export default function DashboardProfileHeader({
       formsFilled: 0,
       visitors: 0,
 
-      // show none by default (only show icons when link exists)
       links: {},
 
-      // empty by default for now
       merchTags: [],
       previousVends: [],
       salesPermits: [],
@@ -239,10 +262,18 @@ export default function DashboardProfileHeader({
               <SecondaryButton
                 onClick={() => {
                   if (!signedIn) return
+                  if (createBlocked) {
+                    setLimitOpen(true)
+                    return
+                  }
                   onClickCreate?.()
                 }}
-                className="w-[150px] min-w-[150px] h-[30px] px-[40px] py-[10px] gap-[7px]"
+                className={[
+                  "w-[150px] min-w-[150px] h-[30px] px-[40px] py-[10px] gap-[7px]",
+                  createBlocked ? "opacity-50 cursor-not-allowed" : "",
+                ].join(" ")}
                 disabled={!signedIn}
+                aria-disabled={createBlocked}
               >
                 <span className="inline-flex items-center gap-[7px]">
                   <span className="text-[14px] leading-[14px] font-normal">+</span>
@@ -263,6 +294,54 @@ export default function DashboardProfileHeader({
         onClose={() => setProfilePopoverOpen(false)}
         data={popoverData}
       />
+
+      <KonfolioLimitModal
+        open={limitOpen}
+        onClose={() => setLimitOpen(false)}
+        max={MAX_PUBLISHED_KONFOLIOS}
+        count={resolvedCount}
+      />
     </>
+  )
+}
+
+function KonfolioLimitModal({
+  open,
+  onClose,
+  max,
+  count,
+}: {
+  open: boolean
+  onClose: () => void
+  max: number
+  count: number
+}) {
+  if (!open) return null
+
+  return (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+
+      <div className="relative w-[420px] rounded-[16px] bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+        <div className="text-[18px] font-semibold text-[#262626]">
+          Konfolio limit reached
+        </div>
+
+        <div className="mt-2 text-[14px] leading-[140%] text-[#6B6B6B]">
+          You can have up to {max} published konfolios. You currently have {count}.
+          To create a new one, delete an existing portfolio.
+        </div>
+
+        <div className="mt-6 flex justify-end gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="h-[40px] rounded-[999px] border border-[#DADADA] px-4 text-[14px] text-[#262626] cursor-pointer"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
   )
 }
