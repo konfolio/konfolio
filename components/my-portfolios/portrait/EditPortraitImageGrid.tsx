@@ -17,6 +17,8 @@ type Cell = {
 }
 
 type Props = {
+  editable?: boolean
+
   images?: Cell[]
   onChangeImages?: (images: Cell[]) => void
 
@@ -108,6 +110,8 @@ function arraysEqual(a: string[], b: string[]) {
 }
 
 export default function EditPortraitImageGrid({
+  editable = true,
+
   images,
   onChangeImages,
   previousVendsLabel = "Previous Vends",
@@ -147,7 +151,6 @@ export default function EditPortraitImageGrid({
   const [dragOverIdx, setDragOverIdx] = useState<number | null>(null)
   const [openEditorIdx, setOpenEditorIdx] = useState<number | null>(null)
 
-  // --- Previous Vends ---
   const [localPrevVends, setLocalPrevVends] = useState<string[]>([])
   const [newVend, setNewVend] = useState("")
   const addInputRef = useRef<HTMLInputElement | null>(null)
@@ -172,12 +175,13 @@ export default function EditPortraitImageGrid({
   }, [previousVendsValue])
 
   useEffect(() => {
+    if (!editable) return
     if (editingIdx === null) return
     window.setTimeout(() => {
       editInputRef.current?.focus()
       editInputRef.current?.select()
     }, 0)
-  }, [editingIdx])
+  }, [editingIdx, editable])
 
   const hasAnyEvents = localPrevVends.length > 0
   const vendPlaceholder = hasAnyEvents ? "Type an event..." : "Vended Event 2026"
@@ -189,6 +193,7 @@ export default function EditPortraitImageGrid({
   }
 
   const addVend = (raw: string) => {
+    if (!editable) return
     const text = (raw || "").trim()
     if (!text) return
     if (localPrevVends.length >= 4) return
@@ -202,12 +207,14 @@ export default function EditPortraitImageGrid({
   }
 
   const startEditVend = (idx: number) => {
+    if (!editable) return
     const cur = (localPrevVends[idx] ?? "").trim()
     setEditingIdx(idx)
     setEditingValue(cur)
   }
 
   const saveEditVend = () => {
+    if (!editable) return
     if (editingIdx === null) return
     const nextText = (editingValue || "").trim()
 
@@ -224,11 +231,13 @@ export default function EditPortraitImageGrid({
   }
 
   const cancelEditVend = () => {
+    if (!editable) return
     setEditingIdx(null)
     setEditingValue("")
   }
 
   const deleteVend = (idx: number) => {
+    if (!editable) return
     const next = [...localPrevVends]
     next.splice(idx, 1)
 
@@ -241,7 +250,6 @@ export default function EditPortraitImageGrid({
 
   const parsedPrevVends = useMemo(() => localPrevVends.map(parseEventLine), [localPrevVends])
 
-  // --- object url cleanup ---
   const objectUrls = useRef<string[]>([])
   useEffect(() => {
     return () => {
@@ -250,7 +258,6 @@ export default function EditPortraitImageGrid({
     }
   }, [])
 
-  // --- images emit ---
   const pendingEmitRef = useRef<Cell[] | null>(null)
 
   const updateCells = (updater: (prev: Cell[]) => Cell[]) => {
@@ -277,9 +284,13 @@ export default function EditPortraitImageGrid({
     }
   }, [cells, onChangeImages])
 
-  const openFilePicker = (idx: number) => inputsRef.current[idx]?.click()
+  const openFilePicker = (idx: number) => {
+    if (!editable) return
+    inputsRef.current[idx]?.click()
+  }
 
   const setImageFromFile = (idx: number, file: File) => {
+    if (!editable) return
     if (!file.type.startsWith("image/")) return
     const url = URL.createObjectURL(file)
     objectUrls.current.push(url)
@@ -299,6 +310,7 @@ export default function EditPortraitImageGrid({
   }
 
   const onInputChange = (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!editable) return
     const file = e.target.files?.[0]
     if (!file) return
     setImageFromFile(idx, file)
@@ -306,18 +318,21 @@ export default function EditPortraitImageGrid({
   }
 
   const onDragOver = (idx: number, e: React.DragEvent) => {
+    if (!editable) return
     e.preventDefault()
     e.stopPropagation()
     setDragOverIdx(idx)
   }
 
   const onDragLeave = (idx: number, e: React.DragEvent) => {
+    if (!editable) return
     e.preventDefault()
     e.stopPropagation()
     setDragOverIdx((cur) => (cur === idx ? null : cur))
   }
 
   const onDrop = (idx: number, e: React.DragEvent) => {
+    if (!editable) return
     e.preventDefault()
     e.stopPropagation()
     setDragOverIdx(null)
@@ -325,6 +340,9 @@ export default function EditPortraitImageGrid({
     if (!file) return
     setImageFromFile(idx, file)
   }
+
+  // NEW: blank out Previous Vends section in preview if empty (matches square request)
+  const showPrevVendsSection = editable || localPrevVends.length > 0
 
   return (
     <section className="w-[1512px] flex flex-col items-center">
@@ -354,7 +372,7 @@ export default function EditPortraitImageGrid({
                     bg-[rgba(165,165,165,0.068)]
                     border border-white
                     transition
-                    ${isDragOver ? "border-dashed" : ""}
+                    ${editable && isDragOver ? "border-dashed" : ""}
                     ${isEditorOpen ? "z-[200]" : "z-[0]"}
                   `}
                   style={{
@@ -378,34 +396,40 @@ export default function EditPortraitImageGrid({
 
                   <button
                     type="button"
-                    className="absolute inset-0 z-[0] bg-transparent"
+                    className={[
+                      "absolute inset-0 z-[0] bg-transparent",
+                      editable ? "cursor-pointer" : "cursor-default",
+                    ].join(" ")}
                     aria-label={`Upload image ${idx + 1}`}
                     onClick={() => {
+                      if (!editable) return
                       if (isEditorOpen) return
                       openFilePicker(idx)
                     }}
                   />
 
-                  <button
-                    type="button"
-                    aria-label="Image settings"
-                    className="
-                      absolute right-[10px] top-[10px]
-                      hidden group-hover:flex
-                      w-[24px] h-[24px]
-                      items-center justify-center
-                      z-[10]
-                      cursor-pointer
-                    "
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setOpenEditorIdx((cur) => (cur === idx ? null : idx))
-                    }}
-                  >
-                    <SlidersIcon />
-                  </button>
+                  {editable ? (
+                    <button
+                      type="button"
+                      aria-label="Image settings"
+                      className="
+                        absolute right-[10px] top-[10px]
+                        hidden group-hover:flex
+                        w-[24px] h-[24px]
+                        items-center justify-center
+                        z-[10]
+                        cursor-pointer
+                      "
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setOpenEditorIdx((cur) => (cur === idx ? null : idx))
+                      }}
+                    >
+                      <SlidersIcon />
+                    </button>
+                  ) : null}
 
-                  {isEditorOpen && (
+                  {editable && isEditorOpen && (
                     <EditImagePopover
                       title={`Recommended - ${RECOMMENDED[idx] ?? "Image"}`}
                       imageSrc={cell.src}
@@ -488,7 +512,7 @@ export default function EditPortraitImageGrid({
                     </p>
                   </div>
 
-                  {isDragOver && (
+                  {editable && isDragOver && (
                     <div className="pointer-events-none absolute inset-0 z-[4] bg-white/20 rounded-[15px]" />
                   )}
                 </div>
@@ -497,135 +521,138 @@ export default function EditPortraitImageGrid({
           </div>
         </div>
 
-        {/* Previous Vends */}
-        <div className="w-[1512px] flex flex-col items-center pt-[20px] pb-[30px] gap-[6px]">
-          <p className="m-0 font-inter font-normal text-[13px] leading-[16px] text-center text-[#A5A5A5]">
-            {previousVendsLabel}
-          </p>
+        {showPrevVendsSection ? (
+          <div className="w-[1512px] flex flex-col items-center pt-[20px] pb-[30px] gap-[6px]">
+            <p className="m-0 font-inter font-normal text-[13px] leading-[16px] text-center text-[#A5A5A5]">
+              {previousVendsLabel}
+            </p>
 
-          <div className="flex items-center justify-center gap-[6px]">
-            {parsedPrevVends.map((ev, i) => {
-              const isEditing = editingIdx === i
-              const displayKey = `${ev.title}-${ev.year ?? ""}-${i}`
+            <div className="flex items-center justify-center gap-[6px]">
+              {parsedPrevVends.map((ev, i) => {
+                const isEditing = editable && editingIdx === i
+                const displayKey = `${ev.title}-${ev.year ?? ""}-${i}`
 
-              return (
-                <div key={displayKey} className="group flex items-center gap-[6px]">
-                  {i !== 0 ? (
-                    <span className="font-inter font-normal text-[16px] leading-[19px] text-[#A5A5A5]">|</span>
-                  ) : null}
+                return (
+                  <div key={displayKey} className="group flex items-center gap-[6px]">
+                    {i !== 0 ? (
+                      <span className="font-inter font-normal text-[16px] leading-[19px] text-[#A5A5A5]">|</span>
+                    ) : null}
 
-                  {isEditing ? (
-                    <input
-                      ref={editInputRef}
-                      value={editingValue}
-                      onChange={(e) => setEditingValue(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault()
-                          saveEditVend()
-                        }
-                        if (e.key === "Escape") {
-                          e.preventDefault()
-                          cancelEditVend()
-                        }
-                      }}
-                      className="
-                        w-[240px]
-                        text-center
-                        font-inter font-normal
-                        text-[16px] leading-[19px]
-                        text-[#262626]
-                        bg-transparent
-                        outline-none
-                      "
-                      aria-label="Edit previous vend"
-                    />
-                  ) : (
-                    <>
-                      {/* Click anywhere on the text area to edit */}
-                      <button
-                        type="button"
-                        onClick={() => startEditVend(i)}
-                        className="flex items-baseline gap-[6px] cursor-text"
+                    {isEditing ? (
+                      <input
+                        ref={editInputRef}
+                        value={editingValue}
+                        onChange={(e) => setEditingValue(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault()
+                            saveEditVend()
+                          }
+                          if (e.key === "Escape") {
+                            e.preventDefault()
+                            cancelEditVend()
+                          }
+                        }}
+                        className="
+                          w-[240px]
+                          text-center
+                          font-inter font-normal
+                          text-[16px] leading-[19px]
+                          text-[#262626]
+                          bg-transparent
+                          outline-none
+                        "
                         aria-label="Edit previous vend"
-                      >
-                        <span className="font-inter font-normal text-[16px] leading-[19px] text-[#262626]">
-                          {ev.title || ""}
-                        </span>
+                      />
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => startEditVend(i)}
+                          className={["flex items-baseline gap-[6px]", editable ? "cursor-text" : "cursor-default"].join(
+                            " "
+                          )}
+                          aria-label="Edit previous vend"
+                        >
+                          <span className="font-inter font-normal text-[16px] leading-[19px] text-[#262626]">
+                            {ev.title || ""}
+                          </span>
 
-                        {ev.year ? (
-                          <span className="font-inter italic font-normal text-[12px] leading-[140%] text-[#A5A5A5]">
-                            {ev.year}
+                          {ev.year ? (
+                            <span className="font-inter italic font-normal text-[12px] leading-[140%] text-[#A5A5A5]">
+                              {ev.year}
+                            </span>
+                          ) : null}
+                        </button>
+
+                        {editable ? (
+                          <span
+                            className="
+                              ml-[4px]
+                              flex items-center gap-[6px]
+                              opacity-0 group-hover:opacity-100
+                              pointer-events-none group-hover:pointer-events-auto
+                              transition-opacity
+                            "
+                          >
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                startEditVend(i)
+                              }}
+                              aria-label="Edit previous vend"
+                              className="w-[16px] h-[16px] flex items-center justify-center cursor-pointer text-[#A5A5A5]"
+                            >
+                              <PencilIcon className="w-[16px] h-[16px]" />
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                deleteVend(i)
+                              }}
+                              aria-label="Delete previous vend"
+                              className="w-[16px] h-[16px] flex items-center justify-center cursor-pointer text-[#A5A5A5]"
+                            >
+                              <TrashIcon className="w-[16px] h-[16px]" />
+                            </button>
                           </span>
                         ) : null}
-                      </button>
+                      </>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
 
-                      {/* Icons only on hover */}
-                      <span
-                        className="
-                          ml-[4px]
-                          flex items-center gap-[6px]
-                          opacity-0 group-hover:opacity-100
-                          pointer-events-none group-hover:pointer-events-auto
-                          transition-opacity
-                        "
-                      >
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            startEditVend(i)
-                          }}
-                          aria-label="Edit previous vend"
-                          className="w-[16px] h-[16px] flex items-center justify-center cursor-pointer text-[#A5A5A5]"
-                        >
-                          <PencilIcon className="w-[16px] h-[16px]" />
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            deleteVend(i)
-                          }}
-                          aria-label="Delete previous vend"
-                          className="w-[16px] h-[16px] flex items-center justify-center cursor-pointer text-[#A5A5A5]"
-                        >
-                          <TrashIcon className="w-[16px] h-[16px]" />
-                        </button>
-                      </span>
-                    </>
-                  )}
-                </div>
-              )
-            })}
+            {editable && localPrevVends.length < 4 ? (
+              <input
+                ref={addInputRef}
+                value={newVend}
+                onChange={(e) => setNewVend(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    addVend(newVend)
+                  }
+                }}
+                placeholder={vendPlaceholder}
+                className="
+                  w-[258px]
+                  text-center
+                  font-inter font-normal
+                  text-[16px] leading-[19px]
+                  text-[#D3D3D3]
+                  placeholder:text-[#D3D3D3]
+                  bg-transparent
+                  outline-none
+                "
+              />
+            ) : null}
           </div>
-
-          {localPrevVends.length < 4 ? (
-            <input
-              ref={addInputRef}
-              value={newVend}
-              onChange={(e) => setNewVend(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault()
-                  addVend(newVend)
-                }
-              }}
-              placeholder={vendPlaceholder}
-              className="
-                w-[258px]
-                text-center
-                font-inter font-normal
-                text-[16px] leading-[19px]
-                text-[#D3D3D3]
-                placeholder:text-[#D3D3D3]
-                bg-transparent
-                outline-none
-              "
-            />
-          ) : null}
-        </div>
+        ) : null}
 
         <div className="h-[18px]" />
       </div>

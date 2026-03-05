@@ -445,7 +445,7 @@ export default function MerchTagPicker({
             [&_path]:fill-[#FFFFFF]
           "
         >
-          <DeleteIcon className="w-[13.42px] h-[13.42px]" />
+          <DeleteIcon className="w-[13.42px] h-[13.42px] cursor-pointer" />
         </button>
       </div>
     )
@@ -478,7 +478,6 @@ export default function MerchTagPicker({
               text-[#A5A5A5]
               [&_span]:text-[#A5A5A5]
               [&_svg]:text-[#A5A5A5]
-              cursor-pointer
             "
           />
         ) : (
@@ -549,7 +548,7 @@ export default function MerchTagPicker({
                   [&_path]:fill-[#FFFFFF]
                 "
               >
-                <DeleteIcon className="w-[13.42px] h-[13.42px]" />
+                <DeleteIcon className="w-[13.42px] h-[13.42px] cursor-pointer" />
               </button>
             </div>
           ))}
@@ -579,7 +578,6 @@ export default function MerchTagPicker({
                   text-[#A5A5A5]
                   [&_span]:text-[#A5A5A5]
                   [&_svg]:text-[#A5A5A5]
-                  cursor-pointer
                 "
               />
             ) : (
@@ -592,6 +590,7 @@ export default function MerchTagPicker({
                   border border-[#A5A5A5]/50
                   bg-[rgba(255,255,255,0.1)]
                   [&_path]:stroke-[#A5A5A5]
+                  cursor-pointer
                 "
               >
                 <PlusIcon />

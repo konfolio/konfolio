@@ -11,11 +11,22 @@ import LocationIcon from "@/components/icons/LocationIcon"
 import OpenTabIcon from "@/components/icons/OpenTabIcon"
 import DeleteIcon from "@/components/icons/DeleteIcon"
 
+import HomeIcon from "@/components/icons/HomeIcon"
+import ShopIcon from "@/components/icons/ShopIcon"
+import InstagramIcon from "@/components/icons/InstagramIcon"
+import XIcon from "@/components/icons/XIcon"
+import FacebookIcon from "@/components/icons/FacebookIcon"
+import TumblrIcon from "@/components/icons/TumblrIcon"
+import PixivIcon from "@/components/icons/PixivIcon"
+import BlueskyIcon from "@/components/icons/BlueskyIcon"
+
 import MerchTagPicker from "@/components/my-portfolios/MerchTagPicker"
 import LinkPicker, { type LinkPickerValue } from "@/components/my-portfolios/LinkPicker"
 import ColorPicker from "@/components/my-portfolios/ColorPicker"
 
 type Props = {
+  editable?: boolean
+
   backHref: string
   onBack?: () => void
 
@@ -78,7 +89,83 @@ function parseEventLine(line: string): { title: string; year?: string } {
 
 type OpenPicker = "banner" | "background" | null
 
+function safeStr(x: any) {
+  return String(x ?? "").trim()
+}
+
+function normalizeUrl(raw: string): string {
+  const v = safeStr(raw)
+  if (!v) return ""
+  const lower = v.toLowerCase()
+  if (lower.startsWith("http://") || lower.startsWith("https://")) return v
+  return `https://${v}`
+}
+
+function getActiveLinkUrls(value: LinkPickerValue | undefined): Array<{ key: string; url: string }> {
+  const v: any = value as any
+  if (!v) return []
+
+  const activeKeys: string[] = Array.isArray(v.activeKeys) ? v.activeKeys : []
+  const linksByKey: Record<string, string> =
+    v.linksByKey && typeof v.linksByKey === "object" ? (v.linksByKey as Record<string, string>) : {}
+
+  return activeKeys
+    .map((k) => ({ key: k, url: normalizeUrl(linksByKey[k] ?? "") }))
+    .filter((x) => Boolean(x.url))
+}
+
+function iconLabelForKey(key: string) {
+  if (key === "website") return "Website"
+  if (key === "shop") return "Shop"
+  if (key === "instagram") return "Instagram"
+  if (key === "x") return "X"
+  if (key === "facebook") return "Facebook"
+  if (key === "tumblr") return "Tumblr"
+  if (key === "pixiv") return "Pixiv"
+  if (key === "bluesky") return "Bluesky"
+  return "Link"
+}
+
+function IconForKey({ k }: { k: string }) {
+  if (k === "website") return <HomeIcon className="w-[24px] h-[24px]" />
+  if (k === "shop") return <ShopIcon className="w-[24px] h-[24px]" />
+  if (k === "instagram") return <InstagramIcon className="w-[24px] h-[24px]" />
+  if (k === "x") return <XIcon className="w-[24px] h-[24px]" />
+  if (k === "facebook") return <FacebookIcon className="w-[24px] h-[24px]" />
+  if (k === "tumblr") return <TumblrIcon className="w-[24px] h-[24px]" />
+  if (k === "pixiv") return <PixivIcon className="w-[24px] h-[24px]" />
+  if (k === "bluesky") return <BlueskyIcon className="w-[24px] h-[24px]" />
+  return <HomeIcon className="w-[24px] h-[24px]" />
+}
+
+function KonfolioLogo() {
+  return (
+    <div
+      aria-label="Konfolio"
+      className="absolute left-1/2 -translate-x-1/2 top-[30px] w-[84px] h-[18.67px] opacity-50 pointer-events-none select-none"
+    >
+      <div
+        className="absolute left-1/2 -translate-x-1/2 top-0"
+        style={{
+          fontFamily: "Inknut Antiqua",
+          fontStyle: "normal",
+          fontWeight: 600,
+          fontSize: "18.1193px",
+          letterSpacing: "-0.02em",
+          lineHeight: "18.67px",
+          color: "#262626",
+          whiteSpace: "nowrap",
+        }}
+      >
+        konfolio
+      </div>
+    </div>
+  )
+}
+
 export default function EditSquareProfileSidebar({
+  editable = true,
+
   backHref,
   onBack,
 
@@ -163,6 +250,9 @@ export default function EditSquareProfileSidebar({
 
   const parsedPrevVends = useMemo(() => localPrevVends.map(parseEventLine), [localPrevVends])
 
+  // NEW: hide the whole Previous Vends section when not editable and empty
+  const showPrevVendsSection = editable || localPrevVends.length > 0
+
   const [localBanner, setLocalBanner] = useState(bannerColor)
   const [localBg, setLocalBg] = useState(backgroundColor)
   useEffect(() => setLocalBanner(bannerColor), [bannerColor])
@@ -206,6 +296,8 @@ export default function EditSquareProfileSidebar({
   const pickerSwatches = openPicker === "banner" ? localBannerSwatches : localBgSwatches
 
   const setPickerHex = (hex: string) => {
+    if (!editable) return
+
     if (openPicker === "banner") {
       setLocalBanner(hex)
       onChangeBannerColor?.(hex)
@@ -216,6 +308,8 @@ export default function EditSquareProfileSidebar({
   }
 
   const setPickerSwatches = (next: string[]) => {
+    if (!editable) return
+
     if (openPicker === "banner") {
       setLocalBannerSwatches(next)
       onChangeBannerSwatches?.(next)
@@ -238,9 +332,13 @@ export default function EditSquareProfileSidebar({
     }
   }, [])
 
-  const openFilePicker = () => fileInputRef.current?.click()
+  const openFilePicker = () => {
+    if (!editable) return
+    fileInputRef.current?.click()
+  }
 
   const handleFile = (file: File) => {
+    if (!editable) return
     if (!file.type.startsWith("image/")) return
     const url = URL.createObjectURL(file)
     objectUrls.current.push(url)
@@ -249,6 +347,7 @@ export default function EditSquareProfileSidebar({
   }
 
   const onFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!editable) return
     const file = e.target.files?.[0]
     if (!file) return
     handleFile(file)
@@ -256,6 +355,7 @@ export default function EditSquareProfileSidebar({
   }
 
   const onDrop = (e: React.DragEvent) => {
+    if (!editable) return
     e.preventDefault()
     e.stopPropagation()
     const file = e.dataTransfer.files?.[0]
@@ -264,82 +364,92 @@ export default function EditSquareProfileSidebar({
   }
 
   const onDragOver = (e: React.DragEvent) => {
+    if (!editable) return
     e.preventDefault()
     e.stopPropagation()
   }
 
-  const hasAnyEvents = localPrevVends.length > 0
-  const vendPlaceholder = hasAnyEvents ? "Type an event..." : "Vended Event 2026"
+  const activeLinks = useMemo(() => getActiveLinkUrls(linksValue), [linksValue])
 
   return (
     <aside
-      className="w-[316px] h-[982px] px-[20px] py-[40px] flex flex-col items-center gap-[10px]"
+      className="w-[316px] h-[982px] px-[20px] py-[40px] flex flex-col items-center gap-[10px] relative"
       style={{ backgroundColor: localBanner }}
     >
-      <div className="relative w-[276px] h-[36px] flex items-center justify-center gap-[40px]">
-        <div className="absolute left-0 top-1/2 -translate-y-1/2">
-          <button
-            type="button"
-            aria-label="Back"
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              if (onBack) onBack()
-              else window.location.href = backHref
-            }}
-            className="w-[30px] h-[30px] flex items-center justify-center cursor-pointer"
-          >
-            <ArrowLeft className="w-[30px] h-[30px]" />
-          </button>
-        </div>
-
-        <div
-          ref={colorButtonsWrapRef}
-          className="relative flex items-center justify-end gap-[5px] w-[98px] h-[36px]"
-        >
-          <div className="w-[16px] h-[16px] flex items-center justify-center text-[#A5A5A5]">
-            <BrushIcon className="w-[16px] h-[16px]" />
+      {editable ? (
+        <div className="relative w-[276px] h-[36px] flex items-center justify-center gap-[40px]">
+          <div className="absolute left-0 top-1/2 -translate-y-1/2">
+            <button
+              type="button"
+              aria-label="Back"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                if (onBack) onBack()
+                else window.location.href = backHref
+              }}
+              className="w-[30px] h-[30px] flex items-center justify-center cursor-pointer"
+            >
+              <ArrowLeft className="w-[30px] h-[30px]" />
+            </button>
           </div>
 
-          <button
-            type="button"
-            onClick={() => togglePicker("banner")}
-            aria-label="Pick banner color"
-            className="w-[36px] h-[36px] rounded-full border border-[rgba(165,165,165,0.5)] bg-white cursor-pointer relative overflow-hidden"
+          <div
+            ref={colorButtonsWrapRef}
+            className="relative flex items-center justify-end gap-[5px] w-[98px] h-[36px]"
           >
-            <span className="absolute inset-0" style={{ backgroundColor: localBanner }} />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => togglePicker("background")}
-            aria-label="Pick background color"
-            className="w-[36px] h-[36px] rounded-full border border-[rgba(165,165,165,0.5)] bg-white cursor-pointer relative overflow-hidden"
-          >
-            <span className="absolute inset-0" style={{ backgroundColor: localBg }} />
-          </button>
-
-          {openPicker ? (
-            <div
-              ref={colorPopoverRef}
-              className="absolute z-50 top-[52px] left-1/2 -translate-x-1/2 w-[276px]"
-            >
-              <ColorPicker
-                label={pickerLabel}
-                valueHex={pickerHex}
-                onChangeHex={setPickerHex}
-                swatches={pickerSwatches}
-                onChangeSwatches={setPickerSwatches}
-                onRequestClose={() => setOpenPicker(null)}
-              />
+            <div className="w-[16px] h-[16px] flex items-center justify-center text-[#A5A5A5]">
+              <BrushIcon className="w-[16px] h-[16px]" />
             </div>
-          ) : null}
+
+            <button
+              type="button"
+              onClick={() => togglePicker("banner")}
+              aria-label="Pick banner color"
+              className="w-[36px] h-[36px] rounded-full border border-[rgba(165,165,165,0.5)] bg-white cursor-pointer relative overflow-hidden"
+            >
+              <span className="absolute inset-0" style={{ backgroundColor: localBanner }} />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => togglePicker("background")}
+              aria-label="Pick background color"
+              className="w-[36px] h-[36px] rounded-full border border-[rgba(165,165,165,0.5)] bg-white cursor-pointer relative overflow-hidden"
+            >
+              <span className="absolute inset-0" style={{ backgroundColor: localBg }} />
+            </button>
+
+            {openPicker ? (
+              <div
+                ref={colorPopoverRef}
+                className="absolute z-50 top-[52px] left-1/2 -translate-x-1/2 w-[276px]"
+              >
+                <ColorPicker
+                  label={pickerLabel}
+                  valueHex={pickerHex}
+                  onChangeHex={setPickerHex}
+                  swatches={pickerSwatches}
+                  onChangeSwatches={setPickerSwatches}
+                  onRequestClose={() => setOpenPicker(null)}
+                />
+              </div>
+            ) : null}
+          </div>
         </div>
-      </div>
+      ) : (
+        <>
+          <KonfolioLogo />
+          <div className="h-[24px] w-[276px]" />
+        </>
+      )}
 
       <div className="w-[276px] flex-1 flex flex-col items-center justify-center gap-[30px]">
         <div
-          className="relative w-[189px] h-[189px] bg-white border border-[#A5A5A5] border-[0.5px] rounded-[15px] overflow-hidden"
+          className={[
+            "relative w-[189px] h-[189px] bg-white border border-[#A5A5A5] border-[0.5px] rounded-[15px] overflow-hidden",
+            editable ? "cursor-pointer" : "cursor-default",
+          ].join(" ")}
           onDrop={onDrop}
           onDragOver={onDragOver}
         >
@@ -351,9 +461,16 @@ export default function EditSquareProfileSidebar({
             onChange={onFileInputChange}
           />
 
-          <button type="button" className="absolute inset-0" aria-label="Upload profile image" onClick={openFilePicker}>
-            <span className="sr-only">Upload</span>
-          </button>
+          {editable ? (
+            <button
+              type="button"
+              className="absolute inset-0 cursor-pointer"
+              aria-label="Upload profile image"
+              onClick={openFilePicker}
+            >
+              <span className="sr-only">Upload</span>
+            </button>
+          ) : null}
 
           {localImgUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -370,112 +487,165 @@ export default function EditSquareProfileSidebar({
               <div className="w-[52px] h-[52px] flex items-center justify-center text-[#A5A5A5] [&_path]:stroke-[#A5A5A5] [&_path]:fill-[#A5A5A5]">
                 <ImageIcon />
               </div>
-              <p className="m-0 w-[100px] font-inter font-normal text-[11px] leading-[13px] text-center text-[#A5A5A5]">
-                Drop image here or click to open files
+              <p className="m-0 w-[140px] font-inter font-normal text-[11px] leading-[13px] text-center text-[#A5A5A5]">
+                {editable ? "Drop image here or click to open files" : ""}
               </p>
             </div>
           )}
         </div>
 
         <div className="w-[276px] flex flex-col items-center gap-[12px]">
-          <input
-            value={localBusiness}
-            onChange={(e) => {
-              setLocalBusiness(e.target.value)
-              onChangeBusinessName?.(e.target.value)
-            }}
-            placeholder="Business Name"
-            className="w-full text-center font-inter font-normal text-[22px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] bg-transparent outline-none"
-          />
+          {editable ? (
+            <input
+              value={localBusiness}
+              onChange={(e) => {
+                setLocalBusiness(e.target.value)
+                onChangeBusinessName?.(e.target.value)
+              }}
+              placeholder="Business Name"
+              className="w-full text-center font-inter font-normal text-[22px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] bg-transparent outline-none"
+            />
+          ) : (
+            <p className="m-0 w-full text-center font-inter font-normal text-[22px] leading-[140%] text-[#262626]">
+              {safeStr(localBusiness) || "Business Name"}
+            </p>
+          )}
 
-          <input
-            value={localDisplay}
-            onChange={(e) => {
-              setLocalDisplay(e.target.value)
-              onChangeDisplayName?.(e.target.value)
-            }}
-            placeholder="Your Name"
-            className="w-full text-center font-inter font-normal text-[15px] leading-[140%] text-[rgba(165,165,165,0.5)] placeholder:text-[rgba(165,165,165,0.5)] bg-transparent outline-none"
-          />
+          {editable ? (
+            <input
+              value={localDisplay}
+              onChange={(e) => {
+                setLocalDisplay(e.target.value)
+                onChangeDisplayName?.(e.target.value)
+              }}
+              placeholder="Your Name"
+              className="w-full text-center font-inter font-normal text-[15px] leading-[140%] text-[rgba(165,165,165,0.5)] placeholder:text-[rgba(165,165,165,0.5)] bg-transparent outline-none"
+            />
+          ) : (
+            <p className="m-0 w-full text-center font-inter font-normal text-[15px] leading-[140%] text-[#A5A5A5]">
+              {safeStr(localDisplay) || "Your Name"}
+            </p>
+          )}
         </div>
 
         <div className="w-[276px] flex items-center justify-center">
-          {showAddLink ? (
-            <LinkPicker onAddLinkClick={onAddLinkClick} value={linksValue} onChange={onChangeLinks} />
-          ) : null}
+          {editable ? (
+            showAddLink ? (
+              <LinkPicker onAddLinkClick={onAddLinkClick} value={linksValue} onChange={onChangeLinks} />
+            ) : null
+          ) : (
+            <div className="flex items-center justify-center gap-[10px]">
+              {activeLinks.map((l) => (
+                <a
+                  key={l.key}
+                  href={l.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={iconLabelForKey(l.key)}
+                  className="w-[24px] h-[24px] flex items-center justify-center text-[#262626] cursor-pointer"
+                >
+                  <IconForKey k={l.key} />
+                </a>
+              ))}
+            </div>
+          )}
         </div>
 
-        {showMerchTag ? (
-          <MerchTagPicker maxTags={8} onMerchClick={onMerchClick} value={merchTags} onChange={onChangeMerchTags} />
-        ) : null}
-
-        <div className="w-[276px] flex flex-col items-center gap-[12px]">
-          <p className="m-0 w-full text-center font-inter font-normal text-[15px] leading-[140%] text-[#A5A5A5]">
-            Previous Vends
-          </p>
-
-          <div className="w-full flex flex-col items-center gap-[6px]">
-            {useMemo(() => localPrevVends.map(parseEventLine), [localPrevVends]).map((ev, i) => (
-              <div key={`${ev.title}-${ev.year ?? ""}-${i}`} className="group relative w-full flex justify-center">
-                <div className="flex items-baseline gap-[6px]">
-                  <span className="font-inter font-normal text-[15px] leading-[140%] text-[#262626]">
-                    {ev.title || ""}
-                  </span>
-                  {ev.year ? (
-                    <span className="font-inter italic font-normal text-[12px] leading-[140%] text-[#A5A5A5]">
-                      {ev.year}
-                    </span>
-                  ) : null}
-                </div>
-
-                <button
-                  type="button"
-                  aria-label="Delete event"
-                  className="
-                    absolute right-[12px] top-1/2 -translate-y-1/2
-                    opacity-0 transition-opacity
-                    group-hover:opacity-100
-                    text-[#A5A5A5]
-                    [&_path]:fill-[#A5A5A5]
-                    [&_path]:stroke-[#A5A5A5]
-                    cursor-pointer
-                  "
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    deleteVendAt(i)
-                  }}
-                >
-                  <DeleteIcon className="w-[14px] h-[14px]" />
-                </button>
+        {editable ? (
+          showMerchTag ? (
+            <MerchTagPicker
+              maxTags={8}
+              onMerchClick={onMerchClick}
+              value={merchTags}
+              onChange={onChangeMerchTags}
+            />
+          ) : null
+        ) : (
+          <div className="w-[276px] flex flex-wrap justify-center gap-[10px]">
+            {(Array.isArray(merchTags) ? merchTags : []).slice(0, 8).map((t) => (
+              <div
+                key={t}
+                className="flex items-center justify-center px-[20px] py-[7px] h-[24px] rounded-full border border-[#A5A5A5] border-[0.5px]"
+              >
+                <span className="font-inter font-normal text-[15px] leading-[150%] text-[#262626]">
+                  {safeStr(t)}
+                </span>
               </div>
             ))}
           </div>
+        )}
 
-          {localPrevVends.length < 4 ? (
-            <input
-              ref={addInputRef}
-              value={newVend}
-              onChange={(e) => setNewVend(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault()
-                  addVend(newVend)
-                }
-              }}
-              placeholder={vendPlaceholder}
-              className="
-                w-full
-                text-center
-                font-inter font-normal
-                text-[15px] leading-[140%]
-                text-[#D3D3D3]
-                placeholder:text-[#D3D3D3]
-                bg-transparent
-                outline-none
-              "
-            />
-          ) : null}
-        </div>
+        {showPrevVendsSection ? (
+          <div className="w-[276px] flex flex-col items-center gap-[12px]">
+            <p className="m-0 w-full text-center font-inter font-normal text-[15px] leading-[140%] text-[#A5A5A5]">
+              Previous Vends
+            </p>
+
+            <div className="w-full flex flex-col items-center gap-[6px]">
+              {parsedPrevVends.map((ev, i) => (
+                <div key={`${ev.title}-${ev.year ?? ""}-${i}`} className="group relative w-full flex justify-center">
+                  <div className="flex items-baseline gap-[6px]">
+                    <span className="font-inter font-normal text-[15px] leading-[140%] text-[#262626]">
+                      {ev.title || ""}
+                    </span>
+                    {ev.year ? (
+                      <span className="font-inter italic font-normal text-[12px] leading-[140%] text-[#A5A5A5]">
+                        {ev.year}
+                      </span>
+                    ) : null}
+                  </div>
+
+                  {editable ? (
+                    <button
+                      type="button"
+                      aria-label="Delete event"
+                      className="
+                        absolute right-[12px] top-1/2 -translate-y-1/2
+                        opacity-0 transition-opacity
+                        group-hover:opacity-100
+                        text-[#A5A5A5]
+                        [&_path]:fill-[#A5A5A5]
+                        [&_path]:stroke-[#A5A5A5]
+                        cursor-pointer
+                      "
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        deleteVendAt(i)
+                      }}
+                    >
+                      <DeleteIcon className="w-[14px] h-[14px]" />
+                    </button>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+
+            {editable && localPrevVends.length < 4 ? (
+              <input
+                ref={addInputRef}
+                value={newVend}
+                onChange={(e) => setNewVend(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    addVend(newVend)
+                  }
+                }}
+                placeholder={localPrevVends.length > 0 ? "Type an event..." : "Vended Event 2026"}
+                className="
+                  w-full
+                  text-center
+                  font-inter font-normal
+                  text-[15px] leading-[140%]
+                  text-[#D3D3D3]
+                  placeholder:text-[#D3D3D3]
+                  bg-transparent
+                  outline-none
+                "
+              />
+            ) : null}
+          </div>
+        ) : null}
 
         <div className="w-[276px] flex flex-col items-center gap-[12px]">
           <div className="flex justify-center">
@@ -484,61 +654,77 @@ export default function EditSquareProfileSidebar({
                 <LocationIcon className="w-[12px] h-[12px]" />
               </div>
 
-              <input
-                value={localLocation}
-                onChange={(e) => {
-                  setLocalLocation(e.target.value)
-                  onChangeLocationText?.(e.target.value)
-                }}
-                placeholder="City, State"
-                size={Math.max(localLocation.length || 0, 8)}
-                className="
-                  w-auto
-                  text-center
-                  font-inter font-normal
-                  text-[15px] leading-[140%]
-                  text-[#A5A5A5]
-                  placeholder:text-[#A5A5A5]
-                  bg-transparent
-                  outline-none
-                "
-              />
+              {editable ? (
+                <input
+                  value={localLocation}
+                  onChange={(e) => {
+                    setLocalLocation(e.target.value)
+                    onChangeLocationText?.(e.target.value)
+                  }}
+                  placeholder="City, State"
+                  size={Math.max(localLocation.length || 0, 8)}
+                  className="
+                    w-auto
+                    text-center
+                    font-inter font-normal
+                    text-[15px] leading-[140%]
+                    text-[#A5A5A5]
+                    placeholder:text-[#A5A5A5]
+                    bg-transparent
+                    outline-none
+                  "
+                />
+              ) : (
+                <span className="font-inter font-normal text-[15px] leading-[140%] text-[#A5A5A5]">
+                  {safeStr(localLocation)}
+                </span>
+              )}
             </div>
           </div>
 
-          <input
-            value={localEmail}
-            onChange={(e) => {
-              setLocalEmail(e.target.value)
-              onChangeEmail?.(e.target.value)
-            }}
-            placeholder="myemailaddress@konfolio.com"
-            className="
-              w-full
-              text-center
-              font-inter font-normal
-              text-[15px] leading-[140%]
-              text-[#A5A5A5]
-              placeholder:text-[#A5A5A5]
-              bg-transparent
-              outline-none
-            "
-          />
+          {editable ? (
+            <input
+              value={localEmail}
+              onChange={(e) => {
+                setLocalEmail(e.target.value)
+                onChangeEmail?.(e.target.value)
+              }}
+              placeholder="myemailaddress@konfolio.com"
+              className="
+                w-full
+                text-center
+                font-inter font-normal
+                text-[15px] leading-[140%]
+                text-[#A5A5A5]
+                placeholder:text-[#A5A5A5]
+                bg-transparent
+                outline-none
+              "
+            />
+          ) : (
+            <p className="m-0 w-full text-center font-inter font-normal text-[15px] leading-[140%] text-[#A5A5A5]">
+              {safeStr(localEmail)}
+            </p>
+          )}
         </div>
       </div>
 
-      <div className="w-[276px] h-[30px] flex items-center justify-center gap-[10px]">
-        <SecondaryButton onClick={onPublish}>{publishLabel}</SecondaryButton>
+      {editable ? (
+        <div className="w-[276px] h-[30px] flex items-center justify-center gap-[10px]">
+          <div className="cursor-pointer">
+            <SecondaryButton onClick={onPublish}>{publishLabel}</SecondaryButton>
+          </div>
 
-        <button
-          type="button"
-          aria-label="Open preview"
-          onClick={onOpenPreview}
-          className="w-[30px] h-[30px] bg-white border border-[#262626] rounded-full flex items-center justify-center cursor-pointer"
-        >
-          <OpenTabIcon className="w-[16px] h-[16px] [&_path]:stroke-[#262626]" />
-        </button>
-      </div>
+          <button
+            type="button"
+            aria-label="Open preview"
+            onClick={onOpenPreview}
+            className="w-[30px] h-[30px] border border-[#262626] rounded-full flex items-center justify-center cursor-pointer"
+          >
+            <OpenTabIcon className="w-[16px] h-[16px] [&_path]:stroke-[#262626]" />
+          </button>
+        </div>
+      ) : null}
     </aside>
   )
 }

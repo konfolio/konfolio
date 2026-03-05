@@ -1,83 +1,23 @@
-[00:00:11.653] Server  LOG     ✓ Ready in 10.2s
-[00:25:24.852] Server  LOG     ✓ Compiled in 3.4s
-[00:25:33.019] Server  LOG     ✓ Compiled in 15ms
-[00:39:24.736] Server  LOG     ✓ Compiled in 2.1s
-[00:44:23.530] Server  LOG     ✓ Compiled in 764ms
-[00:45:48.699] Browser LOG     [PUBLISH] Success: {"ok":true,"publishedAt":"2026-03-04T22:16:42.923Z","status":"published","thumbnailUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/6b285113-a150-4238-9334-b35ab46b8a6b/thumbnail.png","thumbnailUrlWithBust":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/6b285113-a150-4238-9334-b35ab46b8a6b/thumbnail.png?t=2026-03-04T22%3A16%3A42.923Z"}
-[00:54:07.989] Browser LOG     [PUBLISH] Success: {"ok":true,"publishedAt":"2026-03-04T22:25:03.790Z","status":"published","thumbnailUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/344183b6-c9e5-4f69-8a22-87618f5cce86/thumbnail.png","thumbnailUrlWithBust":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/344183b6-c9e5-4f69-8a22-87618f5cce86/thumbnail.png?t=2026-03-04T22%3A25%3A03.790Z"}
-[00:58:19.432] Server  LOG     ✓ Compiled in 2s
-[01:06:40.180] Server  LOG     ✓ Compiled in 294ms
-[01:12:11.843] Server  LOG     ✓ Compiled in 1364ms
-[01:13:36.925] Server  LOG     ✓ Compiled in 309ms
-[01:14:08.898] Server  LOG     ✓ Compiled in 166ms
-[01:19:07.753] Server  LOG     ✓ Compiled in 2.5s
-[01:19:09.385] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
-[01:23:48.281] Server  LOG     ✓ Compiled in 292ms
-[01:26:17.270] Server  LOG     ✓ Compiled in 953ms
-[01:26:19.480] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
-[01:29:29.560] Server  LOG     ✓ Compiled in 325ms
-[01:29:30.169] Browser ERROR   uncaughtError: TypeError: Cannot read properties of undefined (reading 'editName')
-[01:29:38.808] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[01:29:38.808] Server  LOG     ✓ Compiled in 392ms
-[01:29:46.517] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
-[01:30:23.329] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
-[01:33:32.942] Server  LOG     ✓ Compiled in 214ms
-[01:33:33.431] Browser ERROR   uncaughtError: Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `MenuItem`.
-[01:34:16.727] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[01:34:16.823] Server  LOG     ✓ Compiled in 192ms
-[01:34:21.449] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
-[01:38:42.035] Server  LOG     ✓ Compiled in 222ms
-[01:39:11.429] Server  LOG     ✓ Compiled in 261ms
-[01:39:15.072] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
-[01:39:24.281] Browser LOG     more 6b285113-a150-4238-9334-b35ab46b8a6b
-[01:39:27.981] Browser LOG     more a3c1c86c-2507-4b59-8d7a-4ea27f9cf05c
-[01:40:11.963] Browser LOG     more 6b285113-a150-4238-9334-b35ab46b8a6b
-[01:52:49.289] Server  LOG     ✓ Compiled in 406ms
-[01:52:50.171] Browser ERROR   uncaughtError: Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `MenuItem`.
-[01:53:35.854] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[01:53:35.856] Server  LOG     ✓ Compiled in 201ms
-[01:53:40.766] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
-[01:53:50.477] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
-[01:53:57.586] Browser LOG     more a3c1c86c-2507-4b59-8d7a-4ea27f9cf05c
-[01:53:59.771] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
-[01:58:49.156] Server  LOG     ✓ Compiled in 775ms
-[01:59:44.540] Server  LOG     ✓ Compiled in 253ms
-[02:43:29.417] Server  LOG     ✓ Compiled in 2.1s
-[02:48:45.768] Server  LOG     ✓ Compiled in 548ms
-[03:07:25.605] Server  LOG     ✓ Compiled in 607ms
-[03:07:42.125] Server  LOG     ✓ Compiled in 213ms
-[03:50:08.043] Server  LOG     ✓ Compiled in 459ms
-[03:59:43.102] Server  LOG     ✓ Compiled in 538ms
-[04:14:00.178] Server  LOG     ✓ Compiled in 3s
-[04:14:03.974] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
-[04:14:25.623] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
-[04:14:51.286] Server  LOG     ✓ Compiled in 292ms
-[04:15:09.996] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
-[04:15:18.188] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
-[04:59:15.183] Server  LOG     ✓ Compiled in 702ms
-[04:59:27.311] Server  LOG     ✓ Compiled in 725ms
-[04:59:47.348] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
-[06:10:52.759] Server  LOG     ✓ Compiled in 633ms
-[06:11:09.230] Server  LOG     ✓ Compiled in 194ms
-[06:11:21.769] Server  LOG     ✓ Finished filesystem cache database compaction in 10.2s
-[06:11:25.533] Server  LOG     ✓ Compiled in 1009ms
-[06:19:54.532] Browser LOG     [PUBLISH] Success: {"ok":true,"publishedAt":"2026-03-05T03:50:49.433Z","status":"published","thumbnailUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/ad03c7df-5d7c-4b34-be5d-e324cd014670/thumbnail.png","thumbnailUrlWithBust":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/ad03c7df-5d7c-4b34-be5d-e324cd014670/thumbnail.png?t=2026-03-05T03%3A50%3A49.433Z"}
-[06:20:31.157] Browser LOG     more ad03c7df-5d7c-4b34-be5d-e324cd014670
-[06:20:58.447] Server  LOG     ✓ Compiled in 320ms
-[06:27:26.149] Server  LOG     ✓ Compiled in 620ms
-[06:27:55.928] Server  LOG     ✓ Compiled in 840ms
-[06:27:59.410] Browser LOG     more a3c1c86c-2507-4b59-8d7a-4ea27f9cf05c
-[06:29:36.478] Server  LOG     ✓ Compiled in 340ms
-[06:30:54.683] Server  LOG     ✓ Compiled in 191ms
-[06:30:58.586] Browser LOG     more 6b285113-a150-4238-9334-b35ab46b8a6b
-[06:31:11.036] Browser LOG     more a3c1c86c-2507-4b59-8d7a-4ea27f9cf05c
-[06:31:19.667] Browser LOG     more 6b285113-a150-4238-9334-b35ab46b8a6b
-[06:31:30.600] Browser LOG     more a3c1c86c-2507-4b59-8d7a-4ea27f9cf05c
-[06:31:50.961] Browser LOG     more 6b285113-a150-4238-9334-b35ab46b8a6b
-[07:06:37.719] Server  LOG     ✓ Compiled in 408ms
-[07:06:42.907] Browser LOG     more a3c1c86c-2507-4b59-8d7a-4ea27f9cf05c
-[07:06:51.920] Browser LOG     more a3c1c86c-2507-4b59-8d7a-4ea27f9cf05c
+[00:00:06.194] Server  LOG     ✓ Ready in 5.2s
+[00:24:44.540] Server  LOG     ✓ Compiled in 5.7s
+[00:25:09.494] Server  LOG     ✓ Compiled in 269ms
+[00:28:31.575] Server  LOG     ✓ Compiled in 1587ms
+[00:29:15.347] Server  LOG     ✓ Compiled in 212ms
+[00:32:20.025] Server  LOG     ✓ Compiled in 207ms
+[00:32:40.518] Server  LOG     ✓ Compiled in 103ms
+[00:32:54.407] Server  LOG     ✓ Compiled in 145ms
+[00:34:07.824] Server  LOG     ✓ Compiled in 97ms
+[00:34:27.161] Server  LOG     ✓ Compiled in 171ms
+[00:36:49.581] Server  LOG     ✓ Compiled in 353ms
+[00:37:51.430] Server  LOG     ✓ Compiled in 134ms
+[00:38:32.724] Server  LOG     ✓ Compiled in 115ms
+[00:38:32.832] Browser ERROR   uncaughtError: ReferenceError: KonfolioLogoInline is not defined
+[00:39:03.276] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:39:03.290] Server  LOG     ✓ Compiled in 111ms
+[00:39:29.727] Server  LOG     ✓ Compiled in 698ms
+[00:48:39.152] Server  LOG     ✓ Compiled in 320ms
+[00:48:59.012] Server  LOG     ✓ Compiled in 691ms
+[00:51:47.232] Server  LOG     ✓ Compiled in 151ms
+[00:53:10.294] Server  LOG     ✓ Compiled in 252ms
+[00:58:55.895] Server  LOG     ✓ Compiled in 252ms
+[00:59:10.936] Server  LOG     ✓ Finished filesystem cache database compaction in 12.4s

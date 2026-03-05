@@ -93,44 +93,44 @@ export default function LinkPicker({
         key: "website",
         label: "Main Website",
         rightText: "Recommended",
-        icon: <HomeIcon className="text-[#262626]" />,
+        icon: <HomeIcon className="text-[#262626] w-[24px] h-[24px] cursor-pointer" />,
       },
       {
         key: "shop",
         label: "Main Shop",
         rightText: "Recommended",
-        icon: <ShopIcon className="text-[#262626]" />,
+        icon: <ShopIcon className="text-[#262626] w-[24px] h-[24px] cursor-pointer" />,
       },
       {
         key: "instagram",
         label: "Instagram",
         rightText: "Recommended",
-        icon: <InstagramIcon className="text-[#262626]" />,
+        icon: <InstagramIcon className="text-[#262626] w-[24px] h-[24px] cursor-pointer" />,
       },
       {
         key: "x",
         label: "X / Twitter",
-        icon: <XIcon className="text-[#262626]" />,
+        icon: <XIcon className="text-[#262626] w-[24px] h-[24px] cursor-pointer" />,
       },
       {
         key: "facebook",
         label: "Facebook",
-        icon: <FacebookIcon className="text-[#262626]" />,
+        icon: <FacebookIcon className="text-[#262626] w-[24px] h-[24px] cursor-pointer" />,
       },
       {
         key: "tumblr",
         label: "Tumblr",
-        icon: <TumblrIcon className="text-[#262626]" />,
+        icon: <TumblrIcon className="text-[#262626] w-[24px] h-[24px] cursor-pointer" />,
       },
       {
         key: "pixiv",
         label: "Pixiv",
-        icon: <PixivIcon className="text-[#262626]" />,
+        icon: <PixivIcon className="text-[#262626] w-[24px] h-[24px] cursor-pointer" />,
       },
       {
         key: "bluesky",
         label: "Bluesky",
-        icon: <BlueskyIcon className="text-[#262626]" />,
+        icon: <BlueskyIcon className="text-[#262626] w-[24px] h-[24px] cursor-pointer" />,
       },
     ],
     []
@@ -244,6 +244,7 @@ export default function LinkPicker({
                 text-[#A5A5A5]
                 [&_path]:fill-[#A5A5A5]
                 [&_path]:stroke-[#A5A5A5]
+                cursor-pointer
               "
               onClick={(e) => {
                 e.preventDefault()
@@ -267,7 +268,7 @@ export default function LinkPicker({
             setActiveInputKey(null)
             setLinksOpen((v) => !v)
           }}
-          className="w-[18px] h-[18px] flex items-center justify-center text-[#A5A5A5]"
+          className="w-[18px] h-[18px] flex items-center justify-center text-[#A5A5A5] cursor-pointer"
           aria-label="Add link"
         >
           <LinkIcon className="w-[18px] h-[18px]" />

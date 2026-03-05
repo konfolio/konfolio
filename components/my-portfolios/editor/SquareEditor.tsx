@@ -12,7 +12,7 @@ import PublishMissingFieldsPopover from "@/components/my-portfolios/editor/Publi
 
 import { supabase } from "@/lib/supabase/browser"
 
-type Props = { draftId: string }
+type Props = { draftId: string; readOnly?: boolean }
 
 async function getAccessToken(): Promise<string | null> {
   const { data } = await supabase.auth.getSession()
@@ -220,7 +220,6 @@ function computeMissingLabelsSquare(draft: any) {
     : []
   if (merch.length === 0) required.push("Merchandise")
 
-  // square requires 9 images filled
   if (!isGridFilled(draft?.images, 9)) required.push("Featured Image")
 
   const prev = Array.isArray(draft?.previousVends) ? draft.previousVends : []
@@ -232,7 +231,7 @@ function computeMissingLabelsSquare(draft: any) {
   return { required, optional }
 }
 
-export default function SquareEditor({ draftId }: Props) {
+export default function SquareEditor({ draftId, readOnly = false }: Props) {
   const draft = useKonfolioDraftStore((s) => s.draftsById[draftId])
   const patchDraft = useKonfolioDraftStore((s) => s.patchDraft)
 
@@ -274,9 +273,11 @@ export default function SquareEditor({ draftId }: Props) {
     return `${window.location.origin}/my-portfolios/${draftId}/preview`
   }, [publishedUrl, draftId])
 
-  const exitGuardEnabled = draft.status === "draft" || hasUnsavedChanges
+  const exitGuardEnabled = !readOnly && (draft.status === "draft" || hasUnsavedChanges)
 
   async function handlePublish() {
+    if (readOnly) return
+
     setPublishOpen(true)
     setPublishStatus("publishing")
     setPublishError("")
@@ -345,7 +346,9 @@ export default function SquareEditor({ draftId }: Props) {
         return
       }
 
-      setSavedSnapshot(JSON.stringify(snapshotForDirtyCheck({ ...draft, ...content, images, profileImageUrl })))
+      setSavedSnapshot(
+        JSON.stringify(snapshotForDirtyCheck({ ...draft, ...content, images, profileImageUrl }))
+      )
 
       const pubRes = await fetch(`/api/konfolios/${draftId}/publish`, {
         method: "POST",
@@ -388,17 +391,15 @@ export default function SquareEditor({ draftId }: Props) {
     }
   }
 
-  // Shows popover if ANY missing exist.
-  // - If required missing: blocks publish
-  // - If only optional missing: allows publish via popover button
   const onPressPublishWithValidation = useCallback(() => {
+    if (readOnly) return
+
     const missing = computeMissingLabelsSquare(draft)
 
     const hasRequired = missing.required.length > 0
     const hasOptional = missing.optional.length > 0
 
     if (hasRequired || hasOptional) {
-      // IMPORTANT: show BOTH lists, even in required mode
       setMissingRequired(missing.required)
       setMissingOptional(missing.optional)
       setMissingOpen(true)
@@ -406,9 +407,11 @@ export default function SquareEditor({ draftId }: Props) {
     }
 
     void handlePublish()
-  }, [draft])
+  }, [draft, readOnly])
 
   useEffect(() => {
+    if (readOnly) return
+
     ;(window as any).__konfolio_attempt_publish = () => {
       onPressPublishWithValidation()
     }
@@ -418,96 +421,133 @@ export default function SquareEditor({ draftId }: Props) {
         delete (window as any).__konfolio_attempt_publish
       } catch {}
     }
-  }, [onPressPublishWithValidation])
+  }, [onPressPublishWithValidation, readOnly])
 
-  const isOptionalOnlyMode = missingOpen && missingRequired.length === 0 && missingOptional.length > 0
+  const isOptionalOnlyMode = !readOnly && missingOpen && missingRequired.length === 0 && missingOptional.length > 0
+
+  const content = (
+    <main className="w-full min-h-[982px]" style={{ backgroundColor: draft.backgroundColor }}>
+      <div className="w-full px-[25px] sm:px-10 lg:px-[150px]">
+        <div className="mx-auto max-w-[1512px]">
+          <div className="flex items-start justify-center gap-[20px]">
+            <EditSquareProfileSidebar
+              editable={!readOnly}
+              backHref="/my-portfolios"
+              onBack={() => {
+                if (readOnly) {
+                  const editHref = `/my-portfolios/${draftId}/edit`
+                  if (typeof window === "undefined") return
+                  if (window.history.length > 1) window.history.back()
+                  else window.location.href = editHref
+                  return
+                }
+
+                const fn = (window as any).__konfolio_attempt_exit
+                if (typeof fn === "function") {
+                  fn("/my-portfolios")
+                  return
+                }
+                window.location.href = "/my-portfolios"
+              }}
+              bannerColor={draft.bannerColor}
+              backgroundColor={draft.backgroundColor}
+              onChangeBannerColor={readOnly ? undefined : (hex) => patchDraft(draftId, { bannerColor: hex })}
+              onChangeBackgroundColor={
+                readOnly ? undefined : (hex) => patchDraft(draftId, { backgroundColor: hex })
+              }
+              bannerSwatches={bannerSwatches}
+              backgroundSwatches={backgroundSwatches}
+              onChangeBannerSwatches={
+                readOnly ? undefined : (next) => patchDraft(draftId, { bannerSwatches: next } as any)
+              }
+              onChangeBackgroundSwatches={
+                readOnly ? undefined : (next) => patchDraft(draftId, { backgroundSwatches: next } as any)
+              }
+              profileImageUrl={draft.profileImageUrl}
+              onChangeProfileImage={
+                readOnly ? undefined : (_file, objectUrl) => patchDraft(draftId, { profileImageUrl: objectUrl })
+              }
+              businessName={draft.businessName}
+              displayName={draft.displayName}
+              onChangeBusinessName={readOnly ? undefined : (val) => patchDraft(draftId, { businessName: val })}
+              onChangeDisplayName={readOnly ? undefined : (val) => patchDraft(draftId, { displayName: val })}
+              locationText={draft.locationText}
+              onChangeLocationText={readOnly ? undefined : (val) => patchDraft(draftId, { locationText: val })}
+              email={draft.email}
+              onChangeEmail={readOnly ? undefined : (val) => patchDraft(draftId, { email: val })}
+              previousVends={draft.previousVends}
+              onChangePreviousVends={readOnly ? undefined : (vals) => patchDraft(draftId, { previousVends: vals })}
+              linksValue={draft.links}
+              onChangeLinks={readOnly ? undefined : (next) => patchDraft(draftId, { links: next })}
+              merchTags={draft.merchTags}
+              onChangeMerchTags={readOnly ? undefined : (next) => patchDraft(draftId, { merchTags: next })}
+              publishLabel={readOnly ? "" : "Publish"}
+              onPublish={readOnly ? undefined : () => onPressPublishWithValidation()}
+              onOpenPreview={
+                readOnly
+                  ? undefined
+                  : () =>
+                      window.open(
+                        `/my-portfolios/${draftId}/preview`,
+                        "_blank",
+                        "noopener,noreferrer"
+                      )
+              }
+            />
+
+            <EditSquareImageGrid
+              editable={!readOnly}
+              images={draft.images as any}
+              onChangeImages={readOnly ? undefined : (images) => patchDraft(draftId, { images } as any)}
+            />
+          </div>
+        </div>
+      </div>
+
+      {!readOnly && (
+        <>
+          <PublishMissingFieldsPopover
+            open={missingOpen}
+            requiredMissing={missingRequired}
+            optionalMissing={missingOptional}
+            onClose={() => setMissingOpen(false)}
+            onKeepEditing={() => setMissingOpen(false)}
+            onPublishAnyway={
+              isOptionalOnlyMode
+                ? () => {
+                    setMissingOpen(false)
+                    void handlePublish()
+                  }
+                : undefined
+            }
+          />
+
+          <PublishPopover
+            open={publishOpen}
+            onClose={() => {
+              setPublishOpen(false)
+              setPublishStatus("idle")
+              setPublishError("")
+            }}
+            portfolioName={publishedPortfolioName || cleanString(draft.displayName) || "Portfolio"}
+            liveUrl={liveUrl}
+            onExport={() => {}}
+            allowExploreSearch={allowExploreSearch}
+            onToggleExploreSearch={(next) => setAllowExploreSearch(next)}
+            onGoToExplore={() => window.open("/explore", "_blank")}
+            status={publishStatus}
+            errorMessage={publishError}
+          />
+        </>
+      )}
+    </main>
+  )
+
+  if (readOnly) return content
 
   return (
     <KonfolioExitGuard enabled={exitGuardEnabled} draftId={draftId} backHref="/my-portfolios">
-      <main className="w-full min-h-[982px]" style={{ backgroundColor: draft.backgroundColor }}>
-        <div className="w-full px-[25px] sm:px-10 lg:px-[150px]">
-          <div className="mx-auto max-w-[1512px]">
-            <div className="flex items-start justify-center gap-[20px]">
-              <EditSquareProfileSidebar
-                backHref="/my-portfolios"
-                onBack={() => {
-                  const fn = (window as any).__konfolio_attempt_exit
-                  if (typeof fn === "function") {
-                    fn("/my-portfolios")
-                    return
-                  }
-                  window.location.href = "/my-portfolios"
-                }}
-                bannerColor={draft.bannerColor}
-                backgroundColor={draft.backgroundColor}
-                onChangeBannerColor={(hex) => patchDraft(draftId, { bannerColor: hex })}
-                onChangeBackgroundColor={(hex) => patchDraft(draftId, { backgroundColor: hex })}
-                bannerSwatches={bannerSwatches}
-                backgroundSwatches={backgroundSwatches}
-                onChangeBannerSwatches={(next) => patchDraft(draftId, { bannerSwatches: next } as any)}
-                onChangeBackgroundSwatches={(next) => patchDraft(draftId, { backgroundSwatches: next } as any)}
-                profileImageUrl={draft.profileImageUrl}
-                onChangeProfileImage={(_file, objectUrl) => patchDraft(draftId, { profileImageUrl: objectUrl })}
-                businessName={draft.businessName}
-                displayName={draft.displayName}
-                onChangeBusinessName={(val) => patchDraft(draftId, { businessName: val })}
-                onChangeDisplayName={(val) => patchDraft(draftId, { displayName: val })}
-                locationText={draft.locationText}
-                onChangeLocationText={(val) => patchDraft(draftId, { locationText: val })}
-                email={draft.email}
-                onChangeEmail={(val) => patchDraft(draftId, { email: val })}
-                previousVends={draft.previousVends}
-                onChangePreviousVends={(vals) => patchDraft(draftId, { previousVends: vals })}
-                linksValue={draft.links}
-                onChangeLinks={(next) => patchDraft(draftId, { links: next })}
-                merchTags={draft.merchTags}
-                onChangeMerchTags={(next) => patchDraft(draftId, { merchTags: next })}
-                publishLabel="Publish"
-                onPublish={() => onPressPublishWithValidation()}
-                onOpenPreview={() => window.open(`/my-portfolios/${draftId}/preview`, "_blank")}
-              />
-
-              <EditSquareImageGrid
-                images={draft.images as any}
-                onChangeImages={(images) => patchDraft(draftId, { images } as any)}
-              />
-            </div>
-          </div>
-        </div>
-
-        <PublishMissingFieldsPopover
-          open={missingOpen}
-          requiredMissing={missingRequired}
-          optionalMissing={missingOptional}
-          onClose={() => setMissingOpen(false)}
-          onKeepEditing={() => setMissingOpen(false)}
-          onPublishAnyway={
-            isOptionalOnlyMode
-              ? () => {
-                  setMissingOpen(false)
-                  void handlePublish()
-                }
-              : undefined
-          }
-        />
-
-        <PublishPopover
-          open={publishOpen}
-          onClose={() => {
-            setPublishOpen(false)
-            setPublishStatus("idle")
-            setPublishError("")
-          }}
-          portfolioName={publishedPortfolioName || cleanString(draft.displayName) || "Portfolio"}
-          liveUrl={liveUrl}
-          onExport={() => {}}
-          allowExploreSearch={allowExploreSearch}
-          onToggleExploreSearch={(next) => setAllowExploreSearch(next)}
-          onGoToExplore={() => window.open("/explore", "_blank")}
-          status={publishStatus}
-          errorMessage={publishError}
-        />
-      </main>
+      {content}
     </KonfolioExitGuard>
   )
 }

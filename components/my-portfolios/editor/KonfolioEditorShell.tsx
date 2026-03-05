@@ -11,6 +11,11 @@ import { supabase } from "@/lib/supabase/browser"
 type Props = {
   konfolioId: string
   initialDraft?: KonfolioDraft
+  /**
+   * edit: normal editor experience (default)
+   * preview: renders the portfolio preview (no edit affordances)
+   */
+  mode?: "edit" | "preview"
 }
 
 type SocialKey =
@@ -124,7 +129,7 @@ function draftFromGetResponse(data: any): KonfolioDraft | null {
   return draft
 }
 
-export default function KonfolioEditorShell({ konfolioId, initialDraft }: Props) {
+export default function KonfolioEditorShell({ konfolioId, initialDraft, mode = "edit" }: Props) {
   const draft = useKonfolioDraftStore((s) => s.draftsById[konfolioId])
   const setDraft = useKonfolioDraftStore((s) => s.setDraft)
 
@@ -216,6 +221,12 @@ export default function KonfolioEditorShell({ konfolioId, initialDraft }: Props)
     )
   }
 
-  if (readyDraft.template === "square") return <SquareEditor draftId={konfolioId} />
-  return <PortraitEditor draftId={konfolioId} />
+  // We pass a "readonly" flag down so editors can disable edit affordances.
+  const readOnly = mode === "preview"
+
+  if (readyDraft.template === "square") {
+    return <SquareEditor draftId={konfolioId} readOnly={readOnly} />
+  }
+
+  return <PortraitEditor draftId={konfolioId} readOnly={readOnly} />
 }
