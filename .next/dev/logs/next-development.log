@@ -50,3 +50,21 @@ Check the render method of `MenuItem`.
 [02:48:45.768] Server  LOG     ✓ Compiled in 548ms
 [03:07:25.605] Server  LOG     ✓ Compiled in 607ms
 [03:07:42.125] Server  LOG     ✓ Compiled in 213ms
+[03:50:08.043] Server  LOG     ✓ Compiled in 459ms
+[03:59:43.102] Server  LOG     ✓ Compiled in 538ms
+[04:14:00.178] Server  LOG     ✓ Compiled in 3s
+[04:14:03.974] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
+[04:14:25.623] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
+[04:14:51.286] Server  LOG     ✓ Compiled in 292ms
+[04:15:09.996] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
+[04:15:18.188] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
+[04:59:15.183] Server  LOG     ✓ Compiled in 702ms
+[04:59:27.311] Server  LOG     ✓ Compiled in 725ms
+[04:59:47.348] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
+[06:10:52.759] Server  LOG     ✓ Compiled in 633ms
+[06:11:09.230] Server  LOG     ✓ Compiled in 194ms
+[06:11:21.769] Server  LOG     ✓ Finished filesystem cache database compaction in 10.2s
+[06:11:25.533] Server  LOG     ✓ Compiled in 1009ms
+[06:19:54.532] Browser LOG     [PUBLISH] Success: {"ok":true,"publishedAt":"2026-03-05T03:50:49.433Z","status":"published","thumbnailUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/ad03c7df-5d7c-4b34-be5d-e324cd014670/thumbnail.png","thumbnailUrlWithBust":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/ad03c7df-5d7c-4b34-be5d-e324cd014670/thumbnail.png?t=2026-03-05T03%3A50%3A49.433Z"}
+[06:20:31.157] Browser LOG     more ad03c7df-5d7c-4b34-be5d-e324cd014670
+[06:20:58.447] Server  LOG     ✓ Compiled in 320ms

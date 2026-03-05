@@ -13,7 +13,10 @@ import OpenTabIcon from "@/components/icons/OpenTabIcon"
 import ThreeDotsIcon from "@/components/icons/ThreeDotsIcon"
 import CheckIcon from "@/components/icons/CheckIcon"
 
-import PortfolioMoreMenu from "@/components/my-portfolios/dashboard/PortfolioMoreMenu"
+import PortfolioMoreMenu, {
+  type PortfolioMoreAction,
+} from "@/components/my-portfolios/dashboard/PortfolioMoreMenu"
+import PortfolioDeleteConfirm from "@/components/my-portfolios/dashboard/PortfolioDeleteConfirm"
 
 import PencilIcon from "@/components/icons/PencilIcon"
 import LinkIcon from "@/components/icons/LinkIcon"
@@ -21,6 +24,8 @@ import ExportIcon from "@/components/icons/ExportIcon"
 import TrashIcon from "@/components/icons/TrashIcon"
 
 type Props = {
+  id: string
+
   portfolioName: string
   publicUrl: string
 
@@ -38,17 +43,29 @@ type Props = {
   onMore?: () => void
 
   onCopyUrl?: () => void
+
+  // Optional menu actions
+  onEditName?: () => void
+  onLinkAccessOnly?: () => void
+  onDuplicate?: () => void
+  onEditUrl?: () => void
+  onExport?: () => void
+
+  // Delete handler provided by grid (does API + optimistic removal there)
+  onDelete?: (id: string) => Promise<void> | void
 }
 
 function formatCompact(n: number) {
   if (!Number.isFinite(n)) return "0"
   const abs = Math.abs(n)
-  if (abs >= 1_000_000) return `${(n / 1_000_000).toFixed(abs >= 10_000_000 ? 0 : 1)}M`
+  if (abs >= 1_000_000)
+    return `${(n / 1_000_000).toFixed(abs >= 10_000_000 ? 0 : 1)}M`
   if (abs >= 1_000) return `${(n / 1_000).toFixed(abs >= 10_000 ? 0 : 1)}K`
   return String(Math.round(n))
 }
 
 export default function DashPortfolio({
+  id,
   portfolioName,
   publicUrl,
   thumbnailUrl,
@@ -64,8 +81,67 @@ export default function DashPortfolio({
   onEdit,
   onMore,
   onCopyUrl,
+
+  onEditName,
+  onLinkAccessOnly,
+  onDuplicate,
+  onEditUrl,
+  onExport,
+
+  onDelete,
 }: Props) {
   const [menuOpen, setMenuOpen] = React.useState(false)
+
+  const [deleteOpen, setDeleteOpen] = React.useState(false)
+  const [isDeleting, setIsDeleting] = React.useState(false)
+
+  const closeMenu = React.useCallback(() => setMenuOpen(false), [])
+  const closeDelete = React.useCallback(() => setDeleteOpen(false), [])
+
+  const handleMenuAction = React.useCallback(
+    (action: PortfolioMoreAction) => {
+      closeMenu()
+
+      switch (action) {
+        case "editName":
+          onEditName?.()
+          return
+        case "linkAccessOnly":
+          onLinkAccessOnly?.()
+          return
+        case "duplicate":
+          onDuplicate?.()
+          return
+        case "editUrl":
+          onEditUrl?.()
+          return
+        case "export":
+          onExport?.()
+          return
+        case "delete":
+          setDeleteOpen(true)
+          return
+        default:
+          return
+      }
+    },
+    [closeMenu, onEditName, onLinkAccessOnly, onDuplicate, onEditUrl, onExport]
+  )
+
+  const handleConfirmDelete = React.useCallback(async () => {
+    if (!onDelete) {
+      setDeleteOpen(false)
+      return
+    }
+
+    setIsDeleting(true)
+    try {
+      await onDelete(id)
+      setDeleteOpen(false)
+    } finally {
+      setIsDeleting(false)
+    }
+  }, [onDelete, id])
 
   return (
     <div
@@ -216,9 +292,7 @@ export default function DashPortfolio({
             <PortfolioMoreMenu
               open={menuOpen}
               onClose={() => setMenuOpen(false)}
-              onAction={() => {
-                // intentionally no-op for now
-              }}
+              onAction={handleMenuAction}
               icons={{
                 editName: PencilIcon,
                 linkAccessOnly: LinkIcon,
@@ -232,6 +306,18 @@ export default function DashPortfolio({
           </div>
         </div>
       </div>
+
+      <PortfolioDeleteConfirm
+        open={deleteOpen}
+        onClose={closeDelete}
+        onCancel={closeDelete}
+        onConfirmDelete={handleConfirmDelete}
+        isDeleting={isDeleting}
+        title="Are you sure to delete?"
+        subtitle="This portfolio cannot be recovered after deletion."
+        confirmLabel={isDeleting ? "Deleting..." : "Delete"}
+        cancelLabel="Return"
+      />
     </div>
   )
 }

@@ -4,6 +4,8 @@
 import * as React from "react"
 import DashPortfolio from "@/components/my-portfolios/dashboard/DashPortfolio"
 
+import { supabase } from "@/lib/supabase/browser"
+
 type KonfolioStatus = "draft" | "published"
 
 export type DashboardKonfolio = {
@@ -35,6 +37,9 @@ type Props = {
 
   urlBase?: string
   urlPrefix?: string
+
+  // NEW: lets the header update without refresh
+  onPublishedCountChange?: (count: number) => void
 }
 
 function formatDateLabel(iso?: string | null) {
@@ -52,6 +57,26 @@ function buildPublicUrl(urlBase: string, urlPrefix: string, slug: string) {
   return `${base}${path}`
 }
 
+async function getAccessToken(): Promise<string | null> {
+  const { data } = await supabase.auth.getSession()
+  return data.session?.access_token ?? null
+}
+
+async function deleteKonfolioRow(konfolioId: string): Promise<void> {
+  const token = await getAccessToken()
+  if (!token) throw new Error("Not signed in")
+
+  const res = await fetch(`/api/konfolios/${konfolioId}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  })
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "")
+    throw new Error(text || `Delete failed (${res.status})`)
+  }
+}
+
 export default function DashPortfolioGrid({
   items,
   className,
@@ -61,16 +86,43 @@ export default function DashPortfolioGrid({
   onCopyUrl,
   urlBase = "",
   urlPrefix = "",
+  onPublishedCountChange,
 }: Props) {
+  const [localItems, setLocalItems] = React.useState<DashboardKonfolio[]>(items)
+
+  React.useEffect(() => {
+    setLocalItems(items)
+  }, [items])
+
   const published = React.useMemo(
     () =>
-      items
+      localItems
         .filter((k) => k.status === "published")
         .sort((a, b) => {
           const at = a.updatedAt ? new Date(a.updatedAt).getTime() : 0
           const bt = b.updatedAt ? new Date(b.updatedAt).getTime() : 0
           return bt - at
         }),
+    [localItems]
+  )
+
+  React.useEffect(() => {
+    onPublishedCountChange?.(published.length)
+  }, [published.length, onPublishedCountChange])
+
+  const handleDelete = React.useCallback(
+    async (id: string) => {
+      // optimistic removal
+      setLocalItems((cur) => cur.filter((k) => k.id !== id))
+
+      try {
+        await deleteKonfolioRow(id)
+      } catch (e) {
+        // rollback to the latest incoming items (safer than capturing stale localItems)
+        setLocalItems(items)
+        throw e
+      }
+    },
     [items]
   )
 
@@ -93,6 +145,7 @@ export default function DashPortfolioGrid({
           return (
             <DashPortfolio
               key={k.id}
+              id={k.id}
               portfolioName={k.portfolioName}
               publicUrl={publicUrl}
               thumbnailUrl={k.thumbnailUrl ?? null}
@@ -105,6 +158,7 @@ export default function DashPortfolioGrid({
               onEdit={onEdit ? () => onEdit(k.id) : undefined}
               onMore={onMore ? () => onMore(k.id) : undefined}
               onCopyUrl={onCopyUrl ? () => onCopyUrl(publicUrl) : undefined}
+              onDelete={handleDelete}
             />
           )
         })}

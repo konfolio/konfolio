@@ -46,6 +46,14 @@ export default function MyPortfoliosPage() {
   const [items, setItems] = useState<DashboardKonfolio[]>([])
   const [loading, setLoading] = useState(true)
 
+  // NEW: count that drives the header without refresh
+  const [publishedCount, setPublishedCount] = useState(0)
+
+  useEffect(() => {
+    // keep header count in sync when items are initially loaded / refetched
+    setPublishedCount(items.filter((k) => k.status === "published").length)
+  }, [items])
+
   useEffect(() => {
     let mounted = true
 
@@ -81,7 +89,9 @@ export default function MyPortfoliosPage() {
 
       const res = await supabase
         .from("konfolios")
-        .select("id, user_id, portfolio_name, portfolio_slug, status, thumbnail_url, updated_at, published_at")
+        .select(
+          "id, user_id, portfolio_name, portfolio_slug, status, thumbnail_url, updated_at, published_at"
+        )
         .eq("user_id", user.id)
         .order("updated_at", { ascending: false })
 
@@ -127,7 +137,10 @@ export default function MyPortfoliosPage() {
     }
   }, [])
 
-  const hasPublished = useMemo(() => items.some((k) => k.status === "published"), [items])
+  const hasPublished = useMemo(
+    () => items.some((k) => k.status === "published"),
+    [items]
+  )
 
   function openCreateFlow() {
     setPendingPortfolioName("")
@@ -152,6 +165,7 @@ export default function MyPortfoliosPage() {
         editHref="/profile"
         createHref="/create"
         onClickCreate={openCreateFlow}
+        konfolioCount={publishedCount}
       />
 
       <section className="w-full flex justify-center px-6">
@@ -161,6 +175,7 @@ export default function MyPortfoliosPage() {
               items={items}
               urlBase=""
               urlPrefix={businessSlug}
+              onPublishedCountChange={setPublishedCount}
               onView={(id) => {
                 window.location.href = `/my-portfolios/${id}/preview`
               }}
