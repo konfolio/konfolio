@@ -68,3 +68,16 @@ Check the render method of `MenuItem`.
 [06:19:54.532] Browser LOG     [PUBLISH] Success: {"ok":true,"publishedAt":"2026-03-05T03:50:49.433Z","status":"published","thumbnailUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/ad03c7df-5d7c-4b34-be5d-e324cd014670/thumbnail.png","thumbnailUrlWithBust":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/ad03c7df-5d7c-4b34-be5d-e324cd014670/thumbnail.png?t=2026-03-05T03%3A50%3A49.433Z"}
 [06:20:31.157] Browser LOG     more ad03c7df-5d7c-4b34-be5d-e324cd014670
 [06:20:58.447] Server  LOG     ✓ Compiled in 320ms
+[06:27:26.149] Server  LOG     ✓ Compiled in 620ms
+[06:27:55.928] Server  LOG     ✓ Compiled in 840ms
+[06:27:59.410] Browser LOG     more a3c1c86c-2507-4b59-8d7a-4ea27f9cf05c
+[06:29:36.478] Server  LOG     ✓ Compiled in 340ms
+[06:30:54.683] Server  LOG     ✓ Compiled in 191ms
+[06:30:58.586] Browser LOG     more 6b285113-a150-4238-9334-b35ab46b8a6b
+[06:31:11.036] Browser LOG     more a3c1c86c-2507-4b59-8d7a-4ea27f9cf05c
+[06:31:19.667] Browser LOG     more 6b285113-a150-4238-9334-b35ab46b8a6b
+[06:31:30.600] Browser LOG     more a3c1c86c-2507-4b59-8d7a-4ea27f9cf05c
+[06:31:50.961] Browser LOG     more 6b285113-a150-4238-9334-b35ab46b8a6b
+[07:06:37.719] Server  LOG     ✓ Compiled in 408ms
+[07:06:42.907] Browser LOG     more a3c1c86c-2507-4b59-8d7a-4ea27f9cf05c
+[07:06:51.920] Browser LOG     more a3c1c86c-2507-4b59-8d7a-4ea27f9cf05c

@@ -1,4 +1,5 @@
 // /components/my-portfolios/dashboard/DashPortfolio.tsx
+// FULL FILE with ExportPopover integrated
 "use client"
 
 import * as React from "react"
@@ -17,6 +18,7 @@ import PortfolioMoreMenu, {
   type PortfolioMoreAction,
 } from "@/components/my-portfolios/dashboard/PortfolioMoreMenu"
 import PortfolioDeleteConfirm from "@/components/my-portfolios/dashboard/PortfolioDeleteConfirm"
+import ExportPopover from "@/components/my-portfolios/dashboard/ExportPopover"
 
 import PencilIcon from "@/components/icons/PencilIcon"
 import LinkIcon from "@/components/icons/LinkIcon"
@@ -49,7 +51,7 @@ type Props = {
   onLinkAccessOnly?: () => void
   onDuplicate?: () => void
   onEditUrl?: () => void
-  onExport?: () => void
+  onExportPick?: (type: "pdf" | "png" | "jpeg") => void
 
   // Delete handler provided by grid (does API + optimistic removal there)
   onDelete?: (id: string) => Promise<void> | void
@@ -86,7 +88,7 @@ export default function DashPortfolio({
   onLinkAccessOnly,
   onDuplicate,
   onEditUrl,
-  onExport,
+  onExportPick,
 
   onDelete,
 }: Props) {
@@ -95,8 +97,11 @@ export default function DashPortfolio({
   const [deleteOpen, setDeleteOpen] = React.useState(false)
   const [isDeleting, setIsDeleting] = React.useState(false)
 
+  const [exportOpen, setExportOpen] = React.useState(false)
+
   const closeMenu = React.useCallback(() => setMenuOpen(false), [])
   const closeDelete = React.useCallback(() => setDeleteOpen(false), [])
+  const closeExport = React.useCallback(() => setExportOpen(false), [])
 
   const handleMenuAction = React.useCallback(
     (action: PortfolioMoreAction) => {
@@ -116,7 +121,7 @@ export default function DashPortfolio({
           onEditUrl?.()
           return
         case "export":
-          onExport?.()
+          setExportOpen(true)
           return
         case "delete":
           setDeleteOpen(true)
@@ -125,7 +130,7 @@ export default function DashPortfolio({
           return
       }
     },
-    [closeMenu, onEditName, onLinkAccessOnly, onDuplicate, onEditUrl, onExport]
+    [closeMenu, onEditName, onLinkAccessOnly, onDuplicate, onEditUrl]
   )
 
   const handleConfirmDelete = React.useCallback(async () => {
@@ -316,7 +321,18 @@ export default function DashPortfolio({
         title="Are you sure to delete?"
         subtitle="This portfolio cannot be recovered after deletion."
         confirmLabel={isDeleting ? "Deleting..." : "Delete"}
-        cancelLabel="Return"
+        cancelLabel="Cancel"
+      />
+
+      <ExportPopover
+        open={exportOpen}
+        onClose={closeExport}
+        portfolioName={portfolioName}
+        thumbnailUrl={thumbnailUrl ?? null}
+        onPick={(type) => {
+          closeExport()
+          onExportPick?.(type)
+        }}
       />
     </div>
   )

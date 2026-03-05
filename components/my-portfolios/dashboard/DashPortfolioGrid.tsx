@@ -7,6 +7,7 @@ import DashPortfolio from "@/components/my-portfolios/dashboard/DashPortfolio"
 import { supabase } from "@/lib/supabase/browser"
 
 type KonfolioStatus = "draft" | "published"
+type ExportType = "pdf" | "png" | "jpeg"
 
 export type DashboardKonfolio = {
   id: string
@@ -35,6 +36,9 @@ type Props = {
 
   onCopyUrl?: (url: string) => void
 
+  // NEW: triggered when export is chosen + type picked
+  onExport?: (id: string, type: ExportType) => void
+
   urlBase?: string
   urlPrefix?: string
 
@@ -46,7 +50,11 @@ function formatDateLabel(iso?: string | null) {
   if (!iso) return "—"
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return "—"
-  return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
+  return d.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })
 }
 
 function buildPublicUrl(urlBase: string, urlPrefix: string, slug: string) {
@@ -84,6 +92,7 @@ export default function DashPortfolioGrid({
   onEdit,
   onMore,
   onCopyUrl,
+  onExport,
   urlBase = "",
   urlPrefix = "",
   onPublishedCountChange,
@@ -112,13 +121,12 @@ export default function DashPortfolioGrid({
 
   const handleDelete = React.useCallback(
     async (id: string) => {
-      // optimistic removal
       setLocalItems((cur) => cur.filter((k) => k.id !== id))
 
       try {
         await deleteKonfolioRow(id)
       } catch (e) {
-        // rollback to the latest incoming items (safer than capturing stale localItems)
+        // rollback to latest incoming items
         setLocalItems(items)
         throw e
       }
@@ -158,6 +166,13 @@ export default function DashPortfolioGrid({
               onEdit={onEdit ? () => onEdit(k.id) : undefined}
               onMore={onMore ? () => onMore(k.id) : undefined}
               onCopyUrl={onCopyUrl ? () => onCopyUrl(publicUrl) : undefined}
+              onExportPick={
+                onExport
+                  ? (type) => {
+                      onExport(k.id, type)
+                    }
+                  : undefined
+              }
               onDelete={handleDelete}
             />
           )
