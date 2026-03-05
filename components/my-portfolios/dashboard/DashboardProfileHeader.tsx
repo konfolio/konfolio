@@ -102,8 +102,6 @@ export default function DashboardProfileHeader({
         setProfile((profileRes.data as Profile | null) ?? null)
       }
 
-      // Count published konfolios for this user.
-      // If your schema differs, update user_id/status accordingly.
       const countRes = await supabase
         .from("konfolios")
         .select("id", { count: "exact", head: true })
@@ -132,6 +130,27 @@ export default function DashboardProfileHeader({
     }
   }, [])
 
+  function handleProfileSaved(patch: Profile) {
+    setProfile((prev) => {
+      const base =
+        prev ?? ({
+          first_name: null,
+          last_name: null,
+          preferred_name: null,
+          business_name: null,
+          profile_image_url: null,
+        } as Profile)
+
+      return {
+        first_name: patch.first_name ?? base.first_name ?? null,
+        last_name: patch.last_name ?? base.last_name ?? null,
+        preferred_name: patch.preferred_name ?? base.preferred_name ?? null,
+        business_name: patch.business_name ?? base.business_name ?? null,
+        profile_image_url: patch.profile_image_url ?? base.profile_image_url ?? null,
+      }
+    })
+  }
+
   const fullName = useMemo(() => fullNameFromProfile(profile), [profile])
 
   const resolvedProfileImageUrl =
@@ -151,14 +170,12 @@ export default function DashboardProfileHeader({
       return fullName
     })()
 
-  // If parent provides override, keep it; otherwise use publishedCount from supabase
   const resolvedCount = konfolioCountOverride ?? publishedCount
   const showChecker = !resolvedProfileImageUrl
 
   const limitReached = resolvedCount >= MAX_PUBLISHED_KONFOLIOS
   const createBlocked = signedIn && limitReached
 
-  // popover data
   const popoverData: ArtistProfilePopupData = useMemo(
     () => ({
       profileImageUrl: resolvedProfileImageUrl,
@@ -198,9 +215,7 @@ export default function DashboardProfileHeader({
       >
         <div className="w-full flex items-center justify-center px-[150px] pt-[15px]">
           <div className="w-full max-w-[1212px] h-[80px] flex items-end justify-between gap-[15px]">
-            {/* Profile */}
             <div className="flex items-center gap-[19px] h-[80px] flex-1 min-w-0">
-              {/* Avatar */}
               <div className="relative w-[80px] h-[80px] rounded-[71.4286px] overflow-hidden bg-[#F7F7F7] shrink-0">
                 {!showChecker ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -222,7 +237,6 @@ export default function DashboardProfileHeader({
                 )}
               </div>
 
-              {/* Info */}
               <div className="flex flex-col items-start py-[5px] h-[80px] flex-1 min-w-0">
                 <div className="flex flex-col items-start gap-[4px] w-full">
                   <div className="text-[20px] leading-[28px] font-normal text-[#262626] truncate">
@@ -239,7 +253,7 @@ export default function DashboardProfileHeader({
                 <button
                   type="button"
                   onClick={() => setProfilePopoverOpen(true)}
-                  className="mt-[15px] inline-flex items-center gap-[4px] h-[16px] rounded-full hover:opacity-80 active:opacity-70"
+                  className="mt-[15px] inline-flex items-center gap-[4px] h-[16px] rounded-full hover:opacity-80 active:opacity-70 cursor-pointer"
                 >
                   <PencilIcon className="w-[16px] h-[16px]" />
                   <span className="text-[12px] leading-[130%] font-normal text-[#262626]">
@@ -253,7 +267,6 @@ export default function DashboardProfileHeader({
               </div>
             </div>
 
-            {/* Create Field */}
             <div className="flex flex-col items-end gap-[14px] w-[150px] h-[54px] shrink-0">
               <div className="text-right text-[14px] leading-[130%] font-normal text-[#A5A5A5] w-full">
                 {pad2(resolvedCount)} konfolios
@@ -293,6 +306,7 @@ export default function DashboardProfileHeader({
         open={profilePopoverOpen}
         onClose={() => setProfilePopoverOpen(false)}
         data={popoverData}
+        onSaved={handleProfileSaved}
       />
 
       <KonfolioLimitModal

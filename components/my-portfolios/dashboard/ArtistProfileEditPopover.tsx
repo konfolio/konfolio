@@ -44,10 +44,20 @@ export type ArtistProfilePopupData = {
   betaText?: string
 }
 
+type SavedProfilePatch = {
+  first_name: string | null
+  last_name: string | null
+  preferred_name: string | null
+  business_name: string | null
+  profile_image_url: string | null
+}
+
 type Props = {
   open: boolean
   onClose: () => void
   data?: ArtistProfilePopupData
+
+  onSaved?: (patch: SavedProfilePatch) => void
 
   onToggleExploreTag?: (label: string) => void
   onAddSalesPermit?: () => void
@@ -92,6 +102,11 @@ const SOCIAL_ROWS: { key: SocialKey; label: string; Icon: React.ComponentType<an
   { key: "tumblr", label: "Tumblr", Icon: TumblrIcon },
   { key: "pixiv", label: "Pixiv", Icon: PixivIcon },
 ]
+
+async function getAccessToken(): Promise<string | null> {
+  const { data } = await supabase.auth.getSession()
+  return data.session?.access_token ?? null
+}
 
 function formatMemberSince(createdAt?: string | null) {
   if (!createdAt) return "Member since —"
@@ -155,7 +170,6 @@ function stableJson(v: any) {
   }
 }
 
-// Enter-to-add helpers
 function normalizeUrlInput(raw: string) {
   const s = raw.trim()
   if (!s) return ""
@@ -217,6 +231,7 @@ export default function ArtistProfileEditPopover({
   open,
   onClose,
   data,
+  onSaved,
   onToggleExploreTag,
   onAddSalesPermit,
   onSupport,
@@ -292,7 +307,14 @@ export default function ArtistProfileEditPopover({
   const [isDirty, setIsDirty] = useState(false)
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle")
 
+  // Avatar (deferred upload until Save)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [pendingAvatarFile, setPendingAvatarFile] = useState<File | null>(null)
+  const [pendingAvatarPreviewUrl, setPendingAvatarPreviewUrl] = useState<string>("")
+  const [profileImageUrlText, setProfileImageUrlText] = useState<string>(profileImageUrl || "")
+
   const initialRef = useRef<{
+    profileImageUrlText: string
     businessNameText: string
     locationText: string
     firstNameText: string
@@ -320,10 +342,20 @@ export default function ArtistProfileEditPopover({
   useEffect(() => setMerchTags(merchTagsFromProps), [merchTagsFromProps])
 
   useEffect(() => {
+    setProfileImageUrlText(profileImageUrl || "")
+  }, [profileImageUrl])
+
+  useEffect(() => {
     return () => {
       if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current)
     }
   }, [])
+
+  useEffect(() => {
+    return () => {
+      if (pendingAvatarPreviewUrl) URL.revokeObjectURL(pendingAvatarPreviewUrl)
+    }
+  }, [pendingAvatarPreviewUrl])
 
   useEffect(() => {
     if (!open) return
@@ -343,6 +375,11 @@ export default function ArtistProfileEditPopover({
     initialRef.current = null
     if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current)
 
+    setPendingAvatarFile(null)
+    if (pendingAvatarPreviewUrl) URL.revokeObjectURL(pendingAvatarPreviewUrl)
+    setPendingAvatarPreviewUrl("")
+    setProfileImageUrlText(profileImageUrl || "")
+
     let cancelled = false
 
     async function loadProfileMeta() {
@@ -354,7 +391,7 @@ export default function ArtistProfileEditPopover({
 
       const metaRes = await supabase
         .from("profiles")
-        .select("location, created_at, prev_vends, collabs, merch_tags, sales_permit, links")
+        .select("location, created_at, prev_vends, collabs, merch_tags, sales_permit, links, profile_image_url")
         .eq("id", userId)
         .maybeSingle()
 
@@ -391,6 +428,13 @@ export default function ArtistProfileEditPopover({
         setExploreTags(COLLAB_OPTIONS.map((label) => ({ label, checked: selected.has(label) })))
       } else {
         setExploreTags(COLLAB_OPTIONS.map((label) => ({ label, checked: false })))
+      }
+
+      const dbAvatar = String(row.profile_image_url ?? "").trim()
+      if (dbAvatar) {
+        setProfileImageUrlText(dbAvatar)
+      } else {
+        setProfileImageUrlText(profileImageUrl || "")
       }
 
       const optionalRes = await supabase
@@ -436,6 +480,7 @@ export default function ArtistProfileEditPopover({
       }
 
       initialRef.current = {
+        profileImageUrlText: String(dbAvatar || profileImageUrl || "").trim(),
         businessNameText: String(bn ?? "").trim(),
         firstNameText: String(fn ?? "").trim(),
         lastNameText: String(ln ?? "").trim(),
@@ -468,6 +513,7 @@ export default function ArtistProfileEditPopover({
     const currentCollabs = exploreTags.filter((t) => t.checked).map((t) => t.label)
 
     const same =
+      profileImageUrlText.trim() === init.profileImageUrlText.trim() &&
       businessNameText.trim() === init.businessNameText.trim() &&
       firstNameText.trim() === init.firstNameText.trim() &&
       lastNameText.trim() === init.lastNameText.trim() &&
@@ -486,6 +532,7 @@ export default function ArtistProfileEditPopover({
       if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current)
     }
   }, [
+    profileImageUrlText,
     businessNameText,
     firstNameText,
     lastNameText,
@@ -521,6 +568,53 @@ export default function ArtistProfileEditPopover({
     onToggleExploreTag?.(label)
   }
 
+  function onPickAvatarClick() {
+    fileInputRef.current?.click()
+  }
+
+  function onAvatarFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] || null
+    e.target.value = ""
+    if (!file) return
+    if (!file.type.startsWith("image/")) return
+
+    setPendingAvatarFile(file)
+
+    if (pendingAvatarPreviewUrl) URL.revokeObjectURL(pendingAvatarPreviewUrl)
+    const nextPreview = URL.createObjectURL(file)
+    setPendingAvatarPreviewUrl(nextPreview)
+
+    setProfileImageUrlText("__pending_upload__")
+  }
+
+  async function uploadPendingAvatarIfAny(): Promise<string | null> {
+    if (!pendingAvatarFile) return null
+
+    const token = await getAccessToken()
+    if (!token) throw new Error("Not signed in")
+
+    const fd = new FormData()
+    fd.append("file", pendingAvatarFile)
+
+    const res = await fetch("/api/profile-image/upload", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: fd,
+    })
+
+    if (!res.ok) {
+      const txt = await res.text().catch(() => "")
+      console.log("[ArtistProfileEditPopover] avatar upload failed:", res.status, txt)
+      throw new Error("Failed to upload profile image")
+    }
+
+    const json = (await res.json().catch(() => null)) as { profileImageUrl?: string } | null
+    const newUrl = (json?.profileImageUrl || "").trim()
+    if (!newUrl) throw new Error("Upload missing profileImageUrl")
+
+    return newUrl
+  }
+
   async function handleSave() {
     setSaveError("")
     setIsSaving(true)
@@ -534,7 +628,12 @@ export default function ArtistProfileEditPopover({
 
       const collabs = exploreTags.filter((t) => t.checked).map((t) => t.label)
 
-      const payload = {
+      let avatarUrlToSave: string | null = null
+      if (pendingAvatarFile) {
+        avatarUrlToSave = await uploadPendingAvatarIfAny()
+      }
+
+      const payload: any = {
         business_name: businessNameText.trim() || null,
         first_name: firstNameText.trim() || null,
         last_name: lastNameText.trim() || null,
@@ -547,13 +646,41 @@ export default function ArtistProfileEditPopover({
         links: limitLinksToMax(linksMap, 5),
       }
 
+      if (avatarUrlToSave) {
+        payload.profile_image_url = avatarUrlToSave
+      }
+
       const res = await supabase.from("profiles").update(payload).eq("id", userId)
       if (res.error) throw res.error
+
+      const newProfileImageUrl =
+        avatarUrlToSave ??
+        (profileImageUrlText && profileImageUrlText !== "__pending_upload__"
+          ? profileImageUrlText
+          : profileImageUrl || null)
+
+      onSaved?.({
+        business_name: (payload.business_name ?? null) as string | null,
+        first_name: (payload.first_name ?? null) as string | null,
+        last_name: (payload.last_name ?? null) as string | null,
+        preferred_name: (payload.preferred_name ?? null) as string | null,
+        profile_image_url: (newProfileImageUrl || null) as string | null,
+      })
 
       const savedLinks = limitLinksToMax(linksMap, 5)
       setLinksMap(savedLinks)
 
+      if (avatarUrlToSave) {
+        setProfileImageUrlText(avatarUrlToSave)
+        setPendingAvatarFile(null)
+        if (pendingAvatarPreviewUrl) URL.revokeObjectURL(pendingAvatarPreviewUrl)
+        setPendingAvatarPreviewUrl("")
+      }
+
+      const finalAvatarForInit = String(newProfileImageUrl ?? "").trim()
+
       initialRef.current = {
+        profileImageUrlText: finalAvatarForInit,
         businessNameText: String(payload.business_name ?? "").trim(),
         firstNameText: String(payload.first_name ?? "").trim(),
         lastNameText: String(payload.last_name ?? "").trim(),
@@ -585,6 +712,12 @@ export default function ArtistProfileEditPopover({
   }
 
   if (!open) return null
+
+  const avatarSrc =
+    pendingAvatarPreviewUrl ||
+    (profileImageUrlText && profileImageUrlText !== "__pending_upload__" ? profileImageUrlText : "")
+
+  const showChecker = !avatarSrc
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center px-6">
@@ -657,21 +790,53 @@ export default function ArtistProfileEditPopover({
           </div>
 
           <div className="flex flex-row items-start gap-[29px] py-[20px]">
-            <div className="w-[80px] h-[80px] rounded-[71.4286px] overflow-hidden bg-[#F7F7F7] shrink-0 relative">
-              {profileImageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={profileImageUrl} alt="Profile" className="w-full h-full object-cover" />
-              ) : (
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(45deg, #E9E9E9 25%, transparent 25%), linear-gradient(-45deg, #E9E9E9 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #E9E9E9 75%), linear-gradient(-45deg, transparent 75%, #E9E9E9 75%)",
-                    backgroundSize: "20px 20px",
-                    backgroundPosition: "0 0, 0 10px, 10px -10px, -10px 0px",
-                  }}
-                />
-              )}
+            <div className="w-[80px] h-[80px] shrink-0 relative">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={onAvatarFileChange}
+              />
+
+              <button
+                type="button"
+                onClick={onPickAvatarClick}
+                className={[
+                  "group relative w-[80px] h-[80px]",
+                  "rounded-[71.4286px] overflow-hidden bg-[#F7F7F7]",
+                  "cursor-pointer",
+                ].join(" ")}
+                aria-label="Choose profile photo"
+              >
+                {!showChecker ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={avatarSrc} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(45deg, #E9E9E9 25%, transparent 25%), linear-gradient(-45deg, #E9E9E9 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #E9E9E9 75%), linear-gradient(-45deg, transparent 75%, #E9E9E9 75%)",
+                      backgroundSize: "20px 20px",
+                      backgroundPosition: "0 0, 0 10px, 10px -10px, -10px 0px",
+                    }}
+                  />
+                )}
+
+                <span
+                  className={[
+                    "absolute bottom-[6px] right-[6px]",
+                    "w-[25px] h-[25px] p-[3px]",
+                    "flex items-center justify-center",
+                    "bg-white rounded-[15.5px]",
+                    "shadow-[0_0_4px_rgba(0,0,0,0.1)]",
+                    "opacity-0 group-hover:opacity-100 transition-opacity",
+                  ].join(" ")}
+                >
+                  <PencilIcon className="w-[18px] h-[18px]" />
+                </span>
+              </button>
             </div>
 
             <div className="w-[526px] flex flex-col gap-[50px]">

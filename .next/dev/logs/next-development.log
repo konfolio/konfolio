@@ -44,3 +44,9 @@ Check the render method of `MenuItem`.
 [01:53:50.477] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
 [01:53:57.586] Browser LOG     more a3c1c86c-2507-4b59-8d7a-4ea27f9cf05c
 [01:53:59.771] Browser LOG     more 344183b6-c9e5-4f69-8a22-87618f5cce86
+[01:58:49.156] Server  LOG     ✓ Compiled in 775ms
+[01:59:44.540] Server  LOG     ✓ Compiled in 253ms
+[02:43:29.417] Server  LOG     ✓ Compiled in 2.1s
+[02:48:45.768] Server  LOG     ✓ Compiled in 548ms
+[03:07:25.605] Server  LOG     ✓ Compiled in 607ms
+[03:07:42.125] Server  LOG     ✓ Compiled in 213ms
