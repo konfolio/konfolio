@@ -1,23 +1,39 @@
-[00:00:06.194] Server  LOG     ✓ Ready in 5.2s
-[00:24:44.540] Server  LOG     ✓ Compiled in 5.7s
-[00:25:09.494] Server  LOG     ✓ Compiled in 269ms
-[00:28:31.575] Server  LOG     ✓ Compiled in 1587ms
-[00:29:15.347] Server  LOG     ✓ Compiled in 212ms
-[00:32:20.025] Server  LOG     ✓ Compiled in 207ms
-[00:32:40.518] Server  LOG     ✓ Compiled in 103ms
-[00:32:54.407] Server  LOG     ✓ Compiled in 145ms
-[00:34:07.824] Server  LOG     ✓ Compiled in 97ms
-[00:34:27.161] Server  LOG     ✓ Compiled in 171ms
-[00:36:49.581] Server  LOG     ✓ Compiled in 353ms
-[00:37:51.430] Server  LOG     ✓ Compiled in 134ms
-[00:38:32.724] Server  LOG     ✓ Compiled in 115ms
-[00:38:32.832] Browser ERROR   uncaughtError: ReferenceError: KonfolioLogoInline is not defined
-[00:39:03.276] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[00:39:03.290] Server  LOG     ✓ Compiled in 111ms
-[00:39:29.727] Server  LOG     ✓ Compiled in 698ms
-[00:48:39.152] Server  LOG     ✓ Compiled in 320ms
-[00:48:59.012] Server  LOG     ✓ Compiled in 691ms
-[00:51:47.232] Server  LOG     ✓ Compiled in 151ms
-[00:53:10.294] Server  LOG     ✓ Compiled in 252ms
-[00:58:55.895] Server  LOG     ✓ Compiled in 252ms
-[00:59:10.936] Server  LOG     ✓ Finished filesystem cache database compaction in 12.4s
+[00:00:04.218] Server  LOG     ✓ Ready in 3.5s
+[00:00:59.181] Browser LOG     [PUBLISH] Success: {"ok":true,"publishedAt":"2026-03-06T00:09:42.004Z","status":"published","thumbnailUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/a3c1c86c-2507-4b59-8d7a-4ea27f9cf05c/thumbnail.png","thumbnailUrlWithBust":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/a3c1c86c-2507-4b59-8d7a-4ea27f9cf05c/thumbnail.png?t=2026-03-06T00%3A09%3A42.004Z"}
+[00:06:12.707] Server  LOG     ✓ Compiled in 1842ms
+[00:07:51.182] Server  LOG     ✓ Compiled in 0ms
+[00:09:49.114] Server  LOG     ✓ Compiled in 426ms
+[00:15:19.787] Server  LOG     ✓ Compiled in 1833ms
+[00:16:22.658] Server  LOG     ✓ Compiled in 469ms
+[00:16:32.855] Server  LOG     ✓ Compiled in 147ms
+[00:17:01.533] Server  ERROR   Error: You cannot use different slug names for the same dynamic path ('portfolioName' !== 'portfolio').
+[00:17:01.575] Server  ERROR   ⨯ "unhandledRejection:" Error: You cannot use different slug names for the same dynamic path ('portfolioName' !== 'portfolio').
+[00:17:01.603] Server  ERROR   ⨯ "unhandledRejection: " Error: You cannot use different slug names for the same dynamic path ('portfolioName' !== 'portfolio').
+[00:17:07.007] Server  ERROR   Error: You cannot use different slug names for the same dynamic path ('portfolioName' !== 'portfolio').
+[00:17:07.037] Server  ERROR   ⨯ "unhandledRejection:" Error: You cannot use different slug names for the same dynamic path ('portfolioName' !== 'portfolio').
+[00:17:07.070] Server  ERROR   ⨯ "unhandledRejection: " Error: You cannot use different slug names for the same dynamic path ('portfolioName' !== 'portfolio').
+[00:20:11.419] Browser LOG     [PUBLISH] Success: {"ok":true,"publishedAt":"2026-03-06T00:29:02.368Z","status":"published","thumbnailUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/6b285113-a150-4238-9334-b35ab46b8a6b/thumbnail.png","thumbnailUrlWithBust":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/6b285113-a150-4238-9334-b35ab46b8a6b/thumbnail.png?t=2026-03-06T00%3A29%3A02.368Z"}
+[00:26:00.145] Server  LOG     ✓ Compiled in 858ms
+[00:31:45.421] Server  LOG     ✓ Compiled in 815ms
+[00:31:52.627] Server  LOG     ✓ Finished filesystem cache database compaction in 11.7s
+[00:33:18.040] Server  LOG     ✓ Compiled in 2.7s
+[00:36:02.396] Server  LOG     ✓ Compiled in 342ms
+[00:36:27.611] Server  LOG     ✓ Compiled in 193ms
+[00:37:42.045] Server  LOG     ✓ Compiled in 207ms
+[00:38:51.596] Server  LOG     ✓ Compiled in 272ms
+[00:39:52.758] Server  LOG     ✓ Compiled in 238ms
+[00:41:18.882] Server  LOG     ✓ Compiled in 337ms
+[00:43:00.436] Server  LOG     ✓ Compiled in 140ms
+[00:43:14.341] Server  LOG     ✓ Compiled in 128ms
+[00:49:34.173] Server  LOG     ✓ Compiled in 287ms
+[00:50:06.754] Server  LOG     ✓ Compiled in 133ms
+[00:51:12.795] Server  LOG     ✓ Compiled in 166ms
+[00:54:21.686] Browser LOG     [PUBLISH] Success: {"ok":true,"publishedAt":"2026-03-06T01:03:07.040Z","status":"published","thumbnailUrl":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/6b285113-a150-4238-9334-b35ab46b8a6b/thumbnail.png","thumbnailUrlWithBust":"https://jhocsvjoqsncizdsmyol.supabase.co/storage/v1/object/public/konfolio-images/805adce4-3914-4b33-8a74-56da2ba4b779/6b285113-a150-4238-9334-b35ab46b8a6b/thumbnail.png?t=2026-03-06T01%3A03%3A07.040Z"}
+[00:54:56.666] Server  LOG     ✓ Compiled in 290ms
+[00:55:34.495] Server  LOG     ✓ Compiled in 565ms
+[00:58:37.865] Server  LOG     ✓ Compiled in 318ms
+[00:59:22.983] Server  LOG     ✓ Compiled in 206ms
+[01:00:23.445] Server  LOG     ✓ Compiled in 230ms
+[01:00:47.833] Server  LOG     ✓ Compiled in 188ms
+[01:01:08.625] Server  LOG     ✓ Compiled in 139ms
+[01:01:19.087] Server  LOG     ✓ Compiled in 126ms

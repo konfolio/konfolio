@@ -1,5 +1,4 @@
 // /components/my-portfolios/dashboard/DashPortfolio.tsx
-// FULL FILE with ExportPopover integrated
 "use client"
 
 import * as React from "react"
@@ -19,6 +18,7 @@ import PortfolioMoreMenu, {
 } from "@/components/my-portfolios/dashboard/PortfolioMoreMenu"
 import PortfolioDeleteConfirm from "@/components/my-portfolios/dashboard/PortfolioDeleteConfirm"
 import ExportPopover from "@/components/my-portfolios/dashboard/ExportPopover"
+import HoverTag from "@/components/my-portfolios/dashboard/HoverTag"
 
 import PencilIcon from "@/components/icons/PencilIcon"
 import LinkIcon from "@/components/icons/LinkIcon"
@@ -46,14 +46,12 @@ type Props = {
 
   onCopyUrl?: () => void
 
-  // Optional menu actions
   onEditName?: () => void
   onLinkAccessOnly?: () => void
   onDuplicate?: () => void
   onEditUrl?: () => void
   onExportPick?: (type: "pdf" | "png" | "jpeg") => void
 
-  // Delete handler provided by grid (does API + optimistic removal there)
   onDelete?: (id: string) => Promise<void> | void
 }
 
@@ -64,6 +62,14 @@ function formatCompact(n: number) {
     return `${(n / 1_000_000).toFixed(abs >= 10_000_000 ? 0 : 1)}M`
   if (abs >= 1_000) return `${(n / 1_000).toFixed(abs >= 10_000 ? 0 : 1)}K`
   return String(Math.round(n))
+}
+
+function normalizePublicUrl(url: string) {
+  const trimmed = String(url ?? "").trim()
+  if (!trimmed) return ""
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed
+  if (trimmed.startsWith("/")) return trimmed
+  return `/${trimmed}`
 }
 
 export default function DashPortfolio({
@@ -93,15 +99,65 @@ export default function DashPortfolio({
   onDelete,
 }: Props) {
   const [menuOpen, setMenuOpen] = React.useState(false)
-
   const [deleteOpen, setDeleteOpen] = React.useState(false)
   const [isDeleting, setIsDeleting] = React.useState(false)
-
   const [exportOpen, setExportOpen] = React.useState(false)
+  const [copied, setCopied] = React.useState(false)
+
+  const copyTimeoutRef = React.useRef<number | null>(null)
 
   const closeMenu = React.useCallback(() => setMenuOpen(false), [])
   const closeDelete = React.useCallback(() => setDeleteOpen(false), [])
   const closeExport = React.useCallback(() => setExportOpen(false), [])
+
+  React.useEffect(() => {
+    return () => {
+      if (copyTimeoutRef.current) {
+        window.clearTimeout(copyTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  const resolvedPublicUrl = React.useMemo(() => normalizePublicUrl(publicUrl), [publicUrl])
+
+  const handleOpenPublished = React.useCallback(() => {
+    if (!resolvedPublicUrl) return
+    window.open(resolvedPublicUrl, "_blank", "noopener,noreferrer")
+  }, [resolvedPublicUrl])
+
+  const handleCopyLink = React.useCallback(async () => {
+    const url = resolvedPublicUrl
+    if (!url) return
+
+    const fullUrl =
+      typeof window !== "undefined" && url.startsWith("/")
+        ? `${window.location.origin}${url}`
+        : url
+
+    try {
+      await navigator.clipboard.writeText(fullUrl)
+    } catch {
+      const textarea = document.createElement("textarea")
+      textarea.value = fullUrl
+      textarea.setAttribute("readonly", "")
+      textarea.style.position = "absolute"
+      textarea.style.left = "-9999px"
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand("copy")
+      document.body.removeChild(textarea)
+    }
+
+    onCopyUrl?.()
+
+    setCopied(true)
+    if (copyTimeoutRef.current) {
+      window.clearTimeout(copyTimeoutRef.current)
+    }
+    copyTimeoutRef.current = window.setTimeout(() => {
+      setCopied(false)
+    }, 1500)
+  }, [resolvedPublicUrl, onCopyUrl])
 
   const handleMenuAction = React.useCallback(
     (action: PortfolioMoreAction) => {
@@ -199,25 +255,37 @@ export default function DashPortfolio({
 
       <div className="w-full h-[17px] flex items-center justify-between">
         <div className="flex items-center gap-[25px]">
-          <div className="flex items-center gap-[5px]">
+          <div className="relative group/views flex items-center gap-[5px]">
             <EyeIcon className="text-[#262626]" />
             <span className="text-[#262626] text-[14px] leading-[130%] font-normal">
               {formatCompact(views)}
             </span>
+
+            <div className="absolute left-1/2 -translate-x-1/2 top-[-31px] opacity-0 pointer-events-none group-hover/views:opacity-100 transition-opacity duration-150 z-20">
+              <HoverTag label="Views" />
+            </div>
           </div>
 
-          <div className="flex items-center gap-[5px]">
+          <div className="relative group/visitors flex items-center gap-[5px]">
             <UserIcon className="text-[#262626]" />
             <span className="text-[#262626] text-[14px] leading-[130%] font-normal">
               {formatCompact(viewers)}
             </span>
+
+            <div className="absolute left-1/2 -translate-x-1/2 top-[-31px] opacity-0 pointer-events-none group-hover/visitors:opacity-100 transition-opacity duration-150 z-20">
+              <HoverTag label="Visitors" />
+            </div>
           </div>
 
-          <div className="flex items-center gap-[5px]">
+          <div className="relative group/clicks flex items-center gap-[5px]">
             <HandPointingIcon className="text-[#262626]" />
             <span className="text-[#262626] text-[14px] leading-[130%] font-normal">
               {formatCompact(linkClicks)}
             </span>
+
+            <div className="absolute left-1/2 -translate-x-1/2 top-[-31px] opacity-0 pointer-events-none group-hover/clicks:opacity-100 transition-opacity duration-150 z-20">
+              <HoverTag label="Link clicks" />
+            </div>
           </div>
         </div>
 
@@ -236,21 +304,32 @@ export default function DashPortfolio({
           </div>
         </div>
 
-        <div className="w-full h-[10px] flex items-center gap-[5px]">
-          <div className="flex items-center h-[10px] max-w-[349px]">
-            <span className="text-[#A5A5A5] text-[14px] leading-[130%] font-normal truncate">
-              {publicUrl}
-            </span>
-          </div>
-
+        <div className="w-full h-[10px] relative">
           <button
             type="button"
-            onClick={onCopyUrl}
-            className="inline-flex items-center justify-center cursor-pointer"
-            aria-label="Copy URL"
-            title="Copy URL"
+            onClick={handleCopyLink}
+            className="w-full flex items-center gap-[5px] cursor-pointer"
+            aria-label="Copy published link"
+            title="Copy published link"
           >
-            <CopyIcon className="text-[#A5A5A5]" />
+            <span className="min-w-0 truncate text-[#A5A5A5] text-[14px] leading-[130%] font-normal">
+              {publicUrl}
+            </span>
+
+            {/* ICON + TOOLTIP ANCHOR */}
+            <span className="relative flex items-center flex-shrink-0">
+              <CopyIcon className="w-[10px] h-[10px] text-[#A5A5A5]" />
+
+              <div
+                className={[
+                  "absolute left-1/2 -translate-x-1/2 top-[-38px] z-30",
+                  "transition-opacity duration-200",
+                  copied ? "opacity-100" : "opacity-0 pointer-events-none",
+                ].join(" ")}
+              >
+                <HoverTag label="Copied link" />
+              </div>
+            </span>
           </button>
         </div>
       </div>
@@ -266,7 +345,7 @@ export default function DashPortfolio({
         <div className="flex items-center justify-end gap-[5.33px]">
           <button
             type="button"
-            onClick={onView}
+            onClick={handleOpenPublished}
             className={[
               "h-[22px] min-w-[120px] px-[20px] py-[5px] rounded-[100px]",
               "bg-[#262626] text-white",

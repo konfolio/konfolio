@@ -1,4 +1,3 @@
-// /components/my-portfolios/dashboard/DashPortfolioGrid.tsx
 "use client"
 
 import * as React from "react"
@@ -13,6 +12,7 @@ export type DashboardKonfolio = {
   id: string
   portfolioName: string
   portfolioSlug: string
+  businessName: string
   status: KonfolioStatus
 
   thumbnailUrl?: string | null
@@ -36,13 +36,10 @@ type Props = {
 
   onCopyUrl?: (url: string) => void
 
-  // NEW: triggered when export is chosen + type picked
   onExport?: (id: string, type: ExportType) => void
 
   urlBase?: string
-  urlPrefix?: string
 
-  // NEW: lets the header update without refresh
   onPublishedCountChange?: (count: number) => void
 }
 
@@ -57,10 +54,22 @@ function formatDateLabel(iso?: string | null) {
   })
 }
 
-function buildPublicUrl(urlBase: string, urlPrefix: string, slug: string) {
+function slugify(input: string): string {
+  return (input || "")
+    .toLowerCase()
+    .trim()
+    .replace(/['"]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+}
+
+function buildPublicUrl(urlBase: string, businessName: string, portfolioSlug: string) {
   const base = urlBase.replace(/\/+$/, "")
-  const prefix = urlPrefix ? `/${urlPrefix.replace(/^\/+|\/+$/g, "")}` : ""
-  const path = `${prefix}/${slug}`.replace(/\/{2,}/g, "/")
+  const business = slugify(businessName)
+  const portfolio = slugify(portfolioSlug)
+  const path = `/${business}/${portfolio}`
+
   if (!base) return path
   return `${base}${path}`
 }
@@ -94,7 +103,6 @@ export default function DashPortfolioGrid({
   onCopyUrl,
   onExport,
   urlBase = "",
-  urlPrefix = "",
   onPublishedCountChange,
 }: Props) {
   const [localItems, setLocalItems] = React.useState<DashboardKonfolio[]>(items)
@@ -126,7 +134,6 @@ export default function DashPortfolioGrid({
       try {
         await deleteKonfolioRow(id)
       } catch (e) {
-        // rollback to latest incoming items
         setLocalItems(items)
         throw e
       }
@@ -148,7 +155,7 @@ export default function DashPortfolioGrid({
     <div className={className}>
       <div className="flex flex-wrap gap-[20px]">
         {published.map((k) => {
-          const publicUrl = buildPublicUrl(urlBase, urlPrefix, k.portfolioSlug)
+          const publicUrl = buildPublicUrl(urlBase, k.businessName, k.portfolioSlug)
 
           return (
             <DashPortfolio

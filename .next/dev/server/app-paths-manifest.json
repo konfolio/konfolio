@@ -1,4 +1,8 @@
 {
+  "/[business]/[portfolioName]/page": "app/[business]/[portfolioName]/page.js",
+  "/[business]/[portfolio]/page": "app/[business]/[portfolio]/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/konfolios/[id]/publish/route": "app/api/konfolios/[id]/publish/route.js",
   "/api/konfolios/[id]/route": "app/api/konfolios/[id]/route.js",
   "/my-portfolios/[konfolioId]/edit/page": "app/my-portfolios/[konfolioId]/edit/page.js",
   "/my-portfolios/[konfolioId]/preview/page": "app/my-portfolios/[konfolioId]/preview/page.js",

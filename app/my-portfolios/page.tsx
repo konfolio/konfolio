@@ -1,4 +1,3 @@
-// /app/my-portfolios/page.tsx
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
@@ -17,13 +16,14 @@ import { supabase } from "@/lib/supabase/browser"
 type TemplateType = "square" | "portrait"
 
 function slugify(input: string) {
-  return input
+  return (input || "")
     .trim()
     .toLowerCase()
     .replace(/['"]/g, "")
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "")
-    .slice(0, 40)
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80)
 }
 
 type KonfolioRow = {
@@ -41,16 +41,14 @@ export default function MyPortfoliosPage() {
   const [nameCardOpen, setNameCardOpen] = useState(false)
   const [createPopoverOpen, setCreatePopoverOpen] = useState(false)
   const [pendingPortfolioName, setPendingPortfolioName] = useState("")
-  const [businessSlug, setBusinessSlug] = useState("businessname")
+  const [businessName, setBusinessName] = useState("Business Name")
 
   const [items, setItems] = useState<DashboardKonfolio[]>([])
   const [loading, setLoading] = useState(true)
 
-  // NEW: count that drives the header without refresh
   const [publishedCount, setPublishedCount] = useState(0)
 
   useEffect(() => {
-    // keep header count in sync when items are initially loaded / refetched
     setPublishedCount(items.filter((k) => k.status === "published").length)
   }, [items])
 
@@ -70,8 +68,9 @@ export default function MyPortfoliosPage() {
         .maybeSingle()
 
       if (!mounted) return
+
       const bn = String(profileRes.data?.business_name ?? "").trim()
-      setBusinessSlug(bn ? slugify(bn) : "businessname")
+      setBusinessName(bn || "Business Name")
     }
 
     async function loadKonfolios() {
@@ -86,6 +85,16 @@ export default function MyPortfoliosPage() {
         setLoading(false)
         return
       }
+
+      const profileRes = await supabase
+        .from("profiles")
+        .select("business_name")
+        .eq("id", user.id)
+        .maybeSingle()
+
+      if (!mounted) return
+
+      const userBusinessName = String(profileRes.data?.business_name ?? "").trim() || "Business Name"
 
       const res = await supabase
         .from("konfolios")
@@ -110,6 +119,7 @@ export default function MyPortfoliosPage() {
         id: r.id,
         portfolioName: String(r.portfolio_name ?? "Untitled"),
         portfolioSlug: String(r.portfolio_slug ?? r.id),
+        businessName: userBusinessName,
         status: r.status === "published" ? "published" : "draft",
         thumbnailUrl: r.thumbnail_url,
         updatedAt: r.updated_at,
@@ -141,6 +151,8 @@ export default function MyPortfoliosPage() {
     () => items.some((k) => k.status === "published"),
     [items]
   )
+
+  const businessSlug = useMemo(() => slugify(businessName), [businessName])
 
   function openCreateFlow() {
     setPendingPortfolioName("")
@@ -174,11 +186,7 @@ export default function MyPortfoliosPage() {
             <DashPortfolioGrid
               items={items}
               urlBase=""
-              urlPrefix={businessSlug}
               onPublishedCountChange={setPublishedCount}
-              onView={(id) => {
-                window.location.href = `/my-portfolios/${id}/preview`
-              }}
               onEdit={(id) => {
                 window.location.href = `/my-portfolios/${id}/edit`
               }}
@@ -186,8 +194,13 @@ export default function MyPortfoliosPage() {
                 console.log("more", id)
               }}
               onCopyUrl={async (url) => {
+                const fullUrl =
+                  typeof window !== "undefined" && url.startsWith("/")
+                    ? `${window.location.origin}${url}`
+                    : url
+
                 try {
-                  await navigator.clipboard.writeText(url)
+                  await navigator.clipboard.writeText(fullUrl)
                 } catch {
                   // intentionally ignore
                 }

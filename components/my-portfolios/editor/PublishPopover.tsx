@@ -9,6 +9,7 @@ import OpenTabIcon from "@/components/icons/OpenTabIcon"
 import ExportIcon from "@/components/icons/ExportIcon"
 import DeleteIcon from "@/components/icons/DeleteIcon"
 import ArrowRightIcon from "@/components/icons/ArrowRight"
+import HoverTag from "@/components/my-portfolios/dashboard/HoverTag"
 
 type Props = {
   open: boolean
@@ -72,6 +73,7 @@ export default function PublishPopover({
   errorMessage = "",
 }: Props) {
   const cardRef = useRef<HTMLDivElement | null>(null)
+  const copyTimeoutRef = useRef<number | null>(null)
 
   useClickOutside(cardRef, () => {
     if (open) onClose()
@@ -83,6 +85,14 @@ export default function PublishPopover({
     if (!open) return
     setCopied(false)
   }, [open])
+
+  useEffect(() => {
+    return () => {
+      if (copyTimeoutRef.current) {
+        window.clearTimeout(copyTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const captionName = (portfolioName || "").trim() || "Portfolio"
 
@@ -102,9 +112,27 @@ export default function PublishPopover({
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(safeLiveUrl)
-      setCopied(true)
-      window.setTimeout(() => setCopied(false), 1200)
-    } catch {}
+    } catch {
+      const textarea = document.createElement("textarea")
+      textarea.value = safeLiveUrl
+      textarea.setAttribute("readonly", "")
+      textarea.style.position = "absolute"
+      textarea.style.left = "-9999px"
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand("copy")
+      document.body.removeChild(textarea)
+    }
+
+    setCopied(true)
+
+    if (copyTimeoutRef.current) {
+      window.clearTimeout(copyTimeoutRef.current)
+    }
+
+    copyTimeoutRef.current = window.setTimeout(() => {
+      setCopied(false)
+    }, 1200)
   }
 
   function handleOpenTab() {
@@ -117,7 +145,6 @@ export default function PublishPopover({
 
   if (!open) return null
 
-  // IMPORTANT FIX: Only show spinner when status === "publishing"
   const isPublishing = status === "publishing"
 
   return (
@@ -127,7 +154,6 @@ export default function PublishPopover({
       aria-modal="true"
       aria-label="Publish popover"
     >
-      {/* Backdrop */}
       <button
         type="button"
         aria-label="Close publish popover"
@@ -135,12 +161,10 @@ export default function PublishPopover({
         className="absolute inset-0 bg-black/20"
       />
 
-      {/* Card */}
       <div
         ref={cardRef}
         className="relative isolate bg-white rounded-[15px] shadow-[5px_5px_25px_rgba(0,0,0,0.1)] w-[872px] h-[444px] px-[111px] py-[25px] flex flex-col items-center justify-between"
       >
-        {/* Close button (DeleteIcon, 2x, pointer on hover) */}
         <button
           type="button"
           onClick={onClose}
@@ -152,14 +176,12 @@ export default function PublishPopover({
           </span>
         </button>
 
-        {/* Logo */}
         <div className="relative h-[18px] w-[81px] select-none">
           <div className="absolute left-[1.29px] top-[3.21px] font-[Inknut_Antiqua] font-semibold text-[17.4721px] leading-[45px] tracking-[-0.02em] text-[#262626]">
             konfolio
           </div>
         </div>
 
-        {/* Publishing */}
         {isPublishing ? (
           <div className="w-[650px] flex-1 flex flex-col items-center justify-center">
             <div className="flex items-center gap-3 text-[#262626]">
@@ -178,7 +200,6 @@ export default function PublishPopover({
           </div>
         ) : status === "success" ? (
           <>
-            {/* Success */}
             <div className="w-[650px] h-[211px] flex flex-col items-center gap-[50px]">
               <div className="w-[650px] h-[16px] text-center font-semibold text-[22px] leading-[27px] text-[#262626]">
                 {captionName} has been published!
@@ -196,7 +217,7 @@ export default function PublishPopover({
                   </button>
 
                   <div className="h-full flex-1 flex items-center pl-5 pr-5">
-                    <span className="text-[15px] leading-[150%] text-[#262626] truncate flex-1">
+                    <span className="text-[15px] leading-[150%] text-[#262626] truncate">
                       {safeLiveUrl}
                     </span>
 
@@ -218,23 +239,24 @@ export default function PublishPopover({
                     onClick={handleCopy}
                     className="h-full w-[156px] bg-[#F3F3FE] rounded-l-[100px] flex items-center justify-center cursor-pointer"
                   >
-                    <span className="text-[15px] leading-[150%] text-[#262626]">
-                      {copied ? "Copied" : "Copy link"}
-                    </span>
+                    <span className="text-[15px] leading-[150%] text-[#262626]">Copy link</span>
                   </button>
 
                   <div className="h-full flex-1 flex items-center pl-5 pr-5">
-                    <span className="text-[15px] leading-[150%] text-[#262626] truncate flex-1">
-                      {safeLiveUrl}
-                    </span>
-
                     <button
                       type="button"
                       onClick={handleCopy}
+                      className="w-full h-full flex items-center gap-[7px] cursor-pointer text-left"
                       aria-label="Copy link"
-                      className="ml-[7px] h-4 w-4 flex items-center justify-center text-[#A5A5A5] cursor-pointer"
+                      title="Copy link"
                     >
-                      <CopyIcon className="h-4 w-4" />
+                      <span className="min-w-0 truncate text-[15px] leading-[150%] text-[#262626]">
+                        {safeLiveUrl}
+                      </span>
+
+                      <span className="relative flex items-center flex-shrink-0 text-[#A5A5A5]">
+                        <CopyIcon className="h-4 w-4 text-[#A5A5A5] [&_path]:stroke-[#A5A5A5]" />
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -250,7 +272,7 @@ export default function PublishPopover({
                   </button>
 
                   <div className="h-full flex-1 flex items-center pl-5 pr-5">
-                    <span className="text-[15px] leading-[150%] text-[#262626] truncate flex-1">
+                    <span className="text-[15px] leading-[150%] text-[#262626] truncate">
                       {derivedExportLabel}
                     </span>
 
@@ -267,7 +289,6 @@ export default function PublishPopover({
               </div>
             </div>
 
-            {/* Explore toggle */}
             <div className="w-[258px] h-[49.5px] flex flex-col items-center justify-center gap-[15px]">
               <button
                 type="button"
@@ -300,7 +321,6 @@ export default function PublishPopover({
             </div>
           </>
         ) : (
-          // status === "idle" fallback (should rarely happen while open)
           <div className="w-[650px] flex-1 flex flex-col items-center justify-center">
             <div className="text-[15px] leading-[150%] text-[#262626]">Preparing publish…</div>
           </div>
