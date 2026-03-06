@@ -1,194 +1,232 @@
-import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-import chromium from "@sparticuz/chromium";
-import puppeteer from "puppeteer-core";
-import fs from "fs";
+import { NextResponse } from "next/server"
+import { createClient } from "@supabase/supabase-js"
+import chromium from "@sparticuz/chromium"
+import puppeteer from "puppeteer-core"
+import fs from "fs"
 
 async function getExecutablePath() {
-  // If you set a custom path, use it
-  if (process.env.CHROME_EXECUTABLE_PATH) return process.env.CHROME_EXECUTABLE_PATH;
+  if (process.env.CHROME_EXECUTABLE_PATH) return process.env.CHROME_EXECUTABLE_PATH
 
-  // Local Mac default Chrome path
-  const macChrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
-  if (fs.existsSync(macChrome)) return macChrome;
+  const macChrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+  if (fs.existsSync(macChrome)) return macChrome
 
-  // Fallback to serverless chromium (Linux)
-  return await chromium.executablePath();
+  return await chromium.executablePath()
 }
 
-export const runtime = "nodejs";
+export const runtime = "nodejs"
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+)
 
 function getBearerToken(req: Request) {
-  const authHeader = req.headers.get("authorization") || "";
-  if (!authHeader.startsWith("Bearer ")) return null;
-  return authHeader.slice("Bearer ".length).trim();
+  const authHeader = req.headers.get("authorization") || ""
+  if (!authHeader.startsWith("Bearer ")) return null
+  return authHeader.slice("Bearer ".length).trim()
 }
 
-function escapeHtml(s: string) {
-  return s
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
+function slugify(input: string): string {
+  return (input || "")
+    .toLowerCase()
+    .trim()
+    .replace(/['"]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
 }
 
-// Minimal HTML snapshot from DB content (good enough for thumbnails)
-function buildThumbnailHtml(konfolio: { template: string; content: any }) {
-  const c = konfolio.content ?? {};
-  const template = konfolio.template ?? "square";
-  const bg = c.backgroundColor ?? "#F7F7F7";
-  const banner = c.bannerColor ?? "#FFFFFF";
-  const displayName = escapeHtml(String(c.displayName ?? "Name"));
-  const locationText = escapeHtml(String(c.locationText ?? ""));
-  const profileImageUrl = String(c.profileImageUrl ?? "").trim();
+function getAppBaseUrl(req: Request) {
+  const envUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL
 
-  const images: any[] = Array.isArray(c.images) ? c.images : [];
-  const cols = template === "portrait" ? 2 : 3;
+  if (envUrl && envUrl.trim()) {
+    return envUrl.replace(/\/+$/, "")
+  }
 
-  const cells = images
-    .map((cell) => {
-      const src = String(cell?.src ?? "").trim();
-      if (src) {
-        return `
-          <div class="cell">
-            <img src="${escapeHtml(src)}" />
-          </div>
-        `;
-      }
-      return `<div class="cell placeholder"></div>`;
-    })
-    .join("");
-
-  return `<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <style>
-    * { box-sizing: border-box; }
-    body { margin: 0; background: ${bg}; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
-    .wrap { max-width: 900px; margin: 0 auto; padding: 40px 25px; }
-    .card { background: ${banner}; border-radius: 18px; padding: 18px; margin-bottom: 18px; }
-    .row { display: flex; gap: 14px; align-items: center; }
-    .avatar { width: 56px; height: 56px; border-radius: 50%; background: #e5e5e5; overflow: hidden; flex: 0 0 auto; }
-    .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .name { font-size: 18px; font-weight: 700; color: #262626; line-height: 1.2; }
-    .loc { font-size: 13px; color: #666; margin-top: 2px; }
-    .grid { display: grid; grid-template-columns: repeat(${cols}, 1fr); gap: 12px; }
-    .cell { background: #fff; border-radius: 16px; overflow: hidden; aspect-ratio: 1/1; }
-    .cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .placeholder { background: #f1f1f1; }
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <div class="card">
-      <div class="row">
-        <div class="avatar">
-          ${profileImageUrl ? `<img src="${escapeHtml(profileImageUrl)}" />` : ""}
-        </div>
-        <div>
-          <div class="name">${displayName}</div>
-          <div class="loc">${locationText}</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid">
-      ${cells}
-    </div>
-  </div>
-</body>
-</html>`;
+  const url = new URL(req.url)
+  return url.origin.replace(/\/+$/, "")
 }
 
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
+  let browser: Awaited<ReturnType<typeof puppeteer.launch>> | null = null
+
   try {
-    const { id: konfolioId } = await ctx.params;
+    const { id: konfolioId } = await ctx.params
+    console.log("[THUMBNAIL] Starting publish thumbnail generation for konfolio:", konfolioId)
 
-    // 1) Auth
-    const token = getBearerToken(req);
-    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const token = getBearerToken(req)
+    if (!token) {
+      console.log("[THUMBNAIL] Missing bearer token")
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
 
-    const { data: userData, error: userErr } = await supabaseAdmin.auth.getUser(token);
-    if (userErr || !userData.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const userId = userData.user.id;
+    const { data: userData, error: userErr } = await supabaseAdmin.auth.getUser(token)
+    if (userErr || !userData.user) {
+      console.log("[THUMBNAIL] Failed auth:", userErr?.message ?? "No user")
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
 
-    // 2) Ownership + fetch needed fields
+    const userId = userData.user.id
+    console.log("[THUMBNAIL] Authenticated user:", userId)
+
     const { data: k, error: kErr } = await supabaseAdmin
       .from("konfolios")
-      .select("id,user_id,template,content,status")
+      .select("id, user_id, template, content, status, portfolio_slug")
       .eq("id", konfolioId)
-      .maybeSingle();
+      .maybeSingle()
 
-    if (kErr) return NextResponse.json({ error: kErr.message }, { status: 500 });
-    if (!k || k.user_id !== userId) return NextResponse.json({ error: "Konfolio not found" }, { status: 404 });
+    if (kErr) {
+      console.log("[THUMBNAIL] Konfolio fetch error:", kErr.message)
+      return NextResponse.json({ error: kErr.message }, { status: 500 })
+    }
 
-    // 3) Mark published (idempotent)
-    const publishedAt = new Date().toISOString();
+    if (!k || k.user_id !== userId) {
+      console.log("[THUMBNAIL] Konfolio not found or ownership mismatch")
+      return NextResponse.json({ error: "Konfolio not found" }, { status: 404 })
+    }
+
+    console.log("[THUMBNAIL] Konfolio found:", {
+      id: k.id,
+      status: k.status,
+      template: k.template,
+      portfolio_slug: k.portfolio_slug,
+    })
+
+    const { data: profile, error: profileErr } = await supabaseAdmin
+      .from("profiles")
+      .select("business_name")
+      .eq("id", userId)
+      .maybeSingle()
+
+    if (profileErr) {
+      console.log("[THUMBNAIL] Profile fetch error:", profileErr.message)
+      return NextResponse.json({ error: profileErr.message }, { status: 500 })
+    }
+
+    const businessSlug = slugify(String(profile?.business_name ?? ""))
+    const portfolioSlug = slugify(String(k.portfolio_slug ?? ""))
+
+    console.log("[THUMBNAIL] businessSlug:", businessSlug)
+    console.log("[THUMBNAIL] portfolioSlug:", portfolioSlug)
+
+    if (!businessSlug || !portfolioSlug) {
+      console.log("[THUMBNAIL] Missing slug data for screenshot")
+      return NextResponse.json(
+        { error: "Missing business or portfolio slug for thumbnail generation" },
+        { status: 400 }
+      )
+    }
+
+    const publishedAt = new Date().toISOString()
+
     const { error: pubErr } = await supabaseAdmin
       .from("konfolios")
       .update({ status: "published", published_at: publishedAt })
-      .eq("id", konfolioId);
+      .eq("id", konfolioId)
 
-    if (pubErr) return NextResponse.json({ error: pubErr.message }, { status: 500 });
+    if (pubErr) {
+      console.log("[THUMBNAIL] Publish update error:", pubErr.message)
+      return NextResponse.json({ error: pubErr.message }, { status: 500 })
+    }
 
-    // 4) Render thumbnail HTML from DB + screenshot it
-    const html = buildThumbnailHtml({ template: k.template, content: k.content });
+    console.log("[THUMBNAIL] Marked konfolio published at:", publishedAt)
 
-    const executablePath = await getExecutablePath();
+    const baseUrl = getAppBaseUrl(req)
+    const publicUrl = `${baseUrl}/${businessSlug}/${portfolioSlug}?thumbnail=1&t=${encodeURIComponent(
+      publishedAt
+    )}`
 
-    const isMacLocal = executablePath.includes("Google Chrome.app");
+    console.log("[THUMBNAIL] baseUrl:", baseUrl)
+    console.log("[THUMBNAIL] publicUrl:", publicUrl)
 
-    const browser = await puppeteer.launch({
-        // On Mac local, chromium.args can include linux-only flags; keep it simple.
-        args: isMacLocal ? [] : chromium.args,
-        executablePath,
-        headless: true,
-        defaultViewport: { width: 1200, height: 800 },
-    });
+    const executablePath = await getExecutablePath()
+    const isMacLocal = executablePath.includes("Google Chrome.app")
 
-    const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: "networkidle0" });
-    const png = await page.screenshot({ type: "png" });
-    await browser.close();
+    console.log("[THUMBNAIL] executablePath:", executablePath)
+    console.log("[THUMBNAIL] isMacLocal:", isMacLocal)
 
-    // 5) Upload stable key
-    const thumbPath = `${userId}/${konfolioId}/thumbnail.png`;
+    browser = await puppeteer.launch({
+      args: isMacLocal ? [] : chromium.args,
+      executablePath,
+      headless: true,
+      defaultViewport: { width: 1512, height: 982 },
+    })
+
+    console.log("[THUMBNAIL] Browser launched")
+
+    const page = await browser.newPage()
+    console.log("[THUMBNAIL] New page created")
+
+    await page.goto(publicUrl, {
+      waitUntil: "networkidle0",
+      timeout: 60000,
+    })
+
+    console.log("[THUMBNAIL] Public page loaded successfully")
+
+    const png = await page.screenshot({
+      type: "png",
+      fullPage: true,
+    })
+
+    console.log("[THUMBNAIL] Screenshot captured from public page")
+
+    const thumbPath = `${userId}/${konfolioId}/thumbnail.png`
+    console.log("[THUMBNAIL] Uploading thumbnail to:", thumbPath)
+
     const { error: upErr } = await supabaseAdmin.storage
       .from("konfolio-images")
-      .upload(thumbPath, png, { contentType: "image/png", upsert: true });
+      .upload(thumbPath, png, {
+        contentType: "image/png",
+        upsert: true,
+      })
 
-    if (upErr) return NextResponse.json({ error: upErr.message }, { status: 500 });
+    if (upErr) {
+      console.log("[THUMBNAIL] Upload error:", upErr.message)
+      return NextResponse.json({ error: upErr.message }, { status: 500 })
+    }
 
     const { data: publicUrlData } = supabaseAdmin.storage
       .from("konfolio-images")
-      .getPublicUrl(thumbPath);
+      .getPublicUrl(thumbPath)
 
-    const thumbnailUrl = publicUrlData.publicUrl;
+    const thumbnailUrl = publicUrlData.publicUrl
+    console.log("[THUMBNAIL] thumbnailUrl:", thumbnailUrl)
 
-    // 6) Save thumbnail_url
     const { error: tErr } = await supabaseAdmin
       .from("konfolios")
       .update({ thumbnail_url: thumbnailUrl })
-      .eq("id", konfolioId);
+      .eq("id", konfolioId)
 
-    if (tErr) return NextResponse.json({ error: tErr.message }, { status: 500 });
+    if (tErr) {
+      console.log("[THUMBNAIL] thumbnail_url save error:", tErr.message)
+      return NextResponse.json({ error: tErr.message }, { status: 500 })
+    }
+
+    console.log("[THUMBNAIL] thumbnail_url saved to konfolios row")
 
     return NextResponse.json({
-  ok: true,
-  status: "published",
-  publishedAt,
-  thumbnailUrl,
-  thumbnailUrlWithBust: `${thumbnailUrl}?t=${encodeURIComponent(publishedAt)}`,
-});
+      ok: true,
+      status: "published",
+      publishedAt,
+      publicUrl,
+      thumbnailUrl,
+      thumbnailUrlWithBust: `${thumbnailUrl}?t=${encodeURIComponent(publishedAt)}`,
+    })
   } catch (e: any) {
-    return NextResponse.json({ error: e?.message ?? "Unknown error" }, { status: 500 });
+    console.log("[THUMBNAIL] Fatal error:", e?.message ?? e)
+    return NextResponse.json({ error: e?.message ?? "Unknown error" }, { status: 500 })
+  } finally {
+    if (browser) {
+      try {
+        await browser.close()
+        console.log("[THUMBNAIL] Browser closed")
+      } catch (closeErr: any) {
+        console.log("[THUMBNAIL] Browser close error:", closeErr?.message ?? closeErr)
+      }
+    }
   }
 }

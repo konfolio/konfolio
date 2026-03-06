@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 
 import Navbar from "@/components/Navbar"
 import DashboardProfileHeader from "@/components/my-portfolios/dashboard/DashboardProfileHeader"
@@ -52,100 +52,114 @@ export default function MyPortfoliosPage() {
     setPublishedCount(items.filter((k) => k.status === "published").length)
   }, [items])
 
-  useEffect(() => {
-    let mounted = true
+  const loadBusinessName = useCallback(async () => {
+    const sessionRes = await supabase.auth.getSession()
+    const user = sessionRes.data.session?.user
+    if (!user) return
 
-    async function loadBusinessName() {
-      const sessionRes = await supabase.auth.getSession()
-      const user = sessionRes.data.session?.user
-      if (!mounted) return
-      if (!user) return
+    const profileRes = await supabase
+      .from("profiles")
+      .select("business_name")
+      .eq("id", user.id)
+      .maybeSingle()
 
-      const profileRes = await supabase
-        .from("profiles")
-        .select("business_name")
-        .eq("id", user.id)
-        .maybeSingle()
+    const bn = String(profileRes.data?.business_name ?? "").trim()
+    setBusinessName(bn || "Business Name")
+  }, [])
 
-      if (!mounted) return
+  const loadKonfolios = useCallback(async () => {
+    setLoading(true)
 
-      const bn = String(profileRes.data?.business_name ?? "").trim()
-      setBusinessName(bn || "Business Name")
+    const sessionRes = await supabase.auth.getSession()
+    const user = sessionRes.data.session?.user
+
+    if (!user) {
+      setItems([])
+      setLoading(false)
+      return
     }
 
-    async function loadKonfolios() {
-      setLoading(true)
+    const profileRes = await supabase
+      .from("profiles")
+      .select("business_name")
+      .eq("id", user.id)
+      .maybeSingle()
 
-      const sessionRes = await supabase.auth.getSession()
-      const user = sessionRes.data.session?.user
-      if (!mounted) return
+    const userBusinessName = String(profileRes.data?.business_name ?? "").trim() || "Business Name"
 
-      if (!user) {
-        setItems([])
-        setLoading(false)
-        return
-      }
+    const res = await supabase
+      .from("konfolios")
+      .select(
+        "id, user_id, portfolio_name, portfolio_slug, status, thumbnail_url, updated_at, published_at"
+      )
+      .eq("user_id", user.id)
+      .order("updated_at", { ascending: false })
 
-      const profileRes = await supabase
-        .from("profiles")
-        .select("business_name")
-        .eq("id", user.id)
-        .maybeSingle()
+    if (res.error) {
+      console.error("loadKonfolios error:", res.error)
+      setItems([])
+      setLoading(false)
+      return
+    }
 
-      if (!mounted) return
+    const rows = (res.data ?? []) as KonfolioRow[]
 
-      const userBusinessName = String(profileRes.data?.business_name ?? "").trim() || "Business Name"
+    const mapped: DashboardKonfolio[] = rows.map((r) => {
+      const bust = r.updated_at || r.published_at || ""
 
-      const res = await supabase
-        .from("konfolios")
-        .select(
-          "id, user_id, portfolio_name, portfolio_slug, status, thumbnail_url, updated_at, published_at"
-        )
-        .eq("user_id", user.id)
-        .order("updated_at", { ascending: false })
-
-      if (!mounted) return
-
-      if (res.error) {
-        console.error("loadKonfolios error:", res.error)
-        setItems([])
-        setLoading(false)
-        return
-      }
-
-      const rows = (res.data ?? []) as KonfolioRow[]
-
-      const mapped: DashboardKonfolio[] = rows.map((r) => ({
+      return {
         id: r.id,
         portfolioName: String(r.portfolio_name ?? "Untitled"),
         portfolioSlug: String(r.portfolio_slug ?? r.id),
         businessName: userBusinessName,
         status: r.status === "published" ? "published" : "draft",
-        thumbnailUrl: r.thumbnail_url,
+        thumbnailUrl: r.thumbnail_url
+          ? `${r.thumbnail_url}?t=${encodeURIComponent(bust)}`
+          : null,
         updatedAt: r.updated_at,
         exploreEnabled: true,
         views: 0,
         uniqueViewers: 0,
         linkClicks: 0,
-      }))
+      }
+    })
 
-      setItems(mapped)
-      setLoading(false)
+    setItems(mapped)
+    setLoading(false)
+  }, [])
+
+  useEffect(() => {
+    let mounted = true
+
+    async function init() {
+      if (!mounted) return
+      await loadBusinessName()
+      if (!mounted) return
+      await loadKonfolios()
     }
 
-    loadBusinessName()
-    loadKonfolios()
+    void init()
 
     const { data: sub } = supabase.auth.onAuthStateChange(() => {
-      loadBusinessName()
-      loadKonfolios()
+      void loadBusinessName()
+      void loadKonfolios()
     })
 
     return () => {
       mounted = false
       sub.subscription.unsubscribe()
     }
-  }, [])
+  }, [loadBusinessName, loadKonfolios])
+
+  useEffect(() => {
+    function handleFocus() {
+      void loadBusinessName()
+      void loadKonfolios()
+    }
+
+    window.addEventListener("focus", handleFocus)
+    return () => window.removeEventListener("focus", handleFocus)
+  }, [loadBusinessName, loadKonfolios])
 
   const hasPublished = useMemo(
     () => items.some((k) => k.status === "published"),
