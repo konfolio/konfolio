@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-
 type Template = "square" | "portrait";
 type Status = "draft" | "published";
 
@@ -52,7 +51,7 @@ export async function GET(
 
   const { data, error } = await supabase
     .from("konfolios")
-    .select("id, template, status, updated_at, content")
+    .select("id, template, status, updated_at, content, explore_enabled")
     .eq("id", id)
     .single();
 
@@ -69,6 +68,7 @@ export async function GET(
     template: data.template,
     status: data.status,
     updatedAt: data.updated_at,
+    exploreEnabled: data.explore_enabled,
     content: data.content,
   });
 }
@@ -117,6 +117,21 @@ export async function PATCH(
     patch.content = body.content; // opaque JSON
   }
 
+  if (body.explore_enabled !== undefined) {
+    if (typeof body.explore_enabled !== "boolean") {
+      return NextResponse.json(
+        { error: "explore_enabled must be a boolean" },
+        { status: 400 }
+      );
+    }
+    patch.explore_enabled = body.explore_enabled;
+  }
+
+  // drafts should never be explore-visible
+  if (patch.status === "draft") {
+    patch.explore_enabled = false;
+  }
+
   if (Object.keys(patch).length === 0) {
     return NextResponse.json({ error: "No fields to update" }, { status: 400 });
   }
@@ -125,7 +140,7 @@ export async function PATCH(
     .from("konfolios")
     .update(patch)
     .eq("id", id)
-    .select("id, template, status, updated_at, content")
+    .select("id, template, status, updated_at, content, explore_enabled")
     .single();
 
   if (error) {
@@ -141,6 +156,7 @@ export async function PATCH(
     template: data.template,
     status: data.status,
     updatedAt: data.updated_at,
+    exploreEnabled: data.explore_enabled,
     content: data.content,
   });
 }
@@ -165,7 +181,6 @@ async function deleteStoragePrefix(
     for (const item of data) {
       const full = path ? `${path}/${item.name}` : item.name;
 
-      // Files typically have an `id`. Folders usually don't.
       if ((item as any).id) {
         toDelete.push(full);
       } else {
@@ -188,59 +203,55 @@ export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const token = getBearerToken(req)
-  if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const token = getBearerToken(req);
+  if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { id } = await params
-  if (!id) return NextResponse.json({ error: "Missing id param" }, { status: 400 })
+  const { id } = await params;
+  if (!id) return NextResponse.json({ error: "Missing id param" }, { status: 400 });
 
   const supabaseAdmin = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
+  );
 
-  const { data: userRes, error: userErr } = await supabaseAdmin.auth.getUser(token)
-  const user = userRes?.user
-  if (userErr || !user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const { data: userRes, error: userErr } = await supabaseAdmin.auth.getUser(token);
+  const user = userRes?.user;
+  if (userErr || !user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  // Ownership check (draft OR published)
   const { data: k, error: kErr } = await supabaseAdmin
     .from("konfolios")
     .select("id, user_id, status")
     .eq("id", id)
-    .maybeSingle()
+    .maybeSingle();
 
-  if (kErr) return NextResponse.json({ error: kErr.message }, { status: 500 })
+  if (kErr) return NextResponse.json({ error: kErr.message }, { status: 500 });
   if (!k || k.user_id !== user.id) {
-    return NextResponse.json({ error: "Konfolio not found" }, { status: 404 })
+    return NextResponse.json({ error: "Konfolio not found" }, { status: 404 });
   }
 
-  // Delete storage folder: konfolio-images/{userId}/{konfolioId}/...
-  const prefix = `${user.id}/${id}`
-  let deletedStorageObjects = 0
+  const prefix = `${user.id}/${id}`;
+  let deletedStorageObjects = 0;
 
   try {
-    const res = await deleteStoragePrefix(supabaseAdmin, "konfolio-images", prefix)
-    deletedStorageObjects = res.deleted
+    const res = await deleteStoragePrefix(supabaseAdmin, "konfolio-images", prefix);
+    deletedStorageObjects = res.deleted;
   } catch (e: any) {
-    // If you want to fail hard instead, return 500 here.
-    console.warn("Storage cleanup failed:", e?.message ?? e)
+    console.warn("Storage cleanup failed:", e?.message ?? e);
   }
 
-  // Delete DB row (any status)
   const { data, error } = await supabaseAdmin
     .from("konfolios")
     .delete()
     .eq("id", id)
     .eq("user_id", user.id)
-    .select("id")
+    .select("id");
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json({
     ok: true,
     deletedCount: data?.length ?? 0,
     deletedIds: data?.map((r) => r.id) ?? [],
     deletedStorageObjects,
-  })
+  });
 }

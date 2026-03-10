@@ -156,7 +156,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
-    const png = await page.screenshot({ type: "png" });
+    const png = await page.screenshot({ type: "png", fullPage: true });
     await browser.close();
 
     // 5) Upload stable key
