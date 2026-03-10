@@ -1,4 +1,3 @@
-// app/api/konfolios/create-from-template/route.ts
 import { NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 
@@ -44,10 +43,10 @@ function slugify(input: string): string {
   return input
     .toLowerCase()
     .trim()
-    .replace(/['"]/g, "")            
-    .replace(/[^a-z0-9]+/g, "-")     
-    .replace(/-+/g, "-")             
-    .replace(/^-|-$/g, "");          
+    .replace(/['"]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
 }
 
 function normalizeStringArray(v: any): string[] {
@@ -156,13 +155,10 @@ export async function POST(req: Request) {
 
   const template: Template = isTemplate(body?.template) ? body.template : "square"
 
-  // template defaults
   let content: Record<string, any> = makeBaseContent(template)
 
-  // prefer auth email 
   if (auth.user.email) content.email = String(auth.user.email).trim()
 
-  // Autofill 
   try {
     const { data: profile, error: profErr } = await supabase
       .from("profiles")
@@ -195,41 +191,42 @@ export async function POST(req: Request) {
         ...(profileImageUrl ? { profileImageUrl } : {}),
         merchTags,
         previousVends,
-        links, 
+        links,
       }
     }
   } catch {
-    
   }
 
   const portfolioName: string = isNonEmptyString(body?.portfolioName)
-  ? body.portfolioName.trim()
-  : "Untitled Portfolio";
+    ? body.portfolioName.trim()
+    : "Untitled Portfolio"
 
-  const portfolioSlug: string = slugify(portfolioName) || `portfolio-${Date.now()}`;
+  const portfolioSlug: string = slugify(portfolioName) || `portfolio-${Date.now()}`
 
   const { data, error } = await supabase
     .from("konfolios")
     .insert({
-    user_id: auth.user.id,
-    template,
-    status: "draft" as Status,
-    portfolio_name: portfolioName,
-    portfolio_slug: portfolioSlug,
-    content,
+      user_id: auth.user.id,
+      template,
+      status: "draft" as Status,
+      portfolio_name: portfolioName,
+      portfolio_slug: portfolioSlug,
+      content,
+      explore_enabled: false,
     })
-    .select("id, template, status, updated_at, content, portfolio_name, portfolio_slug")
+    .select("id, template, status, updated_at, content, portfolio_name, portfolio_slug, explore_enabled")
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   return NextResponse.json({
-  id: data.id,
-  template: data.template,
-  status: data.status,
-  updatedAt: data.updated_at,
-  portfolioName: data.portfolio_name,
-  portfolioSlug: data.portfolio_slug,
-  content: data.content ?? {},
-  });
+    id: data.id,
+    template: data.template,
+    status: data.status,
+    updatedAt: data.updated_at,
+    portfolioName: data.portfolio_name,
+    portfolioSlug: data.portfolio_slug,
+    exploreEnabled: data.explore_enabled,
+    content: data.content ?? {},
+  })
 }
