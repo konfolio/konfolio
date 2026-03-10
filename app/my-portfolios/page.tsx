@@ -12,6 +12,7 @@ import CreateKonfolioPopover from "@/components/my-portfolios/dashboard/CreateKo
 import PortfolioNameCard from "@/components/my-portfolios/dashboard/PortfolioNameCard"
 
 import { supabase } from "@/lib/supabase/browser"
+import { exportFromImageUrl, type KonfolioExportType } from "@/lib/konfolio/exportFromImage"
 
 type TemplateType = "square" | "portrait"
 
@@ -85,7 +86,8 @@ export default function MyPortfoliosPage() {
       .eq("id", user.id)
       .maybeSingle()
 
-    const userBusinessName = String(profileRes.data?.business_name ?? "").trim() || "Business Name"
+    const userBusinessName =
+      String(profileRes.data?.business_name ?? "").trim() || "Business Name"
 
     const res = await supabase
       .from("konfolios")
@@ -168,6 +170,27 @@ export default function MyPortfoliosPage() {
 
   const businessSlug = useMemo(() => slugify(businessName), [businessName])
 
+  const handleExportPick = useCallback(
+    async (item: DashboardKonfolio, type: KonfolioExportType) => {
+      if (!item.thumbnailUrl) {
+        alert("No thumbnail available for export yet.")
+        return
+      }
+
+      try {
+        await exportFromImageUrl({
+          imageUrl: item.thumbnailUrl,
+          format: type,
+          portfolioName: item.portfolioName,
+        })
+      } catch (error) {
+        console.error("Export failed:", error)
+        alert("Export failed. Please try again.")
+      }
+    },
+    []
+  )
+
   function openCreateFlow() {
     setPendingPortfolioName("")
     setNameCardOpen(true)
@@ -218,6 +241,11 @@ export default function MyPortfoliosPage() {
                 } catch {
                   // intentionally ignore
                 }
+              }}
+              onExport={(id, type) => {
+                const item = items.find((x) => x.id === id)
+                if (!item) return
+                void handleExportPick(item, type)
               }}
             />
           ) : (

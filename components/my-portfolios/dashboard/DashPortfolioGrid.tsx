@@ -173,7 +173,7 @@ export default function DashPortfolioGrid({
               onEdit={onEdit ? () => onEdit(k.id) : undefined}
               onMore={onMore ? () => onMore(k.id) : undefined}
               onCopyUrl={onCopyUrl ? () => onCopyUrl(publicUrl) : undefined}
-              onExportPick={
+              onExportPick={                
                 onExport
                   ? (type) => {
                       onExport(k.id, type)
