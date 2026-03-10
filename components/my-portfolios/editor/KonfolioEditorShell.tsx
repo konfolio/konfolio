@@ -11,9 +11,22 @@ import { supabase } from "@/lib/supabase/browser"
 type Props = {
   konfolioId: string
   initialDraft?: KonfolioDraft
+  /**
+   * edit: normal editor experience (default)
+   * preview: renders the portfolio preview (no edit affordances)
+   */
+  mode?: "edit" | "preview"
 }
 
-type SocialKey = "website" | "shop" | "instagram" | "x" | "facebook" | "tumblr" | "pixiv" | "bluesky"
+type SocialKey =
+  | "website"
+  | "shop"
+  | "instagram"
+  | "x"
+  | "facebook"
+  | "tumblr"
+  | "pixiv"
+  | "bluesky"
 
 function defaultLinks() {
   return {
@@ -31,10 +44,42 @@ function defaultLinks() {
   }
 }
 
+function safeJsonParseObject(input: unknown): Record<string, any> {
+  if (!input) return {}
+  if (typeof input === "object") return input as Record<string, any>
+  if (typeof input !== "string") return {}
+
+  try {
+    const parsed = JSON.parse(input)
+    return parsed && typeof parsed === "object" ? (parsed as Record<string, any>) : {}
+  } catch {
+    return {}
+  }
+}
+
+function normalizeUpdatedAt(data: any): number {
+  const n = data?.updatedAt
+  if (typeof n === "number" && Number.isFinite(n)) return n
+
+  const s1 = data?.updatedAt
+  if (typeof s1 === "string") {
+    const t = new Date(s1).getTime()
+    if (Number.isFinite(t)) return t
+  }
+
+  const s2 = data?.updated_at
+  if (typeof s2 === "string") {
+    const t = new Date(s2).getTime()
+    if (Number.isFinite(t)) return t
+  }
+
+  return Date.now()
+}
+
 /**
  * Your GET route returns:
  * { id, template, status, updatedAt, content }
- * We normalize that into a KonfolioDraft for the editor.
+ * content may be JSON object OR stringified JSON.
  */
 function draftFromGetResponse(data: any): KonfolioDraft | null {
   const id = String(data?.id ?? "").trim()
@@ -43,11 +88,15 @@ function draftFromGetResponse(data: any): KonfolioDraft | null {
   if (!id) return null
   if (template !== "square" && template !== "portrait") return null
 
-  const content = data?.content && typeof data.content === "object" ? data.content : {}
+  const content = safeJsonParseObject(data?.content)
 
   const links =
-    content.links && typeof content.links === "object" && Array.isArray(content.links.activeKeys)
-      ? content.links
+    content.links &&
+    typeof content.links === "object" &&
+    Array.isArray((content.links as any).activeKeys) &&
+    (content.links as any).linksByKey &&
+    typeof (content.links as any).linksByKey === "object"
+      ? (content.links as any)
       : defaultLinks()
 
   const merchTags = Array.isArray(content.merchTags) ? content.merchTags : []
@@ -58,7 +107,7 @@ function draftFromGetResponse(data: any): KonfolioDraft | null {
     id,
     template,
     status: data?.status === "published" ? "published" : "draft",
-    updatedAt: typeof data?.updatedAt === "number" ? data.updatedAt : Date.now(),
+    updatedAt: normalizeUpdatedAt(data),
 
     bannerColor: String(content.bannerColor ?? "#FFFFFF"),
     backgroundColor: String(content.backgroundColor ?? "#F7F7F7"),
@@ -80,8 +129,7 @@ function draftFromGetResponse(data: any): KonfolioDraft | null {
   return draft
 }
 
-export default function KonfolioEditorShell({ konfolioId, initialDraft }: Props) {
-  const draftsHydrated = useKonfolioDraftStore((s) => s.hasHydrated)
+export default function KonfolioEditorShell({ konfolioId, initialDraft, mode = "edit" }: Props) {
   const draft = useKonfolioDraftStore((s) => s.draftsById[konfolioId])
   const setDraft = useKonfolioDraftStore((s) => s.setDraft)
 
@@ -91,7 +139,7 @@ export default function KonfolioEditorShell({ konfolioId, initialDraft }: Props)
     let alive = true
 
     const boot = async () => {
-      if (!draftsHydrated) return
+      setBooting(true)
 
       // 1) If a server-provided initialDraft exists, prefer it
       if (initialDraft) {
@@ -148,11 +196,11 @@ export default function KonfolioEditorShell({ konfolioId, initialDraft }: Props)
       alive = false
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [konfolioId, initialDraft, draftsHydrated])
+  }, [konfolioId, initialDraft])
 
   const readyDraft = useKonfolioDraftStore((s) => s.draftsById[konfolioId])
 
-  if (booting || !draftsHydrated || !readyDraft) {
+  if (booting || !readyDraft) {
     return (
       <main className="w-full min-h-[982px] bg-[#F7F7F7]">
         <div className="w-full px-[25px] sm:px-10 lg:px-[150px]">
@@ -173,6 +221,12 @@ export default function KonfolioEditorShell({ konfolioId, initialDraft }: Props)
     )
   }
 
-  if (readyDraft.template === "square") return <SquareEditor draftId={konfolioId} />
-  return <PortraitEditor draftId={konfolioId} />
+  // We pass a "readonly" flag down so editors can disable edit affordances.
+  const readOnly = mode === "preview"
+
+  if (readyDraft.template === "square") {
+    return <SquareEditor draftId={konfolioId} readOnly={readOnly} />
+  }
+
+  return <PortraitEditor draftId={konfolioId} readOnly={readOnly} />
 }

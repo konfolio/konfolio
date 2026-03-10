@@ -1,6 +1,7 @@
+// components/my-portfolios/square/EditSquareImageGrid.tsx
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import ImageIcon from "@/components/icons/ImageIcon"
 import SlidersIcon from "@/components/icons/SlidersIcon"
 import EditImagePopover, { type ImageEdits } from "@/components/my-portfolios/EditImagePopover"
@@ -14,6 +15,7 @@ type Cell = {
 }
 
 type Props = {
+  editable?: boolean
   images?: Cell[]
   onChangeImages?: (images: Cell[]) => void
 }
@@ -75,7 +77,7 @@ function editsToImgStyle(edits?: ImageEdits): React.CSSProperties {
   }
 }
 
-export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
+export default function EditSquareImageGrid({ editable = true, images, onChangeImages }: Props) {
   const [cells, setCells] = useState<Cell[]>(() => {
     const incoming = images?.slice(0, 9)
     return incoming && incoming.length > 0
@@ -107,7 +109,6 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
     }
   }, [])
 
-  // --- IMPORTANT FIX: don't emit to parent inside setCells updater ---
   const pendingEmitRef = useRef<Cell[] | null>(null)
 
   const updateCells = (updater: (prev: Cell[]) => Cell[]) => {
@@ -119,6 +120,11 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
   }
 
   useEffect(() => {
+    if (!editable) {
+      pendingEmitRef.current = null
+      return
+    }
+
     if (syncingFromPropsRef.current) {
       syncingFromPropsRef.current = false
       pendingEmitRef.current = null
@@ -132,13 +138,15 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
       onChangeImages?.(pending)
       pendingEmitRef.current = null
     }
-  }, [cells, onChangeImages])
+  }, [cells, onChangeImages, editable])
 
   const openFilePicker = (idx: number) => {
+    if (!editable) return
     inputsRef.current[idx]?.click()
   }
 
   const setImageFromFile = (idx: number, file: File) => {
+    if (!editable) return
     if (!file.type.startsWith("image/")) return
     const url = URL.createObjectURL(file)
     objectUrls.current.push(url)
@@ -158,6 +166,7 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
   }
 
   const onInputChange = (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!editable) return
     const file = e.target.files?.[0]
     if (!file) return
     setImageFromFile(idx, file)
@@ -165,18 +174,21 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
   }
 
   const onDragOver = (idx: number, e: React.DragEvent) => {
+    if (!editable) return
     e.preventDefault()
     e.stopPropagation()
     setDragOverIdx(idx)
   }
 
   const onDragLeave = (idx: number, e: React.DragEvent) => {
+    if (!editable) return
     e.preventDefault()
     e.stopPropagation()
     setDragOverIdx((cur) => (cur === idx ? null : cur))
   }
 
   const onDrop = (idx: number, e: React.DragEvent) => {
+    if (!editable) return
     e.preventDefault()
     e.stopPropagation()
     setDragOverIdx(null)
@@ -186,6 +198,11 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
   }
 
   const [openEditorIdx, setOpenEditorIdx] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (editable) return
+    setOpenEditorIdx(null)
+  }, [editable])
 
   return (
     <section className="w-[922px] h-[982px] flex flex-col items-center justify-center py-[30px]">
@@ -199,8 +216,7 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
             const col = idx % 3
             const placement: "right" | "left" = col === 2 ? "left" : "right"
 
-            // eslint-disable-next-line react-hooks/rules-of-hooks
-            const imgStyle = useMemo(() => editsToImgStyle(cell.edits), [cell.edits])
+            const imgStyle = editsToImgStyle(cell.edits)
 
             return (
               <div
@@ -220,7 +236,6 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                   onChange={(e) => onInputChange(idx, e)}
                 />
 
-                {/* Inner clipped visual card */}
                 <div
                   className="
                     relative
@@ -242,18 +257,22 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                     ].join(", "),
                   }}
                 >
-                  {/* Click target */}
-                  <button
-                    type="button"
-                    className="absolute inset-0 z-[0] bg-transparent"
-                    aria-label={`Upload image ${idx + 1}`}
-                    onClick={() => {
-                      if (isEditorOpen) return
-                      openFilePicker(idx)
-                    }}
-                  >
-                    <span className="sr-only">Upload</span>
-                  </button>
+                  {/* Click target (edit only) */}
+                  {editable ? (
+                    <button
+                      type="button"
+                      className="absolute inset-0 z-[0] bg-transparent cursor-pointer"
+                      aria-label={`Upload image ${idx + 1}`}
+                      onClick={() => {
+                        if (isEditorOpen) return
+                        openFilePicker(idx)
+                      }}
+                    >
+                      <span className="sr-only">Upload</span>
+                    </button>
+                  ) : (
+                    <div className="absolute inset-0 z-[0]" />
+                  )}
 
                   {/* Image preview */}
                   {hasImage ? (
@@ -290,17 +309,12 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                     </div>
                   )}
 
-                  {/* Hover overlay:
-                      - smaller height (closer to Figma 70)
-                      - NO backdrop blur (removes “clear vs suddenly blurry seam”)
-                      - fade starts a bit above the overlay so there's no hard line
-                  */}
+                  {/* Hover overlay (both modes) */}
                   <div className="pointer-events-none absolute left-0 right-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity z-[3]">
-                    {/* single gradient layer */}
                     <div
                       className="absolute left-[-2px] right-[-2px] bottom-[-2px]"
                       style={{
-                        height: 76, // slightly > 70 so the fade begins earlier without moving text
+                        height: 76,
                         borderBottomLeftRadius: 16,
                         borderBottomRightRadius: 16,
                         background:
@@ -308,7 +322,6 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                       }}
                     />
 
-                    {/* subtle white rim so overlay feels like it merges with border */}
                     <div
                       className="absolute left-0 right-0 bottom-0"
                       style={{
@@ -319,7 +332,6 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                       }}
                     />
 
-                    {/* text container stays exactly 70px like Figma */}
                     <div className="absolute left-0 right-0 bottom-0 h-[70px] px-[15px] py-[15px] flex flex-col justify-end items-start">
                       <p className="m-0 w-full font-inter font-normal text-[17px] leading-[140%] text-[#262626]">
                         {cell.title ?? "Title"}
@@ -330,60 +342,65 @@ export default function EditSquareImageGrid({ images, onChangeImages }: Props) {
                     </div>
                   </div>
 
-                  {isDragOver ? <div className="pointer-events-none absolute inset-0 z-[4] bg-white/20" /> : null}
+                  {editable && isDragOver ? (
+                    <div className="pointer-events-none absolute inset-0 z-[4] bg-white/20" />
+                  ) : null}
                 </div>
 
-                {/* Sliders icon (hover only) */}
-                <button
-                  type="button"
-                  aria-label="Image settings"
-                  className="
-                    absolute
-                    right-[10px] top-[10px]
-                    hidden
-                    w-[24px] h-[24px]
-                    group-hover:flex
-                    items-center justify-center
-                    z-[10]
-                    cursor-pointer
-                  "
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setOpenEditorIdx((cur) => (cur === idx ? null : idx))
-                  }}
-                >
-                  <SlidersIcon />
-                </button>
+                {/* Sliders icon + popover (edit only) */}
+                {editable ? (
+                  <>
+                    <button
+                      type="button"
+                      aria-label="Image settings"
+                      className="
+                        absolute
+                        right-[10px] top-[10px]
+                        hidden
+                        w-[24px] h-[24px]
+                        group-hover:flex
+                        items-center justify-center
+                        z-[10]
+                        cursor-pointer
+                      "
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setOpenEditorIdx((cur) => (cur === idx ? null : idx))
+                      }}
+                    >
+                      <SlidersIcon />
+                    </button>
 
-                {/* Popover */}
-                {isEditorOpen && (
-                  <EditImagePopover
-                    title={`Recommended - ${RECOMMENDED[idx]}`}
-                    imageSrc={cell.src}
-                    onClose={() => setOpenEditorIdx(null)}
-                    placement={placement}
-                    variant="square"
-                    titleText={cell.title ?? "Title"}
-                    descriptionText={cell.description ?? "Short description"}
-                    edits={cell.edits ?? { ...DEFAULT_EDITS }}
-                    onChangeMeta={({ title, description }) => {
-                      updateCells((prev) => {
-                        const next = [...prev]
-                        const existing = next[idx] ?? { id: String(idx) }
-                        next[idx] = { ...existing, title, description }
-                        return next
-                      })
-                    }}
-                    onChangeEdits={(nextEdits) => {
-                      updateCells((prev) => {
-                        const next = [...prev]
-                        const existing = next[idx] ?? { id: String(idx) }
-                        next[idx] = { ...existing, edits: nextEdits }
-                        return next
-                      })
-                    }}
-                  />
-                )}
+                    {isEditorOpen && (
+                      <EditImagePopover
+                        title={`Recommended - ${RECOMMENDED[idx]}`}
+                        imageSrc={cell.src}
+                        onClose={() => setOpenEditorIdx(null)}
+                        placement={placement}
+                        variant="square"
+                        titleText={cell.title ?? "Title"}
+                        descriptionText={cell.description ?? "Short description"}
+                        edits={cell.edits ?? { ...DEFAULT_EDITS }}
+                        onChangeMeta={({ title, description }) => {
+                          updateCells((prev) => {
+                            const next = [...prev]
+                            const existing = next[idx] ?? { id: String(idx) }
+                            next[idx] = { ...existing, title, description }
+                            return next
+                          })
+                        }}
+                        onChangeEdits={(nextEdits) => {
+                          updateCells((prev) => {
+                            const next = [...prev]
+                            const existing = next[idx] ?? { id: String(idx) }
+                            next[idx] = { ...existing, edits: nextEdits }
+                            return next
+                          })
+                        }}
+                      />
+                    )}
+                  </>
+                ) : null}
               </div>
             )
           })}

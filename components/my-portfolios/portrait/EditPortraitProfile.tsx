@@ -1,12 +1,23 @@
+// components/my-portfolios/portrait/EditPortraitProfile.tsx
 "use client"
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
+
 import ArrowLeft from "@/components/icons/ArrowLeft"
 import ImageIcon from "@/components/icons/ImageIcon"
 import BrushIcon from "@/components/icons/BrushIcon"
 import LocationIcon from "@/components/icons/LocationIcon"
 import OpenTabIcon from "@/components/icons/OpenTabIcon"
 import SecondaryButton from "@/components/buttons/SecondaryButton"
+
+import HomeIcon from "@/components/icons/HomeIcon"
+import ShopIcon from "@/components/icons/ShopIcon"
+import InstagramIcon from "@/components/icons/InstagramIcon"
+import XIcon from "@/components/icons/XIcon"
+import FacebookIcon from "@/components/icons/FacebookIcon"
+import TumblrIcon from "@/components/icons/TumblrIcon"
+import PixivIcon from "@/components/icons/PixivIcon"
+import BlueskyIcon from "@/components/icons/BlueskyIcon"
 
 import ColorPicker from "@/components/my-portfolios/ColorPicker"
 import LinkPicker, { type LinkPickerValue } from "@/components/my-portfolios/LinkPicker"
@@ -15,6 +26,8 @@ import MerchTagPicker from "@/components/my-portfolios/MerchTagPicker"
 type OpenPicker = "banner" | "background" | null
 
 type Props = {
+  editable?: boolean
+
   backHref: string
   onBack?: () => void
 
@@ -23,7 +36,6 @@ type Props = {
   onChangeBannerColor?: (hex: string) => void
   onChangeBackgroundColor?: (hex: string) => void
 
-  /** Persisted palettes */
   bannerSwatches?: string[]
   backgroundSwatches?: string[]
   onChangeBannerSwatches?: (next: string[]) => void
@@ -46,11 +58,9 @@ type Props = {
   showAddLink?: boolean
   onAddLinkClick?: () => void
 
-  /** Controlled link picker */
   linksValue?: LinkPickerValue
   onChangeLinks?: (next: LinkPickerValue) => void
 
-  /** Controlled merch tags */
   merchTags?: string[]
   onChangeMerchTags?: (next: string[]) => void
   onMerchClick?: () => void
@@ -65,7 +75,81 @@ const NAME_PLACEHOLDER = "Your Name"
 const LOCATION_PLACEHOLDER = "City, State"
 const EMAIL_PLACEHOLDER = "myemailaddress@konfolio.com"
 
+function safeStr(x: any) {
+  return String(x ?? "").trim()
+}
+
+function normalizeUrl(raw: string): string {
+  const v = safeStr(raw)
+  if (!v) return ""
+  const lower = v.toLowerCase()
+  if (lower.startsWith("http://") || lower.startsWith("https://")) return v
+  return `https://${v}`
+}
+
+function getActiveLinkUrls(value: LinkPickerValue | undefined): Array<{ key: string; url: string }> {
+  const v: any = value as any
+  if (!v) return []
+
+  const activeKeys: string[] = Array.isArray(v.activeKeys) ? v.activeKeys : []
+  const linksByKey: Record<string, string> =
+    v.linksByKey && typeof v.linksByKey === "object" ? (v.linksByKey as Record<string, string>) : {}
+
+  return activeKeys
+    .map((k) => ({ key: k, url: normalizeUrl(linksByKey[k] ?? "") }))
+    .filter((x) => Boolean(x.url))
+}
+
+function iconLabelForKey(key: string) {
+  if (key === "website") return "Website"
+  if (key === "shop") return "Shop"
+  if (key === "instagram") return "Instagram"
+  if (key === "x") return "X"
+  if (key === "facebook") return "Facebook"
+  if (key === "tumblr") return "Tumblr"
+  if (key === "pixiv") return "Pixiv"
+  if (key === "bluesky") return "Bluesky"
+  return "Link"
+}
+
+function IconForKey({ k }: { k: string }) {
+  if (k === "website") return <HomeIcon className="w-[24px] h-[24px]" />
+  if (k === "shop") return <ShopIcon className="w-[24px] h-[24px]" />
+  if (k === "instagram") return <InstagramIcon className="w-[24px] h-[24px]" />
+  if (k === "x") return <XIcon className="w-[24px] h-[24px]" />
+  if (k === "facebook") return <FacebookIcon className="w-[24px] h-[24px]" />
+  if (k === "tumblr") return <TumblrIcon className="w-[24px] h-[24px]" />
+  if (k === "pixiv") return <PixivIcon className="w-[24px] h-[24px]" />
+  if (k === "bluesky") return <BlueskyIcon className="w-[24px] h-[24px]" />
+  return <HomeIcon className="w-[24px] h-[24px]" />
+}
+
+function KonfolioLogoInline() {
+  return (
+    <div
+      aria-label="Konfolio"
+      className="w-[84px] h-[18.67px] opacity-50 pointer-events-none select-none"
+    >
+      <div
+        style={{
+          fontFamily: "Inknut Antiqua",
+          fontStyle: "normal",
+          fontWeight: 600,
+          fontSize: "18.1193px",
+          letterSpacing: "-0.02em",
+          lineHeight: "18.67px",
+          color: "#262626",
+          whiteSpace: "nowrap",
+        }}
+      >
+        konfolio
+      </div>
+    </div>
+  )
+}
+
 export default function EditPortraitProfile({
+  editable = true,
   backHref,
   onBack,
 
@@ -107,6 +191,21 @@ export default function EditPortraitProfile({
   onPublish,
   onOpenPreview,
 }: Props) {
+  const handleBack = () => {
+    if (onBack) {
+      onBack()
+      return
+    }
+
+    const href = backHref || "/my-portfolios"
+    const fn = (window as any).__konfolio_attempt_exit
+    if (typeof fn === "function") {
+      fn(href)
+      return
+    }
+    window.location.href = href
+  }
+
   const [localBusiness, setLocalBusiness] = useState(businessName)
   const [localName, setLocalName] = useState(displayName)
   const [localLocation, setLocalLocation] = useState(locationText)
@@ -117,26 +216,23 @@ export default function EditPortraitProfile({
   useEffect(() => setLocalLocation(locationText), [locationText])
   useEffect(() => setLocalEmail(email), [email])
 
-  // colors
   const [localBanner, setLocalBanner] = useState(bannerColor)
   const [localBg, setLocalBg] = useState(backgroundColor)
   useEffect(() => setLocalBanner(bannerColor), [bannerColor])
   useEffect(() => setLocalBg(backgroundColor), [backgroundColor])
 
-  // swatches (local for snappy UI)
   const [localBannerSwatches, setLocalBannerSwatches] = useState<string[]>(bannerSwatches)
   const [localBgSwatches, setLocalBgSwatches] = useState<string[]>(backgroundSwatches)
   useEffect(() => setLocalBannerSwatches(bannerSwatches), [bannerSwatches])
   useEffect(() => setLocalBgSwatches(backgroundSwatches), [backgroundSwatches])
 
-  // expanded color picker popover
   const [openPicker, setOpenPicker] = useState<OpenPicker>(null)
   const colorPopoverRef = useRef<HTMLDivElement | null>(null)
   const colorButtonsWrapRef = useRef<HTMLDivElement | null>(null)
 
-  // close on outside click
   useEffect(() => {
     if (!openPicker) return
+    if (!editable) return
 
     const onDown = (e: MouseEvent | PointerEvent) => {
       const pop = colorPopoverRef.current
@@ -150,9 +246,10 @@ export default function EditPortraitProfile({
 
     window.addEventListener("pointerdown", onDown)
     return () => window.removeEventListener("pointerdown", onDown)
-  }, [openPicker])
+  }, [openPicker, editable])
 
   const togglePicker = (which: Exclude<OpenPicker, null>) => {
+    if (!editable) return
     setOpenPicker((prev) => (prev === which ? null : which))
   }
 
@@ -161,6 +258,7 @@ export default function EditPortraitProfile({
   const pickerSwatches = openPicker === "banner" ? localBannerSwatches : localBgSwatches
 
   const applyPickerHex = (hex: string) => {
+    if (!editable) return
     if (openPicker === "banner") {
       setLocalBanner(hex)
       onChangeBannerColor?.(hex)
@@ -171,6 +269,7 @@ export default function EditPortraitProfile({
   }
 
   const applyPickerSwatches = (next: string[]) => {
+    if (!editable) return
     if (openPicker === "banner") {
       setLocalBannerSwatches(next)
       onChangeBannerSwatches?.(next)
@@ -180,7 +279,6 @@ export default function EditPortraitProfile({
     }
   }
 
-  // profile image upload (102x102)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [localImgUrl, setLocalImgUrl] = useState(profileImageUrl || "")
   const objectUrls = useRef<string[]>([])
@@ -194,9 +292,13 @@ export default function EditPortraitProfile({
     }
   }, [])
 
-  const openFilePicker = () => fileInputRef.current?.click()
+  const openFilePicker = () => {
+    if (!editable) return
+    fileInputRef.current?.click()
+  }
 
   const handleFile = (file: File) => {
+    if (!editable) return
     if (!file.type.startsWith("image/")) return
     const url = URL.createObjectURL(file)
     objectUrls.current.push(url)
@@ -205,6 +307,7 @@ export default function EditPortraitProfile({
   }
 
   const onFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!editable) return
     const file = e.target.files?.[0]
     if (!file) return
     handleFile(file)
@@ -212,6 +315,7 @@ export default function EditPortraitProfile({
   }
 
   const onDrop = (e: React.DragEvent) => {
+    if (!editable) return
     e.preventDefault()
     e.stopPropagation()
     const file = e.dataTransfer.files?.[0]
@@ -220,12 +324,13 @@ export default function EditPortraitProfile({
   }
 
   const onDragOver = (e: React.DragEvent) => {
+    if (!editable) return
     e.preventDefault()
     e.stopPropagation()
   }
 
-  // placeholder-like behavior
   const focusClearIfPlaceholder = (val: string, placeholder: string, setter: (v: string) => void) => {
+    if (!editable) return
     if ((val ?? "").trim() === placeholder) setter("")
   }
 
@@ -235,12 +340,12 @@ export default function EditPortraitProfile({
     setter: (v: string) => void,
     onChange?: (v: string) => void
   ) => {
+    if (!editable) return
     if ((val ?? "").trim() !== "") return
     setter(placeholder)
     onChange?.(placeholder)
   }
 
-  // measure location text width
   const locationMeasureRef = useRef<HTMLSpanElement | null>(null)
   const [locationPxWidth, setLocationPxWidth] = useState<number>(90)
 
@@ -251,47 +356,52 @@ export default function EditPortraitProfile({
     setLocationPxWidth(Math.max(90, w + 2))
   }, [localLocation])
 
+  const activeLinks = useMemo(() => getActiveLinkUrls(linksValue), [linksValue])
+  const safeTags = (Array.isArray(merchTags) ? merchTags : [])
+    .map((t) => safeStr(t))
+    .filter(Boolean)
+    .slice(0, 8)
+
   return (
-    <header
-      className="relative w-[1512px] h-[180px] flex items-center justify-center"
-      style={{ backgroundColor: localBanner }}
-    >
-      <div className="absolute left-[105px] top-1/2 -translate-y-1/2 z-[2]">
-        {onBack ? (
+    <header className="relative w-[1512px] h-[180px] flex items-center justify-center" style={{ backgroundColor: localBanner }}>
+      {editable ? (
+        <div className="absolute left-[105px] top-1/2 -translate-y-1/2 z-[2]">
           <button
             type="button"
             aria-label="Back"
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
-              onBack()
+              handleBack()
             }}
-            className="w-[30px] h-[30px] flex items-center justify-center"
+            className="w-[30px] h-[30px] flex items-center justify-center cursor-pointer"
           >
             <ArrowLeft className="w-[30px] h-[30px]" />
           </button>
-        ) : (
-          <ArrowLeft href={backHref} className="w-[30px] h-[30px]" />
-        )}
-      </div>
+        </div>
+      ) : null}
 
       <div className="w-[1182px] h-[102px] flex items-center gap-[20px]">
-        {/* Profile image */}
         <div
-          className="relative w-[102px] h-[102px] bg-white border border-[#A5A5A5] border-[0.5px] rounded-[11.7339px] overflow-hidden"
+          className={[
+            "relative w-[102px] h-[102px] bg-white border border-[#A5A5A5] border-[0.5px] rounded-[11.7339px] overflow-hidden",
+            editable ? "cursor-pointer" : "cursor-default",
+          ].join(" ")}
           onDrop={onDrop}
           onDragOver={onDragOver}
         >
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={onFileInputChange} />
 
-          <button
-            type="button"
-            className="absolute inset-0 z-[1] bg-transparent"
-            aria-label="Upload profile image"
-            onClick={openFilePicker}
-          >
-            <span className="sr-only">Upload</span>
-          </button>
+          {editable ? (
+            <button
+              type="button"
+              className="absolute inset-0 z-[1] bg-transparent cursor-pointer"
+              aria-label="Upload profile image"
+              onClick={openFilePicker}
+            >
+              <span className="sr-only">Upload</span>
+            </button>
+          ) : null}
 
           {localImgUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -311,12 +421,12 @@ export default function EditPortraitProfile({
         </div>
 
         <div className="w-[1060px] h-[105px] flex items-center gap-[10px]">
-          {/* Left column */}
           <div className="w-[830px] h-[100px] flex flex-col items-start gap-[15px]">
             <div className="w-full h-[21px] flex items-center gap-[10px] pt-[5px]">
               <input
                 value={localBusiness}
                 placeholder={BUSINESS_PLACEHOLDER}
+                readOnly={!editable}
                 onFocus={() =>
                   focusClearIfPlaceholder(localBusiness, BUSINESS_PLACEHOLDER, (v) => {
                     setLocalBusiness(v)
@@ -324,108 +434,147 @@ export default function EditPortraitProfile({
                   })
                 }
                 onBlur={() =>
-                  blurRestoreIfEmpty(
-                    localBusiness,
-                    BUSINESS_PLACEHOLDER,
-                    (v) => setLocalBusiness(v),
-                    onChangeBusinessName
-                  )
+                  blurRestoreIfEmpty(localBusiness, BUSINESS_PLACEHOLDER, (v) => setLocalBusiness(v), onChangeBusinessName)
                 }
                 onChange={(e) => {
+                  if (!editable) return
                   setLocalBusiness(e.target.value)
                   onChangeBusinessName?.(e.target.value)
                 }}
-                className="w-full font-inter font-normal text-[22px] leading-[27px] text-[#A5A5A5] placeholder:text-[#A5A5A5] bg-transparent outline-none"
+                className={[
+                  "w-full font-inter font-normal text-[22px] leading-[27px] bg-transparent outline-none",
+                  editable ? "text-[#A5A5A5] placeholder:text-[#A5A5A5]" : "text-[#262626] placeholder:text-[#262626]",
+                ].join(" ")}
               />
             </div>
 
             <div className="flex items-center gap-[10px]">
-              {showAddLink ? (
-                <LinkPicker onAddLinkClick={onAddLinkClick} value={linksValue} onChange={onChangeLinks} />
-              ) : null}
+              {editable ? (
+                showAddLink ? (
+                  <LinkPicker onAddLinkClick={onAddLinkClick} value={linksValue} onChange={onChangeLinks} />
+                ) : null
+              ) : (
+                <div className="flex items-center gap-[10px]">
+                  {activeLinks.map((l) => (
+                    <a
+                      key={l.key}
+                      href={l.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={iconLabelForKey(l.key)}
+                      className="w-[24px] h-[24px] flex items-center justify-center text-[#262626] cursor-pointer"
+                    >
+                      <IconForKey k={l.key} />
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="w-full min-h-[25px] flex items-start">
-              <MerchTagPicker
-                maxTags={8}
-                onMerchClick={onMerchClick}
-                layout="inlineLeft"
-                value={merchTags}
-                onChange={onChangeMerchTags}
-              />
+              {editable ? (
+                <MerchTagPicker
+                  maxTags={8}
+                  onMerchClick={onMerchClick}
+                  layout="inlineLeft"
+                  value={merchTags}
+                  onChange={onChangeMerchTags}
+                />
+              ) : (
+                <div className="flex flex-wrap gap-[10px]">
+                  {safeTags.map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      className="flex items-center justify-center px-[20px] py-[7px] h-[24px] rounded-full border border-[#A5A5A5] border-[0.5px]"
+                      onClick={() => {}}
+                    >
+                      <span className="font-inter font-normal text-[15px] leading-[150%] text-[#262626]">{t}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Right column */}
           <div className="w-[220px] h-[105px] flex flex-col items-end gap-[15px]">
             <div className="w-[205px] h-[36px] flex items-center justify-end gap-[30px]">
-              <div ref={colorButtonsWrapRef} className="relative w-[98px] h-[36px] flex items-center justify-end gap-[5px]">
-                <div className="w-[16px] h-[16px] flex items-center justify-center text-[#A5A5A5]">
-                  <BrushIcon className="w-[16px] h-[16px]" />
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => togglePicker("banner")}
-                  aria-label="Pick banner color"
-                  className="w-[36px] h-[36px] rounded-full border border-[rgba(165,165,165,0.5)] bg-white cursor-pointer relative overflow-hidden"
-                >
-                  <span className="absolute inset-0" style={{ backgroundColor: localBanner }} />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => togglePicker("background")}
-                  aria-label="Pick background color"
-                  className="w-[36px] h-[36px] rounded-full border border-[rgba(165,165,165,0.5)] bg-white cursor-pointer relative overflow-hidden"
-                >
-                  <span className="absolute inset-0" style={{ backgroundColor: localBg }} />
-                </button>
-
-                {openPicker ? (
-                  <div ref={colorPopoverRef} className="absolute z-50 top-[52px] left-1/2 -translate-x-1/2 w-[276px]">
-                    <ColorPicker
-                      label={pickerLabel}
-                      valueHex={pickerHex}
-                      onChangeHex={applyPickerHex}
-                      swatches={pickerSwatches}
-                      onChangeSwatches={applyPickerSwatches}
-                      onRequestClose={() => setOpenPicker(null)}
-                    />
+              {editable ? (
+                <div ref={colorButtonsWrapRef} className="relative w-[98px] h-[36px] flex items-center justify-end gap-[5px]">
+                  <div className="w-[16px] h-[16px] flex items-center justify-center text-[#A5A5A5]">
+                    <BrushIcon className="w-[16px] h-[16px]" />
                   </div>
-                ) : null}
-              </div>
 
-              <div className="w-[190px] h-[30px] flex items-center gap-[10px]">
-                <SecondaryButton className="w-[150px] h-[30px]" onClick={onPublish}>
-                  {publishLabel}
-                </SecondaryButton>
+                  <button
+                    type="button"
+                    onClick={() => togglePicker("banner")}
+                    aria-label="Pick banner color"
+                    className="w-[36px] h-[36px] rounded-full border border-[rgba(165,165,165,0.5)] bg-white cursor-pointer relative overflow-hidden"
+                  >
+                    <span className="absolute inset-0" style={{ backgroundColor: localBanner }} />
+                  </button>
 
-                <button
-                  type="button"
-                  aria-label="Open preview"
-                  onClick={onOpenPreview}
-                  className="w-[30px] h-[30px] bg-white rounded-full border border-[#262626] flex items-center justify-center"
-                >
-                  <OpenTabIcon className="w-[16px] h-[16px] [&_path]:stroke-[#262626]" />
-                </button>
-              </div>
+                  <button
+                    type="button"
+                    onClick={() => togglePicker("background")}
+                    aria-label="Pick background color"
+                    className="w-[36px] h-[36px] rounded-full border border-[rgba(165,165,165,0.5)] bg-white cursor-pointer relative overflow-hidden"
+                  >
+                    <span className="absolute inset-0" style={{ backgroundColor: localBg }} />
+                  </button>
+
+                  {openPicker ? (
+                    <div ref={colorPopoverRef} className="absolute z-50 top-[52px] left-1/2 -translate-x-1/2 w-[276px]">
+                      <ColorPicker
+                        label={pickerLabel}
+                        valueHex={pickerHex}
+                        onChangeHex={applyPickerHex}
+                        swatches={pickerSwatches}
+                        onChangeSwatches={applyPickerSwatches}
+                        onRequestClose={() => setOpenPicker(null)}
+                      />
+                    </div>
+                  ) : null}
+                </div>
+              ) : (
+                // PREVIEW: logo in swatches spot, no swatches rendered
+                <div className="w-[98px] h-[36px] flex items-center justify-end">
+                  <KonfolioLogoInline />
+                </div>
+              )}
+
+              {editable ? (
+                <div className="w-[190px] h-[30px] flex items-center gap-[10px]">
+                  <SecondaryButton className="w-[150px] h-[30px] cursor-pointer" onClick={onPublish}>
+                    {publishLabel}
+                  </SecondaryButton>
+
+                  <button
+                    type="button"
+                    aria-label="Open preview"
+                    onClick={onOpenPreview}
+                    className="w-[30px] h-[30px] rounded-full border border-[#262626] flex items-center justify-center cursor-pointer"
+                  >
+                    <OpenTabIcon className="w-[16px] h-[16px] [&_path]:stroke-[#262626]" />
+                  </button>
+                </div>
+              ) : null}
             </div>
 
             <div className="w-[220px] h-[54px] flex flex-col items-end justify-center gap-[4px] pt-[4px]">
               <input
                 value={localName}
                 placeholder={NAME_PLACEHOLDER}
+                readOnly={!editable}
                 onFocus={() =>
                   focusClearIfPlaceholder(localName, NAME_PLACEHOLDER, (v) => {
                     setLocalName(v)
                     onChangeDisplayName?.(v)
                   })
                 }
-                onBlur={() =>
-                  blurRestoreIfEmpty(localName, NAME_PLACEHOLDER, (v) => setLocalName(v), onChangeDisplayName)
-                }
+                onBlur={() => blurRestoreIfEmpty(localName, NAME_PLACEHOLDER, (v) => setLocalName(v), onChangeDisplayName)}
                 onChange={(e) => {
+                  if (!editable) return
                   setLocalName(e.target.value)
                   onChangeDisplayName?.(e.target.value)
                 }}
@@ -448,6 +597,7 @@ export default function EditPortraitProfile({
                   <input
                     value={localLocation}
                     placeholder={LOCATION_PLACEHOLDER}
+                    readOnly={!editable}
                     onFocus={() =>
                       focusClearIfPlaceholder(localLocation, LOCATION_PLACEHOLDER, (v) => {
                         setLocalLocation(v)
@@ -455,14 +605,10 @@ export default function EditPortraitProfile({
                       })
                     }
                     onBlur={() =>
-                      blurRestoreIfEmpty(
-                        localLocation,
-                        LOCATION_PLACEHOLDER,
-                        (v) => setLocalLocation(v),
-                        onChangeLocationText
-                      )
+                      blurRestoreIfEmpty(localLocation, LOCATION_PLACEHOLDER, (v) => setLocalLocation(v), onChangeLocationText)
                     }
                     onChange={(e) => {
+                      if (!editable) return
                       setLocalLocation(e.target.value)
                       onChangeLocationText?.(e.target.value)
                     }}
@@ -475,6 +621,7 @@ export default function EditPortraitProfile({
               <input
                 value={localEmail}
                 placeholder={EMAIL_PLACEHOLDER}
+                readOnly={!editable}
                 onFocus={() =>
                   focusClearIfPlaceholder(localEmail, EMAIL_PLACEHOLDER, (v) => {
                     setLocalEmail(v)
@@ -483,6 +630,7 @@ export default function EditPortraitProfile({
                 }
                 onBlur={() => blurRestoreIfEmpty(localEmail, EMAIL_PLACEHOLDER, (v) => setLocalEmail(v), onChangeEmail)}
                 onChange={(e) => {
+                  if (!editable) return
                   setLocalEmail(e.target.value)
                   onChangeEmail?.(e.target.value)
                 }}

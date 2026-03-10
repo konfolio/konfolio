@@ -47,6 +47,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 }
 
 
+// Validate ../../../app/[business]/[portfolio]/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/[business]/[portfolio]">> = Specific
+  const handler = {} as typeof import("../../../app/[business]/[portfolio]/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../../app/auth/callback/page.tsx
 {
   type __IsExpected<Specific extends AppPageConfig<"/auth/callback">> = Specific
@@ -263,10 +272,64 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../../app/test-create/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/test-create">> = Specific
+  const handler = {} as typeof import("../../../app/test-create/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/test-delete/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/test-delete">> = Specific
+  const handler = {} as typeof import("../../../app/test-delete/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../../app/test-port/[profileId]/page.tsx
 {
   type __IsExpected<Specific extends AppPageConfig<"/test-port/[profileId]">> = Specific
   const handler = {} as typeof import("../../../app/test-port/[profileId]/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/test-publish/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/test-publish">> = Specific
+  const handler = {} as typeof import("../../../app/test-publish/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/test-upload/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/test-upload">> = Specific
+  const handler = {} as typeof import("../../../app/test-upload/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/api/analytics/home-metrics/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/analytics/home-metrics">> = Specific
+  const handler = {} as typeof import("../../../app/api/analytics/home-metrics/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/api/analytics/home-view/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/analytics/home-view">> = Specific
+  const handler = {} as typeof import("../../../app/api/analytics/home-view/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check
@@ -285,6 +348,24 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/auth/sync">> = Specific
   const handler = {} as typeof import("../../../app/api/auth/sync/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/api/konfolios/[id]/images/upload/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/konfolios/[id]/images/upload">> = Specific
+  const handler = {} as typeof import("../../../app/api/konfolios/[id]/images/upload/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/api/konfolios/[id]/publish/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/konfolios/[id]/publish">> = Specific
+  const handler = {} as typeof import("../../../app/api/konfolios/[id]/publish/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check
@@ -321,6 +402,24 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/profile-image/upload">> = Specific
   const handler = {} as typeof import("../../../app/api/profile-image/upload/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/api/public/konfolios/[id]/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/public/konfolios/[id]">> = Specific
+  const handler = {} as typeof import("../../../app/api/public/konfolios/[id]/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/api/public/konfolios/by-slug/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/public/konfolios/by-slug">> = Specific
+  const handler = {} as typeof import("../../../app/api/public/konfolios/by-slug/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

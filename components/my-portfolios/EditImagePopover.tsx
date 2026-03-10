@@ -1,7 +1,7 @@
 // components/my-portfolios/EditImagePopover.tsx
 "use client"
 
-import { useMemo, useRef } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import useClickOutside from "@/components/hooks/useClickOutside"
 
 import DeleteIcon from "@/components/icons/DeleteIcon"
@@ -34,24 +34,13 @@ type Props = {
   imageSrc?: string
   onClose: () => void
 
-  /**
-   * right = image on left, sliders on right (default)
-   * left  = sliders on left, image on right (for right-most column cells)
-   */
-  placement?: "right" | "left"
-
-  /**
-   * square = 284x284 preview, 515x314 popover (default)
-   * portrait = 274x345 preview, 505x375 popover
-   */
+  placement?: "right" | "left" // not used for flipping layout anymore
   variant?: Variant
 
-  // Editable meta overlay
   titleText?: string
   descriptionText?: string
   onChangeMeta?: (next: { title: string; description: string }) => void
 
-  // Controlled edits
   edits?: ImageEdits
   onChangeEdits?: (next: ImageEdits) => void
 }
@@ -134,6 +123,41 @@ export default function EditImagePopover({
   const popoverRef = useRef<HTMLDivElement | null>(null)
   useClickOutside(popoverRef, onClose, { enabled: true, closeOnEsc: true })
 
+  const [shiftX, setShiftX] = useState(0)
+
+  const clampToViewport = () => {
+    const el = popoverRef.current
+    if (!el) return
+
+    const rect = el.getBoundingClientRect()
+    const margin = 12
+
+    const overflowRight = rect.right - (window.innerWidth - margin)
+    const overflowLeft = margin - rect.left
+
+    let nextShift = 0
+    if (overflowRight > 0) nextShift -= overflowRight
+    if (overflowLeft > 0) nextShift += overflowLeft
+
+    setShiftX((cur) => (Math.abs(cur - nextShift) > 0.5 ? nextShift : cur))
+  }
+
+  // ✅ Clamp ONLY when the popover opens / variant changes / image changes
+  // ❌ Do NOT clamp on title/description typing (that causes the "jump")
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => clampToViewport())
+    return () => cancelAnimationFrame(raf)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [variant, placement, imageSrc])
+
+  // ✅ Also clamp on resize (and optionally scroll)
+  useEffect(() => {
+    const onResize = () => clampToViewport()
+    window.addEventListener("resize", onResize)
+    return () => window.removeEventListener("resize", onResize)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const mergedEdits = edits ?? DEFAULT_EDITS
   const setEdit = (patch: Partial<ImageEdits>) => {
     const next: ImageEdits = { ...mergedEdits, ...patch }
@@ -142,6 +166,7 @@ export default function EditImagePopover({
 
   const rotateDeg = useMemo(() => ((clamp(mergedEdits.rotate, 0, 100) - 50) / 50) * 180, [mergedEdits.rotate])
   const zoomScale = useMemo(() => 1 + (clamp(mergedEdits.zoom, 0, 100) / 100) * 1.0, [mergedEdits.zoom])
+
   const brightnessVal = useMemo(
     () => 0.5 + (clamp(mergedEdits.brightness, 0, 100) / 100) * 1.0,
     [mergedEdits.brightness]
@@ -151,6 +176,7 @@ export default function EditImagePopover({
     [mergedEdits.contrast]
   )
   const saturateVal = useMemo(() => clamp(mergedEdits.saturation, 0, 100) / 50, [mergedEdits.saturation])
+
   const hueRotateDeg = useMemo(
     () => ((clamp(mergedEdits.temperature, 0, 100) - 50) / 50) * 30,
     [mergedEdits.temperature]
@@ -164,7 +190,6 @@ export default function EditImagePopover({
   const imgStyle = useMemo<React.CSSProperties>(() => {
     return {
       transformOrigin: "center",
-      // add a tiny extra scale so corners never peek through the rim
       transform: `scale(${zoomScale}) rotate(${rotateDeg}deg) scale(1.02)`,
       filter: `brightness(${brightnessVal}) contrast(${contrastVal}) saturate(${saturateVal}) sepia(${sepiaVal}) hue-rotate(${hueRotateDeg}deg)`,
       transition: "transform 120ms linear, filter 120ms linear",
@@ -172,12 +197,11 @@ export default function EditImagePopover({
     }
   }, [zoomScale, rotateDeg, brightnessVal, contrastVal, saturateVal, sepiaVal, hueRotateDeg])
 
-  const isFlipped = placement === "left"
   const v = VARIANT_STYLES[variant]
 
-  const popoverAnchorClass = isFlipped ? "right-[-16px] top-[-15px]" : "left-[-16px] top-[-15px]"
-  const imagePosClass = isFlipped ? "absolute right-[15px] top-[15px]" : "absolute left-[15px] top-[15px]"
-  const controlsPosClass = isFlipped ? "absolute left-[15px] top-[15px]" : `absolute ${v.controls.xFromLeft} top-[15px]`
+  const popoverAnchorClass = "left-[-16px] top-[-15px]"
+  const imagePosClass = "absolute left-[15px] top-[15px]"
+  const controlsPosClass = `absolute ${v.controls.xFromLeft} top-[15px]`
 
   const onReset = () => {
     onChangeEdits?.({ ...DEFAULT_EDITS })
@@ -196,11 +220,15 @@ export default function EditImagePopover({
         backdrop-blur-[5px]
         z-[50]
       `}
+      style={{
+        // translate3d keeps it smoother + avoids some reflow jank
+        transform: shiftX ? `translate3d(${shiftX}px, 0, 0)` : undefined,
+      }}
       onClick={(e) => e.stopPropagation()}
       role="dialog"
       aria-label="Edit image"
     >
-      {/* Preview area (diffused white rim + white glow, no overlay seam) */}
+      {/* Preview area */}
       <div
         className={`
           ${imagePosClass}
@@ -213,15 +241,11 @@ export default function EditImagePopover({
         `}
         style={{
           boxShadow: [
-            // outer white rim + glow (diffused)
             "0 0 0 1.25px rgba(255,255,255,0.95)",
             "0 0 18px rgba(255,255,255,0.55)",
             "0 0 40px rgba(255,255,255,0.25)",
-            // original soft drop shadow
             "2px 4px 25px rgba(165, 165, 165, 0.10)",
-            // subtle inner white rim so border “covers” edges
             "inset 0 0 0 2px rgba(255,255,255,0.88)",
-            // keep your inner depth
             "inset 2.14645px 2.00046px 9.24px rgba(165,165,165,0.126)",
             "inset 1.21725px 1.13446px 4.62px rgba(165,165,165,0.126)",
           ].join(", "),
@@ -229,16 +253,21 @@ export default function EditImagePopover({
       >
         {imageSrc ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={imageSrc} alt="" className="absolute inset-0 w-full h-full object-cover" style={imgStyle} draggable={false} />
+          <img
+            src={imageSrc}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+            style={imgStyle}
+            draggable={false}
+          />
         ) : null}
 
-        {/* Editable overlay — single gradient layer, no blur seam, covers bottom corners */}
+        {/* Editable overlay */}
         <div className="absolute left-0 right-0 bottom-0 z-[2]">
-          {/* gradient sheet with slight bleed so no corner slivers */}
           <div
             className="absolute left-[-2px] right-[-2px] bottom-[-2px]"
             style={{
-              height: 76, // slightly > 70 so the fade begins earlier without moving text
+              height: 76,
               borderBottomLeftRadius: 16,
               borderBottomRightRadius: 16,
               background:
@@ -246,7 +275,6 @@ export default function EditImagePopover({
             }}
           />
 
-          {/* subtle rim continuation so overlay feels like part of the border */}
           <div
             className="absolute left-0 right-0 bottom-0"
             style={{
@@ -257,37 +285,23 @@ export default function EditImagePopover({
             }}
           />
 
-          {/* text inputs stay exactly 70px */}
           <div className="relative h-[70px] px-[15px] py-[15px] flex flex-col justify-end items-start">
             <input
               value={titleText}
               onChange={(e) => onChangeMeta?.({ title: e.target.value, description: descriptionText })}
-              className="
-                w-full
-                bg-transparent
-                outline-none
-                font-inter font-normal text-[17px] leading-[140%]
-                text-[#262626]
-              "
+              className="w-full bg-transparent outline-none font-inter font-normal text-[17px] leading-[140%] text-[#262626]"
             />
             <input
               value={descriptionText}
               onChange={(e) => onChangeMeta?.({ title: titleText, description: e.target.value })}
-              className="
-                w-full
-                bg-transparent
-                outline-none
-                font-inter font-normal text-[15px] leading-[150%]
-                text-[#262626]
-              "
+              className="w-full bg-transparent outline-none font-inter font-normal text-[15px] leading-[150%] text-[#262626]"
             />
           </div>
         </div>
       </div>
 
-      {/* Interaction field */}
+      {/* Controls */}
       <div className={`${controlsPosClass} w-[181px] ${v.controls.h} flex flex-col justify-between items-start`}>
-        {/* Text + Close */}
         <div className="w-[181px] h-[25px] flex flex-row items-start gap-[10px] relative">
           <p className="m-0 w-[155px] h-[25px] font-inter font-normal text-[12px] leading-[130%] text-[#A5A5A5]">
             {title}
@@ -305,7 +319,6 @@ export default function EditImagePopover({
           </button>
         </div>
 
-        {/* Editing Field */}
         <div className="w-[181px] h-[186px] flex flex-col items-start gap-[18px]">
           <SliderRow
             icon={<ArrowRotateIcon />}
@@ -362,7 +375,6 @@ export default function EditImagePopover({
           />
         </div>
 
-        {/* Aside */}
         <div className="w-[181px] h-[16px] flex flex-row justify-between items-center">
           <div className="w-[47px] h-[16px] flex flex-row justify-between items-center gap-[15px]">
             <button type="button" aria-label="Images" className="w-[16px] h-[16px] text-[#262626] cursor-pointer">

@@ -57,6 +57,7 @@ export default function SecondaryButton({
         hover:bg-[rgba(38,38,38,0.2)]
         active:bg-[rgba(38,38,38,0.4)]
         disabled:opacity-50 disabled:cursor-not-allowed
+        cursor-pointer
         ${className}
       `}
     >
