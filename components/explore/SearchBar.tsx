@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import SearchIcon from "@/components/icons/SearchIcon"
 import FilterIcon from "@/components/icons/FilterIcon"
 
@@ -12,21 +13,11 @@ type FilterOption = {
 type Props = {
   value?: string
   onChange?: (v: string) => void
-
-  /**
-   * Optional: parent can control selected filters
-   * If you pass these, the component becomes controlled for filters.
-   */
   selectedFilters?: string[]
   onSelectedFiltersChange?: (ids: string[]) => void
 }
 
-/** Your checkmark SVG as a TSX component */
-function CheckIcon({
-  className = "",
-}: {
-  className?: string
-}) {
+function CheckIcon({ className = "" }: { className?: string }) {
   return (
     <svg
       width="12"
@@ -60,20 +51,44 @@ export default function SearchBar({
   selectedFilters,
   onSelectedFiltersChange,
 }: Props) {
-  const options = useMemo(() => DEFAULT_OPTIONS, [])
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
+  const options = useMemo(() => DEFAULT_OPTIONS, [])
   const [open, setOpen] = useState(false)
-  const [localSelected, setLocalSelected] = useState<string[]>([])
+  const [localValue, setLocalValue] = useState(value)
+  const [localSelected, setLocalSelected] = useState<string[]>(selectedFilters ?? [])
 
   const isControlled = selectedFilters !== undefined && onSelectedFiltersChange
   const selected = isControlled ? selectedFilters! : localSelected
 
   const wrapperRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+  setLocalSelected(selectedFilters ?? [])
+  }, [selectedFilters])
 
+  useEffect(() => {
+    setLocalValue(value)
+  }, [value])
+  function pushState(nextValue: string, nextSelected: string[]) {
+  const params = new URLSearchParams(searchParams.toString())
+
+  if (nextValue.trim()) params.set("q", nextValue.trim())
+  else params.delete("q")
+
+  if (nextSelected.length > 0) params.set("filters", nextSelected.join(","))
+  else params.delete("filters")
+
+  const queryString = params.toString()
+  router.push(queryString ? `${pathname}?${queryString}` : pathname)
+}
   function setSelected(next: string[]) {
-    if (isControlled) onSelectedFiltersChange!(next)
-    else setLocalSelected(next)
-  }
+  if (isControlled) onSelectedFiltersChange!(next)
+  else setLocalSelected(next)
+
+  pushState(value, next)
+}
 
   function toggle(id: string) {
     setSelected(
@@ -83,7 +98,24 @@ export default function SearchBar({
     )
   }
 
-  // close on click outside
+  function pushSearch(nextValue: string) {
+    const params = new URLSearchParams(searchParams.toString())
+
+    if (nextValue.trim()) params.set("q", nextValue.trim())
+    else params.delete("q")
+
+    const queryString = params.toString()
+    router.push(queryString ? `${pathname}?${queryString}` : pathname)
+  }
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      pushSearch(localValue)
+    }, 250)
+
+    return () => window.clearTimeout(timeout)
+  }, [localValue])
+
   useEffect(() => {
     function onDocMouseDown(e: MouseEvent) {
       const el = wrapperRef.current
@@ -94,7 +126,6 @@ export default function SearchBar({
     return () => document.removeEventListener("mousedown", onDocMouseDown)
   }, [])
 
-  // close on escape
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") setOpen(false)
@@ -104,10 +135,8 @@ export default function SearchBar({
   }, [])
 
   return (
-    // centered, max width 1212, fixed height 36
     <div className="w-full flex justify-center" ref={wrapperRef}>
       <div className="relative w-full max-w-[1212px] h-[36px]">
-        {/* Search Bar pill */}
         <div className="h-full flex items-center justify-center">
           <div
             className="
@@ -121,8 +150,11 @@ export default function SearchBar({
             "
           >
             <input
-              value={value}
-              onChange={(e) => onChange?.(e.target.value)}
+              value={localValue}
+              onChange={(e) => {
+                setLocalValue(e.target.value)
+                onChange?.(e.target.value)
+              }}
               placeholder=""
               className="
                 w-full
@@ -133,13 +165,17 @@ export default function SearchBar({
               "
             />
 
-            <span className="w-[24px] h-[24px] flex items-center justify-center">
+            <button
+              type="button"
+              onClick={() => pushSearch(localValue)}
+              className="w-[24px] h-[24px] flex items-center justify-center"
+              aria-label="Search"
+            >
               <SearchIcon className="block" />
-            </span>
+            </button>
           </div>
         </div>
 
-        {/* Filter button pinned to the right */}
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
@@ -156,7 +192,6 @@ export default function SearchBar({
           <FilterIcon className="block" />
         </button>
 
-        {/* Dropdown */}
         {open && (
           <div
             className="
@@ -186,7 +221,6 @@ export default function SearchBar({
                   "
                 >
                   <div className="flex items-center gap-[10px] w-full">
-                    {/* checkbox */}
                     <span
                       className="
                         w-[14px] h-[14px]

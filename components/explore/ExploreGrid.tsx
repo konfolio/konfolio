@@ -6,72 +6,48 @@ import ExplorePortfolioCard from "@/components/explore/ExplorePortfolioCard"
 import ThreeDotsIcon from "@/components/icons/ThreeDotsIcon"
 
 type Item = {
-  id: number
+  id: string
   businessName: string
   creatorName: string
   previewImageUrl: string
-  avatarUrl?: string
+  profileImageUrl?: string
   labels?: string[]
+}
+
+type ExploreItem = {
+  id: string
+  template: "square" | "portrait"
+  updated_at: string | null
+  thumbnailUrl: string
+  businessName: string
+  displayName: string
+  locationText: string
+  profileImageUrl: string
+  merchTags: string[]
+}
+
+type Props = {
+  items: ExploreItem[]
 }
 
 const PAGE_SIZE = 12
 
-export default function ExploreGrid() {
+export default function ExploreGrid({ items }: Props) {
   const pathname = usePathname()
 
-  // ---- Test data (make > 12) ----
   const allItems: Item[] = useMemo(() => {
-    const base: Item[] = [
-      {
-        id: 0,
-        businessName: "Califlair",
-        creatorName: "Konfolio",
-        previewImageUrl: "/images/califlair_home.png",
-        avatarUrl: "/images/konfolio_placeholder.png",
-        labels: ["Share Table", "Other Collabs"],
-      },
-      {
-        id: 1,
-        businessName: "Say0ranArts",
-        creatorName: "Konfolio",
-        previewImageUrl: "/images/sayoran_home.png",
-        avatarUrl: "/images/konfolio_placeholder.png",
-        labels: ["Stamp Rally"],
-      },
-      {
-        id: 2,
-        businessName: "Penelopeloveprints",
-        creatorName: "Konfolio",
-        previewImageUrl: "/images/penelope_home.png",
-        avatarUrl: "/images/konfolio_placeholder.png",
-        labels: ["Other Collabs"],
-      },
-      {
-        id: 3,
-        businessName: "LINVANIIN",
-        creatorName: "Konfolio",
-        previewImageUrl: "/images/linvaniin_home.png",
-        avatarUrl: "/images/konfolio_placeholder.png",
-        labels: ["Stamp Rally"],
-      },
-    ]
-
-    const filler: Item[] = Array.from({ length: 24 }).map((_, i) => ({
-      id: i + 4,
-      businessName: `Califlair ${i + 1}`,
-      creatorName: "Konfolio",
-      previewImageUrl: "/images/califlair_home.png",
-      avatarUrl: "/images/konfolio_placeholder.png",
-      labels: ["Other Collabs"],
+    return items.map((item) => ({
+      id: item.id,
+      businessName: item.businessName,
+      creatorName: item.displayName,
+      previewImageUrl: item.thumbnailUrl,
+      profileImageUrl: item.profileImageUrl,
+      labels: item.merchTags ?? [],
     }))
+  }, [items])
 
-    return [...base, ...filler] // 28 total
-  }, [])
-
-  // ---- paging state ----
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 
-  // Reset when you come back to /explore
   useEffect(() => {
     if (pathname === "/explore") {
       setVisibleCount(PAGE_SIZE)
@@ -81,7 +57,6 @@ export default function ExploreGrid() {
   const visibleItems = allItems.slice(0, visibleCount)
   const hasMore = visibleCount < allItems.length
 
-  // ---- load control ----
   const isLoadingRef = useRef(false)
   const sentinelRef = useRef<HTMLDivElement | null>(null)
 
@@ -98,7 +73,6 @@ export default function ExploreGrid() {
 
         isLoadingRef.current = true
 
-        // small delay so it doesn't feel instant
         window.setTimeout(() => {
           setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, allItems.length))
           isLoadingRef.current = false
@@ -106,9 +80,7 @@ export default function ExploreGrid() {
       },
       {
         root: null,
-        // IMPORTANT: no early preload
         rootMargin: "0px",
-        // Require it to actually be in view
         threshold: 0.8,
       }
     )
@@ -117,15 +89,11 @@ export default function ExploreGrid() {
     return () => observer.disconnect()
   }, [allItems.length, hasMore])
 
-  // show dots only if:
-  // - there are more results
-  // - AND we've filled the first page (12)
   const showDots = hasMore && visibleItems.length >= PAGE_SIZE
 
   return (
     <div className="w-full flex justify-center">
       <div className="w-full max-w-[1212px] flex flex-col">
-        {/* Grid */}
         <div
           className="
             grid
@@ -139,17 +107,17 @@ export default function ExploreGrid() {
           {visibleItems.map((item) => (
             <ExplorePortfolioCard
               key={item.id}
+              portfolioId={item.id}
               businessName={item.businessName}
               creatorName={item.creatorName}
               previewImageUrl={item.previewImageUrl}
-              avatarUrl={item.avatarUrl}
+              avatarUrl={item.profileImageUrl}
               labels={item.labels}
               className="w-[390px] h-[320px]"
             />
           ))}
         </div>
 
-        {/* Dots */}
         {showDots && (
           <div className="w-full flex justify-center pt-[36px] pb-[12px]">
             <div
@@ -168,15 +136,9 @@ export default function ExploreGrid() {
           </div>
         )}
 
-        {/* Short scroll buffer before load */}
         {showDots && <div className="h-[48px]" />}
-
-        {/* Sentinel */}
         {hasMore && <div ref={sentinelRef} className="h-[18px]" />}
-
-        {/* Bottom breathing room  */}
         <div className="h-[36px]" />
-
       </div>
     </div>
   )
