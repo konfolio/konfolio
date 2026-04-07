@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import CreateFormWizard from "@/components/organizer/CreateFormWizard";
 import {
   CalendarDays,
   Eye,
@@ -77,6 +78,7 @@ export default function OrganizerHomePage({ organizerId }: Props) {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     let ignore = false;
@@ -141,12 +143,17 @@ export default function OrganizerHomePage({ organizerId }: Props) {
               {forms.length.toString().padStart(2, "0")} forms
             </p>
 
-            <Link
-              href="/forms/create"
-              className="mt-2 inline-block border px-5 py-2 rounded-full"
-            >
+          <button
+            onClick={() => setOpen(true)}
+            className="mt-2 inline-block rounded-full border border-black bg-white px-5 py-2 text-sm font-normal text-black transition hover:bg-white"
+              >
               + Create
-            </Link>
+            </button>
+
+      <CreateFormWizard
+        open={open}
+        onClose={() => setOpen(false)}
+      />
           </div>
         </div>
 
