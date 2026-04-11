@@ -83,7 +83,7 @@ export default function OrganizerFormCard({ form }: Props) {
           ⋯
         </button>
         <Link
-          href={`/forms/${form.id}/edit`}
+          href={`/organizer/forms/${form.id}/edit`}
           className="text-[13px] text-[#262626] border-b border-[#C0BDB4] pb-[1px] hover:opacity-70"
         >
           Edit Form

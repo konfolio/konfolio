@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase/browser";
 import { useEffect, useState } from "react";
 
 export default function MyFormsPage() {
+  const [loading, setLoading] = useState(true);
   const [forms, setForms] = useState([]);
 
   useEffect(() => {
@@ -29,8 +30,8 @@ export default function MyFormsPage() {
 
         if (!res.ok) throw new Error(json?.error);
 
-        console.log("User's forms:", json.forms);
         setForms(json.forms);
+        setLoading(false);
       } catch (err: any) {
         console.error("Error fetching user's forms:", err?.message);
       }
@@ -38,8 +39,6 @@ export default function MyFormsPage() {
 
     getUserForms();
   }, []);
-
-  console.log(typeof forms);
 
   return (
     <main className="min-h-screen bg-[#F7F7F7]">
@@ -50,9 +49,13 @@ export default function MyFormsPage() {
 
       <section className="w-full flex justify-center px-[150px] py-[40px]">
         <div className="w-full max-w-[1212px] grid grid-cols-2 gap-[12px]">
-          {forms.map((form: any) => (
-            <OrganizerFormCard key={form.id} form={form} />
-          ))}
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+            forms.map((form: any) => (
+              <OrganizerFormCard key={form.id} form={form} />
+            ))
+          )}
         </div>
       </section>
     </main>
