@@ -16,9 +16,11 @@ const DEV_ORGANIZER_ID = "a0d1b45e-e482-4eba-ba34-54a4c88d33d4";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+
     const body = await req.json().catch(() => null);
     const status = body?.status as string;
 
@@ -31,7 +33,7 @@ export async function PATCH(
     const { data: appRow, error: appErr } = await supabase
       .from("alley_applications")
       .select("id, organizer_id")
-      .eq("id", params.id)
+      .eq("id", id)
       .single();
 
     if (appErr || !appRow) {
@@ -48,7 +50,7 @@ export async function PATCH(
     const { data, error } = await supabase
       .from("alley_applications")
       .update({ status })
-      .eq("id", params.id)
+      .eq("id", id)
       .select("id,status")
       .single();
 

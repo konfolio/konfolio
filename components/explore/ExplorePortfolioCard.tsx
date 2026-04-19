@@ -5,6 +5,7 @@ import PrimaryButton from "@/components/buttons/PrimaryButton"
 import ThreeDotsIcon from "@/components/icons/ThreeDotsIcon"
 
 type Props = {
+  portfolioId: string
   businessName: string
   creatorName: string
   previewImageUrl: string
@@ -36,11 +37,11 @@ function CheckIcon({ className = "" }: { className?: string }) {
 const GRID_BASE_SHADOW =
   "2px 4px 25px rgba(165,165,165,0.1), inset 2.14645px 2.00046px 9.24px rgba(165,165,165,0.126), inset 1.21725px 1.13446px 4.62px rgba(165,165,165,0.126), inset 0 0 0 1px rgba(255,255,255,0.9)"
 
-// subtle hover bump (still “grid-like”, not dramatic)
 const GRID_HOVER_SHADOW =
   "2px 4px 25px rgba(165,165,165,0.14), inset 2.14645px 2.00046px 9.24px rgba(165,165,165,0.126), inset 1.21725px 1.13446px 4.62px rgba(165,165,165,0.126), inset 0 0 0 1px rgba(255,255,255,0.9)"
 
 export default function ExplorePortfolioCard({
+  portfolioId,
   businessName,
   creatorName,
   previewImageUrl,
@@ -59,7 +60,6 @@ export default function ExplorePortfolioCard({
         ${className}
       `}
     >
-      {/* ===== Preview ===== */}
       <div
         className="
           relative w-[390px] h-[260px]
@@ -73,14 +73,10 @@ export default function ExplorePortfolioCard({
         style={
           {
             boxShadow: GRID_BASE_SHADOW,
-            // allow Tailwind arbitrary box-shadow on hover via CSS var
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             "--hoverShadow": GRID_HOVER_SHADOW,
           } as React.CSSProperties
         }
       >
-        {/* Gradient / conic border overlay (kept for the “gradient effect”) */}
         <div
           className="
             pointer-events-none absolute inset-0 rounded-[15px]
@@ -93,7 +89,6 @@ export default function ExplorePortfolioCard({
           "
         />
 
-        {/* Image */}
         <Image
           src={previewImageUrl}
           alt={`${businessName} preview`}
@@ -110,7 +105,6 @@ export default function ExplorePortfolioCard({
           <ThreeDotsIcon />
         </button>
 
-        {/* Center button — appears on hover */}
         <div
           className="
             absolute inset-0 flex items-center justify-center
@@ -120,7 +114,7 @@ export default function ExplorePortfolioCard({
           "
         >
           <PrimaryButton
-            href={`/portfolio/${businessName}`}
+            href={`/explore/${portfolioId}`}
             icon="open"
             className="h-[33px] min-w-[150px] px-[40px] py-[10px]"
           >
@@ -129,9 +123,7 @@ export default function ExplorePortfolioCard({
         </div>
       </div>
 
-      {/* ===== Bottom Info ===== */}
       <div className="w-[390px] h-[35px] px-[15px] flex flex-col justify-center gap-[12px]">
-        {/* Top row */}
         <div className="w-[360px] h-[13px] flex items-center justify-between">
           <div className="text-[17px] leading-[140%] font-normal text-[#262626]">
             {businessName}
@@ -156,7 +148,6 @@ export default function ExplorePortfolioCard({
           </div>
         </div>
 
-        {/* Label row */}
         <div className="w-[360px] h-[10px] flex items-center justify-start gap-[11px]">
           {labels.slice(0, 3).map((label) => (
             <div key={label} className="flex items-center gap-[5px]">
