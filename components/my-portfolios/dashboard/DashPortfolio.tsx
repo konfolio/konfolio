@@ -530,9 +530,9 @@ export default function DashPortfolio({
         </div>
 
         <div className="flex items-center gap-[5px]">
-          <CheckIcon className="text-[#262626]" />
+        {exploreEnabled && <CheckIcon className="text-[#262626]" />}
           <span className="text-[#262626] text-[14px] leading-[130%] font-normal">
-            {exploreEnabled ? "Explore" : "Private"}
+            {exploreEnabled ? "Explore" : "Link Access Only"}
           </span>
         </div>
       </div>
@@ -688,6 +688,7 @@ export default function DashPortfolio({
               open={menuOpen}
               onClose={() => setMenuOpen(false)}
               onAction={handleMenuAction}
+              exploreEnabled={exploreEnabled} 
               icons={{
                 editName: PencilIcon,
                 linkAccessOnly: LinkIcon,

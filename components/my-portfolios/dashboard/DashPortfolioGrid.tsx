@@ -156,6 +156,28 @@ async function updateKonfolioSlug(
   }
 }
 
+async function updateKonfolioExploreEnabled(
+  konfolioId: string,
+  nextValue: boolean
+): Promise<void> {
+  const token = await getAccessToken()
+  if (!token) throw new Error("Not signed in")
+
+  const res = await fetch(`/api/konfolios/${konfolioId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ explore_enabled: nextValue }),
+  })
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "")
+    throw new Error(text || `Failed to update explore setting (${res.status})`)
+  }
+}
+
 export default function DashPortfolioGrid({
   items,
   className,
@@ -265,6 +287,33 @@ export default function DashPortfolioGrid({
     [localItems]
   )
 
+  const handleToggleExplore = React.useCallback(
+    async (id: string, currentValue: boolean) => {
+      const previous = localItems
+      const nextValue = !currentValue
+
+      setLocalItems((cur) =>
+        cur.map((k) =>
+          k.id === id
+            ? {
+                ...k,
+                exploreEnabled: nextValue,
+                updatedAt: new Date().toISOString(),
+              }
+            : k
+        )
+      )
+
+      try {
+        await updateKonfolioExploreEnabled(id, nextValue)
+      } catch (error) {
+        console.error(error)
+        setLocalItems(previous)
+      }
+    },
+    [localItems]
+  )
+
   const handleDuplicate = React.useCallback(
     async (id: string) => {
       if (duplicatingId === id) return
@@ -322,13 +371,16 @@ export default function DashPortfolioGrid({
               views={k.views ?? 0}
               viewers={k.uniqueViewers ?? 0}
               linkClicks={k.linkClicks ?? 0}
-              exploreEnabled={Boolean(k.exploreEnabled)}
+              exploreEnabled={k.exploreEnabled ?? false}
               lastUpdatedLabel={formatDateLabel(k.updatedAt)}
               onView={onView ? () => onView(k.id) : undefined}
               onEdit={onEdit ? () => onEdit(k.id) : undefined}
               onMore={onMore ? () => onMore(k.id) : undefined}
               onCopyUrl={onCopyUrl ? () => onCopyUrl(publicUrl) : undefined}
               onEditName={(nextName) => handleRename(k.id, nextName)}
+              onLinkAccessOnly={() =>
+                handleToggleExplore(k.id, k.exploreEnabled ?? false)
+              }
               onEditUrl={(nextSlug) => handleEditUrl(k.id, nextSlug)}
               onDuplicate={() => handleDuplicate(k.id)}
               onExportPick={
