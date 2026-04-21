@@ -9,7 +9,7 @@ export default function HostNamePage() {
       <main className="flex-1 flex justify-center px-[25px] sm:px-10 pt-[100px] pb-[120px]">
         <NameCard
           mode="host"
-          backHref="/onboarding/audience"
+          backHref="/onboarding/beta"
           onNextHref="/onboarding/business-info/host"
         />
       </main>
