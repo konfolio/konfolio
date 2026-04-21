@@ -1,9 +1,12 @@
 "use client"
 
 import * as React from "react"
+import { useRouter } from "next/navigation"
 import DashPortfolio from "@/components/my-portfolios/dashboard/DashPortfolio"
 
 import { supabase } from "@/lib/supabase/browser"
+import { duplicateKonfolio } from "@/lib/duplicateKonfolio"
+import { useKonfolioDraftStore } from "@/stores/konfolioDraftStore"
 
 type KonfolioStatus = "draft" | "published"
 type ExportType = "pdf" | "png" | "jpeg"
@@ -64,7 +67,11 @@ function slugify(input: string): string {
     .replace(/^-|-$/g, "")
 }
 
-function buildPublicUrl(urlBase: string, businessName: string, portfolioSlug: string) {
+function buildPublicUrl(
+  urlBase: string,
+  businessName: string,
+  portfolioSlug: string
+) {
   const base = urlBase.replace(/\/+$/, "")
   const business = slugify(businessName)
   const portfolio = slugify(portfolioSlug)
@@ -105,7 +112,13 @@ export default function DashPortfolioGrid({
   urlBase = "",
   onPublishedCountChange,
 }: Props) {
+  const router = useRouter()
   const [localItems, setLocalItems] = React.useState<DashboardKonfolio[]>(items)
+  const [duplicatingId, setDuplicatingId] = React.useState<string | null>(null)
+
+  const hasKonfolioHydrated = useKonfolioDraftStore((s) => s.hasHydrated)
+  const forceKonfolioHydrate = useKonfolioDraftStore((s) => s.forceHydrate)
+  const setDraft = useKonfolioDraftStore((s) => s.setDraft)
 
   React.useEffect(() => {
     setLocalItems(items)
@@ -141,6 +154,41 @@ export default function DashPortfolioGrid({
     [items]
   )
 
+  const handleDuplicate = React.useCallback(
+    async (id: string) => {
+      if (duplicatingId === id) return
+
+      try {
+        setDuplicatingId(id)
+
+        if (!hasKonfolioHydrated) {
+          try {
+            await forceKonfolioHydrate()
+          } catch (e: any) {
+            console.warn("[DashPortfolioGrid] forceHydrate failed:", e?.message ?? e)
+          }
+        }
+
+        const { draft } = await duplicateKonfolio(id)
+
+        setDraft(draft.id, draft)
+
+        router.push(`/my-portfolios/${draft.id}/edit`)
+        router.refresh()
+      } catch (error) {
+        console.error(error)
+        alert(
+          error instanceof Error
+            ? error.message
+            : "Failed to duplicate konfolio"
+        )
+      } finally {
+        setDuplicatingId(null)
+      }
+    },
+    [duplicatingId, forceKonfolioHydrate, hasKonfolioHydrated, router, setDraft]
+  )
+
   if (published.length === 0) {
     return (
       <div className={className}>
@@ -173,7 +221,8 @@ export default function DashPortfolioGrid({
               onEdit={onEdit ? () => onEdit(k.id) : undefined}
               onMore={onMore ? () => onMore(k.id) : undefined}
               onCopyUrl={onCopyUrl ? () => onCopyUrl(publicUrl) : undefined}
-              onExportPick={                
+              onDuplicate={() => handleDuplicate(k.id)}
+              onExportPick={
                 onExport
                   ? (type) => {
                       onExport(k.id, type)

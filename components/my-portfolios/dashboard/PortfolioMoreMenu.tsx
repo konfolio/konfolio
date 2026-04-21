@@ -69,7 +69,13 @@ export default function PortfolioMoreMenu({
 
   return (
     <div ref={rootRef} className="absolute right-0 top-[calc(100%+8px)] z-50">
-      <div className={["relative", `right-[${figmaOffset.rightPx}px]`, `top-[${figmaOffset.topPx}px]`].join(" ")}>
+      <div
+        className={[
+          "relative",
+          `right-[${figmaOffset.rightPx}px]`,
+          `top-[${figmaOffset.topPx}px]`,
+        ].join(" ")}
+      >
         <div
           role="menu"
           aria-label="Portfolio more menu"
