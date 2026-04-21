@@ -132,6 +132,44 @@ export async function PATCH(
     patch.explore_enabled = body.explore_enabled
   }
 
+  if (body.portfolio_name !== undefined) {
+    if (typeof body.portfolio_name !== "string") {
+      return NextResponse.json(
+        { error: "portfolio_name must be a string" },
+        { status: 400 }
+      )
+    }
+
+    const trimmed = body.portfolio_name.trim()
+    if (!trimmed) {
+      return NextResponse.json(
+        { error: "Portfolio name cannot be empty" },
+        { status: 400 }
+      )
+    }
+
+    patch.portfolio_name = trimmed
+  }
+
+  if (body.portfolio_slug !== undefined) {
+    if (typeof body.portfolio_slug !== "string") {
+      return NextResponse.json(
+        { error: "portfolio_slug must be a string" },
+        { status: 400 }
+      )
+    }
+
+    const trimmed = body.portfolio_slug.trim()
+    if (!trimmed) {
+      return NextResponse.json(
+        { error: "Portfolio slug cannot be empty" },
+        { status: 400 }
+      )
+    }
+
+    patch.portfolio_slug = trimmed
+  }
+
   if (patch.status === "draft") {
     patch.explore_enabled = false
   }

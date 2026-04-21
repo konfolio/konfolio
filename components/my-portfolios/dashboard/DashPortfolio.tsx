@@ -1,4 +1,3 @@
-// /components/my-portfolios/dashboard/DashPortfolio.tsx
 "use client"
 
 import * as React from "react"
@@ -46,7 +45,7 @@ type Props = {
 
   onCopyUrl?: () => void
 
-  onEditName?: () => void
+  onEditName?: (nextName: string) => Promise<void> | void
   onLinkAccessOnly?: () => void
   onDuplicate?: () => void
   onEditUrl?: () => void
@@ -104,11 +103,29 @@ export default function DashPortfolio({
   const [exportOpen, setExportOpen] = React.useState(false)
   const [copied, setCopied] = React.useState(false)
 
+  const [isEditingName, setIsEditingName] = React.useState(false)
+  const [draftName, setDraftName] = React.useState(portfolioName)
+  const [isSavingName, setIsSavingName] = React.useState(false)
+
   const copyTimeoutRef = React.useRef<number | null>(null)
+  const nameInputRef = React.useRef<HTMLInputElement | null>(null)
 
   const closeMenu = React.useCallback(() => setMenuOpen(false), [])
   const closeDelete = React.useCallback(() => setDeleteOpen(false), [])
   const closeExport = React.useCallback(() => setExportOpen(false), [])
+
+  React.useEffect(() => {
+    setDraftName(portfolioName)
+  }, [portfolioName])
+
+  React.useEffect(() => {
+    if (!isEditingName) return
+    const id = window.setTimeout(() => {
+      nameInputRef.current?.focus()
+      nameInputRef.current?.select()
+    }, 0)
+    return () => window.clearTimeout(id)
+  }, [isEditingName])
 
   React.useEffect(() => {
     return () => {
@@ -159,13 +176,57 @@ export default function DashPortfolio({
     }, 1500)
   }, [resolvedPublicUrl, onCopyUrl])
 
+  const startEditingName = React.useCallback(() => {
+    if (isSavingName) return
+    setDraftName(portfolioName)
+    setIsEditingName(true)
+    setMenuOpen(false)
+  }, [isSavingName, portfolioName])
+
+  const cancelEditingName = React.useCallback(() => {
+    setDraftName(portfolioName)
+    setIsEditingName(false)
+  }, [portfolioName])
+
+  const saveName = React.useCallback(async () => {
+    const trimmed = draftName.trim()
+
+    if (!trimmed) {
+      setDraftName(portfolioName)
+      setIsEditingName(false)
+      return
+    }
+
+    if (trimmed === portfolioName.trim()) {
+      setIsEditingName(false)
+      return
+    }
+
+    if (!onEditName) {
+      setIsEditingName(false)
+      return
+    }
+
+    try {
+      setIsSavingName(true)
+      await onEditName(trimmed)
+      setIsEditingName(false)
+    } catch (error) {
+      console.error(error)
+      setDraftName(portfolioName)
+      alert(error instanceof Error ? error.message : "Failed to update name")
+    } finally {
+      setIsSavingName(false)
+    }
+  }, [draftName, onEditName, portfolioName])
+
   const handleMenuAction = React.useCallback(
     (action: PortfolioMoreAction) => {
       closeMenu()
 
       switch (action) {
         case "editName":
-          onEditName?.()
+          startEditingName()
           return
         case "linkAccessOnly":
           onLinkAccessOnly?.()
@@ -186,7 +247,7 @@ export default function DashPortfolio({
           return
       }
     },
-    [closeMenu, onEditName, onLinkAccessOnly, onDuplicate, onEditUrl]
+    [closeMenu, onDuplicate, onEditUrl, onLinkAccessOnly, startEditingName]
   )
 
   const handleConfirmDelete = React.useCallback(async () => {
@@ -299,9 +360,47 @@ export default function DashPortfolio({
 
       <div className="w-full h-[38px] flex flex-col items-start gap-[10px]">
         <div className="w-full h-[18px] flex items-center py-[3px]">
-          <div className="flex-1 text-[#262626] text-[17px] leading-[140%] font-normal truncate">
-            {portfolioName}
-          </div>
+          {isEditingName ? (
+            <input
+              ref={nameInputRef}
+              value={draftName}
+              onChange={(e) => setDraftName(e.target.value)}
+              onBlur={() => void saveName()}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault()
+                  void saveName()
+                }
+                if (e.key === "Escape") {
+                  e.preventDefault()
+                  cancelEditingName()
+                }
+              }}
+              disabled={isSavingName}
+              className={[
+                "flex-1 h-[18px] px-0 py-0",
+                "bg-transparent border-0 rounded-none shadow-none",
+                "text-[#262626] text-[17px] leading-[140%] font-normal",
+                "outline-none ring-0 focus:outline-none focus:ring-0",
+                "disabled:opacity-60",
+              ].join(" ")}
+              aria-label="Edit portfolio name"
+            />
+          ) : (
+            <button
+              type="button"
+              onClick={startEditingName}
+              className={[
+                "flex-1 text-left truncate",
+                "text-[#262626] text-[17px] leading-[140%] font-normal",
+                "cursor-pointer hover:opacity-70 transition-opacity",
+              ].join(" ")}
+              title="Click to edit name"
+              aria-label="Edit portfolio name"
+            >
+              {portfolioName}
+            </button>
+          )}
         </div>
 
         <div className="w-full h-[10px] relative">
@@ -316,7 +415,6 @@ export default function DashPortfolio({
               {publicUrl}
             </span>
 
-            {/* ICON + TOOLTIP ANCHOR */}
             <span className="relative flex items-center flex-shrink-0">
               <CopyIcon className="w-[10px] h-[10px] text-[#A5A5A5]" />
 

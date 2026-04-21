@@ -6,6 +6,7 @@ import DashPortfolio from "@/components/my-portfolios/dashboard/DashPortfolio"
 
 import { supabase } from "@/lib/supabase/browser"
 import { duplicateKonfolio } from "@/lib/duplicateKonfolio"
+import { updateKonfolioName } from "@/lib/updateKonfolioName"
 import { useKonfolioDraftStore } from "@/stores/konfolioDraftStore"
 
 type KonfolioStatus = "draft" | "published"
@@ -154,6 +155,32 @@ export default function DashPortfolioGrid({
     [items]
   )
 
+  const handleRename = React.useCallback(
+    async (id: string, nextName: string) => {
+      const previous = localItems
+
+      setLocalItems((cur) =>
+        cur.map((k) =>
+          k.id === id
+            ? {
+                ...k,
+                portfolioName: nextName,
+                updatedAt: new Date().toISOString(),
+              }
+            : k
+        )
+      )
+
+      try {
+        await updateKonfolioName(id, nextName)
+      } catch (error) {
+        setLocalItems(previous)
+        throw error
+      }
+    },
+    [localItems]
+  )
+
   const handleDuplicate = React.useCallback(
     async (id: string) => {
       if (duplicatingId === id) return
@@ -221,6 +248,7 @@ export default function DashPortfolioGrid({
               onEdit={onEdit ? () => onEdit(k.id) : undefined}
               onMore={onMore ? () => onMore(k.id) : undefined}
               onCopyUrl={onCopyUrl ? () => onCopyUrl(publicUrl) : undefined}
+              onEditName={(nextName) => handleRename(k.id, nextName)}
               onDuplicate={() => handleDuplicate(k.id)}
               onExportPick={
                 onExport
