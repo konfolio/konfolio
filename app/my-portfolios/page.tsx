@@ -257,6 +257,7 @@ export default function MyPortfoliosPage() {
       <PortfolioNameCard
         isOpen={nameCardOpen}
         businessSlug={businessSlug}
+        existingNames={items.map((item) => item.portfolioName)}
         onClose={closeNameCard}
         onContinue={(name) => {
           setPendingPortfolioName(name)
