@@ -1,7 +1,7 @@
 // app/login/page.tsx
 "use client"
 
-import { useEffect } from "react"
+import { Suspense, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 
 import AuthHeader from "@/components/onboarding/AuthHeader"
@@ -25,16 +25,12 @@ function safeReturnTo(raw: string | null, role: Role | null | undefined) {
 
   if (!v) return fallback
   if (!isSafeInternalPath(v)) return fallback
-
-  // never send returning users into onboarding
   if (v === "/onboarding" || v.startsWith("/onboarding/")) return fallback
 
-  // vendors cannot access my-portfolios
   if (role === "vendor" && (v === "/my-portfolios" || v.startsWith("/my-portfolios/"))) {
     return "/my-forms"
   }
 
-  // optional: non-vendors cannot access my-forms
   if (role !== "vendor" && (v === "/my-forms" || v.startsWith("/my-forms/"))) {
     return "/my-portfolios"
   }
@@ -42,13 +38,12 @@ function safeReturnTo(raw: string | null, role: Role | null | undefined) {
   return v
 }
 
-export default function LoginPage() {
+function LoginInner() {
   const router = useRouter()
   const params = useSearchParams()
 
   useEffect(() => {
     ;(async () => {
-      // If already signed in, don't show login
       const { data: sessionData } = await supabase.auth.getSession()
       const user = sessionData.session?.user
       if (!user) return
@@ -60,6 +55,7 @@ export default function LoginPage() {
         .maybeSingle()
 
       const complete = Boolean(profile?.onboarding_complete)
+
       if (!complete) {
         router.replace("/onboarding/audience")
         return
@@ -67,6 +63,7 @@ export default function LoginPage() {
 
       const role = (profile?.role ?? null) as Role | null
       const next = safeReturnTo(params.get("returnTo"), role)
+
       router.replace(next)
     })()
   }, [router, params])
@@ -79,5 +76,19 @@ export default function LoginPage() {
         <GoogleSignInButton />
       </main>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#F7F7F7]">
+          <AuthHeader />
+        </div>
+      }
+    >
+      <LoginInner />
+    </Suspense>
   )
 }
