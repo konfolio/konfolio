@@ -11,6 +11,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  serverExternalPackages: ["@sparticuz/chromium", "puppeteer-core"],
+
+  outputFileTracingIncludes: {
+    "/api/konfolios/[id]/publish": [
+      "./node_modules/@sparticuz/chromium/bin/**/*",
+    ],
+  },
 }
 
 export default nextConfig
