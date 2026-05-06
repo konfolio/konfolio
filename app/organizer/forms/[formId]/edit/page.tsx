@@ -595,7 +595,14 @@ export default function EditOrganizerFormPage() {
           {/* Terms of Service */}
           <div className="flex flex-col gap-[12px]">
             <p className="text-[14px] text-[#262626]">
-              I agree to the Terms of Service{" "}
+              <a
+                href="/terms-of-service"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#262626] underline"
+              >
+                I agree to the Terms of Service
+              </a>
               <span className="font-medium">(add link to text)</span> of Event
               Name. <span className="text-[#C0BDB4]">*</span>
             </p>
