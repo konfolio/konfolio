@@ -12,6 +12,15 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Missing organizerId" }, { status: 400 });
     }
 
+    const {
+        data: { user },
+        error: userErr,
+    } = await supabase.auth.getUser();
+
+    if (userErr) {
+        console.error("userErr:", userErr);
+    }
+
     const { data: forms, error: formsErr } = await supabase
       .from("alley_forms")
       .select("id, organizer_id, title, description, is_open, created_at, updated_at")
@@ -45,7 +54,7 @@ export async function GET(req: Request) {
 
     const { data: profile, error: profileErr } = await supabase
       .from("profiles")
-      .select("id, display_name, business_name, location, avatar_url")
+      .select("id, display_name, business_name, location, profile_image_url, organization, links, created_at")
       .eq("id", organizerId)
       .maybeSingle();
 
@@ -67,14 +76,24 @@ export async function GET(req: Request) {
 
     return NextResponse.json({
       profile: {
-        id: organizerId,
-        name:
-          profile?.business_name ||
-          profile?.display_name ||
-          "Organization Name",
-        location: profile?.location || "City, Country",
-        avatar_url: profile?.avatar_url || null,
-      },
+  id: organizerId,
+  name:
+    profile?.business_name ||
+    profile?.organization ||
+    profile?.display_name ||
+    "Organization Name",
+  location: profile?.location || "City, Country",
+  salesLocation: profile?.location || "",
+  profile_image_url: profile?.profile_image_url || null,
+  email: user?.email || null,
+  created_at: profile?.created_at || null,
+  organization_name:
+    profile?.organization ||
+    profile?.business_name ||
+    profile?.display_name ||
+    null,
+  links: profile?.links ?? {},
+},
       forms: normalized,
     });
   } catch (err: any) {

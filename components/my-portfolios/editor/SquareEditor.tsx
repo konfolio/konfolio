@@ -1,4 +1,3 @@
-// components/my-portfolios/editor/SquareEditor.tsx
 "use client"
 
 import { useCallback, useEffect, useMemo, useState } from "react"
@@ -13,6 +12,7 @@ import PublishMissingFieldsPopover from "@/components/my-portfolios/editor/Publi
 import { supabase } from "@/lib/supabase/browser"
 
 type Props = { draftId: string; readOnly?: boolean }
+type ExportType = "pdf" | "png" | "jpeg"
 
 async function getAccessToken(): Promise<string | null> {
   const { data } = await supabase.auth.getSession()
@@ -88,6 +88,8 @@ function snapshotForDirtyCheck(draft: any) {
     merchTags: draft?.merchTags ?? [],
     previousVends: draft?.previousVends ?? [],
     images: Array.isArray(draft?.images) ? draft.images : [],
+    explore_enabled: !!draft?.explore_enabled,
+    thumbnail_url: draft?.thumbnail_url ?? null,
   }
 }
 
@@ -240,17 +242,22 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
     "idle"
   )
   const [publishError, setPublishError] = useState("")
-  const [publishedUrl, setPublishedUrl] = useState<string>("")
-  const [publishedPortfolioName, setPublishedPortfolioName] = useState<string>("")
-  const [allowExploreSearch, setAllowExploreSearch] = useState(true)
+  const [publishedUrl, setPublishedUrl] = useState("")
+  const [publishedPortfolioName, setPublishedPortfolioName] = useState("")
+  const [allowExploreSearch, setAllowExploreSearch] = useState<boolean>(!!draft?.explore_enabled)
+  const [isTogglingExploreSearch, setIsTogglingExploreSearch] = useState(false)
 
-  const [savedSnapshot, setSavedSnapshot] = useState<string>("")
+  const [savedSnapshot, setSavedSnapshot] = useState("")
 
   const [missingOpen, setMissingOpen] = useState(false)
   const [missingRequired, setMissingRequired] = useState<string[]>([])
   const [missingOptional, setMissingOptional] = useState<string[]>([])
 
   if (!draft || draft.template !== "square") return null
+
+  useEffect(() => {
+    setAllowExploreSearch(!!draft.explore_enabled)
+  }, [draft.explore_enabled])
 
   useEffect(() => {
     if (!draft) return
@@ -262,10 +269,8 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
   const currentSnapshot = useMemo(() => JSON.stringify(snapshotForDirtyCheck(draft)), [draft])
   const hasUnsavedChanges = Boolean(savedSnapshot) && currentSnapshot !== savedSnapshot
 
-  const bannerSwatches = Array.isArray((draft as any).bannerSwatches) ? (draft as any).bannerSwatches : []
-  const backgroundSwatches = Array.isArray((draft as any).backgroundSwatches)
-    ? (draft as any).backgroundSwatches
-    : []
+  const bannerSwatches = Array.isArray(draft.bannerSwatches) ? draft.bannerSwatches : []
+  const backgroundSwatches = Array.isArray(draft.backgroundSwatches) ? draft.backgroundSwatches : []
 
   const liveUrl = useMemo(() => {
     if (publishedUrl) return publishedUrl
@@ -274,6 +279,47 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
   }, [publishedUrl, draftId])
 
   const exitGuardEnabled = !readOnly && (draft.status === "draft" || hasUnsavedChanges)
+
+  async function handleToggleExploreSearch(next: boolean) {
+    if (isTogglingExploreSearch || readOnly) return
+
+    const prev = allowExploreSearch
+
+    setAllowExploreSearch(next)
+    patchDraft(draftId, { explore_enabled: next })
+    setIsTogglingExploreSearch(true)
+
+    try {
+      const token = await getAccessToken()
+      if (!token) throw new Error("You must be signed in to update this setting.")
+
+      const res = await fetch(`/api/konfolios/${draftId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          explore_enabled: next,
+        }),
+      })
+
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        throw new Error(json?.error ?? "Failed to update explore setting.")
+      }
+    } catch (e) {
+      console.error("[EXPLORE TOGGLE] Failed:", e)
+      setAllowExploreSearch(prev)
+      patchDraft(draftId, { explore_enabled: prev })
+    } finally {
+      setIsTogglingExploreSearch(false)
+    }
+  }
+
+  function handleExport(type: ExportType) {
+    console.log("[EXPORT] Picked type:", type)
+  }
 
   async function handlePublish() {
     if (readOnly) return
@@ -297,7 +343,7 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
         return
       }
 
-      const images = Array.isArray(draft.images) ? [...(draft.images as any[])] : []
+      const images = Array.isArray(draft.images) ? [...draft.images] : []
       for (let i = 0; i < images.length; i++) {
         const src = cleanString(images[i]?.src)
         if (src.startsWith("blob:")) {
@@ -315,7 +361,11 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
         })
       }
 
-      patchDraft(draftId, { images, profileImageUrl } as any)
+      patchDraft(draftId, {
+        images,
+        profileImageUrl,
+        explore_enabled: allowExploreSearch,
+      })
 
       const content = {
         bannerColor: draft.bannerColor,
@@ -336,7 +386,11 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
       const saveRes = await fetch(`/api/konfolios/${draftId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ template: draft.template, content }),
+        body: JSON.stringify({
+          template: draft.template,
+          content,
+          explore_enabled: allowExploreSearch,
+        }),
       })
 
       const saveJson = await saveRes.json().catch(() => ({}))
@@ -347,7 +401,15 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
       }
 
       setSavedSnapshot(
-        JSON.stringify(snapshotForDirtyCheck({ ...draft, ...content, images, profileImageUrl }))
+        JSON.stringify(
+          snapshotForDirtyCheck({
+            ...draft,
+            ...content,
+            images,
+            profileImageUrl,
+            explore_enabled: allowExploreSearch,
+          })
+        )
       )
 
       const pubRes = await fetch(`/api/konfolios/${draftId}/publish`, {
@@ -378,11 +440,16 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
 
       setPublishedPortfolioName(portfolioNameFromDb || initialName)
 
-      const businessSlug = slugify(cleanString((content as any).businessName)) || "business"
+      const businessSlug = slugify(cleanString(content.businessName)) || "business"
       const origin = typeof window === "undefined" ? "" : window.location.origin
       setPublishedUrl(`${origin}/${businessSlug}/${portfolioSlug}`)
 
-      patchDraft(draftId, { status: "published" } as any)
+      patchDraft(draftId, {
+        status: "published",
+        explore_enabled: allowExploreSearch,
+        thumbnail_url: getJson?.thumbnail_url ?? null,
+      })
+
       setPublishStatus("success")
       console.log("[PUBLISH] Success:", pubJson)
     } catch (e: any) {
@@ -407,7 +474,7 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
     }
 
     void handlePublish()
-  }, [draft, readOnly])
+  }, [draft, readOnly, allowExploreSearch])
 
   useEffect(() => {
     if (readOnly) return
@@ -458,10 +525,10 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
               bannerSwatches={bannerSwatches}
               backgroundSwatches={backgroundSwatches}
               onChangeBannerSwatches={
-                readOnly ? undefined : (next) => patchDraft(draftId, { bannerSwatches: next } as any)
+                readOnly ? undefined : (next) => patchDraft(draftId, { bannerSwatches: next })
               }
               onChangeBackgroundSwatches={
-                readOnly ? undefined : (next) => patchDraft(draftId, { backgroundSwatches: next } as any)
+                readOnly ? undefined : (next) => patchDraft(draftId, { backgroundSwatches: next })
               }
               profileImageUrl={draft.profileImageUrl}
               onChangeProfileImage={
@@ -497,8 +564,8 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
 
             <EditSquareImageGrid
               editable={!readOnly}
-              images={draft.images as any}
-              onChangeImages={readOnly ? undefined : (images) => patchDraft(draftId, { images } as any)}
+              images={draft.images}
+              onChangeImages={readOnly ? undefined : (images) => patchDraft(draftId, { images })}
             />
           </div>
         </div>
@@ -531,9 +598,11 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
             }}
             portfolioName={publishedPortfolioName || cleanString(draft.displayName) || "Portfolio"}
             liveUrl={liveUrl}
-            onExport={() => {}}
+            onExport={handleExport}
+            thumbnailUrl={draft.thumbnail_url ?? null}
             allowExploreSearch={allowExploreSearch}
-            onToggleExploreSearch={(next) => setAllowExploreSearch(next)}
+            onToggleExploreSearch={handleToggleExploreSearch}
+            isTogglingExploreSearch={isTogglingExploreSearch}
             onGoToExplore={() => window.open("/explore", "_blank")}
             status={publishStatus}
             errorMessage={publishError}

@@ -1,9 +1,16 @@
 "use client"
 
 import * as React from "react"
-import DashPortfolio from "@/components/my-portfolios/dashboard/DashPortfolio"
+import { useRouter } from "next/navigation"
+import DashPortfolio, {
+  type EditNameResult,
+  type EditUrlResult,
+} from "@/components/my-portfolios/dashboard/DashPortfolio"
 
 import { supabase } from "@/lib/supabase/browser"
+import { duplicateKonfolio } from "@/lib/duplicateKonfolio"
+import { updateKonfolioName } from "@/lib/updateKonfolioName"
+import { useKonfolioDraftStore } from "@/stores/konfolioDraftStore"
 
 type KonfolioStatus = "draft" | "published"
 type ExportType = "pdf" | "png" | "jpeg"
@@ -64,7 +71,11 @@ function slugify(input: string): string {
     .replace(/^-|-$/g, "")
 }
 
-function buildPublicUrl(urlBase: string, businessName: string, portfolioSlug: string) {
+function buildPublicUrl(
+  urlBase: string,
+  businessName: string,
+  portfolioSlug: string
+) {
   const base = urlBase.replace(/\/+$/, "")
   const business = slugify(businessName)
   const portfolio = slugify(portfolioSlug)
@@ -94,6 +105,79 @@ async function deleteKonfolioRow(konfolioId: string): Promise<void> {
   }
 }
 
+async function updateKonfolioSlug(
+  konfolioId: string,
+  nextSlug: string
+): Promise<EditUrlResult> {
+  const token = await getAccessToken()
+  if (!token) {
+    return {
+      ok: false,
+      reason: "error",
+      message: "Not signed in",
+    }
+  }
+
+  const res = await fetch(`/api/konfolios/${konfolioId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ portfolio_slug: nextSlug }),
+  })
+
+  if (res.ok) {
+    return { ok: true }
+  }
+
+  let message = "Failed to update URL"
+
+  try {
+    const data = await res.json()
+    message = data?.error || message
+  } catch {
+    const text = await res.text().catch(() => "")
+    if (text) message = text
+  }
+
+  if (res.status === 409) {
+    return {
+      ok: false,
+      reason: "duplicate",
+      message,
+    }
+  }
+
+  return {
+    ok: false,
+    reason: "error",
+    message,
+  }
+}
+
+async function updateKonfolioExploreEnabled(
+  konfolioId: string,
+  nextValue: boolean
+): Promise<void> {
+  const token = await getAccessToken()
+  if (!token) throw new Error("Not signed in")
+
+  const res = await fetch(`/api/konfolios/${konfolioId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ explore_enabled: nextValue }),
+  })
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "")
+    throw new Error(text || `Failed to update explore setting (${res.status})`)
+  }
+}
+
 export default function DashPortfolioGrid({
   items,
   className,
@@ -105,7 +189,13 @@ export default function DashPortfolioGrid({
   urlBase = "",
   onPublishedCountChange,
 }: Props) {
+  const router = useRouter()
   const [localItems, setLocalItems] = React.useState<DashboardKonfolio[]>(items)
+  const [duplicatingId, setDuplicatingId] = React.useState<string | null>(null)
+
+  const hasKonfolioHydrated = useKonfolioDraftStore((s) => s.hasHydrated)
+  const forceKonfolioHydrate = useKonfolioDraftStore((s) => s.forceHydrate)
+  const setDraft = useKonfolioDraftStore((s) => s.setDraft)
 
   React.useEffect(() => {
     setLocalItems(items)
@@ -141,6 +231,119 @@ export default function DashPortfolioGrid({
     [items]
   )
 
+  const handleRename = React.useCallback(
+    async (id: string, nextName: string): Promise<EditNameResult> => {
+      const previous = localItems
+
+      setLocalItems((cur) =>
+        cur.map((k) =>
+          k.id === id
+            ? {
+                ...k,
+                portfolioName: nextName,
+                updatedAt: new Date().toISOString(),
+              }
+            : k
+        )
+      )
+
+      const result = await updateKonfolioName(id, nextName)
+
+      if (!result.ok) {
+        setLocalItems(previous)
+        return result
+      }
+
+      return result
+    },
+    [localItems]
+  )
+
+  const handleEditUrl = React.useCallback(
+    async (id: string, nextSlug: string): Promise<EditUrlResult> => {
+      const previous = localItems
+
+      setLocalItems((cur) =>
+        cur.map((k) =>
+          k.id === id
+            ? {
+                ...k,
+                portfolioSlug: nextSlug,
+                updatedAt: new Date().toISOString(),
+              }
+            : k
+        )
+      )
+
+      const result = await updateKonfolioSlug(id, nextSlug)
+
+      if (!result.ok) {
+        setLocalItems(previous)
+        return result
+      }
+
+      return result
+    },
+    [localItems]
+  )
+
+  const handleToggleExplore = React.useCallback(
+    async (id: string, currentValue: boolean) => {
+      const previous = localItems
+      const nextValue = !currentValue
+
+      setLocalItems((cur) =>
+        cur.map((k) =>
+          k.id === id
+            ? {
+                ...k,
+                exploreEnabled: nextValue,
+                updatedAt: new Date().toISOString(),
+              }
+            : k
+        )
+      )
+
+      try {
+        await updateKonfolioExploreEnabled(id, nextValue)
+      } catch (error) {
+        console.error(error)
+        setLocalItems(previous)
+      }
+    },
+    [localItems]
+  )
+
+  const handleDuplicate = React.useCallback(
+    async (id: string) => {
+      if (duplicatingId === id) return
+
+      try {
+        setDuplicatingId(id)
+
+        if (!hasKonfolioHydrated) {
+          try {
+            await forceKonfolioHydrate()
+          } catch (e: any) {
+            console.warn("[DashPortfolioGrid] forceHydrate failed:", e?.message ?? e)
+          }
+        }
+
+        const { draft } = await duplicateKonfolio(id)
+
+        setDraft(draft.id, draft)
+
+        router.push(`/my-portfolios/${draft.id}/edit`)
+        router.refresh()
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setDuplicatingId(null)
+      }
+    },
+    [duplicatingId, forceKonfolioHydrate, hasKonfolioHydrated, router, setDraft]
+  )
+
   if (published.length === 0) {
     return (
       <div className={className}>
@@ -162,18 +365,25 @@ export default function DashPortfolioGrid({
               key={k.id}
               id={k.id}
               portfolioName={k.portfolioName}
+              portfolioSlug={k.portfolioSlug}
               publicUrl={publicUrl}
               thumbnailUrl={k.thumbnailUrl ?? null}
               views={k.views ?? 0}
               viewers={k.uniqueViewers ?? 0}
               linkClicks={k.linkClicks ?? 0}
-              exploreEnabled={Boolean(k.exploreEnabled)}
+              exploreEnabled={k.exploreEnabled ?? false}
               lastUpdatedLabel={formatDateLabel(k.updatedAt)}
               onView={onView ? () => onView(k.id) : undefined}
               onEdit={onEdit ? () => onEdit(k.id) : undefined}
               onMore={onMore ? () => onMore(k.id) : undefined}
               onCopyUrl={onCopyUrl ? () => onCopyUrl(publicUrl) : undefined}
-              onExportPick={                
+              onEditName={(nextName) => handleRename(k.id, nextName)}
+              onLinkAccessOnly={() =>
+                handleToggleExplore(k.id, k.exploreEnabled ?? false)
+              }
+              onEditUrl={(nextSlug) => handleEditUrl(k.id, nextSlug)}
+              onDuplicate={() => handleDuplicate(k.id)}
+              onExportPick={
                 onExport
                   ? (type) => {
                       onExport(k.id, type)

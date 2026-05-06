@@ -1,4 +1,3 @@
-// app/api/konfolios/[id]/route.ts
 import { NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import type { SupabaseClient } from "@supabase/supabase-js"
@@ -31,6 +30,16 @@ function supabaseAuthed(token: string) {
       },
     }
   )
+}
+
+function slugify(input: string) {
+  return String(input ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/['"]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
 }
 
 export async function GET(
@@ -132,6 +141,83 @@ export async function PATCH(
     patch.explore_enabled = body.explore_enabled
   }
 
+  if (body.portfolio_name !== undefined) {
+    if (typeof body.portfolio_name !== "string") {
+      return NextResponse.json(
+        { error: "portfolio_name must be a string" },
+        { status: 400 }
+      )
+    }
+
+    const trimmed = body.portfolio_name.trim()
+    if (!trimmed) {
+      return NextResponse.json(
+        { error: "Portfolio name cannot be empty" },
+        { status: 400 }
+      )
+    }
+
+    const { data: duplicateName, error: duplicateNameErr } = await supabase
+      .from("konfolios")
+      .select("id")
+      .eq("user_id", auth.user.id)
+      .eq("portfolio_name", trimmed)
+      .neq("id", id)
+      .limit(1)
+      .maybeSingle()
+
+    if (duplicateNameErr) {
+      return NextResponse.json({ error: duplicateNameErr.message }, { status: 500 })
+    }
+
+    if (duplicateName) {
+      return NextResponse.json(
+        { error: "That Konfolio name is already in use" },
+        { status: 409 }
+      )
+    }
+
+    patch.portfolio_name = trimmed
+  }
+
+  if (body.portfolio_slug !== undefined) {
+    if (typeof body.portfolio_slug !== "string") {
+      return NextResponse.json(
+        { error: "portfolio_slug must be a string" },
+        { status: 400 }
+      )
+    }
+
+    const normalized = slugify(body.portfolio_slug)
+    if (!normalized) {
+      return NextResponse.json(
+        { error: "Portfolio slug cannot be empty" },
+        { status: 400 }
+      )
+    }
+
+    const { data: duplicate, error: duplicateErr } = await supabase
+      .from("konfolios")
+      .select("id")
+      .eq("portfolio_slug", normalized)
+      .neq("id", id)
+      .limit(1)
+      .maybeSingle()
+
+    if (duplicateErr) {
+      return NextResponse.json({ error: duplicateErr.message }, { status: 500 })
+    }
+
+    if (duplicate) {
+      return NextResponse.json(
+        { error: "That URL slug is already in use" },
+        { status: 409 }
+      )
+    }
+
+    patch.portfolio_slug = normalized
+  }
+
   if (patch.status === "draft") {
     patch.explore_enabled = false
   }
@@ -150,6 +236,24 @@ export async function PATCH(
     .single()
 
   if (error) {
+    if (error.code === "23505") {
+      const msg = error.message?.toLowerCase() ?? ""
+
+      if (msg.includes("portfolio_slug")) {
+        return NextResponse.json(
+          { error: "That URL slug is already in use" },
+          { status: 409 }
+        )
+      }
+
+      if (msg.includes("portfolio_name")) {
+        return NextResponse.json(
+          { error: "That Konfolio name is already in use" },
+          { status: 409 }
+        )
+      }
+    }
+
     const status = error.code === "PGRST116" ? 404 : 500
     return NextResponse.json(
       { error: status === 404 ? "Not found" : error.message },

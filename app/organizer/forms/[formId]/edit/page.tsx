@@ -65,9 +65,6 @@ export default function EditOrganizerFormPage() {
               <span className="text-[#262626]">Receiving</span>
             </span>
             <span>{form.applicationsCount} applications</span>
-            <button className="text-[#262626] border-b border-[#C0BDB4] pb-[1px] hover:opacity-70">
-              Edit Form
-            </button>
           </div>
         </div>
 

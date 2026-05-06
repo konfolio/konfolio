@@ -21,6 +21,8 @@ export type BaseDraft = {
   template: TemplateType
   status: "draft" | "published"
   updatedAt: number
+  explore_enabled?: boolean
+  thumbnail_url?: string | null
 }
 
 export type SquareDraft = BaseDraft & {
@@ -62,7 +64,7 @@ export type PortraitDraft = BaseDraft & {
   merchTags: string[]
   previousVends: string[]
 
-  images: PortraitCell[] // 8 cells
+  images: PortraitCell[]
 }
 
 export type KonfolioDraft = SquareDraft | PortraitDraft

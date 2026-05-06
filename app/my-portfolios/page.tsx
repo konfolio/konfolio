@@ -36,6 +36,7 @@ type KonfolioRow = {
   thumbnail_url: string | null
   updated_at: string | null
   published_at: string | null
+  explore_enabled: boolean | null
 }
 
 export default function MyPortfoliosPage() {
@@ -92,7 +93,7 @@ export default function MyPortfoliosPage() {
     const res = await supabase
       .from("konfolios")
       .select(
-        "id, user_id, portfolio_name, portfolio_slug, status, thumbnail_url, updated_at, published_at"
+        "id, user_id, portfolio_name, portfolio_slug, status, thumbnail_url, updated_at, published_at, explore_enabled"
       )
       .eq("user_id", user.id)
       .order("updated_at", { ascending: false })
@@ -119,7 +120,7 @@ export default function MyPortfoliosPage() {
           ? `${r.thumbnail_url}?t=${encodeURIComponent(bust)}`
           : null,
         updatedAt: r.updated_at,
-        exploreEnabled: true,
+        exploreEnabled: r.explore_enabled ?? false,
         views: 0,
         uniqueViewers: 0,
         linkClicks: 0,
@@ -257,6 +258,7 @@ export default function MyPortfoliosPage() {
       <PortfolioNameCard
         isOpen={nameCardOpen}
         businessSlug={businessSlug}
+        existingNames={items.map((item) => item.portfolioName)}
         onClose={closeNameCard}
         onContinue={(name) => {
           setPendingPortfolioName(name)

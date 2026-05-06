@@ -1,4 +1,3 @@
-// /components/my-portfolios/dashboard/PortfolioMoreMenu.tsx
 "use client"
 
 import * as React from "react"
@@ -17,6 +16,7 @@ type Props = {
   open: boolean
   onClose: () => void
   onAction?: (action: PortfolioMoreAction) => void
+  exploreEnabled: boolean
 
   icons: {
     editName: IconComponent
@@ -27,10 +27,6 @@ type Props = {
     delete: IconComponent
   }
 
-  /**
-   * Matches Figma export:
-   * position: relative; right: 325px; top: 97px;
-   */
   figmaOffset?: { rightPx: number; topPx: number }
 }
 
@@ -38,6 +34,7 @@ export default function PortfolioMoreMenu({
   open,
   onClose,
   onAction,
+  exploreEnabled,
   icons,
   figmaOffset = { rightPx: 325, topPx: 97 },
 }: Props) {
@@ -59,6 +56,7 @@ export default function PortfolioMoreMenu({
 
     document.addEventListener("pointerdown", onPointerDown)
     document.addEventListener("keydown", onKeyDown)
+
     return () => {
       document.removeEventListener("pointerdown", onPointerDown)
       document.removeEventListener("keydown", onKeyDown)
@@ -67,9 +65,17 @@ export default function PortfolioMoreMenu({
 
   if (!open) return null
 
+  const linkAccessLabel = exploreEnabled ? "Link Access Only" : "Show in Explore"
+
   return (
     <div ref={rootRef} className="absolute right-0 top-[calc(100%+8px)] z-50">
-      <div className={["relative", `right-[${figmaOffset.rightPx}px]`, `top-[${figmaOffset.topPx}px]`].join(" ")}>
+      <div
+        className={[
+          "relative",
+          `right-[${figmaOffset.rightPx}px]`,
+          `top-[${figmaOffset.topPx}px]`,
+        ].join(" ")}
+      >
         <div
           role="menu"
           aria-label="Portfolio more menu"
@@ -92,7 +98,7 @@ export default function PortfolioMoreMenu({
           />
 
           <MenuItem
-            label="Link Access Only"
+            label={linkAccessLabel}
             Icon={icons.linkAccessOnly}
             variant="default"
             onClick={() => {
@@ -186,7 +192,7 @@ function MenuItem({
 
         <span
           className={[
-            "w-[136px] h-[10px] flex items-center",
+            "flex-1 h-[18px] flex items-center",
             "font-normal text-[14px] leading-[130%]",
             isDanger ? "text-[#FF4603]" : "text-[#262626]",
           ].join(" ")}

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 type FormMeta = {
@@ -14,11 +15,7 @@ function prettyStatus(status?: string | null) {
   return status.charAt(0).toUpperCase() + status.slice(1);
 }
 
-export default function OrganizerFormHeader({
-  formId,
-}: {
-  formId: string;
-}) {
+export default function OrganizerFormHeader({ formId }: { formId: string }) {
   const [form, setForm] = useState<FormMeta | null>(null);
   const [appCount, setAppCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
@@ -47,7 +44,11 @@ export default function OrganizerFormHeader({
         }
 
         if (appsRes.ok) {
-          setAppCount(Array.isArray(appsJson.applications) ? appsJson.applications.length : 0);
+          setAppCount(
+            Array.isArray(appsJson.applications)
+              ? appsJson.applications.length
+              : 0,
+          );
         } else {
           setAppCount(0);
         }
@@ -82,14 +83,23 @@ export default function OrganizerFormHeader({
             <div className="mt-1 flex items-center gap-4 text-sm text-zinc-500">
               <div className="flex items-center gap-2">
                 <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
-                <span>{loading ? "Loading..." : prettyStatus(form?.status)}</span>
+                <span>
+                  {loading ? "Loading..." : prettyStatus(form?.status)}
+                </span>
               </div>
 
               <span>
-                {loading ? "Loading..." : `${appCount} application${appCount === 1 ? "" : "s"}`}
+                {loading
+                  ? "Loading..."
+                  : `${appCount} application${appCount === 1 ? "" : "s"}`}
               </span>
 
-              <button className="underline hover:text-zinc-700">Edit Form</button>
+              <Link
+                href={`/organizer/forms/${formId}/edit`}
+                className="underline hover:text-zinc-700"
+              >
+                Edit Form
+              </Link>
             </div>
           </div>
         </div>
