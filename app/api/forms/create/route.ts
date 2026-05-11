@@ -31,13 +31,22 @@ export async function POST(req: Request) {
       .insert({
         organizer_id: user.id,
         title,
+
+        // New canonical columns
+        event_date_start: startDate,
+        event_date_end: endDate,
+        event_address: location,
+        status: "draft",
+        fields: [],
+
+        // Keep these only because your old table/code still has them
         start_date: startDate,
         end_date: endDate,
         location,
         is_recurring: isRecurring,
-        is_open: true,
+        is_open: false,
       })
-      .select("organizer_id")
+      .select("id, organizer_id, title, status")
       .single();
 
     if (error) {
@@ -45,7 +54,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ formId: data.organizer_id });
+    return NextResponse.json({
+      formId: data.id,
+      form: data,
+    });
   } catch (err) {
     console.error("POST /api/forms/create failed:", err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
