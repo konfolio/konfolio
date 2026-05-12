@@ -4,16 +4,17 @@ import Link from "next/link";
 
 type Props = {
   formTitle: string;
-  formSlug: string;
+  publicUrl: string;
   onClose: () => void;
 };
 
 export default function PublishFormModal({
   formTitle,
-  formSlug,
+  publicUrl,
   onClose,
 }: Props) {
-  const liveUrl = `konfolio.com/organization/forms/${formSlug}`;
+  const displayUrl = `konfolio.com${publicUrl}`;
+  const absoluteUrl = `https://konfolio.com${publicUrl}`;
 
   return (
     <div
@@ -61,12 +62,12 @@ export default function PublishFormModal({
               View it live
             </div>
             <Link
-              href={`https://${liveUrl}`}
+              href={absoluteUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 flex items-center justify-between px-[20px] text-[14px] text-[#262626] hover:opacity-70"
             >
-              <span>{liveUrl}</span>
+              <span>{displayUrl}</span>
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path
                   d="M5 2H2.5A1.5 1.5 0 0 0 1 3.5v8A1.5 1.5 0 0 0 2.5 13h8A1.5 1.5 0 0 0 12 11.5V9M9 1h4m0 0v4m0-4L5.5 8.5"
@@ -82,15 +83,13 @@ export default function PublishFormModal({
           {/* Copy link */}
           <div className="flex h-[52px] rounded-full border border-[#E9E9E9] overflow-hidden">
             <button
-              onClick={() =>
-                navigator.clipboard.writeText(`https://${liveUrl}`)
-              }
+              onClick={() => navigator.clipboard.writeText(absoluteUrl)}
               className="w-[140px] flex items-center justify-center bg-[#F7F7F7] border-r border-[#E9E9E9] text-[14px] text-[#262626] shrink-0 hover:opacity-70"
             >
               Copy link
             </button>
             <div className="flex-1 flex items-center justify-between px-[20px] text-[14px] text-[#262626]">
-              <span>{liveUrl}</span>
+              <span>{displayUrl}</span>
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <rect
                   x="4"

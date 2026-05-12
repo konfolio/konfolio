@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import PublishFormModal from "@/components/modals/PublishFormModal";
 import SetLimitModal from "@/components/modals/SetLimitModal";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 
 const form = {
@@ -35,6 +36,9 @@ function FormField({
 }
 
 export default function EditOrganizerFormPage() {
+  const params = useParams();
+  const formId = params.formId as string;
+
   const [pages, setPages] = useState([1]);
   const [setLimitOpen, setSetLimitOpen] = useState(false);
   const [publishOpen, setPublishOpen] = useState(false);
@@ -42,6 +46,26 @@ export default function EditOrganizerFormPage() {
   const [sharingTable, setSharingTable] = useState<string | null>(null);
   const [ifYesOpen, setIfYesOpen] = useState(false);
   const [hasPartner, setHasPartner] = useState<string | null>(null);
+  const [publicUrl, setPublicUrl] = useState<string | null>(null); // add this
+  const [publishing, setPublishing] = useState(false);
+
+  const handlePublish = async () => {
+    setPublishing(true);
+    try {
+      const res = await fetch(`/api/forms/${formId}/publish`, {
+        method: "POST",
+      });
+      const json = await res.json();
+      if (res.ok) {
+        setPublicUrl(json.publicUrl);
+        setPublishOpen(true);
+      } else {
+        console.error("Publish failed:", json.error);
+      }
+    } finally {
+      setPublishing(false);
+    }
+  };
 
   return (
     <main
@@ -76,10 +100,11 @@ export default function EditOrganizerFormPage() {
             Set Limit
           </button>
           <button
-            onClick={() => setPublishOpen(true)}
-            className="h-[40px] px-[24px] rounded-full bg-[#262626] text-[14px] text-white hover:opacity-80"
+            onClick={handlePublish}
+            disabled={publishing}
+            className="h-[40px] px-[24px] rounded-full bg-[#262626] text-[14px] text-white hover:opacity-80 disabled:opacity-50"
           >
-            Publish
+            {publishing ? "Publishing..." : "Publish"}
           </button>
           <button className="w-[40px] h-[40px] rounded-full border border-[#E9E9E9] flex items-center justify-center hover:opacity-70">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -674,10 +699,10 @@ export default function EditOrganizerFormPage() {
           onClose={() => setSetLimitOpen(false)}
         />
       )}
-      {publishOpen && (
+      {publishOpen && publicUrl && (
         <PublishFormModal
           formTitle={form.title}
-          formSlug="untitled_form"
+          publicUrl={publicUrl}
           onClose={() => setPublishOpen(false)}
         />
       )}
