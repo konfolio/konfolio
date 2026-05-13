@@ -387,8 +387,8 @@ export default function EditSquareProfileSidebar({
           <div className="flex min-w-0 items-center gap-[15px]">
             <button
               type="button"
-              aria-label="Upload profile image"
-              onClick={openFilePicker}
+              aria-label="Profile image"
+              onClick={editable ? openFilePicker : undefined}
               onDrop={onDrop}
               onDragOver={onDragOver}
               className={[
@@ -403,7 +403,7 @@ export default function EditSquareProfileSidebar({
                 className="hidden"
                 onChange={onFileInputChange}
               />
-  
+
               {localImgUrl ? (
                 <img
                   src={localImgUrl}
@@ -417,21 +417,27 @@ export default function EditSquareProfileSidebar({
                 </div>
               )}
             </button>
-  
-            <input
-              value={localBusiness}
-              onChange={(e) => {
-                setLocalBusiness(e.target.value)
-                onChangeBusinessName?.(e.target.value)
-              }}
-              placeholder="Business Name"
-              className="min-w-0 flex-1 bg-transparent text-left font-inter text-[22px] font-normal leading-[140%] text-[#262626] placeholder:text-[#A5A5A5] outline-none"
-            />
+
+            {editable ? (
+              <input
+                value={localBusiness}
+                onChange={(e) => {
+                  setLocalBusiness(e.target.value)
+                  onChangeBusinessName?.(e.target.value)
+                }}
+                placeholder="Business Name"
+                className="min-w-0 flex-1 bg-transparent text-left font-inter text-[22px] font-normal leading-[140%] text-[#262626] placeholder:text-[#A5A5A5] outline-none"
+              />
+            ) : (
+              <p className="m-0 min-w-0 flex-1 truncate text-left font-inter text-[22px] font-normal leading-[140%] text-[#262626]">
+                {safeStr(localBusiness) || "Business Name"}
+              </p>
+            )}
           </div>
-  
+
           <button
             type="button"
-            aria-label="Open full profile editor"
+            aria-label="Open full profile"
             onClick={onToggleMobile}
             className={[
               "flex h-[32px] w-[32px] shrink-0 items-center justify-center text-[#262626] transition-transform cursor-pointer",
@@ -441,14 +447,13 @@ export default function EditSquareProfileSidebar({
             <ArrowDown className="h-[20px] w-[20px]" />
           </button>
         </div>
-  
+
         {mobileExpanded ? (
           <div className="mt-[18px] flex w-full flex-col items-start gap-[18px]">
-            {/* color picker */}
             {editable ? (
               <div ref={colorButtonsWrapRef} className="relative flex items-center gap-[5px]">
                 <BrushIcon className="h-[16px] w-[16px]" />
-  
+
                 <button
                   type="button"
                   onClick={() => togglePicker("banner")}
@@ -457,7 +462,7 @@ export default function EditSquareProfileSidebar({
                 >
                   <span className="absolute inset-0" style={{ backgroundColor: localBanner }} />
                 </button>
-  
+
                 <button
                   type="button"
                   onClick={() => togglePicker("background")}
@@ -466,7 +471,7 @@ export default function EditSquareProfileSidebar({
                 >
                   <span className="absolute inset-0" style={{ backgroundColor: localBg }} />
                 </button>
-  
+
                 {openPicker ? (
                   <div ref={colorPopoverRef} className="absolute left-0 top-[48px] z-[120] w-[276px]">
                     <ColorPicker
@@ -481,67 +486,115 @@ export default function EditSquareProfileSidebar({
                 ) : null}
               </div>
             ) : null}
-  
-            <input
-              value={localDisplay}
-              onChange={(e) => {
-                setLocalDisplay(e.target.value)
-                onChangeDisplayName?.(e.target.value)
-              }}
-              placeholder="Your Name"
-              className="w-full bg-transparent text-left font-inter text-[15px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
-            />
-  
+
+            {editable ? (
+              <input
+                value={localDisplay}
+                onChange={(e) => {
+                  setLocalDisplay(e.target.value)
+                  onChangeDisplayName?.(e.target.value)
+                }}
+                placeholder="Your Name"
+                className="w-full bg-transparent text-left font-inter text-[15px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
+              />
+            ) : (
+              <p className="m-0 w-full text-left font-inter text-[15px] leading-[140%] text-[#A5A5A5]">
+                {safeStr(localDisplay) || "Your Name"}
+              </p>
+            )}
+
             <div className="flex w-full items-center gap-[5px] text-[#A5A5A5]">
               <LocationIcon className="h-[12px] w-[12px] shrink-0" />
+
+              {editable ? (
+                <input
+                  value={localLocation}
+                  onChange={(e) => {
+                    setLocalLocation(e.target.value)
+                    onChangeLocationText?.(e.target.value)
+                  }}
+                  placeholder="City, State"
+                  className="min-w-0 flex-1 bg-transparent text-left font-inter text-[15px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
+                />
+              ) : (
+                <span className="min-w-0 flex-1 truncate text-left font-inter text-[15px] leading-[140%] text-[#A5A5A5]">
+                  {safeStr(localLocation) || "City, State"}
+                </span>
+              )}
+            </div>
+
+            {editable ? (
               <input
-                value={localLocation}
+                value={localEmail}
                 onChange={(e) => {
-                  setLocalLocation(e.target.value)
-                  onChangeLocationText?.(e.target.value)
+                  setLocalEmail(e.target.value)
+                  onChangeEmail?.(e.target.value)
                 }}
-                placeholder="City, State"
-                className="min-w-0 flex-1 bg-transparent text-left font-inter text-[15px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
+                placeholder="myemailaddress@konfolio.com"
+                className="w-full bg-transparent text-left font-inter text-[15px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
               />
-            </div>
-  
-            <input
-              value={localEmail}
-              onChange={(e) => {
-                setLocalEmail(e.target.value)
-                onChangeEmail?.(e.target.value)
-              }}
-              placeholder="myemailaddress@konfolio.com"
-              className="w-full bg-transparent text-left font-inter text-[15px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
-            />
-  
-            {/* social links */}
+            ) : (
+              <p className="m-0 w-full text-left font-inter text-[15px] leading-[140%] text-[#A5A5A5]">
+                {safeStr(localEmail) || "myemailaddress@konfolio.com"}
+              </p>
+            )}
+
             <div className="flex w-full justify-start">
-              <LinkPicker
-                onAddLinkClick={onAddLinkClick}
-                value={linksValue}
-                onChange={onChangeLinks}
-              />
+              {editable ? (
+                <LinkPicker
+                  onAddLinkClick={onAddLinkClick}
+                  value={linksValue}
+                  onChange={onChangeLinks}
+                />
+              ) : (
+                <div className="flex items-center justify-start gap-[10px]">
+                  {activeLinks.map((l) => (
+                    <a
+                      key={l.key}
+                      href={l.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={iconLabelForKey(l.key)}
+                      className="flex h-[24px] w-[24px] items-center justify-center text-[#262626] cursor-pointer"
+                    >
+                      <IconForKey k={l.key} />
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
-  
-            {/* merch tags */}
+
             <div className="flex w-full flex-col items-start gap-[8px]">
-              <MerchTagPicker
-                maxTags={8}
-                onMerchClick={onMerchClick}
-                value={merchTags}
-                onChange={onChangeMerchTags}
-                layout="inlineLeft"
-              />
+              {editable ? (
+                <MerchTagPicker
+                  maxTags={8}
+                  onMerchClick={onMerchClick}
+                  value={merchTags}
+                  onChange={onChangeMerchTags}
+                  layout="inlineLeft"
+                />
+              ) : (
+                <div className="flex w-full flex-wrap justify-start gap-[10px]">
+                  {(Array.isArray(merchTags) ? merchTags : []).slice(0, 8).map((t) => (
+                    <div
+                      key={t}
+                      className="flex h-[24px] items-center justify-center rounded-full border border-[#A5A5A5] border-[0.5px] px-[20px] py-[7px]"
+                    >
+                      <span className="font-inter text-[15px] font-normal leading-[150%] text-[#262626]">
+                        {safeStr(t)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-  
-            {/* previous vends */}
+
             {showPrevVendsSection ? (
               <div className="flex w-full flex-col items-start gap-[10px]">
                 <p className="m-0 font-inter text-[15px] leading-[140%] text-[#A5A5A5]">
                   Previous Vends
                 </p>
-  
+
                 {parsedPrevVends.map((ev, i) => (
                   <div key={`${ev.title}-${ev.year ?? ""}-${i}`} className="group flex items-center gap-[8px]">
                     <span className="font-inter text-[15px] leading-[140%] text-[#262626]">
@@ -552,18 +605,20 @@ export default function EditSquareProfileSidebar({
                         {ev.year}
                       </span>
                     ) : null}
-  
-                    <button
-                      type="button"
-                      aria-label="Delete event"
-                      onClick={() => deleteVendAt(i)}
-                      className="text-[#A5A5A5] cursor-pointer"
-                    >
-                      <DeleteIcon className="h-[14px] w-[14px]" />
-                    </button>
+
+                    {editable ? (
+                      <button
+                        type="button"
+                        aria-label="Delete event"
+                        onClick={() => deleteVendAt(i)}
+                        className="text-[#A5A5A5] cursor-pointer"
+                      >
+                        <DeleteIcon className="h-[14px] w-[14px]" />
+                      </button>
+                    ) : null}
                   </div>
                 ))}
-  
+
                 {editable && localPrevVends.length < 4 ? (
                   <input
                     ref={addInputRef}
@@ -581,12 +636,11 @@ export default function EditSquareProfileSidebar({
                 ) : null}
               </div>
             ) : null}
-  
-            {/* publish / preview */}
+
             {editable ? (
               <div className="flex w-full items-center justify-start gap-[10px] pt-[4px]">
                 <SecondaryButton onClick={onPublish}>{publishLabel}</SecondaryButton>
-  
+
                 <button
                   type="button"
                   aria-label="Open preview"
@@ -705,7 +759,6 @@ export default function EditSquareProfileSidebar({
           ) : null}
 
           {localImgUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={localImgUrl}
               alt=""

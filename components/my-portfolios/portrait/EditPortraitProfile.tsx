@@ -374,7 +374,7 @@ export default function EditPortraitProfile({
     <>
       {mobileCollapsed ? (
         <section
-          className="flex w-full flex-col px-[20px] py-[20px] text-left lg:hidden"
+          className="flex w-full flex-col px-[20px] py-[20px] text-left max-[900px]:flex min-[901px]:hidden"
           style={{ backgroundColor: localBanner }}
           aria-expanded={mobileExpanded}
         >
@@ -485,9 +485,7 @@ export default function EditPortraitProfile({
                     </div>
                   ) : null}
                 </div>
-              ) : (
-                <KonfolioLogoInline />
-              )}
+              ) : null}
 
               <input
                 value={localName}
@@ -619,7 +617,7 @@ export default function EditPortraitProfile({
       ) : null}
 
       <header
-        className="relative hidden w-full h-[180px] items-center justify-center overflow-visible lg:flex"
+        className="relative hidden w-full h-[180px] items-center justify-center overflow-visible min-[901px]:flex"
         style={{ backgroundColor: localBanner }}
       >
         {editable ? (

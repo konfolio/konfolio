@@ -32,7 +32,10 @@ function toLinksValue(raw: any) {
   }
 
   const linksByKey = raw && typeof raw === "object" ? raw : {}
-  const activeKeys = Object.keys(linksByKey).filter((k) => safeStr((linksByKey as any)[k]).length > 0)
+  const activeKeys = Object.keys(linksByKey).filter(
+    (k) => safeStr((linksByKey as any)[k]).length > 0,
+  )
+
   return { activeKeys, linksByKey }
 }
 
@@ -42,6 +45,7 @@ function toPrevVendsValue(content: any): string {
 
   const arr = safeArr(content?.previousVends)
   if (arr.length === 0) return "Vended Event 2026"
+
   return arr.slice(0, 4).join("|")
 }
 
@@ -56,6 +60,8 @@ export default function PublicKonfolioView({
   ownerBusinessName: string
   portfolioName: string
 }) {
+  const [mobileProfileOpen, setMobileProfileOpen] = React.useState(false)
+
   const bannerColor = safeStr(content?.bannerColor) || "#FFFFFF"
   const backgroundColor = safeStr(content?.backgroundColor) || "#F7F7F7"
 
@@ -64,18 +70,26 @@ export default function PublicKonfolioView({
   const locationText = safeStr(content?.locationText) || "City, State"
   const email = safeStr(content?.email) || "myemailaddress@konfolio.com"
 
-  const businessName = safeStr(content?.businessName) || safeStr(ownerBusinessName) || "Business Name"
+  const businessName =
+    safeStr(content?.businessName) || safeStr(ownerBusinessName) || "Business Name"
 
-  // Memoize object/array props so child components don't see new references every render.
-  const linksValue = React.useMemo(() => toLinksValue(content?.linksValue ?? content?.links ?? {}), [content])
+  const linksValue = React.useMemo(
+    () => toLinksValue(content?.linksValue ?? content?.links ?? {}),
+    [content],
+  )
 
   const merchTags = React.useMemo(() => safeArr(content?.merchTags), [content])
   const previousVendsArr = React.useMemo(() => safeArr(content?.previousVends), [content])
-  const images = React.useMemo(() => (Array.isArray(content?.images) ? content.images : []), [content])
+  const images = React.useMemo(
+    () => (Array.isArray(content?.images) ? content.images : []),
+    [content],
+  )
 
-  // IMPORTANT: pass stable array refs for swatches so child effects don't loop.
   const bannerSwatches = React.useMemo(() => safeArr(content?.bannerSwatches), [content])
-  const backgroundSwatches = React.useMemo(() => safeArr(content?.backgroundSwatches), [content])
+  const backgroundSwatches = React.useMemo(
+    () => safeArr(content?.backgroundSwatches),
+    [content],
+  )
 
   const prevVendsValue = React.useMemo(() => toPrevVendsValue(content), [content])
 
@@ -83,30 +97,62 @@ export default function PublicKonfolioView({
 
   if (template === "square") {
     return (
-      <main className="w-full overflow-hidden" style={{ backgroundColor }}>
-        <div className="w-full flex justify-center">
-          <div className="flex gap-6 items-stretch">
-            <EditSquareProfileSidebar
-              editable={false}
-              backHref={backHref}
-              bannerColor={bannerColor}
-              backgroundColor={backgroundColor}
-              bannerSwatches={bannerSwatches}
-              backgroundSwatches={backgroundSwatches}
-              profileImageUrl={profileImageUrl}
-              businessName={businessName}
-              displayName={displayName}
-              locationText={locationText}
-              email={email}
-              linksValue={linksValue}
-              merchTags={merchTags}
-              previousVends={previousVendsArr}
-              showAddLink={false}
-              showMerchTag={false}
-              publishLabel=""
-            />
+      <main
+        className="w-full min-h-screen overflow-x-hidden"
+        style={{ backgroundColor }}
+      >
+        <div className="w-full px-0 min-[701px]:py-0 min-[1200px]:px-[80px] xl:px-[120px]">
+          <div className="mx-auto w-full max-w-[1512px]">
+            <div className="w-full flex-col max-[700px]:flex min-[701px]:hidden">
+              <EditSquareProfileSidebar
+                editable={false}
+                mobileCollapsed={true}
+                mobileExpanded={mobileProfileOpen}
+                onToggleMobile={() => setMobileProfileOpen((prev) => !prev)}
+                backHref={backHref}
+                bannerColor={bannerColor}
+                backgroundColor={backgroundColor}
+                bannerSwatches={bannerSwatches}
+                backgroundSwatches={backgroundSwatches}
+                profileImageUrl={profileImageUrl}
+                businessName={businessName}
+                displayName={displayName}
+                locationText={locationText}
+                email={email}
+                linksValue={linksValue}
+                merchTags={merchTags}
+                previousVends={previousVendsArr}
+                showAddLink={false}
+                showMerchTag={false}
+                publishLabel=""
+              />
 
-            <EditSquareImageGrid editable={false} images={images} />
+              <EditSquareImageGrid editable={false} images={images} />
+            </div>
+
+            <div className="w-full flex-row items-start justify-start gap-[20px] max-[700px]:hidden min-[701px]:flex">
+              <EditSquareProfileSidebar
+                editable={false}
+                backHref={backHref}
+                bannerColor={bannerColor}
+                backgroundColor={backgroundColor}
+                bannerSwatches={bannerSwatches}
+                backgroundSwatches={backgroundSwatches}
+                profileImageUrl={profileImageUrl}
+                businessName={businessName}
+                displayName={displayName}
+                locationText={locationText}
+                email={email}
+                linksValue={linksValue}
+                merchTags={merchTags}
+                previousVends={previousVendsArr}
+                showAddLink={false}
+                showMerchTag={false}
+                publishLabel=""
+              />
+
+              <EditSquareImageGrid editable={false} images={images} />
+            </div>
           </div>
         </div>
       </main>
@@ -114,8 +160,41 @@ export default function PublicKonfolioView({
   }
 
   return (
-    <main className="w-full overflow-hidden" style={{ backgroundColor }}>
-      <div className="w-full flex flex-col items-center">
+    <main
+      className="w-full min-h-screen overflow-x-hidden"
+      style={{ backgroundColor }}
+    >
+      <div className="w-full flex-col max-[700px]:flex min-[901px]:hidden">
+        <EditPortraitProfile
+          editable={false}
+          mobileCollapsed={true}
+          mobileExpanded={mobileProfileOpen}
+          onToggleMobile={() => setMobileProfileOpen((prev) => !prev)}
+          backHref={backHref}
+          bannerColor={bannerColor}
+          backgroundColor={backgroundColor}
+          bannerSwatches={bannerSwatches}
+          backgroundSwatches={backgroundSwatches}
+          profileImageUrl={profileImageUrl}
+          businessName={businessName}
+          displayName={displayName}
+          locationText={locationText}
+          email={email}
+          linksValue={linksValue}
+          merchTags={merchTags}
+          showAddLink={false}
+          publishLabel=""
+        />
+  
+        <EditPortraitImageGrid
+          editable={false}
+          images={images}
+          previousVendsLabel="Previous Vends"
+          previousVendsValue={prevVendsValue}
+        />
+      </div>
+  
+      <div className="w-full flex-col max-[700px]:hidden min-[901px]:flex">
         <EditPortraitProfile
           editable={false}
           backHref={backHref}
@@ -133,13 +212,17 @@ export default function PublicKonfolioView({
           showAddLink={false}
           publishLabel=""
         />
-
-        <EditPortraitImageGrid
-          editable={false}
-          images={images}
-          previousVendsLabel="Previous Vends"
-          previousVendsValue={prevVendsValue}
-        />
+  
+        <div className="w-full px-[24px] min-[1200px]:px-[80px] xl:px-[120px]">
+          <div className="mx-auto w-full max-w-[1512px]">
+            <EditPortraitImageGrid
+              editable={false}
+              images={images}
+              previousVendsLabel="Previous Vends"
+              previousVendsValue={prevVendsValue}
+            />
+          </div>
+        </div>
       </div>
     </main>
   )
