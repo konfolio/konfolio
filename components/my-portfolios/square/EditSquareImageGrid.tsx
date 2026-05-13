@@ -32,6 +32,18 @@ const RECOMMENDED = [
   "Your Product",
 ]
 
+const MOBILE_ORDER_CLASSES = [
+  "order-5 min-[701px]:order-none",
+  "order-1 min-[701px]:order-none",
+  "order-6 min-[701px]:order-none",
+  "order-2 min-[701px]:order-none",
+  "order-9 min-[701px]:order-none",
+  "order-3 min-[701px]:order-none",
+  "order-7 min-[701px]:order-none",
+  "order-4 min-[701px]:order-none",
+  "order-8 min-[701px]:order-none",
+]
+
 const DEFAULT_EDITS: ImageEdits = {
   rotate: 50,
   zoom: 0,
@@ -60,11 +72,9 @@ function editsToImgStyle(edits?: ImageEdits): React.CSSProperties {
 
   const rotateDeg = ((clamp(e.rotate, 0, 100) - 50) / 50) * 180
   const zoomScale = 1 + (clamp(e.zoom, 0, 100) / 100) * 1.0
-
   const brightnessVal = 0.5 + (clamp(e.brightness, 0, 100) / 100) * 1.0
   const contrastVal = 0.5 + (clamp(e.contrast, 0, 100) / 100) * 1.0
   const saturateVal = clamp(e.saturation, 0, 100) / 50
-
   const hueRotateDeg = ((clamp(e.temperature, 0, 100) - 50) / 50) * 30
   const warm = Math.max(0, clamp(e.temperature, 0, 100) - 50) / 50
   const sepiaVal = warm * 0.25
@@ -86,6 +96,7 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
   })
 
   const syncingFromPropsRef = useRef(false)
+
   useEffect(() => {
     if (!images) return
     syncingFromPropsRef.current = true
@@ -95,21 +106,22 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
       incoming.length > 0
         ? incoming.concat(makeDefaultCells()).slice(0, 9)
         : makeDefaultCells()
+
     setCells(next)
   }, [images])
 
   const inputsRef = useRef<(HTMLInputElement | null)[]>([])
   const [dragOverIdx, setDragOverIdx] = useState<number | null>(null)
-
   const objectUrls = useRef<string[]>([])
+  const pendingEmitRef = useRef<Cell[] | null>(null)
+  const [openEditorIdx, setOpenEditorIdx] = useState<number | null>(null)
+
   useEffect(() => {
     return () => {
       objectUrls.current.forEach((u) => URL.revokeObjectURL(u))
       objectUrls.current = []
     }
   }, [])
-
-  const pendingEmitRef = useRef<Cell[] | null>(null)
 
   const updateCells = (updater: (prev: Cell[]) => Cell[]) => {
     setCells((prev) => {
@@ -140,6 +152,11 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
     }
   }, [cells, onChangeImages, editable])
 
+  useEffect(() => {
+    if (editable) return
+    setOpenEditorIdx(null)
+  }, [editable])
+
   const openFilePicker = (idx: number) => {
     if (!editable) return
     inputsRef.current[idx]?.click()
@@ -148,12 +165,14 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
   const setImageFromFile = (idx: number, file: File) => {
     if (!editable) return
     if (!file.type.startsWith("image/")) return
+
     const url = URL.createObjectURL(file)
     objectUrls.current.push(url)
 
     updateCells((prev) => {
       const next = [...prev]
       const existing = next[idx] ?? { id: String(idx) }
+
       next[idx] = {
         ...existing,
         src: url,
@@ -161,20 +180,24 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
         description: existing.description ?? "Short description",
         edits: existing.edits ?? { ...DEFAULT_EDITS },
       }
+
       return next
     })
   }
 
   const onInputChange = (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
     if (!editable) return
+
     const file = e.target.files?.[0]
     if (!file) return
+
     setImageFromFile(idx, file)
     e.target.value = ""
   }
 
   const onDragOver = (idx: number, e: React.DragEvent) => {
     if (!editable) return
+
     e.preventDefault()
     e.stopPropagation()
     setDragOverIdx(idx)
@@ -182,6 +205,7 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
 
   const onDragLeave = (idx: number, e: React.DragEvent) => {
     if (!editable) return
+
     e.preventDefault()
     e.stopPropagation()
     setDragOverIdx((cur) => (cur === idx ? null : cur))
@@ -189,39 +213,36 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
 
   const onDrop = (idx: number, e: React.DragEvent) => {
     if (!editable) return
+
     e.preventDefault()
     e.stopPropagation()
     setDragOverIdx(null)
+
     const file = e.dataTransfer.files?.[0]
     if (!file) return
+
     setImageFromFile(idx, file)
   }
 
-  const [openEditorIdx, setOpenEditorIdx] = useState<number | null>(null)
-
-  useEffect(() => {
-    if (editable) return
-    setOpenEditorIdx(null)
-  }, [editable])
-
   return (
-    <section className="w-[922px] h-[982px] flex flex-col items-center justify-center py-[30px]">
-      <div className="w-[922px] h-[922px]">
-        <div className="w-full h-full grid grid-cols-3 gap-[15px]">
+    <section className="flex w-full min-w-0 max-w-[922px] flex-col items-center justify-center py-0 min-[701px]:min-w-[600px] min-[701px]:py-[30px]">
+      <div className="w-full min-w-[600px] max-w-[922px] max-[700px]:min-w-0">
+        <div className="grid w-full grid-cols-1 gap-0 min-[701px]:grid-cols-3 min-[701px]:gap-[15px]">
           {cells.map((cell, idx) => {
             const hasImage = Boolean(cell.src)
             const isDragOver = dragOverIdx === idx
             const isEditorOpen = openEditorIdx === idx
-
             const col = idx % 3
             const placement: "right" | "left" = col === 2 ? "left" : "right"
-
             const imgStyle = editsToImgStyle(cell.edits)
 
             return (
               <div
                 key={cell.id ?? String(idx)}
-                className="group relative rounded-[15px] overflow-visible"
+                className={[
+                  "group relative aspect-square overflow-visible rounded-none min-[701px]:rounded-[15px]",
+                  MOBILE_ORDER_CLASSES[idx] ?? "order-none",
+                ].join(" ")}
                 onDragOver={(e) => onDragOver(idx, e)}
                 onDragLeave={(e) => onDragLeave(idx, e)}
                 onDrop={(e) => onDrop(idx, e)}
@@ -240,7 +261,7 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
                   className="
                     relative
                     w-full h-full
-                    rounded-[15px]
+                    rounded-none min-[701px]:rounded-[15px]
                     overflow-hidden
                     bg-[rgba(165,165,165,0.068)]
                     backdrop-blur-[7.58px]
@@ -257,7 +278,6 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
                     ].join(", "),
                   }}
                 >
-                  {/* Click target (edit only) */}
                   {editable ? (
                     <button
                       type="button"
@@ -274,9 +294,7 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
                     <div className="absolute inset-0 z-[0]" />
                   )}
 
-                  {/* Image preview */}
                   {hasImage ? (
-                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={cell.src}
                       alt=""
@@ -290,7 +308,6 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
                     />
                   ) : null}
 
-                  {/* Recommended content */}
                   {!hasImage && (
                     <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-[5px] z-[2]">
                       <div className="w-[52px] h-[52px] flex items-center justify-center text-[#A5A5A5] [&_path]:stroke-[#A5A5A5] [&_path]:fill-[#A5A5A5]">
@@ -309,14 +326,13 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
                     </div>
                   )}
 
-                  {/* Hover overlay (both modes) */}
-                  <div className="pointer-events-none absolute left-0 right-0 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity z-[3]">
+                  <div className="pointer-events-none absolute left-0 right-0 bottom-0 opacity-100 min-[701px]:opacity-0 min-[701px]:group-hover:opacity-100 transition-opacity z-[3]">
                     <div
                       className="absolute left-[-2px] right-[-2px] bottom-[-2px]"
                       style={{
                         height: 76,
-                        borderBottomLeftRadius: 16,
-                        borderBottomRightRadius: 16,
+                        borderBottomLeftRadius: 0,
+                        borderBottomRightRadius: 0,
                         background:
                           "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.92) 70%, rgba(255,255,255,1) 100%)",
                       }}
@@ -326,8 +342,8 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
                       className="absolute left-0 right-0 bottom-0"
                       style={{
                         height: 72,
-                        borderBottomLeftRadius: 15,
-                        borderBottomRightRadius: 15,
+                        borderBottomLeftRadius: 0,
+                        borderBottomRightRadius: 0,
                         boxShadow: "inset 0 -2px 0 rgba(255,255,255,0.88)",
                       }}
                     />
@@ -347,7 +363,6 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
                   ) : null}
                 </div>
 
-                {/* Sliders icon + popover (edit only) */}
                 {editable ? (
                   <>
                     <button
@@ -356,9 +371,9 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
                       className="
                         absolute
                         right-[10px] top-[10px]
-                        hidden
+                        flex
                         w-[24px] h-[24px]
-                        group-hover:flex
+                        min-[701px]:hidden min-[701px]:group-hover:flex
                         items-center justify-center
                         z-[10]
                         cursor-pointer

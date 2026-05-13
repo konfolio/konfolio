@@ -50,7 +50,7 @@ export default function ExportPopover({
       <div
         ref={ref}
         className={[
-          "relative w-[532px] h-[561.01px]",
+          "relative w-[calc(100%-32px)] w-[532px] h-[561.01px]",
           "flex flex-col items-center",
           "p-[20px] gap-[20px] isolate",
           "bg-white rounded-[15px]",

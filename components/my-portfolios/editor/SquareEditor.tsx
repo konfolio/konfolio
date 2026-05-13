@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState, type ComponentProps } from "react"
 
 import { useKonfolioDraftStore } from "@/stores/konfolioDraftStore"
 import KonfolioExitGuard from "@/components/my-portfolios/KonfolioExitGuard"
@@ -71,7 +71,9 @@ async function uploadBlobSrcToStorage(opts: {
 
 function snapshotForDirtyCheck(draft: any) {
   const bannerSwatches = Array.isArray(draft?.bannerSwatches) ? draft.bannerSwatches : []
-  const backgroundSwatches = Array.isArray(draft?.backgroundSwatches) ? draft.backgroundSwatches : []
+  const backgroundSwatches = Array.isArray(draft?.backgroundSwatches)
+    ? draft.backgroundSwatches
+    : []
 
   return {
     template: draft?.template ?? "square",
@@ -122,8 +124,6 @@ function isMeaningfulText(x: any): boolean {
   ])
 
   if (bannedExact.has(lower)) return false
-
-  if (lower === "https://" || lower === "http://" || lower === "www.") return false
   if (lower.startsWith("https://") && lower.length <= "https://".length + 2) return false
   if (lower.startsWith("http://") && lower.length <= "http://".length + 2) return false
 
@@ -133,8 +133,8 @@ function isMeaningfulText(x: any): boolean {
 function looksLikeRealUrl(x: any): boolean {
   const v = cleanString(x)
   if (!v) return false
-  const lower = v.toLowerCase()
 
+  const lower = v.toLowerCase()
   if (lower === "https://" || lower === "http://" || lower === "www.") return false
 
   const hasDot = v.includes(".")
@@ -150,10 +150,7 @@ function looksLikeRealUrl(x: any): boolean {
 function looksLikeRealEmail(x: any): boolean {
   const v = cleanString(x)
   if (!v) return false
-  const lower = v.toLowerCase()
-
-  if (lower === "myemailaddress@konfolio.com") return false
-
+  if (v.toLowerCase() === "myemailaddress@konfolio.com") return false
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
 }
 
@@ -172,7 +169,8 @@ function hasAnyBusinessLink(links: any): boolean {
   if (!links) return false
 
   const activeKeys = Array.isArray(links?.activeKeys) ? links.activeKeys : []
-  const linksByKey = links?.linksByKey && typeof links.linksByKey === "object" ? links.linksByKey : null
+  const linksByKey =
+    links?.linksByKey && typeof links.linksByKey === "object" ? links.linksByKey : null
 
   if (activeKeys.length > 0 && linksByKey) {
     for (const k of activeKeys) {
@@ -199,12 +197,12 @@ function hasAnyBusinessLink(links: any): boolean {
 function isGridFilled(images: any, requiredSlots: number): boolean {
   const arr = Array.isArray(images) ? images : []
   const n = Math.max(0, Math.floor(requiredSlots))
-  if (n === 0) return false
   if (arr.length < n) return false
 
   for (let i = 0; i < n; i++) {
     if (!isRealImageSrc(arr[i]?.src)) return false
   }
+
   return true
 }
 
@@ -248,10 +246,10 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
   const [isTogglingExploreSearch, setIsTogglingExploreSearch] = useState(false)
 
   const [savedSnapshot, setSavedSnapshot] = useState("")
-
   const [missingOpen, setMissingOpen] = useState(false)
   const [missingRequired, setMissingRequired] = useState<string[]>([])
   const [missingOptional, setMissingOptional] = useState<string[]>([])
+  const [mobileProfileOpen, setMobileProfileOpen] = useState(false)
 
   if (!draft || draft.template !== "square") return null
 
@@ -299,15 +297,11 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          explore_enabled: next,
-        }),
+        body: JSON.stringify({ explore_enabled: next }),
       })
 
       const json = await res.json().catch(() => ({}))
-      if (!res.ok) {
-        throw new Error(json?.error ?? "Failed to update explore setting.")
-      }
+      if (!res.ok) throw new Error(json?.error ?? "Failed to update explore setting.")
     } catch (e) {
       console.error("[EXPLORE TOGGLE] Failed:", e)
       setAllowExploreSearch(prev)
@@ -462,7 +456,6 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
     if (readOnly) return
 
     const missing = computeMissingLabelsSquare(draft)
-
     const hasRequired = missing.required.length > 0
     const hasOptional = missing.optional.length > 0
 
@@ -490,78 +483,104 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
     }
   }, [onPressPublishWithValidation, readOnly])
 
-  const isOptionalOnlyMode = !readOnly && missingOpen && missingRequired.length === 0 && missingOptional.length > 0
+  const isOptionalOnlyMode =
+    !readOnly && missingOpen && missingRequired.length === 0 && missingOptional.length > 0
+
+  const renderProfileSidebar = (
+    extraProps: Partial<ComponentProps<typeof EditSquareProfileSidebar>> = {}
+  ) => (
+    <EditSquareProfileSidebar
+      editable={!readOnly}
+      backHref="/my-portfolios"
+      onBack={() => {
+        if (readOnly) {
+          const editHref = `/my-portfolios/${draftId}/edit`
+          if (typeof window === "undefined") return
+          if (window.history.length > 1) window.history.back()
+          else window.location.href = editHref
+          return
+        }
+
+        const attemptExit = (window as any).__konfolio_attempt_exit
+        if (typeof attemptExit === "function") attemptExit("/my-portfolios")
+        else window.location.href = "/my-portfolios"
+      }}
+      bannerColor={draft.bannerColor}
+      backgroundColor={draft.backgroundColor}
+      onChangeBannerColor={readOnly ? undefined : (hex) => patchDraft(draftId, { bannerColor: hex })}
+      onChangeBackgroundColor={
+        readOnly ? undefined : (hex) => patchDraft(draftId, { backgroundColor: hex })
+      }
+      bannerSwatches={bannerSwatches}
+      backgroundSwatches={backgroundSwatches}
+      onChangeBannerSwatches={
+        readOnly ? undefined : (next) => patchDraft(draftId, { bannerSwatches: next })
+      }
+      onChangeBackgroundSwatches={
+        readOnly ? undefined : (next) => patchDraft(draftId, { backgroundSwatches: next })
+      }
+      profileImageUrl={draft.profileImageUrl}
+      onChangeProfileImage={
+        readOnly ? undefined : (_file, objectUrl) => patchDraft(draftId, { profileImageUrl: objectUrl })
+      }
+      businessName={draft.businessName}
+      displayName={draft.displayName}
+      onChangeBusinessName={readOnly ? undefined : (val) => patchDraft(draftId, { businessName: val })}
+      onChangeDisplayName={readOnly ? undefined : (val) => patchDraft(draftId, { displayName: val })}
+      showAddLink={!readOnly}
+      linksValue={draft.links}
+      onChangeLinks={readOnly ? undefined : (next) => patchDraft(draftId, { links: next })}
+      showMerchTag={!readOnly}
+      merchTags={draft.merchTags}
+      onChangeMerchTags={readOnly ? undefined : (next) => patchDraft(draftId, { merchTags: next })}
+      previousVends={draft.previousVends}
+      onChangePreviousVends={
+        readOnly ? undefined : (vals) => patchDraft(draftId, { previousVends: vals })
+      }
+      locationText={draft.locationText}
+      email={draft.email}
+      onChangeLocationText={readOnly ? undefined : (val) => patchDraft(draftId, { locationText: val })}
+      onChangeEmail={readOnly ? undefined : (val) => patchDraft(draftId, { email: val })}
+      publishLabel={readOnly ? "" : "Publish"}
+      onPublish={readOnly ? undefined : () => onPressPublishWithValidation()}
+      onOpenPreview={
+        readOnly
+          ? undefined
+          : () =>
+              window.open(
+                `/my-portfolios/${draftId}/preview`,
+                "_blank",
+                "noopener,noreferrer"
+              )
+      }
+      {...extraProps}
+    />
+  )
 
   const content = (
-    <main className="w-full min-h-[982px]" style={{ backgroundColor: draft.backgroundColor }}>
-      <div className="w-full px-[25px] sm:px-10 lg:px-[150px]">
-        <div className="mx-auto max-w-[1512px]">
-          <div className="flex items-start justify-center gap-[20px]">
-            <EditSquareProfileSidebar
+    <main
+      className="w-full min-h-screen overflow-x-hidden"
+      style={{ backgroundColor: draft.backgroundColor }}
+    >
+      <div className="w-full px-0 min-[701px]:py-0 min-[1200px]:px-[80px] xl:px-[120px]">
+        <div className="mx-auto w-full max-w-[1512px]">
+          <div className="w-full flex-col max-[700px]:flex min-[701px]:hidden">
+            {renderProfileSidebar({
+              mobileCollapsed: true,
+              mobileExpanded: mobileProfileOpen,
+              onToggleMobile: () => setMobileProfileOpen((prev) => !prev),
+            })}
+  
+            <EditSquareImageGrid
               editable={!readOnly}
-              backHref="/my-portfolios"
-              onBack={() => {
-                if (readOnly) {
-                  const editHref = `/my-portfolios/${draftId}/edit`
-                  if (typeof window === "undefined") return
-                  if (window.history.length > 1) window.history.back()
-                  else window.location.href = editHref
-                  return
-                }
-
-                const fn = (window as any).__konfolio_attempt_exit
-                if (typeof fn === "function") {
-                  fn("/my-portfolios")
-                  return
-                }
-                window.location.href = "/my-portfolios"
-              }}
-              bannerColor={draft.bannerColor}
-              backgroundColor={draft.backgroundColor}
-              onChangeBannerColor={readOnly ? undefined : (hex) => patchDraft(draftId, { bannerColor: hex })}
-              onChangeBackgroundColor={
-                readOnly ? undefined : (hex) => patchDraft(draftId, { backgroundColor: hex })
-              }
-              bannerSwatches={bannerSwatches}
-              backgroundSwatches={backgroundSwatches}
-              onChangeBannerSwatches={
-                readOnly ? undefined : (next) => patchDraft(draftId, { bannerSwatches: next })
-              }
-              onChangeBackgroundSwatches={
-                readOnly ? undefined : (next) => patchDraft(draftId, { backgroundSwatches: next })
-              }
-              profileImageUrl={draft.profileImageUrl}
-              onChangeProfileImage={
-                readOnly ? undefined : (_file, objectUrl) => patchDraft(draftId, { profileImageUrl: objectUrl })
-              }
-              businessName={draft.businessName}
-              displayName={draft.displayName}
-              onChangeBusinessName={readOnly ? undefined : (val) => patchDraft(draftId, { businessName: val })}
-              onChangeDisplayName={readOnly ? undefined : (val) => patchDraft(draftId, { displayName: val })}
-              locationText={draft.locationText}
-              onChangeLocationText={readOnly ? undefined : (val) => patchDraft(draftId, { locationText: val })}
-              email={draft.email}
-              onChangeEmail={readOnly ? undefined : (val) => patchDraft(draftId, { email: val })}
-              previousVends={draft.previousVends}
-              onChangePreviousVends={readOnly ? undefined : (vals) => patchDraft(draftId, { previousVends: vals })}
-              linksValue={draft.links}
-              onChangeLinks={readOnly ? undefined : (next) => patchDraft(draftId, { links: next })}
-              merchTags={draft.merchTags}
-              onChangeMerchTags={readOnly ? undefined : (next) => patchDraft(draftId, { merchTags: next })}
-              publishLabel={readOnly ? "" : "Publish"}
-              onPublish={readOnly ? undefined : () => onPressPublishWithValidation()}
-              onOpenPreview={
-                readOnly
-                  ? undefined
-                  : () =>
-                      window.open(
-                        `/my-portfolios/${draftId}/preview`,
-                        "_blank",
-                        "noopener,noreferrer"
-                      )
-              }
+              images={draft.images}
+              onChangeImages={readOnly ? undefined : (images) => patchDraft(draftId, { images })}
             />
-
+          </div>
+  
+          <div className="w-full flex-row items-start justify-start gap-[20px] max-[700px]:hidden min-[701px]:flex">
+            {renderProfileSidebar()}
+  
             <EditSquareImageGrid
               editable={!readOnly}
               images={draft.images}
@@ -570,7 +589,7 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
           </div>
         </div>
       </div>
-
+  
       {!readOnly && (
         <>
           <PublishMissingFieldsPopover
@@ -588,7 +607,7 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
                 : undefined
             }
           />
-
+  
           <PublishPopover
             open={publishOpen}
             onClose={() => {

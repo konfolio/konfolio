@@ -245,6 +245,7 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
   const [publishedPortfolioName, setPublishedPortfolioName] = useState("")
   const [allowExploreSearch, setAllowExploreSearch] = useState<boolean>(!!draft?.explore_enabled)
   const [isTogglingExploreSearch, setIsTogglingExploreSearch] = useState(false)
+  const [mobileProfileExpanded, setMobileProfileExpanded] = useState(false)
 
   const [savedSnapshot, setSavedSnapshot] = useState("")
 
@@ -493,12 +494,15 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
     !readOnly && missingOpen && missingRequired.length === 0 && missingOptional.length > 0
 
   const content = (
-    <main className="w-full min-h-[982px]" style={{ backgroundColor: draft.backgroundColor }}>
-      <div className="w-full px-[25px] sm:px-10 lg:px-[150px]">
-        <div className="mx-auto max-w-[1512px]">
-          <div className="flex flex-col items-center">
+    <main className="w-full min-h-screen overflow-x-hidden" style={{ backgroundColor: draft.backgroundColor }}>
+      <div className="w-full px-0 py-0">
+        <div className="mx-auto w-full max-w-[1512px]">
+          <div className="flex w-full flex-col items-center justify-center gap-[20px]">
             <EditPortraitProfile
               editable={!readOnly}
+              mobileCollapsed={!readOnly}
+              mobileExpanded={mobileProfileExpanded}
+              onToggleMobile={() => setMobileProfileExpanded((v) => !v)}
               backHref="/my-portfolios"
               onBack={() => {
                 if (readOnly) {
@@ -547,13 +551,15 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
               }
             />
 
-            <EditPortraitImageGrid
-              editable={!readOnly}
-              images={draft.images}
-              onChangeImages={readOnly ? undefined : (images) => patchDraft(draftId, { images })}
-              previousVendsValue={(draft.previousVends ?? []).join(" | ")}
-              onChangePreviousVends={readOnly ? undefined : (vals) => patchDraft(draftId, { previousVends: vals })}
-            />
+            <div className="w-full px-[16px] sm:px-6 md:px-10 lg:px-[80px] xl:px-[120px]">
+              <EditPortraitImageGrid
+                editable={!readOnly}
+                images={draft.images}
+                onChangeImages={readOnly ? undefined : (images) => patchDraft(draftId, { images })}
+                previousVendsValue={(draft.previousVends ?? []).join(" | ")}
+                onChangePreviousVends={readOnly ? undefined : (vals) => patchDraft(draftId, { previousVends: vals })}
+              />
+            </div>
           </div>
         </div>
       </div>

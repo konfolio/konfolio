@@ -42,11 +42,9 @@ type Props = {
   onMore?: (id: string) => void
 
   onCopyUrl?: (url: string) => void
-
   onExport?: (id: string, type: ExportType) => void
 
   urlBase?: string
-
   onPublishedCountChange?: (count: number) => void
 }
 
@@ -127,9 +125,7 @@ async function updateKonfolioSlug(
     body: JSON.stringify({ portfolio_slug: nextSlug }),
   })
 
-  if (res.ok) {
-    return { ok: true }
-  }
+  if (res.ok) return { ok: true }
 
   let message = "Failed to update URL"
 
@@ -341,60 +337,63 @@ export default function DashPortfolioGrid({
         setDuplicatingId(null)
       }
     },
-    [duplicatingId, forceKonfolioHydrate, hasKonfolioHydrated, router, setDraft]
+    [
+      duplicatingId,
+      forceKonfolioHydrate,
+      hasKonfolioHydrated,
+      router,
+      setDraft,
+    ]
   )
 
-  if (published.length === 0) {
-    return (
-      <div className={className}>
-        <div className="text-[#A5A5A5] text-[14px] leading-[130%]">
-          No published Konfolios yet.
-        </div>
-      </div>
-    )
-  }
+  if (published.length === 0) return null
 
   return (
-    <div className={className}>
-      <div className="flex flex-wrap gap-[20px]">
-        {published.map((k) => {
-          const publicUrl = buildPublicUrl(urlBase, k.businessName, k.portfolioSlug)
+    <div
+      className={[
+        "w-full",
+        "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3",
+        "justify-items-center",
+        "gap-x-[21px] gap-y-[30px]",
+        className ?? "",
+      ].join(" ")}
+    >
+      {published.map((item) => {
+        const publicUrl = buildPublicUrl(
+          urlBase,
+          item.businessName,
+          item.portfolioSlug
+        )
 
-          return (
+        return (
+          <div key={item.id} className="w-full max-w-[390px]">
             <DashPortfolio
-              key={k.id}
-              id={k.id}
-              portfolioName={k.portfolioName}
-              portfolioSlug={k.portfolioSlug}
+              id={item.id}
+              portfolioName={item.portfolioName}
+              portfolioSlug={item.portfolioSlug}
               publicUrl={publicUrl}
-              thumbnailUrl={k.thumbnailUrl ?? null}
-              views={k.views ?? 0}
-              viewers={k.uniqueViewers ?? 0}
-              linkClicks={k.linkClicks ?? 0}
-              exploreEnabled={k.exploreEnabled ?? false}
-              lastUpdatedLabel={formatDateLabel(k.updatedAt)}
-              onView={onView ? () => onView(k.id) : undefined}
-              onEdit={onEdit ? () => onEdit(k.id) : undefined}
-              onMore={onMore ? () => onMore(k.id) : undefined}
-              onCopyUrl={onCopyUrl ? () => onCopyUrl(publicUrl) : undefined}
-              onEditName={(nextName) => handleRename(k.id, nextName)}
+              thumbnailUrl={item.thumbnailUrl}
+              views={item.views ?? 0}
+              viewers={item.uniqueViewers ?? 0}
+              linkClicks={item.linkClicks ?? 0}
+              exploreEnabled={item.exploreEnabled ?? false}
+              lastUpdatedLabel={formatDateLabel(item.updatedAt)}
+              onView={() => onView?.(item.id)}
+              onEdit={() => onEdit?.(item.id)}
+              onMore={() => onMore?.(item.id)}
+              onCopyUrl={() => onCopyUrl?.(publicUrl)}
+              onEditName={(nextName) => handleRename(item.id, nextName)}
               onLinkAccessOnly={() =>
-                handleToggleExplore(k.id, k.exploreEnabled ?? false)
+                handleToggleExplore(item.id, item.exploreEnabled ?? false)
               }
-              onEditUrl={(nextSlug) => handleEditUrl(k.id, nextSlug)}
-              onDuplicate={() => handleDuplicate(k.id)}
-              onExportPick={
-                onExport
-                  ? (type) => {
-                      onExport(k.id, type)
-                    }
-                  : undefined
-              }
+              onDuplicate={() => handleDuplicate(item.id)}
+              onEditUrl={(nextSlug) => handleEditUrl(item.id, nextSlug)}
+              onExportPick={(type) => onExport?.(item.id, type)}
               onDelete={handleDelete}
             />
-          )
-        })}
-      </div>
+          </div>
+        )
+      })}
     </div>
   )
 }

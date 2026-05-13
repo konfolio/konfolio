@@ -80,7 +80,17 @@ export default function PortfolioNameCard({
 
       <div
         ref={cardRef}
-        className="relative z-[1] flex h-[450px] w-[756px] flex-col items-center justify-between rounded-[15px] bg-white p-[50px] shadow-[5px_5px_25px_rgba(0,0,0,0.1)]"
+        className="
+          relative z-[1]
+          flex h-[450px]
+          w-[756px]
+          max-w-[calc(100%-32px)]
+          flex-col items-center justify-between
+          rounded-[15px] bg-white
+          px-6 py-[50px]
+          sm:p-[50px]
+          shadow-[5px_5px_25px_rgba(0,0,0,0.1)]
+        "
       >
         <button
           type="button"
@@ -105,21 +115,21 @@ export default function PortfolioNameCard({
           </h2>
         </div>
 
-        <div className="flex w-[380px] flex-col items-center gap-[15px]">
-          <div className="flex w-[380px] flex-col items-center gap-[10px] pt-[10px]">
+        <div className="flex w-full max-w-[428px] flex-col items-center gap-[15px] px-6 sm:px-0">
+          <div className="flex w-full sm:w-[380px] flex-col items-center gap-[10px] pt-[10px]">
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Portfolio Name"
-              className="w-[380px] text-center text-[17px] leading-[140%] font-normal text-black placeholder:text-[#D3D3D3] outline-none"
+              className="w-full text-center text-[17px] leading-[140%] font-normal text-black placeholder:text-[#D3D3D3] outline-none"
               autoFocus
             />
-            <div className="w-[380px] border-t border-[#A5A5A5]" />
-          </div>
+          <div className="w-full border-t border-[#A5A5A5]" />
+        </div>
 
-          <div className="w-full text-center text-[14px] leading-[130%] font-normal text-[#D3D3D3]">
+        <div className="w-full sm:w-[380px] text-center text-[14px] leading-[130%] font-normal text-[#D3D3D3]">
             {`konfolio.com/${businessSlug}/${nameSlug}`}
-          </div>
+        </div>
 
           {!isNameValid && typed.length > 0 ? (
             <div className="h-[10px] text-[14px] leading-[130%] font-normal text-[#FF4603]">

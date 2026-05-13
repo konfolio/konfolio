@@ -172,7 +172,7 @@ export default function PublishPopover({
   return (
     <>
       <div
-        className="fixed inset-0 z-[9999] flex items-center justify-center"
+        className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
         role="dialog"
         aria-modal="true"
         aria-label="Publish popover"
@@ -186,7 +186,7 @@ export default function PublishPopover({
 
         <div
           ref={cardRef}
-          className="relative isolate bg-white rounded-[15px] shadow-[5px_5px_25px_rgba(0,0,0,0.1)] w-[872px] h-[444px] px-[111px] py-[25px] flex flex-col items-center justify-between"
+          className="relative isolate flex max-h-[calc(100vh-32px)] w-full max-w-[872px] flex-col items-center justify-between overflow-y-auto rounded-[15px] bg-white px-5 py-[25px] shadow-[5px_5px_25px_rgba(0,0,0,0.1)] sm:px-10 lg:h-[444px] lg:px-[111px]"
         >
           <button
             type="button"
@@ -206,14 +206,14 @@ export default function PublishPopover({
           </div>
 
           {isPublishing ? (
-            <div className="w-[650px] flex-1 flex flex-col items-center justify-center">
+            <div className="flex w-full max-w-[650px] flex-1 flex-col items-center justify-center">
               <div className="flex items-center gap-3 text-[#262626]">
                 <Spinner className="h-5 w-5 animate-spin" />
                 <span className="text-[15px] leading-[150%]">Publishing...</span>
               </div>
             </div>
           ) : status === "error" ? (
-            <div className="w-[650px] flex-1 flex flex-col items-center justify-center gap-3">
+            <div className="flex w-full max-w-[650px] flex-1 flex-col items-center justify-center gap-3">
               <div className="text-center font-semibold text-[18px] leading-[22px] text-[#262626]">
                 Something went wrong
               </div>
@@ -223,14 +223,14 @@ export default function PublishPopover({
             </div>
           ) : status === "success" ? (
             <>
-              <div className="w-[650px] h-[211px] flex flex-col items-center gap-[50px]">
-                <div className="w-[650px] h-[16px] text-center font-semibold text-[22px] leading-[27px] text-[#262626]">
+              <div className="w-full max-w-[650px] h-[211px] flex flex-col items-center gap-[50px]">
+                <div className="w-full max-w-[650px] h-[16px] text-center font-semibold text-[22px] leading-[27px] text-[#262626]">
                   {captionName} has been published!
                 </div>
 
-                <div className="w-[650px] h-[145px] flex flex-col items-start gap-5">
+                <div className="w-full max-w-[650px] h-[145px] flex flex-col items-start gap-5">
                   {/* View */}
-                  <div className="w-[650px] h-[35px] flex items-center overflow-hidden rounded-[100px] border border-[#D3D3D3] bg-white">
+                  <div className="w-full max-w-[650px] h-[35px] flex items-center overflow-hidden rounded-[100px] border border-[#D3D3D3] bg-white">
                     <button
                       type="button"
                       onClick={handleOpenTab}
@@ -256,7 +256,7 @@ export default function PublishPopover({
                   </div>
 
                   {/* Copy */}
-                  <div className="w-[650px] h-[35px] flex items-center overflow-hidden rounded-[100px] border border-[#D3D3D3] bg-white">
+                  <div className="w-full max-w-[650px] h-[35px] flex items-center overflow-hidden rounded-[100px] border border-[#D3D3D3] bg-white">
                     <button
                       type="button"
                       onClick={handleCopy}
@@ -285,7 +285,7 @@ export default function PublishPopover({
                   </div>
 
                   {/* Export */}
-                  <div className="w-[650px] h-[35px] flex items-center overflow-hidden rounded-[100px] border border-[#D3D3D3] bg-white">
+                  <div className="w-full max-w-[650px] h-[35px] flex items-center overflow-hidden rounded-[100px] border border-[#D3D3D3] bg-white">
                     <button
                       type="button"
                       onClick={handleOpenExportPopover}
@@ -358,7 +358,7 @@ export default function PublishPopover({
               </div>
             </>
           ) : (
-            <div className="w-[650px] flex-1 flex flex-col items-center justify-center">
+            <div className="flex w-full max-w-[650px] flex-1 flex-col items-center justify-center">
               <div className="text-[15px] leading-[150%] text-[#262626]">Preparing publish…</div>
             </div>
           )}
