@@ -7,11 +7,23 @@ import ThreeDotsIcon from "@/components/icons/ThreeDotsIcon"
 type Props = {
   portfolioId: string
   businessName: string
+  portfolioName: string
+  portfolioSlug?: string | null
   creatorName: string
   previewImageUrl: string
   avatarUrl?: string
   labels?: string[]
   className?: string
+}
+
+function slugify(input: string): string {
+  return (input || "")
+    .toLowerCase()
+    .trim()
+    .replace(/['"]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
 }
 
 function CheckIcon({ className = "" }: { className?: string }) {
@@ -43,12 +55,22 @@ const GRID_HOVER_SHADOW =
 export default function ExplorePortfolioCard({
   portfolioId,
   businessName,
+  portfolioName,
+  portfolioSlug,
   creatorName,
   previewImageUrl,
   avatarUrl,
   labels = [],
   className = "",
 }: Props) {
+  const businessSlug = slugify(businessName)
+  const finalPortfolioSlug = slugify(portfolioSlug || portfolioName)
+
+  const publicHref =
+    businessSlug && finalPortfolioSlug
+      ? `/${businessSlug}/${finalPortfolioSlug}`
+      : `/explore/${portfolioId}`
+
   return (
     <div
       className={`
@@ -105,6 +127,7 @@ export default function ExplorePortfolioCard({
           <ThreeDotsIcon />
         </button>
 
+        {/* HOVER VIEW BUTTON */}
         <div
           className="
             absolute inset-0 flex items-center justify-center
@@ -114,7 +137,7 @@ export default function ExplorePortfolioCard({
           "
         >
           <PrimaryButton
-            href={`/explore/${portfolioId}`}
+            href={publicHref}
             icon="open"
             className="h-[33px] min-w-[150px] px-[40px] py-[10px]"
           >
@@ -125,7 +148,7 @@ export default function ExplorePortfolioCard({
 
       <div className="w-[390px] h-[35px] px-[15px] flex flex-col justify-center gap-[12px]">
         <div className="w-[360px] h-[13px] flex items-center justify-between">
-          <div className="text-[17px] leading-[140%] font-normal text-[#262626]">
+          <div className="text-[17px] leading-[140%] font-normal text-[#262626] truncate">
             {businessName}
           </div>
 

@@ -8,6 +8,8 @@ import ThreeDotsIcon from "@/components/icons/ThreeDotsIcon"
 type Item = {
   id: string
   businessName: string
+  portfolioName: string
+  portfolioSlug?: string | null
   creatorName: string
   previewImageUrl: string
   profileImageUrl?: string
@@ -20,6 +22,8 @@ type ExploreItem = {
   updated_at: string | null
   thumbnailUrl: string
   businessName: string
+  portfolioName: string
+  portfolioSlug?: string | null
   displayName: string
   locationText: string
   profileImageUrl: string
@@ -39,6 +43,8 @@ export default function ExploreGrid({ items }: Props) {
     return items.map((item) => ({
       id: item.id,
       businessName: item.businessName,
+      portfolioName: item.portfolioName,
+      portfolioSlug: item.portfolioSlug,
       creatorName: item.displayName,
       previewImageUrl: item.thumbnailUrl,
       profileImageUrl: item.profileImageUrl,
@@ -74,7 +80,9 @@ export default function ExploreGrid({ items }: Props) {
         isLoadingRef.current = true
 
         window.setTimeout(() => {
-          setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, allItems.length))
+          setVisibleCount((prev) =>
+            Math.min(prev + PAGE_SIZE, allItems.length)
+          )
           isLoadingRef.current = false
         }, 650)
       },
@@ -92,14 +100,14 @@ export default function ExploreGrid({ items }: Props) {
   const showDots = hasMore && visibleItems.length >= PAGE_SIZE
 
   return (
-    <div className="w-full flex justify-center">
-      <div className="w-full max-w-[1212px] flex flex-col">
+    <div className="flex w-full justify-center">
+      <div className="flex w-full max-w-[1212px] flex-col">
         <div
           className="
             grid
-            gap-[15px]
-            justify-items-center
             grid-cols-1
+            justify-items-center
+            gap-[15px]
             sm:grid-cols-2
             lg:grid-cols-3
           "
@@ -109,21 +117,23 @@ export default function ExploreGrid({ items }: Props) {
               key={item.id}
               portfolioId={item.id}
               businessName={item.businessName}
+              portfolioName={item.portfolioName}
+              portfolioSlug={item.portfolioSlug}
               creatorName={item.creatorName}
               previewImageUrl={item.previewImageUrl}
               avatarUrl={item.profileImageUrl}
               labels={item.labels}
-              className="w-[390px] h-[320px]"
+              className="h-[320px] w-[390px]"
             />
           ))}
         </div>
 
         {showDots && (
-          <div className="w-full flex justify-center pt-[36px] pb-[12px]">
+          <div className="flex w-full justify-center pb-[12px] pt-[36px]">
             <div
               className="
-                w-[32px] h-[32px]
-                grid place-items-center
+                grid h-[32px] w-[32px]
+                place-items-center
                 select-none pointer-events-none
                 text-[#A5A5A5]
               "

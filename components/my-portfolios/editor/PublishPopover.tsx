@@ -93,9 +93,7 @@ export default function PublishPopover({
   }, [open])
 
   useEffect(() => {
-    if (!open) {
-      setExportOpen(false)
-    }
+    if (!open) setExportOpen(false)
   }, [open])
 
   useEffect(() => {
@@ -186,35 +184,42 @@ export default function PublishPopover({
 
         <div
           ref={cardRef}
-          className="relative isolate flex max-h-[calc(100vh-32px)] w-full max-w-[872px] flex-col items-center justify-between overflow-y-auto rounded-[15px] bg-white px-5 py-[25px] shadow-[5px_5px_25px_rgba(0,0,0,0.1)] sm:px-10 lg:h-[444px] lg:px-[111px]"
+          className="
+            relative isolate flex w-full max-w-[872px] flex-col items-center
+            overflow-y-auto rounded-[15px] bg-white shadow-[5px_5px_25px_rgba(0,0,0,0.1)]
+            max-h-[calc(100vh-32px)]
+            px-5 py-[25px]
+            sm:px-8
+            lg:min-h-[444px] lg:px-[111px]
+          "
         >
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="absolute right-5 top-5 w-[52px] h-[52px] flex items-center justify-center cursor-pointer"
+            className="absolute right-4 top-4 z-10 flex h-[52px] w-[52px] cursor-pointer items-center justify-center sm:right-5 sm:top-5"
           >
             <span className="scale-200">
               <DeleteIcon />
             </span>
           </button>
 
-          <div className="relative h-[18px] w-[81px] select-none">
-            <div className="absolute left-[1.29px] top-[3.21px] font-[Inknut_Antiqua] font-semibold text-[17.4721px] leading-[45px] tracking-[-0.02em] text-[#262626]">
+          <div className="relative h-[18px] w-[81px] shrink-0 select-none">
+            <div className="absolute left-[1.29px] top-[3.21px] font-[Inknut_Antiqua] text-[17.4721px] font-semibold leading-[45px] tracking-[-0.02em] text-[#262626]">
               konfolio
             </div>
           </div>
 
           {isPublishing ? (
-            <div className="flex w-full max-w-[650px] flex-1 flex-col items-center justify-center">
+            <div className="flex w-full max-w-[650px] flex-1 flex-col items-center justify-center py-24">
               <div className="flex items-center gap-3 text-[#262626]">
                 <Spinner className="h-5 w-5 animate-spin" />
                 <span className="text-[15px] leading-[150%]">Publishing...</span>
               </div>
             </div>
           ) : status === "error" ? (
-            <div className="flex w-full max-w-[650px] flex-1 flex-col items-center justify-center gap-3">
-              <div className="text-center font-semibold text-[18px] leading-[22px] text-[#262626]">
+            <div className="flex w-full max-w-[650px] flex-1 flex-col items-center justify-center gap-3 py-24">
+              <div className="text-center text-[18px] font-semibold leading-[22px] text-[#262626]">
                 Something went wrong
               </div>
               <div className="text-center text-[15px] leading-[150%] text-[#262626]">
@@ -222,110 +227,111 @@ export default function PublishPopover({
               </div>
             </div>
           ) : status === "success" ? (
-            <>
-              <div className="w-full max-w-[650px] h-[211px] flex flex-col items-center gap-[50px]">
-                <div className="w-full max-w-[650px] h-[16px] text-center font-semibold text-[22px] leading-[27px] text-[#262626]">
-                  {captionName} has been published!
+            <div className="flex w-full max-w-[650px] flex-1 flex-col items-center justify-center gap-8 pt-12 sm:gap-[50px] sm:pt-[52px]">
+              <div className="w-full text-center text-[22px] font-semibold leading-[27px] text-[#262626]">
+                {captionName} has been published!
+              </div>
+
+              <div className="flex w-full flex-col items-start gap-5">
+                {/* View */}
+                <div className="flex min-h-[35px] w-full flex-col overflow-hidden rounded-[18px] border border-[#D3D3D3] bg-white sm:h-[35px] sm:flex-row sm:rounded-[100px]">
+                  <button
+                    type="button"
+                    onClick={handleOpenTab}
+                    className="flex h-[35px] w-full shrink-0 cursor-pointer items-center justify-center bg-[#F3F3FE] sm:h-full sm:w-[156px] sm:rounded-l-[100px]"
+                  >
+                    <span className="text-[15px] leading-[150%] text-[#262626]">
+                      View it live
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleOpenTab}
+                    className="flex min-h-[35px] min-w-0 flex-1 cursor-pointer items-center px-4 text-left sm:h-full sm:px-5"
+                    aria-label="Open live portfolio"
+                    title="Open live portfolio"
+                  >
+                    <span className="min-w-0 flex-1 truncate text-[15px] leading-[150%] text-[#262626]">
+                      {safeLiveUrl}
+                    </span>
+
+                    <span className="ml-[7px] flex h-4 w-4 shrink-0 items-center justify-center text-[#A5A5A5]">
+                      <OpenTabIcon className="h-4 w-4" />
+                    </span>
+                  </button>
                 </div>
 
-                <div className="w-full max-w-[650px] h-[145px] flex flex-col items-start gap-5">
-                  {/* View */}
-                  <div className="w-full max-w-[650px] h-[35px] flex items-center overflow-hidden rounded-[100px] border border-[#D3D3D3] bg-white">
-                    <button
-                      type="button"
-                      onClick={handleOpenTab}
-                      className="h-full w-[156px] bg-[#F3F3FE] rounded-l-[100px] flex items-center justify-center cursor-pointer"
-                    >
-                      <span className="text-[15px] leading-[150%] text-[#262626]">View it live</span>
-                    </button>
+                {/* Copy */}
+                <div className="flex min-h-[35px] w-full flex-col overflow-hidden rounded-[18px] border border-[#D3D3D3] bg-white sm:h-[35px] sm:flex-row sm:rounded-[100px]">
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    className="flex h-[35px] w-full shrink-0 cursor-pointer items-center justify-center bg-[#F3F3FE] sm:h-full sm:w-[156px] sm:rounded-l-[100px]"
+                  >
+                    <span className="text-[15px] leading-[150%] text-[#262626]">
+                      Copy link
+                    </span>
+                  </button>
 
-                    <div className="h-full flex-1 flex items-center pl-5 pr-5">
-                      <span className="text-[15px] leading-[150%] text-[#262626] truncate">
-                        {safeLiveUrl}
-                      </span>
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    className="flex min-h-[35px] min-w-0 flex-1 cursor-pointer items-center px-4 text-left sm:h-full sm:px-5"
+                    aria-label="Copy link"
+                    title="Copy link"
+                  >
+                    <span className="min-w-0 flex-1 truncate text-[15px] leading-[150%] text-[#262626]">
+                      {copied ? "Copied!" : safeLiveUrl}
+                    </span>
 
-                      <button
-                        type="button"
-                        onClick={handleOpenTab}
-                        aria-label="Open in new tab"
-                        className="ml-[7px] h-4 w-4 flex items-center justify-center text-[#A5A5A5] cursor-pointer"
-                      >
-                        <OpenTabIcon className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
+                    <span className="ml-[7px] flex h-4 w-4 shrink-0 items-center justify-center text-[#A5A5A5]">
+                      <CopyIcon className="h-4 w-4 text-[#A5A5A5] [&_path]:stroke-[#A5A5A5]" />
+                    </span>
+                  </button>
+                </div>
 
-                  {/* Copy */}
-                  <div className="w-full max-w-[650px] h-[35px] flex items-center overflow-hidden rounded-[100px] border border-[#D3D3D3] bg-white">
-                    <button
-                      type="button"
-                      onClick={handleCopy}
-                      className="h-full w-[156px] bg-[#F3F3FE] rounded-l-[100px] flex items-center justify-center cursor-pointer"
-                    >
-                      <span className="text-[15px] leading-[150%] text-[#262626]">Copy link</span>
-                    </button>
+                {/* Export */}
+                <div className="flex min-h-[35px] w-full flex-col overflow-hidden rounded-[18px] border border-[#D3D3D3] bg-white sm:h-[35px] sm:flex-row sm:rounded-[100px]">
+                  <button
+                    type="button"
+                    onClick={handleOpenExportPopover}
+                    className="flex h-[35px] w-full shrink-0 cursor-pointer items-center justify-center bg-[#F3F3FE] sm:h-full sm:w-[156px] sm:rounded-l-[100px]"
+                  >
+                    <span className="text-[15px] leading-[150%] text-[#262626]">
+                      Export
+                    </span>
+                  </button>
 
-                    <div className="h-full flex-1 flex items-center pl-5 pr-5">
-                      <button
-                        type="button"
-                        onClick={handleCopy}
-                        className="w-full h-full flex items-center gap-[7px] cursor-pointer text-left"
-                        aria-label="Copy link"
-                        title="Copy link"
-                      >
-                        <span className="min-w-0 truncate text-[15px] leading-[150%] text-[#262626]">
-                          {copied ? "Copied!" : safeLiveUrl}
-                        </span>
+                  <button
+                    type="button"
+                    onClick={handleOpenExportPopover}
+                    className="flex min-h-[35px] min-w-0 flex-1 cursor-pointer items-center px-4 text-left sm:h-full sm:px-5"
+                    aria-label="Open export options"
+                    title="Open export options"
+                  >
+                    <span className="min-w-0 flex-1 truncate text-[15px] leading-[150%] text-[#262626]">
+                      {derivedExportLabel}
+                    </span>
 
-                        <span className="relative flex items-center flex-shrink-0 text-[#A5A5A5]">
-                          <CopyIcon className="h-4 w-4 text-[#A5A5A5] [&_path]:stroke-[#A5A5A5]" />
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Export */}
-                  <div className="w-full max-w-[650px] h-[35px] flex items-center overflow-hidden rounded-[100px] border border-[#D3D3D3] bg-white">
-                    <button
-                      type="button"
-                      onClick={handleOpenExportPopover}
-                      className="h-full w-[156px] bg-[#F3F3FE] rounded-l-[100px] flex items-center justify-center cursor-pointer"
-                    >
-                      <span className="text-[15px] leading-[150%] text-[#262626]">Export</span>
-                    </button>
-
-                    <div className="h-full flex-1 flex items-center pl-5 pr-5">
-                      <button
-                        type="button"
-                        onClick={handleOpenExportPopover}
-                        className="w-full h-full flex items-center text-left cursor-pointer"
-                        aria-label="Open export options"
-                        title="Open export options"
-                      >
-                        <span className="min-w-0 truncate text-[15px] leading-[150%] text-[#262626]">
-                          {derivedExportLabel}
-                        </span>
-
-                        <span className="ml-[7px] h-4 w-4 flex items-center justify-center text-[#A5A5A5] flex-shrink-0">
-                          <ExportIcon className="h-4 w-4" />
-                        </span>
-                      </button>
-                    </div>
-                  </div>
+                    <span className="ml-[7px] flex h-4 w-4 shrink-0 items-center justify-center text-[#A5A5A5]">
+                      <ExportIcon className="h-4 w-4" />
+                    </span>
+                  </button>
                 </div>
               </div>
 
-              <div className="w-[258px] h-[49.5px] flex flex-col items-center justify-center gap-[15px]">
+              <div className="flex w-full max-w-[330px] flex-col items-center justify-center gap-[15px] pb-1">
                 <button
                   type="button"
                   onClick={() => onGoToExplore?.()}
-                  className="w-[258px] h-[21px] flex items-center px-[5px] cursor-pointer"
+                  className="flex w-full cursor-pointer items-center justify-center px-[5px]"
                 >
-                  <div className="flex items-center gap-[5px] text-[#A5A5A5]">
-                    <span className="text-[15px] leading-[150%]">
+                  <div className="flex min-w-0 items-center justify-center gap-[5px] text-[#A5A5A5]">
+                    <span className="text-center text-[15px] leading-[150%]">
                       Look for your portfolio in Explore
                     </span>
-                    <ArrowRightIcon className="h-[11px] w-[11px]" />
+                    <ArrowRightIcon className="h-[11px] w-[11px] shrink-0" />
                   </div>
                 </button>
 
@@ -334,7 +340,7 @@ export default function PublishPopover({
                   onClick={handleToggleExplore}
                   disabled={isTogglingExploreSearch}
                   className={[
-                    "h-[13.5px] min-w-[120px] flex items-center gap-[7px]",
+                    "flex min-h-[18px] min-w-[120px] items-center justify-center gap-[7px]",
                     isTogglingExploreSearch ? "cursor-default opacity-70" : "cursor-pointer",
                   ].join(" ")}
                   aria-pressed={allowExploreSearch}
@@ -342,13 +348,13 @@ export default function PublishPopover({
                 >
                   <span
                     className={[
-                      "w-[22px] h-[13.5px] rounded-[5832.75px] p-[1.5px] flex items-center transition",
+                      "flex h-[13.5px] w-[22px] shrink-0 items-center rounded-[5832.75px] p-[1.5px] transition",
                       allowExploreSearch
-                        ? "bg-[#262626] justify-end"
-                        : "bg-[#D3D3D3] justify-start",
+                        ? "justify-end bg-[#262626]"
+                        : "justify-start bg-[#D3D3D3]",
                     ].join(" ")}
                   >
-                    <span className="w-[10.5px] h-[10.5px] rounded-full bg-white" />
+                    <span className="h-[10.5px] w-[10.5px] rounded-full bg-white" />
                   </span>
 
                   <span className="text-[12px] leading-[130%] text-[#262626]">
@@ -356,10 +362,12 @@ export default function PublishPopover({
                   </span>
                 </button>
               </div>
-            </>
+            </div>
           ) : (
-            <div className="flex w-full max-w-[650px] flex-1 flex-col items-center justify-center">
-              <div className="text-[15px] leading-[150%] text-[#262626]">Preparing publish…</div>
+            <div className="flex w-full max-w-[650px] flex-1 flex-col items-center justify-center py-24">
+              <div className="text-[15px] leading-[150%] text-[#262626]">
+                Preparing publish…
+              </div>
             </div>
           )}
         </div>

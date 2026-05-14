@@ -248,7 +248,7 @@ export default function EditPortraitProfile({
 
   const bannerPrimaryIconClass = bannerIsDark
     ? "text-white [&_path]:stroke-white"
-    : "text-[#262626] [&_path]:stroke-[#262626] [&_path]:fill-[#262626]"
+    : "text-[#262626] [&_path]:stroke-[#262626]"
 
   const bannerButtonClass = bannerIsDark
     ? "border-white text-white [&_span]:text-white [&_path]:stroke-white"
