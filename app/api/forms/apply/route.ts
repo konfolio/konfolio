@@ -35,10 +35,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "You must be logged in to apply." }, { status: 401 });
     }
 
-    if (user.id === form.organizer_id) {
-      return NextResponse.json({ error: "Organizers cannot apply to their own form." }, { status: 403 });
-    }
-
     if (user) {
       const { data: konfolio } = await supabase
         .from("konfolios")
