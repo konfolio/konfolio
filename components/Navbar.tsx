@@ -1,24 +1,25 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { useEffect, useMemo, useState } from "react"
-import { inknut } from "@/app/fonts"
-import { supabase } from "@/lib/supabase/browser"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { inknut } from "@/app/fonts";
+import { supabase } from "@/lib/supabase/browser";
+import Image from "next/image";
 
 type Profile = {
-  role?: string | null // "artist" | "vendor"
-  first_name: string | null
-  preferred_name: string | null
-  business_name?: string | null
-  organization?: string | null
-  profile_image_url: string | null
-}
+  role?: string | null; // "artist" | "vendor"
+  first_name: string | null;
+  preferred_name: string | null;
+  business_name?: string | null;
+  organization?: string | null;
+  profile_image_url: string | null;
+};
 
 function normalizePath(pathnameRaw: string) {
   return pathnameRaw.endsWith("/") && pathnameRaw !== "/"
     ? pathnameRaw.slice(0, -1)
-    : pathnameRaw
+    : pathnameRaw;
 }
 
 function NavItem({
@@ -27,10 +28,10 @@ function NavItem({
   active,
   widthClass,
 }: {
-  href: string
-  label: string
-  active: boolean
-  widthClass: string
+  href: string;
+  label: string;
+  active: boolean;
+  widthClass: string;
 }) {
   return (
     <Link
@@ -62,124 +63,130 @@ function NavItem({
         `}
       />
     </Link>
-  )
+  );
 }
 
 function normRole(roleRaw: string | null | undefined) {
-  return String(roleRaw ?? "").trim().toLowerCase()
+  return String(roleRaw ?? "")
+    .trim()
+    .toLowerCase();
 }
 
 function isVendorRole(roleRaw: string | null | undefined) {
-  return normRole(roleRaw) === "vendor"
+  return normRole(roleRaw) === "vendor";
 }
 
 export default function Navbar() {
-  const pathnameRaw = usePathname() || ""
-  const pathname = normalizePath(pathnameRaw)
+  const pathnameRaw = usePathname() || "";
+  const pathname = normalizePath(pathnameRaw);
 
   // 3-state auth:
   // null = unknown/loading, false = signed out, true = signed in
-  const [signedIn, setSignedIn] = useState<boolean | null>(null)
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
 
-  const [displayName, setDisplayName] = useState<string>("")
-  const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null)
+  const [displayName, setDisplayName] = useState<string>("");
+  const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
 
-  const [isVendor, setIsVendor] = useState(false)
-  const [roleReady, setRoleReady] = useState(false)
+  const [isVendor, setIsVendor] = useState(false);
+  const [roleReady, setRoleReady] = useState(false);
 
-  const isExploreActive = pathname === "/explore" || pathname.startsWith("/explore/")
-  const isSupportActive = pathname === "/support" || pathname.startsWith("/support/")
+  const isExploreActive =
+    pathname === "/explore" || pathname.startsWith("/explore/");
+  const isSupportActive =
+    pathname === "/support" || pathname.startsWith("/support/");
 
   const isMyPortfoliosActive =
-    pathname === "/my-portfolios" || pathname.startsWith("/my-portfolios/")
-  const isMyFormsActive = pathname === "/my-forms" || pathname.startsWith("/my-forms/")
+    pathname === "/my-portfolios" || pathname.startsWith("/my-portfolios/");
+  const isMyFormsActive =
+    pathname === "/my-forms" || pathname.startsWith("/my-forms/");
 
   const hideAccountOnDashboardRoot =
-    pathname === "/my-portfolios" || pathname === "/my-forms"
+    pathname === "/my-portfolios" || pathname === "/my-forms";
 
   useEffect(() => {
-    let mounted = true
+    let mounted = true;
 
     async function load() {
       // start in “unknown” for each load to avoid showing wrong UI
-      setSignedIn(null)
-      setRoleReady(false)
+      setSignedIn(null);
+      setRoleReady(false);
 
-      const sessionRes = await supabase.auth.getSession()
-      const user = sessionRes.data.session?.user
+      const sessionRes = await supabase.auth.getSession();
+      const user = sessionRes.data.session?.user;
 
-      if (!mounted) return
+      if (!mounted) return;
 
       if (!user) {
-        setSignedIn(false)
-        setDisplayName("")
-        setProfileImageUrl(null)
-        setIsVendor(false)
-        setRoleReady(true)
-        return
+        setSignedIn(false);
+        setDisplayName("");
+        setProfileImageUrl(null);
+        setIsVendor(false);
+        setRoleReady(true);
+        return;
       }
 
-      setSignedIn(true)
+      setSignedIn(true);
 
       const profileRes = await supabase
         .from("profiles")
-        .select("role, first_name, preferred_name, business_name, organization, profile_image_url")
+        .select(
+          "role, first_name, preferred_name, business_name, organization, profile_image_url",
+        )
         .eq("id", user.id)
-        .maybeSingle()
+        .maybeSingle();
 
-      if (!mounted) return
+      if (!mounted) return;
 
       if (profileRes.error) {
-        setDisplayName("")
-        setProfileImageUrl(null)
-        setIsVendor(false)
-        setRoleReady(true)
-        return
+        setDisplayName("");
+        setProfileImageUrl(null);
+        setIsVendor(false);
+        setRoleReady(true);
+        return;
       }
 
-      const p = profileRes.data as Profile | null
-      const vendor = isVendorRole(p?.role)
-      setIsVendor(vendor)
+      const p = profileRes.data as Profile | null;
+      const vendor = isVendorRole(p?.role);
+      setIsVendor(vendor);
 
-      const preferred = (p?.preferred_name || "").trim()
-      const first = (p?.first_name || "").trim()
-      const business = String(p?.business_name ?? "").trim()
-      const org = String(p?.organization ?? "").trim()
+      const preferred = (p?.preferred_name || "").trim();
+      const first = (p?.first_name || "").trim();
+      const business = String(p?.business_name ?? "").trim();
+      const org = String(p?.organization ?? "").trim();
 
-      const vendorName = org || business || first || "Account"
-      const artistName = preferred || first || "Account"
+      const vendorName = org || business || first || "Account";
+      const artistName = preferred || first || "Account";
 
-      setDisplayName(vendor ? vendorName : artistName)
-      setProfileImageUrl(p?.profile_image_url ?? null)
+      setDisplayName(vendor ? vendorName : artistName);
+      setProfileImageUrl(p?.profile_image_url ?? null);
 
-      setRoleReady(true)
+      setRoleReady(true);
     }
 
-    load()
+    load();
 
     const { data: sub } = supabase.auth.onAuthStateChange(() => {
-      load()
-    })
+      load();
+    });
 
     return () => {
-      mounted = false
-      sub.subscription.unsubscribe()
-    }
-  }, [])
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
 
   const initials = useMemo(() => {
-    const c = displayName?.[0]?.toUpperCase()
-    return c && c.length ? c : "U"
-  }, [displayName])
+    const c = displayName?.[0]?.toUpperCase();
+    return c && c.length ? c : "U";
+  }, [displayName]);
 
-  const myPrimaryHref = isVendor ? "/my-forms" : "/my-portfolios"
-  const myPrimaryLabel = isVendor ? "My Forms" : "My Portfolios"
-  const myPrimaryWidthClass = isVendor ? "w-[85px]" : "w-[110px]"
-  const isPrimaryActive = isVendor ? isMyFormsActive : isMyPortfoliosActive
+  const myPrimaryHref = isVendor ? "/my-forms" : "/my-portfolios";
+  const myPrimaryLabel = isVendor ? "My Forms" : "My Portfolios";
+  const myPrimaryWidthClass = isVendor ? "w-[85px]" : "w-[110px]";
+  const isPrimaryActive = isVendor ? isMyFormsActive : isMyPortfoliosActive;
 
-  const showSignedInUI = signedIn === true
-  const showSignedOutUI = signedIn === false
-  const authUnknown = signedIn === null
+  const showSignedInUI = signedIn === true;
+  const showSignedOutUI = signedIn === false;
 
   return (
     <nav className="w-full h-[61px] bg-white">
@@ -244,7 +251,7 @@ export default function Navbar() {
             {showSignedInUI ? (
               hideAccountOnDashboardRoot ? null : (
                 <Link
-                  href="/account"
+                  href="/my-forms"
                   className="
                     hidden lg:flex
                     items-center justify-end
@@ -264,10 +271,12 @@ export default function Navbar() {
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     {profileImageUrl ? (
-                      <img
+                      <Image
                         src={profileImageUrl}
                         alt="Profile"
                         className="w-full h-full object-cover"
+                        width={35}
+                        height={35}
                       />
                     ) : (
                       <span className="text-[12px] font-inter text-[#262626]">
@@ -332,5 +341,5 @@ export default function Navbar() {
         </div>
       </div>
     </nav>
-  )
+  );
 }

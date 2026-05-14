@@ -1,8 +1,8 @@
-import Link from "next/link"
-import { inknut } from "@/app/fonts"
+import Link from "next/link";
+import { inknut } from "@/app/fonts";
 
 const footerLink =
-  "relative text-[17px] leading-[140%] font-normal text-zinc-900 whitespace-nowrap transition-all duration-100 ease-out hover:font-semibold"
+  "relative text-[17px] leading-[140%] font-normal text-zinc-900 whitespace-nowrap transition-all duration-100 ease-out hover:font-semibold";
 
 export default function Footer() {
   return (
@@ -29,9 +29,9 @@ export default function Footer() {
             <a href="#" className={footerLink}>
               Report Issue
             </a>
-            <a href="#" className={footerLink}>
+            <Link href="/terms-of-service" className={footerLink}>
               Terms of Service
-            </a>
+            </Link>
           </div>
 
           {/* Reach out (email only italic+underline) */}
@@ -64,22 +64,38 @@ export default function Footer() {
                   konfolio
                 </Link>
 
-                <a href="#" className={`${footerLink} no-shift`} data-text="Explore">
+                <a
+                  href="#"
+                  className={`${footerLink} no-shift`}
+                  data-text="Explore"
+                >
                   Explore
                 </a>
-                <a href="#" className={`${footerLink} no-shift`} data-text="Support">
+                <a
+                  href="#"
+                  className={`${footerLink} no-shift`}
+                  data-text="Support"
+                >
                   Support
                 </a>
               </div>
 
               {/* Right */}
               <div className="flex items-center gap-[50px]">
-                <a href="#" className={`${footerLink} no-shift`} data-text="Report Issue">
+                <a
+                  href="#"
+                  className={`${footerLink} no-shift`}
+                  data-text="Report Issue"
+                >
                   Report Issue
                 </a>
-                <a href="#" className={`${footerLink} no-shift`} data-text="Terms of Service">
+                <Link
+                  href="/terms-of-service"
+                  className={`${footerLink} no-shift`}
+                  data-text="Terms of Service"
+                >
                   Terms of Service
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -91,7 +107,10 @@ export default function Footer() {
 
               <p className="text-[14px] leading-[140%] font-normal text-zinc-900 text-right">
                 Reach out to us at{" "}
-                <a href="mailto:konfolios@gmail.com" className="italic underline">
+                <a
+                  href="mailto:konfolios@gmail.com"
+                  className="italic underline"
+                >
                   konfolios@gmail.com
                 </a>
               </p>
@@ -100,5 +119,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

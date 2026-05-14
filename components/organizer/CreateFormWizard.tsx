@@ -90,7 +90,7 @@ export default function CreateFormWizard({ open, onClose }: Props) {
       }
 
       onClose();
-      router.push(`/organizer/forms/${json.formId}/edit`);
+      router.push(`/organizer/forms/${json.formId}`);
     } catch {
       alert("Something went wrong creating the form");
     } finally {
