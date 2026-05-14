@@ -6,7 +6,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import Image from "next/image";
-import { supabase } from "@/lib/supabaseClient";
 
 type Form = {
   id: string;
@@ -341,13 +340,6 @@ export default function ApplyFormPage() {
         const json = await res.json();
         setForm(json.form);
 
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        if (user && user.id === json.form.organizer_id) {
-          setIsOrganizer(true);
-        }
-
         const profileRes = await fetch(
           `/api/organizer/profile?organizerId=${json.form.organizer_id}`,
         );
@@ -406,23 +398,6 @@ export default function ApplyFormPage() {
   }
 
   if (!form) return null;
-
-  // if (isOrganizer) {
-  //   return (
-  //     <main className="min-h-screen bg-[#F7F7F7]">
-  //       <Navbar />
-  //       <div className="w-full flex justify-center px-[16px] sm:px-[40px] py-[40px]">
-  //         <div className="w-full max-w-[720px] flex flex-col gap-[16px]">
-  //           <FormHeader form={form} />
-  //           <p className="text-[14px] text-[#A5A5A5]">
-  //             You cannot apply to your own form.
-  //           </p>
-  //         </div>
-  //       </div>
-  //       <Footer />
-  //     </main>
-  //   );
-  // }
 
   if (form.status === "closed") {
     return (
