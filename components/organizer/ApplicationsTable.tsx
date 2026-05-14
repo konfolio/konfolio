@@ -412,6 +412,7 @@ export default function ApplicationsTable({
       </div>
       {selectedApp && (
         <ApplicationDrawer
+          key={selectedApp?.id}
           app={selectedApp}
           konfolioViewerBasePath={konfolioViewerBasePath}
           onClose={() => setSelectedApp(null)}

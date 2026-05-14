@@ -23,10 +23,6 @@ export default function ApplicationDrawer({
     return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
 
-  useEffect(() => {
-    if (app) setStatus(app.status);
-  }, [app]);
-
   if (!app) return null;
 
   const thumb =
