@@ -1,20 +1,35 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 
 type Props = {
   formTitle: string;
   publicUrl: string;
+  formId: string;
   onClose: () => void;
 };
 
 export default function PublishFormModal({
   formTitle,
   publicUrl,
+  formId,
   onClose,
 }: Props) {
-  const displayUrl = `konfolio.com${publicUrl}`;
-  const absoluteUrl = `https://konfolio.com${publicUrl}`;
+  const displayUrl = `localhost:3000${publicUrl}`;
+  const absoluteUrl = publicUrl;
+  const fullUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}${publicUrl}`
+      : displayUrl;
+
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(fullUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div
@@ -82,40 +97,57 @@ export default function PublishFormModal({
 
           {/* Copy link */}
           <div className="flex h-[52px] rounded-full border border-[#E9E9E9] overflow-hidden">
-            <button
-              onClick={() => navigator.clipboard.writeText(absoluteUrl)}
-              className="w-[140px] flex items-center justify-center bg-[#F7F7F7] border-r border-[#E9E9E9] text-[14px] text-[#262626] shrink-0 hover:opacity-70"
-            >
+            <div className="w-[140px] flex items-center justify-center bg-[#F7F7F7] border-r border-[#E9E9E9] text-[14px] text-[#262626] shrink-0">
               Copy link
-            </button>
+            </div>
             <div className="flex-1 flex items-center justify-between px-[20px] text-[14px] text-[#262626]">
               <span>{displayUrl}</span>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <rect
-                  x="4"
-                  y="4"
-                  width="8"
-                  height="8"
-                  rx="1.5"
-                  stroke="#A5A5A5"
-                  strokeWidth="1.3"
-                />
-                <path
-                  d="M2 10V2.5A1.5 1.5 0 0 1 3.5 1H10"
-                  stroke="#A5A5A5"
-                  strokeWidth="1.3"
-                  strokeLinecap="round"
-                />
-              </svg>
+              <button
+                onClick={handleCopy}
+                className="text-[#A5A5A5] hover:text-[#262626] transition-colors"
+              >
+                {copied ? (
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path
+                      d="M2 7l3.5 3.5 6.5-6.5"
+                      stroke="#639922"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                ) : (
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <rect
+                      x="4"
+                      y="4"
+                      width="8"
+                      height="8"
+                      rx="1.5"
+                      stroke="currentColor"
+                      strokeWidth="1.3"
+                    />
+                    <path
+                      d="M2 10V2.5A1.5 1.5 0 0 1 3.5 1H10"
+                      stroke="currentColor"
+                      strokeWidth="1.3"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                )}
+              </button>
             </div>
           </div>
         </div>
 
         {/* View submitted applications */}
         <div className="flex justify-center">
-          <button className="text-[13px] text-[#A5A5A5] hover:text-[#262626] flex items-center gap-[6px]">
+          <Link
+            href={`/organizer/forms/${formId}`}
+            className="text-[13px] text-[#A5A5A5] hover:text-[#262626]"
+          >
             View submitted applications →
-          </button>
+          </Link>
         </div>
       </div>
     </div>

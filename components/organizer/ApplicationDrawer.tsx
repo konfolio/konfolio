@@ -154,6 +154,8 @@ export default function ApplicationDrawer({
                 <Image
                   src={thumb}
                   alt="Portfolio"
+                  width={420}
+                  height={180}
                   className="w-full h-[180px] object-cover"
                 />
               ) : (

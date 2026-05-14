@@ -491,6 +491,8 @@ function FormHeader({ form }: { form: Form }) {
           <Image
             src={form.cover_image_url}
             alt="Cover"
+            width={720}
+            height={200}
             className="w-full h-full object-cover"
           />
         </div>

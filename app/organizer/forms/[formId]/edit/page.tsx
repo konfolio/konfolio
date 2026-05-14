@@ -5,13 +5,7 @@ import PublishFormModal from "@/components/modals/PublishFormModal";
 import SetLimitModal from "@/components/modals/SetLimitModal";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState } from "react";
-
-const form = {
-  title: "Untitled Form",
-  status: "receiving",
-  applicationsCount: 140,
-};
+import { useEffect, useState } from "react";
 
 function FormField({
   label,
@@ -35,6 +29,245 @@ function FormField({
   );
 }
 
+const DEFAULT_FIELDS = [
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "First Name",
+    field_key: "first_name",
+    required: true,
+    placeholder: "",
+    options: [],
+    sortOrder: 0,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Last Name",
+    field_key: "last_name",
+    required: true,
+    placeholder: "",
+    options: [],
+    sortOrder: 1,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Preferred Name",
+    field_key: "preferred_name",
+    required: false,
+    placeholder: "",
+    options: [],
+    sortOrder: 2,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Business Name",
+    field_key: "business_name",
+    required: true,
+    placeholder: "",
+    options: [],
+    sortOrder: 3,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Email",
+    field_key: "email",
+    required: true,
+    placeholder: "",
+    options: [],
+    sortOrder: 4,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Location",
+    field_key: "location",
+    required: false,
+    placeholder: "",
+    options: [],
+    sortOrder: 5,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "radio",
+    label: "Are you sharing a table?",
+    field_key: "sharing_table",
+    required: true,
+    placeholder: "",
+    options: ["Yes", "No"],
+    sortOrder: 6,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Konfolio Link",
+    field_key: "konfolio_link",
+    required: true,
+    placeholder: "https://konfolio.com/",
+    options: [],
+    sortOrder: 7,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Portfolio Link",
+    field_key: "portfolio_link",
+    required: false,
+    placeholder: "",
+    options: [],
+    sortOrder: 8,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Social Media Link",
+    field_key: "social_media_link",
+    required: true,
+    placeholder: "",
+    options: [],
+    sortOrder: 9,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Online Shop",
+    field_key: "online_shop",
+    required: true,
+    placeholder: "",
+    options: [],
+    sortOrder: 10,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Additional Link",
+    field_key: "additional_link",
+    required: false,
+    placeholder: "",
+    options: [],
+    sortOrder: 11,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "dropdown",
+    label: "Your Merchandise",
+    field_key: "merchandise",
+    required: true,
+    placeholder: "",
+    options: [],
+    sortOrder: 12,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "dropdown",
+    label: "Do you have a valid sales permit in California (CA)?",
+    field_key: "sales_permit",
+    required: true,
+    placeholder: "",
+    options: ["Yes", "No"],
+    sortOrder: 13,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "checkbox",
+    label: "Have you vended for us previously?",
+    field_key: "previous_vending",
+    required: true,
+    placeholder: "",
+    options: [
+      "2025",
+      "2024",
+      "2023",
+      "Yes, but not listed above.",
+      "No, I have not.",
+    ],
+    sortOrder: 14,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Vend Experience 1",
+    field_key: "vend_experience_1",
+    required: false,
+    placeholder: "",
+    options: [],
+    sortOrder: 15,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Vend Experience 2",
+    field_key: "vend_experience_2",
+    required: false,
+    placeholder: "",
+    options: [],
+    sortOrder: 16,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Vend Experience 3",
+    field_key: "vend_experience_3",
+    required: false,
+    placeholder: "",
+    options: [],
+    sortOrder: 17,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Vend Experience 4",
+    field_key: "vend_experience_4",
+    required: false,
+    placeholder: "",
+    options: [],
+    sortOrder: 18,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "dropdown",
+    label: "First-Choice Option",
+    field_key: "first_choice",
+    required: true,
+    placeholder: "",
+    options: [],
+    sortOrder: 19,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "dropdown",
+    label: "Second-Choice Option",
+    field_key: "second_choice",
+    required: true,
+    placeholder: "",
+    options: [],
+    sortOrder: 20,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "What is the latest date we can inform you of an opening?",
+    field_key: "latest_opening_date",
+    required: true,
+    placeholder: "MM / DD / YYYY",
+    options: [],
+    sortOrder: 21,
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "radio",
+    label: "I agree to the Terms of Service of Event Name.",
+    field_key: "terms_agreement",
+    required: true,
+    placeholder: "",
+    options: ["Yes, I agree."],
+    sortOrder: 22,
+  },
+];
+
 export default function EditOrganizerFormPage() {
   const params = useParams();
   const formId = params.formId as string;
@@ -46,8 +279,29 @@ export default function EditOrganizerFormPage() {
   const [sharingTable, setSharingTable] = useState<string | null>(null);
   const [ifYesOpen, setIfYesOpen] = useState(false);
   const [hasPartner, setHasPartner] = useState<string | null>(null);
-  const [publicUrl, setPublicUrl] = useState<string | null>(null); // add this
+  const [publicUrl, setPublicUrl] = useState<string | null>(null);
   const [publishing, setPublishing] = useState(false);
+  const [formData, setFormData] = useState<any>(null);
+
+  useEffect(() => {
+    if (!formId) return;
+    const fetchForm = async () => {
+      const res = await fetch(`/api/forms/${formId}`);
+      const json = await res.json();
+      if (!res.ok) return;
+      setFormData(json.form);
+
+      // If no fields yet, seed the defaults
+      if (!json.form.fields || json.form.fields.length === 0) {
+        await fetch(`/api/forms/${formId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fields: DEFAULT_FIELDS }),
+        });
+      }
+    };
+    fetchForm();
+  }, [formId]);
 
   const handlePublish = async () => {
     setPublishing(true);
@@ -78,7 +332,7 @@ export default function EditOrganizerFormPage() {
         <div className="flex flex-col gap-[6px]">
           <div className="flex items-center gap-[8px] text-[16px] text-[#262626]">
             <Link href="/my-forms" className="hover:opacity-70">
-              ← {form.title}
+              ← {formData?.title ?? "Untitled Form"}
             </Link>
             <span className="text-[#C0BDB4]">/</span>
             <span>Edit Form</span>
@@ -88,7 +342,7 @@ export default function EditOrganizerFormPage() {
               <span className="w-[7px] h-[7px] rounded-full bg-[#639922] inline-block" />
               <span className="text-[#262626]">Receiving</span>
             </span>
-            <span>{form.applicationsCount} applications</span>
+            <span>{formData?.applications_count ?? 0} applications</span>
           </div>
         </div>
 
@@ -694,15 +948,16 @@ export default function EditOrganizerFormPage() {
       </div>
       {setLimitOpen && (
         <SetLimitModal
-          formTitle={form.title}
-          applicationsCount={form.applicationsCount}
+          formTitle={formData?.title ?? "Untitled Form"}
+          applicationsCount={formData?.applications_count ?? 0}
           onClose={() => setSetLimitOpen(false)}
         />
       )}
       {publishOpen && publicUrl && (
         <PublishFormModal
-          formTitle={form.title}
+          formTitle={formData?.title ?? "Untitled Form"}
           publicUrl={publicUrl}
+          formId={formId}
           onClose={() => setPublishOpen(false)}
         />
       )}
