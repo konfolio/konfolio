@@ -231,6 +231,29 @@ function computeMissingLabelsSquare(draft: any) {
   return { required, optional }
 }
 
+function isDarkHexColor(hex: string) {
+  const clean = String(hex || "").replace("#", "").trim()
+
+  const full =
+    clean.length === 3
+      ? clean
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : clean
+
+  if (full.length !== 6) return false
+
+  const r = parseInt(full.slice(0, 2), 16)
+  const g = parseInt(full.slice(2, 4), 16)
+  const b = parseInt(full.slice(4, 6), 16)
+
+  if ([r, g, b].some((n) => Number.isNaN(n))) return false
+
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+  return luminance < 0.5
+}
+
 export default function SquareEditor({ draftId, readOnly = false }: Props) {
   const draft = useKonfolioDraftStore((s) => s.draftsById[draftId])
   const patchDraft = useKonfolioDraftStore((s) => s.patchDraft)
@@ -269,6 +292,11 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
 
   const bannerSwatches = Array.isArray(draft.bannerSwatches) ? draft.bannerSwatches : []
   const backgroundSwatches = Array.isArray(draft.backgroundSwatches) ? draft.backgroundSwatches : []
+
+  const backgroundIsDark = useMemo(
+    () => isDarkHexColor(draft.backgroundColor),
+    [draft.backgroundColor]
+  )
 
   const liveUrl = useMemo(() => {
     if (publishedUrl) return publishedUrl
@@ -575,6 +603,7 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
               editable={!readOnly}
               images={draft.images}
               onChangeImages={readOnly ? undefined : (images) => patchDraft(draftId, { images })}
+              backgroundIsDark={backgroundIsDark}
             />
           </div>
   
@@ -585,6 +614,7 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
               editable={!readOnly}
               images={draft.images}
               onChangeImages={readOnly ? undefined : (images) => patchDraft(draftId, { images })}
+              backgroundIsDark={backgroundIsDark}
             />
           </div>
         </div>

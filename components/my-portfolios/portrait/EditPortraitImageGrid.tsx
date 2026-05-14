@@ -18,6 +18,7 @@ type Cell = {
 
 type Props = {
   editable?: boolean
+  backgroundIsDark?: boolean
 
   images?: Cell[]
   onChangeImages?: (images: Cell[]) => void
@@ -111,6 +112,7 @@ function arraysEqual(a: string[], b: string[]) {
 
 export default function EditPortraitImageGrid({
   editable = true,
+  backgroundIsDark = false,
 
   images,
   onChangeImages,
@@ -350,6 +352,34 @@ export default function EditPortraitImageGrid({
 
   const showPrevVendsSection = editable || localPrevVends.length > 0
 
+  const cardShellClass = backgroundIsDark
+    ? "border-0 bg-[rgba(165,165,165,0.068)] backdrop-blur-[7.58px]"
+    : "border-0 min-[701px]:border min-[701px]:border-white bg-[rgba(165,165,165,0.068)] backdrop-blur-[7.58px]"
+
+  const cardShellStyle: React.CSSProperties = backgroundIsDark
+    ? {
+        boxShadow: "2px 4px 25px rgba(0,0,0,0.12)",
+      }
+    : {
+        boxShadow:
+          "2px 4px 25px rgba(165,165,165,0.1), inset 2.14645px 2.00046px 9.24px rgba(165,165,165,0.126), inset 1.21725px 1.13446px 4.62px rgba(165,165,165,0.126), inset 0 0 0 1px rgba(255,255,255,0.9)",
+      }
+
+  const gradientStyle: React.CSSProperties = backgroundIsDark
+    ? {
+        background:
+          "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.76) 70%, #000000 100%)",
+        backdropFilter: "none",
+      }
+    : {
+        background:
+          "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 70%, #FFFFFF 100%)",
+        backdropFilter: "none",
+      }
+
+  const overlayTextClass = backgroundIsDark ? "text-white" : "text-[#262626]"
+  const prevVendTextClass = backgroundIsDark ? "text-white" : "text-[#262626]"
+
   return (
     <section className="mx-0 flex w-full min-w-0 max-w-none flex-col items-center justify-center px-0 py-0 min-[701px]:max-w-[1182px] min-[701px]:min-w-[600px] min-[701px]:py-[30px]">
       <div className="w-full min-w-[600px] max-w-[1182px] max-[700px]:min-w-0">
@@ -391,19 +421,11 @@ export default function EditPortraitImageGrid({
                 />
 
                 <div
-                  className="
-                    relative
-                    h-full w-full
-                    overflow-hidden
-                    rounded-none min-[701px]:rounded-[15px]
-                    border-0 min-[701px]:border min-[701px]:border-white
-                    bg-[rgba(165,165,165,0.068)]
-                    backdrop-blur-[7.58px]
-                  "
-                  style={{
-                    boxShadow:
-                      "2px 4px 25px rgba(165,165,165,0.1), inset 2.14645px 2.00046px 9.24px rgba(165,165,165,0.126), inset 1.21725px 1.13446px 4.62px rgba(165,165,165,0.126), inset 0 0 0 1px rgba(255,255,255,0.9)",
-                  }}
+                  className={[
+                    "relative h-full w-full overflow-hidden rounded-none min-[701px]:rounded-[15px]",
+                    cardShellClass,
+                  ].join(" ")}
+                  style={cardShellStyle}
                 >
                   <button
                     type="button"
@@ -457,16 +479,12 @@ export default function EditPortraitImageGrid({
                       opacity-100 min-[701px]:opacity-0 min-[701px]:group-hover:opacity-100
                       transition-opacity
                     "
-                    style={{
-                      background:
-                        "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 70%, #FFFFFF 100%)",
-                      backdropFilter: "none",
-                    }}
+                    style={gradientStyle}
                   >
-                    <p className="m-0 w-full font-inter text-[17px] font-normal leading-[140%] text-[#262626]">
+                    <p className={`m-0 w-full font-inter text-[17px] font-normal leading-[140%] ${overlayTextClass}`}>
                       {cell.title ?? "Title"}
                     </p>
-                    <p className="m-0 w-full font-inter text-[15px] font-normal leading-[140%] text-[#262626]">
+                    <p className={`m-0 w-full font-inter text-[15px] font-normal leading-[140%] ${overlayTextClass}`}>
                       {cell.description ?? "Short description"}
                     </p>
                   </div>
@@ -567,15 +585,15 @@ export default function EditPortraitImageGrid({
                           cancelEditVend()
                         }
                       }}
-                      className="
+                      className={`
                         w-[240px]
                         bg-transparent
                         text-center
                         font-inter
                         text-[16px] font-normal leading-[19px]
-                        text-[#262626]
                         outline-none
-                      "
+                        ${prevVendTextClass}
+                      `}
                       aria-label="Edit previous vend"
                     />
                   ) : (
@@ -588,7 +606,7 @@ export default function EditPortraitImageGrid({
                         )}
                         aria-label="Edit previous vend"
                       >
-                        <span className="font-inter text-[16px] font-normal leading-[19px] text-[#262626]">
+                        <span className={`font-inter text-[16px] font-normal leading-[19px] ${prevVendTextClass}`}>
                           {ev.title || ""}
                         </span>
 

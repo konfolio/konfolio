@@ -32,6 +32,8 @@ type Props = {
   mobileExpanded?: boolean
   onToggleMobile?: () => void
 
+  backgroundIsDark?: boolean
+
   backHref: string
   onBack?: () => void
 
@@ -167,6 +169,8 @@ export default function EditPortraitProfile({
   mobileExpanded = false,
   onToggleMobile,
 
+  backgroundIsDark,
+
   backHref,
   onBack,
 
@@ -240,6 +244,8 @@ export default function EditPortraitProfile({
   useEffect(() => setLocalBg(backgroundColor), [backgroundColor])
 
   const bannerIsDark = isDarkHexColor(localBanner)
+  const resolvedBackgroundIsDark = backgroundIsDark ?? isDarkHexColor(localBg)
+
   const bannerPrimaryColor = bannerIsDark ? "#FFFFFF" : "#262626"
 
   const bannerPrimaryTextClass = bannerIsDark
@@ -432,6 +438,8 @@ export default function EditPortraitProfile({
   const desktopHeaderClass = mobileCollapsed
     ? "relative hidden w-full min-h-[180px] items-center justify-center overflow-visible min-[901px]:flex min-[901px]:pb-[18px] min-[1400px]:pb-0"
     : "relative hidden w-full min-h-[180px] items-center justify-center overflow-visible min-[701px]:flex min-[701px]:pb-[18px] min-[1400px]:pb-0"
+
+  void resolvedBackgroundIsDark
 
   return (
     <>

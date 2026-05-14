@@ -400,6 +400,8 @@ export default function EditSquareProfileSidebar({
   const activeLinks = useMemo(() => getActiveLinkUrls(linksValue), [linksValue])
 
   const bannerIsDark = useMemo(() => isDarkHexColor(localBanner), [localBanner])
+  const backgroundIsDark = useMemo(() => isDarkHexColor(localBg), [localBg])
+  
   const primaryTextClass = bannerIsDark ? "text-white" : "text-[#262626]"
   const primaryStrokeClass = bannerIsDark
     ? "[&_path]:stroke-white"

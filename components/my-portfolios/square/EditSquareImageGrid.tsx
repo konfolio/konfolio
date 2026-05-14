@@ -1,4 +1,3 @@
-// components/my-portfolios/square/EditSquareImageGrid.tsx
 "use client"
 
 import { useEffect, useRef, useState } from "react"
@@ -18,6 +17,7 @@ type Props = {
   editable?: boolean
   images?: Cell[]
   onChangeImages?: (images: Cell[]) => void
+  backgroundIsDark?: boolean
 }
 
 const RECOMMENDED = [
@@ -87,7 +87,12 @@ function editsToImgStyle(edits?: ImageEdits): React.CSSProperties {
   }
 }
 
-export default function EditSquareImageGrid({ editable = true, images, onChangeImages }: Props) {
+export default function EditSquareImageGrid({
+  editable = true,
+  images,
+  onChangeImages,
+  backgroundIsDark = false,
+}: Props) {
   const [cells, setCells] = useState<Cell[]>(() => {
     const incoming = images?.slice(0, 9)
     return incoming && incoming.length > 0
@@ -258,25 +263,16 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
                 />
 
                 <div
-                  className="
-                    relative
-                    w-full h-full
-                    rounded-none min-[701px]:rounded-[15px]
-                    overflow-hidden
-                    bg-[rgba(165,165,165,0.068)]
-                    backdrop-blur-[7.58px]
-                  "
-                  style={{
-                    boxShadow: [
-                      "0 0 0 1.25px rgba(255,255,255,0.95)",
-                      "0 0 18px rgba(255,255,255,0.55)",
-                      "0 0 40px rgba(255,255,255,0.25)",
-                      "2px 4px 25px rgba(165, 165, 165, 0.10)",
-                      "inset 2.14645px 2.00046px 9.24px rgba(165, 165, 165, 0.126)",
-                      "inset 1.21725px 1.13446px 4.62px rgba(165, 165, 165, 0.126)",
-                      "inset 0 0 0 2px rgba(255,255,255,0.88)",
-                    ].join(", "),
-                  }}
+                  className={[
+                    "relative w-full h-full",
+                    "rounded-none min-[701px]:rounded-[15px]",
+                    "overflow-hidden",
+                    "bg-[rgba(165,165,165,0.068)] backdrop-blur-[7.58px]",
+
+                    backgroundIsDark
+                      ? "shadow-none"
+                      : "shadow-none min-[701px]:shadow-[0_0_0_1.25px_rgba(255,255,255,0.95),0_0_18px_rgba(255,255,255,0.55),0_0_40px_rgba(255,255,255,0.25),2px_4px_25px_rgba(165,165,165,0.10),inset_2.14645px_2.00046px_9.24px_rgba(165,165,165,0.126),inset_1.21725px_1.13446px_4.62px_rgba(165,165,165,0.126),inset_0_0_0_2px_rgba(255,255,255,0.88)]",
+                  ].join(" ")}
                 >
                   {editable ? (
                     <button
@@ -333,8 +329,9 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
                         height: 76,
                         borderBottomLeftRadius: 0,
                         borderBottomRightRadius: 0,
-                        background:
-                          "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.92) 70%, rgba(255,255,255,1) 100%)",
+                        background: backgroundIsDark
+                          ? "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.72) 70%, rgba(0,0,0,0.88) 100%)"
+                          : "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.92) 70%, rgba(255,255,255,1) 100%)",
                       }}
                     />
 
@@ -344,15 +341,25 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
                         height: 72,
                         borderBottomLeftRadius: 0,
                         borderBottomRightRadius: 0,
-                        boxShadow: "inset 0 -2px 0 rgba(255,255,255,0.88)",
+                        boxShadow: "none",
                       }}
                     />
 
                     <div className="absolute left-0 right-0 bottom-0 h-[70px] px-[15px] py-[15px] flex flex-col justify-end items-start">
-                      <p className="m-0 w-full font-inter font-normal text-[17px] leading-[140%] text-[#262626]">
+                      <p
+                        className={[
+                          "m-0 w-full font-inter font-normal text-[17px] leading-[140%]",
+                          backgroundIsDark ? "text-white" : "text-[#262626]",
+                        ].join(" ")}
+                      >
                         {cell.title ?? "Title"}
                       </p>
-                      <p className="m-0 w-full font-inter font-normal text-[15px] leading-[150%] text-[#262626]">
+                      <p
+                        className={[
+                          "m-0 w-full font-inter font-normal text-[15px] leading-[150%]",
+                          backgroundIsDark ? "text-white" : "text-[#262626]",
+                        ].join(" ")}
+                      >
                         {cell.description ?? "Short description"}
                       </p>
                     </div>
@@ -371,9 +378,9 @@ export default function EditSquareImageGrid({ editable = true, images, onChangeI
                       className="
                         absolute
                         right-[10px] top-[10px]
-                        flex
+                        hidden
                         w-[24px] h-[24px]
-                        min-[701px]:hidden min-[701px]:group-hover:flex
+                        min-[701px]:group-hover:flex
                         items-center justify-center
                         z-[10]
                         cursor-pointer

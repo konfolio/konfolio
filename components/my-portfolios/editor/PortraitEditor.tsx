@@ -1,3 +1,4 @@
+// components/my-portfolios/portrait/PortraitEditor.tsx
 "use client"
 
 import { useCallback, useEffect, useMemo, useState } from "react"
@@ -31,6 +32,18 @@ function slugify(input: string): string {
 
 function cleanString(x: any): string {
   return String(x ?? "").trim()
+}
+
+function isDarkHexColor(hex: string) {
+  const cleaned = cleanString(hex).replace("#", "")
+  if (!/^[0-9A-Fa-f]{6}$/.test(cleaned)) return false
+
+  const r = parseInt(cleaned.slice(0, 2), 16)
+  const g = parseInt(cleaned.slice(2, 4), 16)
+  const b = parseInt(cleaned.slice(4, 6), 16)
+
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000
+  return brightness < 150
 }
 
 function isMeaningfulText(x: any): boolean {
@@ -272,6 +285,7 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
 
   const bannerSwatches = Array.isArray(draft.bannerSwatches) ? draft.bannerSwatches : []
   const backgroundSwatches = Array.isArray(draft.backgroundSwatches) ? draft.backgroundSwatches : []
+  const backgroundIsDark = isDarkHexColor(draft.backgroundColor)
 
   const liveUrl = useMemo(() => {
     if (publishedUrl) return publishedUrl
@@ -498,6 +512,7 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
     backHref: "/my-portfolios",
     bannerColor: draft.bannerColor,
     backgroundColor: draft.backgroundColor,
+    backgroundIsDark,
     bannerSwatches,
     backgroundSwatches,
     profileImageUrl: draft.profileImageUrl,
@@ -528,6 +543,7 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
 
                 <EditPortraitImageGrid
                   editable={false}
+                  backgroundIsDark={backgroundIsDark}
                   images={draft.images}
                   previousVendsValue={(draft.previousVends ?? []).join(" | ")}
                 />
@@ -539,6 +555,7 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
                 <div className="w-full px-[16px] sm:px-6 md:px-10 lg:px-[80px] xl:px-[120px]">
                   <EditPortraitImageGrid
                     editable={false}
+                    backgroundIsDark={backgroundIsDark}
                     images={draft.images}
                     previousVendsValue={(draft.previousVends ?? []).join(" | ")}
                   />
@@ -581,6 +598,7 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
               <div className="w-full px-[16px] sm:px-6 md:px-10 lg:px-[80px] xl:px-[120px]">
                 <EditPortraitImageGrid
                   editable={true}
+                  backgroundIsDark={backgroundIsDark}
                   images={draft.images}
                   onChangeImages={(images) => patchDraft(draftId, { images })}
                   previousVendsValue={(draft.previousVends ?? []).join(" | ")}
