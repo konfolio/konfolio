@@ -2,7 +2,7 @@ type Props = {
     className?: string
 }
   
-export default function ShopIcon({ className = "text-[#262626]" }: Props) {
+export default function ShopIcon({ className = "text-current" }: Props) {
     return (
       <svg
         width="24"

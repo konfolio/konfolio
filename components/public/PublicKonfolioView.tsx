@@ -20,6 +20,14 @@ function safeArr(v: any): string[] {
   return v.map((x) => safeStr(x)).filter(Boolean)
 }
 
+function firstColor(...values: any[]) {
+  for (const value of values) {
+    const color = safeStr(value)
+    if (color) return color
+  }
+  return ""
+}
+
 function toLinksValue(raw: any) {
   if (
     raw &&
@@ -62,8 +70,23 @@ export default function PublicKonfolioView({
 }) {
   const [mobileProfileOpen, setMobileProfileOpen] = React.useState(false)
 
-  const bannerColor = safeStr(content?.bannerColor) || "#FFFFFF"
-  const backgroundColor = safeStr(content?.backgroundColor) || "#F7F7F7"
+  const bannerColor =
+    firstColor(
+      content?.bannerColor,
+      content?.colors?.bannerColor,
+      content?.colors?.banner,
+      content?.profile?.bannerColor,
+      content?.profile?.banner,
+    ) || "#FFFFFF"
+
+  const backgroundColor =
+    firstColor(
+      content?.backgroundColor,
+      content?.colors?.backgroundColor,
+      content?.colors?.background,
+      content?.profile?.backgroundColor,
+      content?.profile?.background,
+    ) || "#F7F7F7"
 
   const profileImageUrl = safeStr(content?.profileImageUrl)
   const displayName = safeStr(content?.displayName) || "Your Name"
@@ -80,12 +103,14 @@ export default function PublicKonfolioView({
 
   const merchTags = React.useMemo(() => safeArr(content?.merchTags), [content])
   const previousVendsArr = React.useMemo(() => safeArr(content?.previousVends), [content])
+
   const images = React.useMemo(
     () => (Array.isArray(content?.images) ? content.images : []),
     [content],
   )
 
   const bannerSwatches = React.useMemo(() => safeArr(content?.bannerSwatches), [content])
+
   const backgroundSwatches = React.useMemo(
     () => safeArr(content?.backgroundSwatches),
     [content],
@@ -97,13 +122,10 @@ export default function PublicKonfolioView({
 
   if (template === "square") {
     return (
-      <main
-        className="w-full min-h-screen overflow-x-hidden"
-        style={{ backgroundColor }}
-      >
+      <main className="w-full min-h-screen overflow-x-hidden" style={{ backgroundColor }}>
         <div className="w-full px-0 min-[701px]:py-0 min-[1200px]:px-[80px] xl:px-[120px]">
           <div className="mx-auto w-full max-w-[1512px]">
-            <div className="w-full flex-col max-[700px]:flex min-[701px]:hidden">
+            <div className="hidden w-full flex-col max-[700px]:flex">
               <EditSquareProfileSidebar
                 editable={false}
                 mobileCollapsed={true}
@@ -130,7 +152,7 @@ export default function PublicKonfolioView({
               <EditSquareImageGrid editable={false} images={images} />
             </div>
 
-            <div className="w-full flex-row items-start justify-start gap-[20px] max-[700px]:hidden min-[701px]:flex">
+            <div className="hidden w-full flex-row items-start justify-start gap-[20px] min-[701px]:flex">
               <EditSquareProfileSidebar
                 editable={false}
                 backHref={backHref}
@@ -160,11 +182,8 @@ export default function PublicKonfolioView({
   }
 
   return (
-    <main
-      className="w-full min-h-screen overflow-x-hidden"
-      style={{ backgroundColor }}
-    >
-      <div className="w-full flex-col max-[700px]:flex min-[901px]:hidden">
+    <main className="w-full min-h-screen overflow-x-hidden" style={{ backgroundColor }}>
+      <div className="hidden w-full flex-col max-[900px]:flex">
         <EditPortraitProfile
           editable={false}
           mobileCollapsed={true}
@@ -185,7 +204,7 @@ export default function PublicKonfolioView({
           showAddLink={false}
           publishLabel=""
         />
-  
+
         <EditPortraitImageGrid
           editable={false}
           images={images}
@@ -193,8 +212,8 @@ export default function PublicKonfolioView({
           previousVendsValue={prevVendsValue}
         />
       </div>
-  
-      <div className="w-full flex-col max-[700px]:hidden min-[901px]:flex">
+
+      <div className="hidden w-full flex-col min-[901px]:flex">
         <EditPortraitProfile
           editable={false}
           backHref={backHref}
@@ -212,7 +231,7 @@ export default function PublicKonfolioView({
           showAddLink={false}
           publishLabel=""
         />
-  
+
         <div className="w-full px-[24px] min-[1200px]:px-[80px] xl:px-[120px]">
           <div className="mx-auto w-full max-w-[1512px]">
             <EditPortraitImageGrid

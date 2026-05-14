@@ -91,6 +91,18 @@ function normalizeUrl(raw: string): string {
   return `https://${v}`
 }
 
+function isDarkHexColor(hex: string) {
+  const cleaned = safeStr(hex).replace("#", "")
+  if (!/^[0-9A-Fa-f]{6}$/.test(cleaned)) return false
+
+  const r = parseInt(cleaned.slice(0, 2), 16)
+  const g = parseInt(cleaned.slice(2, 4), 16)
+  const b = parseInt(cleaned.slice(4, 6), 16)
+
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000
+  return brightness < 150
+}
+
 function getActiveLinkUrls(value: LinkPickerValue | undefined): Array<{ key: string; url: string }> {
   const v: any = value as any
   if (!v) return []
@@ -116,24 +128,21 @@ function iconLabelForKey(key: string) {
   return "Link"
 }
 
-function IconForKey({ k }: { k: string }) {
-  if (k === "website") return <HomeIcon className="w-[24px] h-[24px]" />
-  if (k === "shop") return <ShopIcon className="w-[24px] h-[24px]" />
-  if (k === "instagram") return <InstagramIcon className="w-[24px] h-[24px]" />
-  if (k === "x") return <XIcon className="w-[24px] h-[24px]" />
-  if (k === "facebook") return <FacebookIcon className="w-[24px] h-[24px]" />
-  if (k === "tumblr") return <TumblrIcon className="w-[24px] h-[24px]" />
-  if (k === "pixiv") return <PixivIcon className="w-[24px] h-[24px]" />
-  if (k === "bluesky") return <BlueskyIcon className="w-[24px] h-[24px]" />
-  return <HomeIcon className="w-[24px] h-[24px]" />
+function IconForKey({ k, className = "w-[24px] h-[24px]" }: { k: string; className?: string }) {
+  if (k === "website") return <HomeIcon className={className} />
+  if (k === "shop") return <ShopIcon className={className} />
+  if (k === "instagram") return <InstagramIcon className={className} />
+  if (k === "x") return <XIcon className={className} />
+  if (k === "facebook") return <FacebookIcon className={className} />
+  if (k === "tumblr") return <TumblrIcon className={className} />
+  if (k === "pixiv") return <PixivIcon className={className} />
+  if (k === "bluesky") return <BlueskyIcon className={className} />
+  return <HomeIcon className={className} />
 }
 
-function KonfolioLogoInline() {
+function KonfolioLogoInline({ color = "#262626" }: { color?: string }) {
   return (
-    <div
-      aria-label="Konfolio"
-      className="w-[84px] h-[18.67px] opacity-50 pointer-events-none select-none"
-    >
+    <div aria-label="Konfolio" className="w-[84px] h-[18.67px] opacity-50 pointer-events-none select-none">
       <div
         style={{
           fontFamily: "Inknut Antiqua",
@@ -142,7 +151,7 @@ function KonfolioLogoInline() {
           fontSize: "18.1193px",
           letterSpacing: "-0.02em",
           lineHeight: "18.67px",
-          color: "#262626",
+          color,
           whiteSpace: "nowrap",
         }}
       >
@@ -226,11 +235,56 @@ export default function EditPortraitProfile({
 
   const [localBanner, setLocalBanner] = useState(bannerColor)
   const [localBg, setLocalBg] = useState(backgroundColor)
+
   useEffect(() => setLocalBanner(bannerColor), [bannerColor])
   useEffect(() => setLocalBg(backgroundColor), [backgroundColor])
 
+  const bannerIsDark = isDarkHexColor(localBanner)
+  const bannerPrimaryColor = bannerIsDark ? "#FFFFFF" : "#262626"
+
+  const bannerPrimaryTextClass = bannerIsDark
+    ? "text-white placeholder:text-white"
+    : "text-[#262626] placeholder:text-[#262626]"
+
+  const bannerPrimaryIconClass = bannerIsDark
+    ? "text-white [&_path]:stroke-white"
+    : "text-[#262626] [&_path]:stroke-[#262626] [&_path]:fill-[#262626]"
+
+  const bannerButtonClass = bannerIsDark
+    ? "border-white text-white [&_span]:text-white [&_path]:stroke-white"
+    : "border-[#262626] text-[#262626] [&_span]:text-[#262626] [&_path]:stroke-[#262626]"
+
+  const merchPickerBannerClass = bannerIsDark
+    ? [
+        "[&_button]:!rounded-full",
+        "[&_button]:!overflow-hidden",
+        "[&_button]:!border-white/30",
+        "[&_button]:!bg-white/10",
+        "[&_button]:!text-white",
+        "[&_span]:!text-white",
+        "[&_svg]:!text-white",
+        "[&_path]:!stroke-white",
+        "[&_path]:!fill-white",
+      ].join(" ")
+    : [
+        "[&_button]:!rounded-full",
+        "[&_button]:!overflow-hidden",
+        "[&_button]:!border-[#262626]",
+        "[&_button]:!bg-transparent",
+        "[&_button]:!text-[#262626]",
+        "[&_span]:!text-[#262626]",
+        "[&_svg]:!text-[#262626]",
+        "[&_path]:!stroke-[#262626]",
+        "[&_path]:!fill-[#262626]",
+      ].join(" ")
+
+  const linkPickerBannerClass = bannerIsDark
+    ? "[&_svg]:text-white [&_path]:stroke-white [&_path]:fill-white [&_button]:text-white [&_span]:text-white"
+    : "[&_svg]:text-[#262626] [&_path]:stroke-[#262626] [&_path]:fill-[#262626] [&_button]:text-[#262626] [&_span]:text-[#262626]"
+
   const [localBannerSwatches, setLocalBannerSwatches] = useState<string[]>(bannerSwatches)
   const [localBgSwatches, setLocalBgSwatches] = useState<string[]>(backgroundSwatches)
+
   useEffect(() => setLocalBannerSwatches(bannerSwatches), [bannerSwatches])
   useEffect(() => setLocalBgSwatches(backgroundSwatches), [backgroundSwatches])
 
@@ -346,7 +400,7 @@ export default function EditPortraitProfile({
     val: string,
     placeholder: string,
     setter: (v: string) => void,
-    onChange?: (v: string) => void
+    onChange?: (v: string) => void,
   ) => {
     if (!editable) return
     if ((val ?? "").trim() !== "") return
@@ -365,16 +419,25 @@ export default function EditPortraitProfile({
   }, [localLocation])
 
   const activeLinks = useMemo(() => getActiveLinkUrls(linksValue), [linksValue])
+
   const safeTags = (Array.isArray(merchTags) ? merchTags : [])
     .map((t) => safeStr(t))
     .filter(Boolean)
     .slice(0, 8)
 
+  const mobileProfileClass = mobileCollapsed
+    ? "flex w-full flex-col px-[20px] py-[20px] text-left max-[900px]:flex min-[901px]:hidden"
+    : "hidden"
+
+  const desktopHeaderClass = mobileCollapsed
+    ? "relative hidden w-full min-h-[180px] items-center justify-center overflow-visible min-[901px]:flex min-[901px]:pb-[18px] min-[1400px]:pb-0"
+    : "relative hidden w-full min-h-[180px] items-center justify-center overflow-visible min-[701px]:flex min-[701px]:pb-[18px] min-[1400px]:pb-0"
+
   return (
     <>
       {mobileCollapsed ? (
         <section
-          className="flex w-full flex-col px-[20px] py-[20px] text-left max-[900px]:flex min-[901px]:hidden"
+          className={mobileProfileClass}
           style={{ backgroundColor: localBanner }}
           aria-expanded={mobileExpanded}
         >
@@ -424,14 +487,19 @@ export default function EditPortraitProfile({
                   })
                 }
                 onBlur={() =>
-                  blurRestoreIfEmpty(localBusiness, BUSINESS_PLACEHOLDER, (v) => setLocalBusiness(v), onChangeBusinessName)
+                  blurRestoreIfEmpty(
+                    localBusiness,
+                    BUSINESS_PLACEHOLDER,
+                    (v) => setLocalBusiness(v),
+                    onChangeBusinessName,
+                  )
                 }
                 onChange={(e) => {
                   if (!editable) return
                   setLocalBusiness(e.target.value)
                   onChangeBusinessName?.(e.target.value)
                 }}
-                className="min-w-0 flex-1 bg-transparent text-left font-inter text-[22px] font-normal leading-[140%] text-[#262626] placeholder:text-[#A5A5A5] outline-none"
+                className={`min-w-0 flex-1 bg-transparent text-left font-inter text-[22px] font-normal leading-[140%] outline-none ${bannerPrimaryTextClass}`}
               />
             </div>
 
@@ -440,7 +508,8 @@ export default function EditPortraitProfile({
               aria-label="Open full profile editor"
               onClick={onToggleMobile}
               className={[
-                "flex h-[32px] w-[32px] shrink-0 items-center justify-center text-[#262626] transition-transform cursor-pointer",
+                "flex h-[32px] w-[32px] shrink-0 items-center justify-center transition-transform cursor-pointer",
+                bannerPrimaryIconClass,
                 mobileExpanded ? "rotate-180" : "",
               ].join(" ")}
             >
@@ -452,7 +521,13 @@ export default function EditPortraitProfile({
             <div className="mt-[18px] flex w-full flex-col items-start gap-[18px]">
               {editable ? (
                 <div ref={colorButtonsWrapRef} className="relative flex items-center gap-[5px]">
-                  <BrushIcon className="h-[16px] w-[16px]" />
+                  <BrushIcon
+                    className={`h-[16px] w-[16px] ${
+                      bannerIsDark
+                        ? "text-white [&_path]:stroke-white [&_path]:fill-none"
+                        : "text-[#262626] [&_path]:stroke-[#262626] [&_path]:fill-none"
+                    }`}
+                  />
 
                   <button
                     type="button"
@@ -497,7 +572,9 @@ export default function EditPortraitProfile({
                     onChangeDisplayName?.(v)
                   })
                 }
-                onBlur={() => blurRestoreIfEmpty(localName, NAME_PLACEHOLDER, (v) => setLocalName(v), onChangeDisplayName)}
+                onBlur={() =>
+                  blurRestoreIfEmpty(localName, NAME_PLACEHOLDER, (v) => setLocalName(v), onChangeDisplayName)
+                }
                 onChange={(e) => {
                   if (!editable) return
                   setLocalName(e.target.value)
@@ -519,7 +596,12 @@ export default function EditPortraitProfile({
                     })
                   }
                   onBlur={() =>
-                    blurRestoreIfEmpty(localLocation, LOCATION_PLACEHOLDER, (v) => setLocalLocation(v), onChangeLocationText)
+                    blurRestoreIfEmpty(
+                      localLocation,
+                      LOCATION_PLACEHOLDER,
+                      (v) => setLocalLocation(v),
+                      onChangeLocationText,
+                    )
                   }
                   onChange={(e) => {
                     if (!editable) return
@@ -540,7 +622,9 @@ export default function EditPortraitProfile({
                     onChangeEmail?.(v)
                   })
                 }
-                onBlur={() => blurRestoreIfEmpty(localEmail, EMAIL_PLACEHOLDER, (v) => setLocalEmail(v), onChangeEmail)}
+                onBlur={() =>
+                  blurRestoreIfEmpty(localEmail, EMAIL_PLACEHOLDER, (v) => setLocalEmail(v), onChangeEmail)
+                }
                 onChange={(e) => {
                   if (!editable) return
                   setLocalEmail(e.target.value)
@@ -552,7 +636,9 @@ export default function EditPortraitProfile({
               <div className="flex w-full justify-start">
                 {editable ? (
                   showAddLink ? (
-                    <LinkPicker onAddLinkClick={onAddLinkClick} value={linksValue} onChange={onChangeLinks} />
+                    <div className={linkPickerBannerClass}>
+                      <LinkPicker onAddLinkClick={onAddLinkClick} value={linksValue} onChange={onChangeLinks} />
+                    </div>
                   ) : null
                 ) : (
                   <div className="flex items-center justify-start gap-[10px]">
@@ -563,7 +649,7 @@ export default function EditPortraitProfile({
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={iconLabelForKey(l.key)}
-                        className="w-[24px] h-[24px] flex items-center justify-center text-[#262626] cursor-pointer"
+                        className={`w-[24px] h-[24px] flex items-center justify-center cursor-pointer ${bannerPrimaryIconClass}`}
                       >
                         <IconForKey k={l.key} />
                       </a>
@@ -574,21 +660,33 @@ export default function EditPortraitProfile({
 
               <div className="flex w-full justify-start">
                 {editable ? (
-                  <MerchTagPicker
-                    maxTags={8}
-                    onMerchClick={onMerchClick}
-                    layout="inlineLeft"
-                    value={merchTags}
-                    onChange={onChangeMerchTags}
-                  />
+                  <div className={merchPickerBannerClass}>
+                    <MerchTagPicker
+                      maxTags={8}
+                      onMerchClick={onMerchClick}
+                      layout="inlineLeft"
+                      value={merchTags}
+                      onChange={onChangeMerchTags}
+                      isDarkBanner={bannerIsDark}
+                    />
+                  </div>
                 ) : (
                   <div className="flex flex-wrap justify-start gap-[10px]">
                     {safeTags.map((t) => (
                       <div
                         key={t}
-                        className="flex items-center justify-center px-[20px] py-[7px] h-[24px] rounded-full border border-[#A5A5A5] border-[0.5px]"
+                        className={[
+                          "flex h-[24px] items-center justify-center rounded-full border border-[0.5px] px-[20px] py-[7px]",
+                          bannerIsDark ? "border-white/30" : "border-[#A5A5A5]/50",
+                        ].join(" ")}
+                        style={{
+                          backgroundColor: bannerIsDark ? "rgba(255, 255, 255, 0.1)" : "transparent",
+                        }}
                       >
-                        <span className="font-inter font-normal text-[15px] leading-[150%] text-[#262626]">
+                        <span
+                          className="font-inter font-normal text-[15px] leading-[150%]"
+                          style={{ color: bannerPrimaryColor }}
+                        >
                           {t}
                         </span>
                       </div>
@@ -599,15 +697,17 @@ export default function EditPortraitProfile({
 
               {editable ? (
                 <div className="flex w-full items-center justify-start gap-[10px] pt-[4px]">
-                  <SecondaryButton onClick={onPublish}>{publishLabel}</SecondaryButton>
+                  <SecondaryButton className={`cursor-pointer bg-transparent ${bannerButtonClass}`} onClick={onPublish}>
+                    {publishLabel}
+                  </SecondaryButton>
 
                   <button
                     type="button"
                     aria-label="Open preview"
                     onClick={onOpenPreview}
-                    className="flex h-[30px] w-[30px] items-center justify-center rounded-full border border-[#262626] cursor-pointer"
+                    className={`flex h-[30px] w-[30px] items-center justify-center rounded-full border cursor-pointer bg-transparent ${bannerButtonClass}`}
                   >
-                    <OpenTabIcon className="h-[16px] w-[16px] [&_path]:stroke-[#262626]" />
+                    <OpenTabIcon className="h-[16px] w-[16px]" />
                   </button>
                 </div>
               ) : null}
@@ -616,12 +716,9 @@ export default function EditPortraitProfile({
         </section>
       ) : null}
 
-      <header
-        className="relative hidden w-full h-[180px] items-center justify-center overflow-visible min-[901px]:flex"
-        style={{ backgroundColor: localBanner }}
-      >
+      <header className={desktopHeaderClass} style={{ backgroundColor: localBanner }}>
         {editable ? (
-          <div className="absolute left-[12px] top-1/2 -translate-y-1/2 z-[20] xl:left-[45px] 2xl:left-[105px]">
+          <div className="absolute left-[8px] top-1/2 -translate-y-1/2 z-[20] hidden min-[1300px]:block min-[1200px]:left-[28px]">
             <button
               type="button"
               aria-label="Back"
@@ -630,14 +727,14 @@ export default function EditPortraitProfile({
                 e.stopPropagation()
                 handleBack()
               }}
-              className="w-[30px] h-[30px] flex items-center justify-center cursor-pointer"
+              className={`w-[30px] h-[30px] flex items-center justify-center cursor-pointer ${bannerPrimaryIconClass}`}
             >
               <ArrowLeft className="w-[30px] h-[30px]" />
             </button>
           </div>
         ) : null}
 
-        <div className="w-full max-w-[1182px] h-[102px] flex items-center gap-[20px] pl-[75px] pr-[24px] xl:pl-0 xl:pr-0">
+        <div className="w-full max-w-[1182px] h-[102px] flex items-center gap-[20px] px-[24px] min-[1200px]:px-0">
           <div
             className={[
               "relative w-[102px] h-[102px] min-w-[102px] shrink-0 bg-white border border-[#A5A5A5] border-[0.5px] rounded-[11.7339px] overflow-hidden",
@@ -689,24 +786,28 @@ export default function EditPortraitProfile({
                     })
                   }
                   onBlur={() =>
-                    blurRestoreIfEmpty(localBusiness, BUSINESS_PLACEHOLDER, (v) => setLocalBusiness(v), onChangeBusinessName)
+                    blurRestoreIfEmpty(
+                      localBusiness,
+                      BUSINESS_PLACEHOLDER,
+                      (v) => setLocalBusiness(v),
+                      onChangeBusinessName,
+                    )
                   }
                   onChange={(e) => {
                     if (!editable) return
                     setLocalBusiness(e.target.value)
                     onChangeBusinessName?.(e.target.value)
                   }}
-                  className={[
-                    "w-full font-inter font-normal text-[22px] leading-[27px] bg-transparent outline-none",
-                    editable ? "text-[#A5A5A5] placeholder:text-[#A5A5A5]" : "text-[#262626] placeholder:text-[#262626]",
-                  ].join(" ")}
+                  className={`w-full font-inter font-normal text-[22px] leading-[27px] bg-transparent outline-none ${bannerPrimaryTextClass}`}
                 />
               </div>
 
               <div className="flex items-center gap-[10px]">
                 {editable ? (
                   showAddLink ? (
-                    <LinkPicker onAddLinkClick={onAddLinkClick} value={linksValue} onChange={onChangeLinks} />
+                    <div className={linkPickerBannerClass}>
+                      <LinkPicker onAddLinkClick={onAddLinkClick} value={linksValue} onChange={onChangeLinks} />
+                    </div>
                   ) : null
                 ) : (
                   <div className="flex items-center gap-[10px]">
@@ -717,7 +818,7 @@ export default function EditPortraitProfile({
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={iconLabelForKey(l.key)}
-                        className="w-[24px] h-[24px] flex items-center justify-center text-[#262626] cursor-pointer"
+                        className={`w-[24px] h-[24px] flex items-center justify-center cursor-pointer ${bannerPrimaryIconClass}`}
                       >
                         <IconForKey k={l.key} />
                       </a>
@@ -728,26 +829,36 @@ export default function EditPortraitProfile({
 
               <div className="w-full min-h-[25px] flex items-start">
                 {editable ? (
-                  <MerchTagPicker
-                    maxTags={8}
-                    onMerchClick={onMerchClick}
-                    layout="inlineLeft"
-                    value={merchTags}
-                    onChange={onChangeMerchTags}
-                  />
+                  <div className={merchPickerBannerClass}>
+                    <MerchTagPicker
+                      maxTags={8}
+                      onMerchClick={onMerchClick}
+                      layout="inlineLeft"
+                      value={merchTags}
+                      onChange={onChangeMerchTags}
+                      isDarkBanner={bannerIsDark}
+                    />
+                  </div>
                 ) : (
                   <div className="flex flex-wrap gap-[10px]">
                     {safeTags.map((t) => (
-                      <button
+                      <div
                         key={t}
-                        type="button"
-                        className="flex items-center justify-center px-[20px] py-[7px] h-[24px] rounded-full border border-[#A5A5A5] border-[0.5px]"
-                        onClick={() => {}}
+                        className={[
+                          "flex h-[24px] items-center justify-center rounded-full border border-[0.5px] px-[20px] py-[7px]",
+                          bannerIsDark ? "border-white/30" : "border-[#A5A5A5]/50",
+                        ].join(" ")}
+                        style={{
+                          backgroundColor: bannerIsDark ? "rgba(255, 255, 255, 0.1)" : "transparent",
+                        }}
                       >
-                        <span className="font-inter font-normal text-[15px] leading-[150%] text-[#262626]">
+                        <span
+                          className="font-inter font-normal text-[15px] leading-[150%]"
+                          style={{ color: bannerPrimaryColor }}
+                        >
                           {t}
                         </span>
-                      </button>
+                      </div>
                     ))}
                   </div>
                 )}
@@ -761,8 +872,14 @@ export default function EditPortraitProfile({
                     ref={colorButtonsWrapRef}
                     className="relative w-[98px] h-[36px] flex items-center justify-end gap-[5px]"
                   >
-                    <div className="w-[16px] h-[16px] flex items-center justify-center text-[#A5A5A5]">
-                      <BrushIcon className="w-[16px] h-[16px]" />
+                    <div className={`w-[16px] h-[16px] flex items-center justify-center ${bannerPrimaryIconClass}`}>
+                      <BrushIcon
+                        className={`h-[16px] w-[16px] ${
+                          bannerIsDark
+                            ? "text-white [&_path]:stroke-white [&_path]:fill-none"
+                            : "text-[#262626] [&_path]:stroke-[#262626] [&_path]:fill-none"
+                        }`}
+                      />
                     </div>
 
                     <button
@@ -801,13 +918,16 @@ export default function EditPortraitProfile({
                   </div>
                 ) : (
                   <div className="w-[98px] h-[36px] flex items-center justify-end">
-                    <KonfolioLogoInline />
+                    <KonfolioLogoInline color={bannerPrimaryColor} />
                   </div>
                 )}
 
                 {editable ? (
                   <div className="flex h-[30px] w-full max-w-[190px] items-center gap-[10px]">
-                    <SecondaryButton className="h-[30px] w-full max-w-[150px] cursor-pointer" onClick={onPublish}>
+                    <SecondaryButton
+                      className={`h-[30px] w-full max-w-[150px] cursor-pointer bg-transparent ${bannerButtonClass}`}
+                      onClick={onPublish}
+                    >
                       {publishLabel}
                     </SecondaryButton>
 
@@ -815,9 +935,9 @@ export default function EditPortraitProfile({
                       type="button"
                       aria-label="Open preview"
                       onClick={onOpenPreview}
-                      className="w-[30px] h-[30px] rounded-full border border-[#262626] flex items-center justify-center cursor-pointer"
+                      className={`w-[30px] h-[30px] rounded-full border flex items-center justify-center cursor-pointer bg-transparent ${bannerButtonClass}`}
                     >
-                      <OpenTabIcon className="w-[16px] h-[16px] [&_path]:stroke-[#262626]" />
+                      <OpenTabIcon className="w-[16px] h-[16px]" />
                     </button>
                   </div>
                 ) : null}
@@ -834,13 +954,15 @@ export default function EditPortraitProfile({
                       onChangeDisplayName?.(v)
                     })
                   }
-                  onBlur={() => blurRestoreIfEmpty(localName, NAME_PLACEHOLDER, (v) => setLocalName(v), onChangeDisplayName)}
+                  onBlur={() =>
+                    blurRestoreIfEmpty(localName, NAME_PLACEHOLDER, (v) => setLocalName(v), onChangeDisplayName)
+                  }
                   onChange={(e) => {
                     if (!editable) return
                     setLocalName(e.target.value)
                     onChangeDisplayName?.(e.target.value)
                   }}
-                  className="w-full text-right font-inter font-normal text-[15px] leading-[18px] text-black placeholder:text-black bg-transparent outline-none"
+                  className={`w-full text-right font-inter font-normal text-[15px] leading-[18px] bg-transparent outline-none ${bannerPrimaryTextClass}`}
                 />
 
                 <div className="w-[260px] flex justify-end relative overflow-visible">
@@ -851,45 +973,37 @@ export default function EditPortraitProfile({
                     {localLocation}
                   </span>
 
-                  <div className="w-[260px] flex justify-end relative overflow-visible">
-                    <span
-                      ref={locationMeasureRef}
-                      className="absolute -left-[9999px] top-0 whitespace-pre font-inter font-normal text-[15px] leading-[18px]"
-                    >
-                      {localLocation}
+                  <div className="flex items-center justify-end w-full">
+                    <span className="inline-flex items-center mr-[5px] shrink-0 text-[#A5A5A5] [&_path]:fill-[#A5A5A5]">
+                      <LocationIcon className="w-[12px] h-[12px]" />
                     </span>
 
-                    <div className="flex items-center justify-end w-full">
-                      <span className="inline-flex items-center mr-[5px] shrink-0 text-[#A5A5A5] [&_path]:fill-[#A5A5A5]">
-                        <LocationIcon className="w-[12px] h-[12px]" />
-                      </span>
-
-                      <input
-                        value={localLocation}
-                        placeholder={LOCATION_PLACEHOLDER}
-                        readOnly={!editable}
-                        onFocus={() =>
-                          focusClearIfPlaceholder(localLocation, LOCATION_PLACEHOLDER, (v) => {
-                            setLocalLocation(v)
-                            onChangeLocationText?.(v)
-                          })
-                        }
-                        onBlur={() =>
-                          blurRestoreIfEmpty(
-                            localLocation,
-                            LOCATION_PLACEHOLDER,
-                            (v) => setLocalLocation(v),
-                            onChangeLocationText
-                          )
-                        }
-                        onChange={(e) => {
-                          if (!editable) return
-                          setLocalLocation(e.target.value)
-                          onChangeLocationText?.(e.target.value)
-                        }}
-                        className="text-right font-inter font-normal text-[15px] leading-[18px] text-[#A5A5A5] placeholder:text-[#A5A5A5] bg-transparent outline-none"
-                      />
-                    </div>
+                    <input
+                      value={localLocation}
+                      placeholder={LOCATION_PLACEHOLDER}
+                      readOnly={!editable}
+                      onFocus={() =>
+                        focusClearIfPlaceholder(localLocation, LOCATION_PLACEHOLDER, (v) => {
+                          setLocalLocation(v)
+                          onChangeLocationText?.(v)
+                        })
+                      }
+                      onBlur={() =>
+                        blurRestoreIfEmpty(
+                          localLocation,
+                          LOCATION_PLACEHOLDER,
+                          (v) => setLocalLocation(v),
+                          onChangeLocationText,
+                        )
+                      }
+                      onChange={(e) => {
+                        if (!editable) return
+                        setLocalLocation(e.target.value)
+                        onChangeLocationText?.(e.target.value)
+                      }}
+                      style={{ width: `${locationPxWidth}px` }}
+                      className="max-w-[238px] text-right font-inter font-normal text-[15px] leading-[18px] text-[#A5A5A5] placeholder:text-[#A5A5A5] bg-transparent outline-none"
+                    />
                   </div>
                 </div>
 
@@ -903,7 +1017,9 @@ export default function EditPortraitProfile({
                       onChangeEmail?.(v)
                     })
                   }
-                  onBlur={() => blurRestoreIfEmpty(localEmail, EMAIL_PLACEHOLDER, (v) => setLocalEmail(v), onChangeEmail)}
+                  onBlur={() =>
+                    blurRestoreIfEmpty(localEmail, EMAIL_PLACEHOLDER, (v) => setLocalEmail(v), onChangeEmail)
+                  }
                   onChange={(e) => {
                     if (!editable) return
                     setLocalEmail(e.target.value)

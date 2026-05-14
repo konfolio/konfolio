@@ -97,6 +97,29 @@ function safeStr(x: any) {
   return String(x ?? "").trim()
 }
 
+function isDarkHexColor(hex: string) {
+  const clean = String(hex || "").replace("#", "").trim()
+
+  const full =
+    clean.length === 3
+      ? clean
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : clean
+
+  if (full.length !== 6) return false
+
+  const r = parseInt(full.slice(0, 2), 16)
+  const g = parseInt(full.slice(2, 4), 16)
+  const b = parseInt(full.slice(4, 6), 16)
+
+  if ([r, g, b].some((n) => Number.isNaN(n))) return false
+
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+  return luminance < 0.5
+}
+
 function normalizeUrl(raw: string): string {
   const v = safeStr(raw)
   if (!v) return ""
@@ -142,7 +165,7 @@ function IconForKey({ k }: { k: string }) {
   return <HomeIcon className="w-[24px] h-[24px]" />
 }
 
-function KonfolioLogo() {
+function KonfolioLogo({ primaryTextColor }: { primaryTextColor: string }) {
   return (
     <div
       aria-label="Konfolio"
@@ -157,7 +180,7 @@ function KonfolioLogo() {
           fontSize: "18.1193px",
           letterSpacing: "-0.02em",
           lineHeight: "18.67px",
-          color: "#262626",
+          color: primaryTextColor,
           whiteSpace: "nowrap",
         }}
       >
@@ -376,6 +399,19 @@ export default function EditSquareProfileSidebar({
 
   const activeLinks = useMemo(() => getActiveLinkUrls(linksValue), [linksValue])
 
+  const bannerIsDark = useMemo(() => isDarkHexColor(localBanner), [localBanner])
+  const primaryTextClass = bannerIsDark ? "text-white" : "text-[#262626]"
+  const primaryStrokeClass = bannerIsDark
+    ? "[&_path]:stroke-white"
+    : "[&_path]:stroke-[#262626]"
+  const primaryTextColor = bannerIsDark ? "#FFFFFF" : "#262626"
+  const primaryIconPathClass = bannerIsDark
+    ? "[&_path]:stroke-white [&_path]:fill-white"
+    : "[&_path]:stroke-[#262626] [&_path]:fill-[#262626]"
+  const primarySocialIconClass = bannerIsDark
+    ? "[&_svg]:text-white [&_path]:!stroke-white [&_path]:!fill-white [&_circle]:!stroke-white [&_circle]:!fill-white"
+    : "[&_svg]:text-[#262626] [&_path]:!stroke-[#262626] [&_path]:!fill-[#262626] [&_circle]:!stroke-[#262626] [&_circle]:!fill-[#262626]"
+
   if (mobileCollapsed) {
     return (
       <section
@@ -426,10 +462,18 @@ export default function EditSquareProfileSidebar({
                   onChangeBusinessName?.(e.target.value)
                 }}
                 placeholder="Business Name"
-                className="min-w-0 flex-1 bg-transparent text-left font-inter text-[22px] font-normal leading-[140%] text-[#262626] placeholder:text-[#A5A5A5] outline-none"
+                className={[
+                  "min-w-0 flex-1 bg-transparent text-left font-inter text-[22px] font-normal leading-[140%] placeholder:text-[#A5A5A5] outline-none",
+                  primaryTextClass,
+                ].join(" ")}
               />
             ) : (
-              <p className="m-0 min-w-0 flex-1 truncate text-left font-inter text-[22px] font-normal leading-[140%] text-[#262626]">
+              <p
+                className={[
+                  "m-0 min-w-0 flex-1 truncate text-left font-inter text-[22px] font-normal leading-[140%]",
+                  primaryTextClass,
+                ].join(" ")}
+              >
                 {safeStr(localBusiness) || "Business Name"}
               </p>
             )}
@@ -440,7 +484,8 @@ export default function EditSquareProfileSidebar({
             aria-label="Open full profile"
             onClick={onToggleMobile}
             className={[
-              "flex h-[32px] w-[32px] shrink-0 items-center justify-center text-[#262626] transition-transform cursor-pointer",
+              "flex h-[32px] w-[32px] shrink-0 items-center justify-center transition-transform cursor-pointer",
+              primaryStrokeClass,
               mobileExpanded ? "rotate-180" : "",
             ].join(" ")}
           >
@@ -452,7 +497,12 @@ export default function EditSquareProfileSidebar({
           <div className="mt-[18px] flex w-full flex-col items-start gap-[18px]">
             {editable ? (
               <div ref={colorButtonsWrapRef} className="relative flex items-center gap-[5px]">
-                <BrushIcon className="h-[16px] w-[16px]" />
+                <BrushIcon
+                  className={[
+                    "h-[16px] w-[16px]",
+                    bannerIsDark ? "text-white" : "text-[#262626]",
+                  ].join(" ")}
+                />
 
                 <button
                   type="button"
@@ -545,6 +595,7 @@ export default function EditSquareProfileSidebar({
                   onAddLinkClick={onAddLinkClick}
                   value={linksValue}
                   onChange={onChangeLinks}
+                  bannerIsDark={bannerIsDark}
                 />
               ) : (
                 <div className="flex items-center justify-start gap-[10px]">
@@ -555,7 +606,10 @@ export default function EditSquareProfileSidebar({
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={iconLabelForKey(l.key)}
-                      className="flex h-[24px] w-[24px] items-center justify-center text-[#262626] cursor-pointer"
+                      className={[
+                        "w-[24px] h-[24px] flex items-center justify-center cursor-pointer",
+                        primarySocialIconClass,
+                      ].join(" ")}
                     >
                       <IconForKey k={l.key} />
                     </a>
@@ -572,15 +626,29 @@ export default function EditSquareProfileSidebar({
                   value={merchTags}
                   onChange={onChangeMerchTags}
                   layout="inlineLeft"
+                  isDarkBanner={bannerIsDark}
                 />
               ) : (
                 <div className="flex w-full flex-wrap justify-start gap-[10px]">
                   {(Array.isArray(merchTags) ? merchTags : []).slice(0, 8).map((t) => (
                     <div
                       key={t}
-                      className="flex h-[24px] items-center justify-center rounded-full border border-[#A5A5A5] border-[0.5px] px-[20px] py-[7px]"
+                      className={[
+                        "flex h-[24px] items-center justify-center rounded-full border border-[0.5px] px-[20px] py-[7px]",
+                        bannerIsDark ? "border-white/30" : "border-[#A5A5A5]/50",
+                      ].join(" ")}
+                      style={{
+                        backgroundColor: bannerIsDark
+                          ? "rgba(255, 255, 255, 0.1)"
+                          : "transparent",
+                      }}
                     >
-                      <span className="font-inter text-[15px] font-normal leading-[150%] text-[#262626]">
+                      <span
+                        className={[
+                          "font-inter text-[15px] font-normal leading-[150%]",
+                          primaryTextClass,
+                        ].join(" ")}
+                      >
                         {safeStr(t)}
                       </span>
                     </div>
@@ -597,7 +665,12 @@ export default function EditSquareProfileSidebar({
 
                 {parsedPrevVends.map((ev, i) => (
                   <div key={`${ev.title}-${ev.year ?? ""}-${i}`} className="group flex items-center gap-[8px]">
-                    <span className="font-inter text-[15px] leading-[140%] text-[#262626]">
+                    <span
+                      className={[
+                        "font-inter text-[15px] leading-[140%]",
+                        primaryTextClass,
+                      ].join(" ")}
+                    >
                       {ev.title}
                     </span>
                     {ev.year ? (
@@ -639,15 +712,32 @@ export default function EditSquareProfileSidebar({
 
             {editable ? (
               <div className="flex w-full items-center justify-start gap-[10px] pt-[4px]">
-                <SecondaryButton onClick={onPublish}>{publishLabel}</SecondaryButton>
+                <SecondaryButton
+                  onClick={onPublish}
+                  className={
+                    bannerIsDark
+                      ? "border-white text-white"
+                      : "border-[#262626] text-[#262626]"
+                  }
+                >
+                  {publishLabel}
+                </SecondaryButton>
 
                 <button
                   type="button"
                   aria-label="Open preview"
                   onClick={onOpenPreview}
-                  className="flex h-[30px] w-[30px] items-center justify-center rounded-full border border-[#262626] cursor-pointer"
+                  className={[
+                    "flex h-[30px] w-[30px] items-center justify-center rounded-full border cursor-pointer",
+                    bannerIsDark ? "border-white" : "border-[#262626]",
+                  ].join(" ")}
                 >
-                  <OpenTabIcon className="h-[16px] w-[16px] [&_path]:stroke-[#262626]" />
+                  <OpenTabIcon
+                    className={[
+                      "h-[16px] w-[16px]",
+                      bannerIsDark ? "[&_path]:stroke-white" : "[&_path]:stroke-[#262626]",
+                    ].join(" ")}
+                  />
                 </button>
               </div>
             ) : null}
@@ -674,7 +764,10 @@ export default function EditSquareProfileSidebar({
                 if (onBack) onBack()
                 else window.location.href = backHref
               }}
-              className="w-[30px] h-[30px] flex items-center justify-center cursor-pointer"
+              className={[
+                "w-[30px] h-[30px] flex items-center justify-center cursor-pointer",
+                primaryStrokeClass,
+              ].join(" ")}
             >
               <ArrowLeft className="w-[30px] h-[30px]" />
             </button>
@@ -684,7 +777,12 @@ export default function EditSquareProfileSidebar({
             ref={colorButtonsWrapRef}
             className="relative flex items-center justify-end gap-[5px] w-[98px] h-[36px]"
           >
-            <div className="w-[16px] h-[16px] flex items-center justify-center text-[#A5A5A5]">
+            <div
+              className={[
+                "w-[16px] h-[16px] flex items-center justify-center",
+                bannerIsDark ? "text-white" : "text-[#262626]",
+              ].join(" ")}
+            >
               <BrushIcon className="w-[16px] h-[16px]" />
             </div>
 
@@ -709,7 +807,7 @@ export default function EditSquareProfileSidebar({
             {openPicker ? (
               <div
                 ref={colorPopoverRef}
-                className="absolute z-50 top-[52px] left-1/2 -translate-x-1/2 w-[276px]"
+                className="absolute z-[200] top-[52px] left-1/2 -translate-x-1/2 w-[276px]"
               >
                 <ColorPicker
                   label={pickerLabel}
@@ -725,7 +823,7 @@ export default function EditSquareProfileSidebar({
         </div>
       ) : (
         <>
-          <KonfolioLogo />
+          <KonfolioLogo primaryTextColor={primaryTextColor} />
           <div className="h-[24px] w-[276px]" />
         </>
       )}
@@ -788,10 +886,18 @@ export default function EditSquareProfileSidebar({
                 onChangeBusinessName?.(e.target.value)
               }}
               placeholder="Business Name"
-              className="w-full text-center font-inter font-normal text-[22px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] bg-transparent outline-none"
+              className={[
+                "w-full text-center font-inter font-normal text-[22px] leading-[140%] placeholder:text-[#A5A5A5] bg-transparent outline-none",
+                primaryTextClass,
+              ].join(" ")}
             />
           ) : (
-            <p className="m-0 w-full text-center font-inter font-normal text-[22px] leading-[140%] text-[#262626]">
+            <p
+              className={[
+                "m-0 w-full text-center font-inter font-normal text-[22px] leading-[140%]",
+                primaryTextClass,
+              ].join(" ")}
+            >
               {safeStr(localBusiness) || "Business Name"}
             </p>
           )}
@@ -816,7 +922,7 @@ export default function EditSquareProfileSidebar({
         <div className="w-full max-w-[276px] flex items-center justify-center">
           {editable ? (
             showAddLink ? (
-              <LinkPicker onAddLinkClick={onAddLinkClick} value={linksValue} onChange={onChangeLinks} />
+              <LinkPicker onAddLinkClick={onAddLinkClick} value={linksValue} onChange={onChangeLinks} bannerIsDark={bannerIsDark}/>
             ) : null
           ) : (
             <div className="flex items-center justify-center gap-[10px]">
@@ -827,7 +933,10 @@ export default function EditSquareProfileSidebar({
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={iconLabelForKey(l.key)}
-                  className="w-[24px] h-[24px] flex items-center justify-center text-[#262626] cursor-pointer"
+                  className={[
+                    "w-[24px] h-[24px] flex items-center justify-center cursor-pointer",
+                    primarySocialIconClass,
+                  ].join(" ")}
                 >
                   <IconForKey k={l.key} />
                 </a>
@@ -838,12 +947,13 @@ export default function EditSquareProfileSidebar({
 
         {editable ? (
           showMerchTag ? (
-            <div className="relative z-[80] w-[276px] flex justify-center">
+            <div className="relative z-[20] w-[276px] flex justify-center">
               <MerchTagPicker
                 maxTags={8}
                 onMerchClick={onMerchClick}
                 value={merchTags}
                 onChange={onChangeMerchTags}
+                isDarkBanner={bannerIsDark}
               />
             </div>
           ) : null
@@ -852,9 +962,22 @@ export default function EditSquareProfileSidebar({
             {(Array.isArray(merchTags) ? merchTags : []).slice(0, 8).map((t) => (
               <div
                 key={t}
-                className="flex items-center justify-center px-[20px] py-[7px] h-[24px] rounded-full border border-[#A5A5A5] border-[0.5px]"
+                className={[
+                  "flex h-[24px] items-center justify-center rounded-full border border-[0.5px] px-[20px] py-[7px]",
+                  bannerIsDark ? "border-white/30" : "border-[#A5A5A5]/50",
+                ].join(" ")}
+                style={{
+                  backgroundColor: bannerIsDark
+                    ? "rgba(255, 255, 255, 0.1)"
+                    : "transparent",
+                }}
               >
-                <span className="font-inter font-normal text-[15px] leading-[150%] text-[#262626]">
+                <span
+                  className={[
+                    "font-inter font-normal text-[15px] leading-[150%]",
+                    primaryTextClass,
+                  ].join(" ")}
+                >
                   {safeStr(t)}
                 </span>
               </div>
@@ -872,7 +995,12 @@ export default function EditSquareProfileSidebar({
               {parsedPrevVends.map((ev, i) => (
                 <div key={`${ev.title}-${ev.year ?? ""}-${i}`} className="group relative w-full flex justify-center">
                   <div className="flex items-baseline gap-[6px]">
-                    <span className="font-inter font-normal text-[15px] leading-[140%] text-[#262626]">
+                    <span
+                      className={[
+                        "font-inter font-normal text-[15px] leading-[140%]",
+                        primaryTextClass,
+                      ].join(" ")}
+                    >
                       {ev.title || ""}
                     </span>
                     {ev.year ? (
@@ -998,17 +1126,32 @@ export default function EditSquareProfileSidebar({
 
       {editable ? (
         <div className="w-full max-w-[276px] h-[30px] flex items-center justify-center gap-[10px]">
-          <div className="cursor-pointer">
-            <SecondaryButton onClick={onPublish}>{publishLabel}</SecondaryButton>
-          </div>
+          <SecondaryButton
+            onClick={onPublish}
+            className={
+              bannerIsDark
+                ? "text-white border-white"
+                : "text-[#262626] border-[#262626]"
+            }
+          >
+            {publishLabel}
+          </SecondaryButton>
 
           <button
             type="button"
             aria-label="Open preview"
             onClick={onOpenPreview}
-            className="w-[30px] h-[30px] border border-[#262626] rounded-full flex items-center justify-center cursor-pointer"
+            className={[
+              "w-[30px] h-[30px] rounded-full flex items-center justify-center cursor-pointer border",
+              bannerIsDark ? "border-white" : "border-[#262626]",
+            ].join(" ")}
           >
-            <OpenTabIcon className="w-[16px] h-[16px] [&_path]:stroke-[#262626]" />
+            <OpenTabIcon
+              className={[
+                "w-[16px] h-[16px]",
+                bannerIsDark ? "[&_path]:stroke-white" : "[&_path]:stroke-[#262626]",
+              ].join(" ")}
+            />
           </button>
         </div>
       ) : null}

@@ -107,7 +107,8 @@ function hasAnyBusinessLink(links: any): boolean {
   if (!links) return false
 
   const activeKeys = Array.isArray(links?.activeKeys) ? links.activeKeys : []
-  const linksByKey = links?.linksByKey && typeof links.linksByKey === "object" ? links.linksByKey : null
+  const linksByKey =
+    links?.linksByKey && typeof links.linksByKey === "object" ? links.linksByKey : null
 
   if (activeKeys.length > 0 && linksByKey) {
     for (const k of activeKeys) {
@@ -238,7 +239,7 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
 
   const [publishOpen, setPublishOpen] = useState(false)
   const [publishStatus, setPublishStatus] = useState<"idle" | "publishing" | "success" | "error">(
-    "idle"
+    "idle",
   )
   const [publishError, setPublishError] = useState("")
   const [publishedUrl, setPublishedUrl] = useState("")
@@ -408,8 +409,8 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
             images: content.images,
             profileImageUrl,
             explore_enabled: allowExploreSearch,
-          })
-        )
+          }),
+        ),
       )
 
       const pubRes = await fetch(`/api/konfolios/${draftId}/publish`, {
@@ -493,74 +494,101 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
   const isOptionalOnlyMode =
     !readOnly && missingOpen && missingRequired.length === 0 && missingOptional.length > 0
 
+  const profileProps = {
+    backHref: "/my-portfolios",
+    bannerColor: draft.bannerColor,
+    backgroundColor: draft.backgroundColor,
+    bannerSwatches,
+    backgroundSwatches,
+    profileImageUrl: draft.profileImageUrl,
+    businessName: draft.businessName,
+    displayName: draft.displayName,
+    locationText: draft.locationText,
+    email: draft.email,
+    linksValue: draft.links,
+    merchTags: draft.merchTags,
+    publishLabel: readOnly ? "" : "Publish",
+  }
+
   const content = (
     <main className="w-full min-h-screen overflow-x-hidden" style={{ backgroundColor: draft.backgroundColor }}>
       <div className="w-full px-0 py-0">
         <div className="mx-auto w-full max-w-[1512px]">
-          <div className="flex w-full flex-col items-center justify-center gap-[20px]">
-            <EditPortraitProfile
-              editable={!readOnly}
-              mobileCollapsed={!readOnly}
-              mobileExpanded={mobileProfileExpanded}
-              onToggleMobile={() => setMobileProfileExpanded((v) => !v)}
-              backHref="/my-portfolios"
-              onBack={() => {
-                if (readOnly) {
-                  const editHref = `/my-portfolios/${draftId}/edit`
-                  if (typeof window === "undefined") return
-                  if (window.history.length > 1) window.history.back()
-                  else window.location.href = editHref
-                  return
-                }
+          {readOnly ? (
+            <>
+              <div className="hidden w-full flex-col max-[900px]:flex">
+                <EditPortraitProfile
+                  editable={false}
+                  mobileCollapsed={true}
+                  mobileExpanded={mobileProfileExpanded}
+                  onToggleMobile={() => setMobileProfileExpanded((v) => !v)}
+                  showAddLink={false}
+                  {...profileProps}
+                />
 
-                const fn = (window as any).__konfolio_attempt_exit
-                if (typeof fn === "function") {
-                  fn("/my-portfolios")
-                  return
-                }
-                window.location.href = "/my-portfolios"
-              }}
-              bannerColor={draft.bannerColor}
-              backgroundColor={draft.backgroundColor}
-              onChangeBannerColor={readOnly ? undefined : (hex) => patchDraft(draftId, { bannerColor: hex })}
-              onChangeBackgroundColor={readOnly ? undefined : (hex) => patchDraft(draftId, { backgroundColor: hex })}
-              bannerSwatches={bannerSwatches}
-              backgroundSwatches={backgroundSwatches}
-              onChangeBannerSwatches={readOnly ? undefined : (next) => patchDraft(draftId, { bannerSwatches: next })}
-              onChangeBackgroundSwatches={readOnly ? undefined : (next) => patchDraft(draftId, { backgroundSwatches: next })}
-              profileImageUrl={draft.profileImageUrl}
-              onChangeProfileImage={readOnly ? undefined : (_file, objectUrl) => patchDraft(draftId, { profileImageUrl: objectUrl })}
-              businessName={draft.businessName}
-              onChangeBusinessName={readOnly ? undefined : (val) => patchDraft(draftId, { businessName: val })}
-              displayName={draft.displayName}
-              onChangeDisplayName={readOnly ? undefined : (val) => patchDraft(draftId, { displayName: val })}
-              locationText={draft.locationText}
-              onChangeLocationText={readOnly ? undefined : (val) => patchDraft(draftId, { locationText: val })}
-              email={draft.email}
-              onChangeEmail={readOnly ? undefined : (val) => patchDraft(draftId, { email: val })}
-              linksValue={draft.links}
-              onChangeLinks={readOnly ? undefined : (next) => patchDraft(draftId, { links: next })}
-              merchTags={draft.merchTags}
-              onChangeMerchTags={readOnly ? undefined : (next) => patchDraft(draftId, { merchTags: next })}
-              publishLabel={readOnly ? "" : "Publish"}
-              onPublish={readOnly ? undefined : () => onPressPublishWithValidation()}
-              onOpenPreview={
-                readOnly
-                  ? undefined
-                  : () => window.open(`/my-portfolios/${draftId}/preview`, "_blank", "noopener,noreferrer")
-              }
-            />
+                <EditPortraitImageGrid
+                  editable={false}
+                  images={draft.images}
+                  previousVendsValue={(draft.previousVends ?? []).join(" | ")}
+                />
+              </div>
 
-            <div className="w-full px-[16px] sm:px-6 md:px-10 lg:px-[80px] xl:px-[120px]">
-              <EditPortraitImageGrid
-                editable={!readOnly}
-                images={draft.images}
-                onChangeImages={readOnly ? undefined : (images) => patchDraft(draftId, { images })}
-                previousVendsValue={(draft.previousVends ?? []).join(" | ")}
-                onChangePreviousVends={readOnly ? undefined : (vals) => patchDraft(draftId, { previousVends: vals })}
+              <div className="hidden w-full flex-col items-center justify-center gap-[20px] min-[901px]:flex">
+                <EditPortraitProfile editable={false} showAddLink={false} {...profileProps} />
+
+                <div className="w-full px-[16px] sm:px-6 md:px-10 lg:px-[80px] xl:px-[120px]">
+                  <EditPortraitImageGrid
+                    editable={false}
+                    images={draft.images}
+                    previousVendsValue={(draft.previousVends ?? []).join(" | ")}
+                  />
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex w-full flex-col items-center justify-center gap-[20px]">
+              <EditPortraitProfile
+                editable={true}
+                mobileCollapsed={true}
+                mobileExpanded={mobileProfileExpanded}
+                onToggleMobile={() => setMobileProfileExpanded((v) => !v)}
+                onBack={() => {
+                  const fn = (window as any).__konfolio_attempt_exit
+                  if (typeof fn === "function") {
+                    fn("/my-portfolios")
+                    return
+                  }
+                  window.location.href = "/my-portfolios"
+                }}
+                onChangeBannerColor={(hex) => patchDraft(draftId, { bannerColor: hex })}
+                onChangeBackgroundColor={(hex) => patchDraft(draftId, { backgroundColor: hex })}
+                onChangeBannerSwatches={(next) => patchDraft(draftId, { bannerSwatches: next })}
+                onChangeBackgroundSwatches={(next) => patchDraft(draftId, { backgroundSwatches: next })}
+                onChangeProfileImage={(_file, objectUrl) => patchDraft(draftId, { profileImageUrl: objectUrl })}
+                onChangeBusinessName={(val) => patchDraft(draftId, { businessName: val })}
+                onChangeDisplayName={(val) => patchDraft(draftId, { displayName: val })}
+                onChangeLocationText={(val) => patchDraft(draftId, { locationText: val })}
+                onChangeEmail={(val) => patchDraft(draftId, { email: val })}
+                onChangeLinks={(next) => patchDraft(draftId, { links: next })}
+                onChangeMerchTags={(next) => patchDraft(draftId, { merchTags: next })}
+                onPublish={() => onPressPublishWithValidation()}
+                onOpenPreview={() =>
+                  window.open(`/my-portfolios/${draftId}/preview`, "_blank", "noopener,noreferrer")
+                }
+                {...profileProps}
               />
+
+              <div className="w-full px-[16px] sm:px-6 md:px-10 lg:px-[80px] xl:px-[120px]">
+                <EditPortraitImageGrid
+                  editable={true}
+                  images={draft.images}
+                  onChangeImages={(images) => patchDraft(draftId, { images })}
+                  previousVendsValue={(draft.previousVends ?? []).join(" | ")}
+                  onChangePreviousVends={(vals) => patchDraft(draftId, { previousVends: vals })}
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
