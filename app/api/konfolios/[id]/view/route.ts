@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 function createAdminClient() {
@@ -13,11 +13,11 @@ function createAdminClient() {
 }
 
 export async function POST(
-  req: Request,
-  { params }: { params: { id: string } }
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const konfolioId = params.id;
+    const { id: konfolioId } = await params;
 
     if (!konfolioId) {
       return NextResponse.json(
