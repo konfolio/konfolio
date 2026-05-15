@@ -867,6 +867,71 @@ export default function EditOrganizerFormPage() {
                 </label>
               </div>
 
+              {/* Additional Questions — organizer can add but not delete default fields */}
+              <div className="flex flex-col gap-[24px]">
+                <p className="text-[13px] text-[#A5A5A5]">
+                  Additional Questions
+                </p>
+
+                {(pageFields[1] ?? [])
+                  .filter((f) => !DEFAULT_FIELDS.find((d) => d.id === f.id))
+                  .map((field, i) => (
+                    <div key={field.id} className="flex items-start gap-[12px]">
+                      <FormField
+                        label={field.label}
+                        required={field.required}
+                        className="flex-1"
+                      />
+                      <button
+                        onClick={() =>
+                          setPageFields((prev) => ({
+                            ...prev,
+                            1: (prev[1] ?? []).filter((f) => f.id !== field.id),
+                          }))
+                        }
+                        className="mt-[32px] text-[#C0BDB4] hover:text-[#A32D2D]"
+                        aria-label="Remove question"
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                        >
+                          <path
+                            d="M3 3l10 10M13 3L3 13"
+                            stroke="currentColor"
+                            strokeWidth="1.4"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+
+                <button
+                  onClick={() => {
+                    const newField = {
+                      id: crypto.randomUUID(),
+                      type: "short_text",
+                      label: "New Question",
+                      field_key: `custom_${Date.now()}`,
+                      required: false,
+                      placeholder: "",
+                      options: [],
+                      sortOrder: (pageFields[1] ?? []).length,
+                    };
+                    setPageFields((prev) => ({
+                      ...prev,
+                      1: [...(prev[1] ?? []), newField],
+                    }));
+                  }}
+                  className="self-start h-[40px] px-[20px] rounded-full border border-[#E9E9E9] text-[14px] text-[#A5A5A5] hover:opacity-70"
+                >
+                  + Add Question
+                </button>
+              </div>
+
               {/* Bottom Page Navigator */}
               <div className="w-full flex items-center justify-center gap-[10px] py-[48px]">
                 <button className="text-[#C0BDB4] hover:text-[#262626]">
