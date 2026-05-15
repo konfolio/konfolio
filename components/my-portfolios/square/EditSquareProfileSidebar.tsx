@@ -401,7 +401,7 @@ export default function EditSquareProfileSidebar({
 
   const bannerIsDark = useMemo(() => isDarkHexColor(localBanner), [localBanner])
   const backgroundIsDark = useMemo(() => isDarkHexColor(localBg), [localBg])
-  
+
   const primaryTextClass = bannerIsDark ? "text-white" : "text-[#262626]"
   const primaryStrokeClass = bannerIsDark
     ? "[&_path]:stroke-white"
@@ -417,12 +417,12 @@ export default function EditSquareProfileSidebar({
   if (mobileCollapsed) {
     return (
       <section
-        className="flex w-full flex-col px-[20px] py-[20px] text-left lg:hidden"
+        className="flex w-full flex-col items-center gap-[25px] px-[20px] pb-[30px] pt-[20px] text-left lg:hidden"
         style={{ backgroundColor: localBanner }}
         aria-expanded={mobileExpanded}
       >
-        <div className="flex w-full items-center justify-between gap-[15px]">
-          <div className="flex min-w-0 items-center gap-[15px]">
+        <div className="flex w-full items-center gap-[10px]">
+          <div className="flex min-w-0 flex-1 items-center lg:items-center gap-[15px]">
             <button
               type="button"
               aria-label="Profile image"
@@ -456,29 +456,47 @@ export default function EditSquareProfileSidebar({
               )}
             </button>
 
-            {editable ? (
-              <input
-                value={localBusiness}
-                onChange={(e) => {
-                  setLocalBusiness(e.target.value)
-                  onChangeBusinessName?.(e.target.value)
-                }}
-                placeholder="Business Name"
-                className={[
-                  "min-w-0 flex-1 bg-transparent text-left font-inter text-[22px] font-normal leading-[140%] placeholder:text-[#A5A5A5] outline-none",
-                  primaryTextClass,
-                ].join(" ")}
-              />
-            ) : (
-              <p
-                className={[
-                  "m-0 min-w-0 flex-1 truncate text-left font-inter text-[22px] font-normal leading-[140%]",
-                  primaryTextClass,
-                ].join(" ")}
-              >
-                {safeStr(localBusiness) || "Business Name"}
-              </p>
-            )}
+            <div className="flex min-w-0 flex-1 flex-col items-start gap-[6px] py-[2px]">
+              {editable ? (
+                <input
+                  value={localBusiness}
+                  onChange={(e) => {
+                    setLocalBusiness(e.target.value)
+                    onChangeBusinessName?.(e.target.value)
+                  }}
+                  placeholder="Business Name"
+                  className={[
+                    "min-h-[24px] w-full bg-transparent text-left font-inter text-[22px] font-normal leading-[140%] placeholder:text-[#A5A5A5] outline-none",
+                    primaryTextClass,
+                  ].join(" ")}
+                />
+              ) : (
+                <p
+                  className={[
+                    "m-0 min-h-[24px] w-full truncate text-left font-inter text-[22px] font-normal leading-[140%]",
+                    primaryTextClass,
+                  ].join(" ")}
+                >
+                  {safeStr(localBusiness) || "Business Name"}
+                </p>
+              )}
+
+              {editable ? (
+                <input
+                  value={localDisplay}
+                  onChange={(e) => {
+                    setLocalDisplay(e.target.value)
+                    onChangeDisplayName?.(e.target.value)
+                  }}
+                  placeholder="Your Name"
+                  className="-mt-[4px] min-h-[24px] w-full bg-transparent text-left font-inter text-[15px] font-normal leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
+                />
+              ) : (
+                <p className="-mt-[4px] m-0 min-h-[24px] w-full truncate text-left font-inter text-[15px] font-normal leading-[140%] text-[#A5A5A5]">
+                  {safeStr(localDisplay) || "Your Name"}
+                </p>
+              )}
+            </div>
           </div>
 
           <button
@@ -496,102 +514,10 @@ export default function EditSquareProfileSidebar({
         </div>
 
         {mobileExpanded ? (
-          <div className="mt-[18px] flex w-full flex-col items-start gap-[18px]">
-            {editable ? (
-              <div ref={colorButtonsWrapRef} className="relative flex items-center gap-[5px]">
-                <BrushIcon
-                  className={[
-                    "h-[16px] w-[16px]",
-                    bannerIsDark ? "text-white" : "text-[#262626]",
-                  ].join(" ")}
-                />
+          <>
+            <div className="h-px w-full bg-[#A5A5A5]/50" />
 
-                <button
-                  type="button"
-                  onClick={() => togglePicker("banner")}
-                  aria-label="Pick banner color"
-                  className="relative h-[36px] w-[36px] overflow-hidden rounded-full border border-[rgba(165,165,165,0.5)] bg-white cursor-pointer"
-                >
-                  <span className="absolute inset-0" style={{ backgroundColor: localBanner }} />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => togglePicker("background")}
-                  aria-label="Pick background color"
-                  className="relative h-[36px] w-[36px] overflow-hidden rounded-full border border-[rgba(165,165,165,0.5)] bg-white cursor-pointer"
-                >
-                  <span className="absolute inset-0" style={{ backgroundColor: localBg }} />
-                </button>
-
-                {openPicker ? (
-                  <div ref={colorPopoverRef} className="absolute left-0 top-[48px] z-[120] w-[276px]">
-                    <ColorPicker
-                      label={pickerLabel}
-                      valueHex={pickerHex}
-                      onChangeHex={setPickerHex}
-                      swatches={pickerSwatches}
-                      onChangeSwatches={setPickerSwatches}
-                      onRequestClose={() => setOpenPicker(null)}
-                    />
-                  </div>
-                ) : null}
-              </div>
-            ) : null}
-
-            {editable ? (
-              <input
-                value={localDisplay}
-                onChange={(e) => {
-                  setLocalDisplay(e.target.value)
-                  onChangeDisplayName?.(e.target.value)
-                }}
-                placeholder="Your Name"
-                className="w-full bg-transparent text-left font-inter text-[15px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
-              />
-            ) : (
-              <p className="m-0 w-full text-left font-inter text-[15px] leading-[140%] text-[#A5A5A5]">
-                {safeStr(localDisplay) || "Your Name"}
-              </p>
-            )}
-
-            <div className="flex w-full items-center gap-[5px] text-[#A5A5A5]">
-              <LocationIcon className="h-[12px] w-[12px] shrink-0" />
-
-              {editable ? (
-                <input
-                  value={localLocation}
-                  onChange={(e) => {
-                    setLocalLocation(e.target.value)
-                    onChangeLocationText?.(e.target.value)
-                  }}
-                  placeholder="City, State"
-                  className="min-w-0 flex-1 bg-transparent text-left font-inter text-[15px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
-                />
-              ) : (
-                <span className="min-w-0 flex-1 truncate text-left font-inter text-[15px] leading-[140%] text-[#A5A5A5]">
-                  {safeStr(localLocation) || "City, State"}
-                </span>
-              )}
-            </div>
-
-            {editable ? (
-              <input
-                value={localEmail}
-                onChange={(e) => {
-                  setLocalEmail(e.target.value)
-                  onChangeEmail?.(e.target.value)
-                }}
-                placeholder="myemailaddress@konfolio.com"
-                className="w-full bg-transparent text-left font-inter text-[15px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
-              />
-            ) : (
-              <p className="m-0 w-full text-left font-inter text-[15px] leading-[140%] text-[#A5A5A5]">
-                {safeStr(localEmail) || "myemailaddress@konfolio.com"}
-              </p>
-            )}
-
-            <div className="flex w-full justify-start">
+            <div className="flex w-full justify-center">
               {editable ? (
                 <LinkPicker
                   onAddLinkClick={onAddLinkClick}
@@ -600,7 +526,7 @@ export default function EditSquareProfileSidebar({
                   bannerIsDark={bannerIsDark}
                 />
               ) : (
-                <div className="flex items-center justify-start gap-[10px]">
+                <div className="flex items-center justify-center gap-[25px]">
                   {activeLinks.map((l) => (
                     <a
                       key={l.key}
@@ -609,7 +535,7 @@ export default function EditSquareProfileSidebar({
                       rel="noopener noreferrer"
                       aria-label={iconLabelForKey(l.key)}
                       className={[
-                        "w-[24px] h-[24px] flex items-center justify-center cursor-pointer",
+                        "flex h-[33px] w-[33px] items-center justify-center cursor-pointer",
                         primarySocialIconClass,
                       ].join(" ")}
                     >
@@ -620,7 +546,9 @@ export default function EditSquareProfileSidebar({
               )}
             </div>
 
-            <div className="flex w-full flex-col items-start gap-[8px]">
+            <div className="h-px w-full bg-[#A5A5A5]/50" />
+
+            <div className="flex w-full justify-center">
               {editable ? (
                 <MerchTagPicker
                   maxTags={8}
@@ -631,7 +559,7 @@ export default function EditSquareProfileSidebar({
                   isDarkBanner={bannerIsDark}
                 />
               ) : (
-                <div className="flex w-full flex-wrap justify-start gap-[10px]">
+                <div className="flex w-full flex-wrap justify-center gap-[7px]">
                   {(Array.isArray(merchTags) ? merchTags : []).slice(0, 8).map((t) => (
                     <div
                       key={t}
@@ -647,7 +575,7 @@ export default function EditSquareProfileSidebar({
                     >
                       <span
                         className={[
-                          "font-inter text-[15px] font-normal leading-[150%]",
+                          "font-inter text-[15px] font-normal leading-[140%]",
                           primaryTextClass,
                         ].join(" ")}
                       >
@@ -660,90 +588,183 @@ export default function EditSquareProfileSidebar({
             </div>
 
             {showPrevVendsSection ? (
-              <div className="flex w-full flex-col items-start gap-[10px]">
-                <p className="m-0 font-inter text-[15px] leading-[140%] text-[#A5A5A5]">
+              <div className="flex w-full flex-col items-center gap-[10px]">
+                <p className="m-0 w-full text-center font-inter text-[14px] font-normal leading-[130%] text-[#A5A5A5]">
                   Previous Vends
                 </p>
 
-                {parsedPrevVends.map((ev, i) => (
-                  <div key={`${ev.title}-${ev.year ?? ""}-${i}`} className="group flex items-center gap-[8px]">
-                    <span
-                      className={[
-                        "font-inter text-[15px] leading-[140%]",
-                        primaryTextClass,
-                      ].join(" ")}
-                    >
-                      {ev.title}
-                    </span>
-                    {ev.year ? (
-                      <span className="font-inter text-[12px] italic leading-[140%] text-[#A5A5A5]">
-                        {ev.year}
-                      </span>
-                    ) : null}
-
-                    {editable ? (
-                      <button
-                        type="button"
-                        aria-label="Delete event"
-                        onClick={() => deleteVendAt(i)}
-                        className="text-[#A5A5A5] cursor-pointer"
-                      >
-                        <DeleteIcon className="h-[14px] w-[14px]" />
-                      </button>
-                    ) : null}
-                  </div>
-                ))}
-
-                {editable && localPrevVends.length < 4 ? (
-                  <input
-                    ref={addInputRef}
-                    value={newVend}
-                    onChange={(e) => setNewVend(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault()
-                        addVend(newVend)
-                      }
-                    }}
-                    placeholder={localPrevVends.length > 0 ? "Type an event..." : "Vended Event 2026"}
-                    className="w-full bg-transparent text-left font-inter text-[15px] leading-[140%] text-[#D3D3D3] placeholder:text-[#D3D3D3] outline-none"
-                  />
-                ) : null}
-              </div>
-            ) : null}
-
-            {editable ? (
-              <div className="flex w-full items-center justify-start gap-[10px] pt-[4px]">
-                <SecondaryButton
-                  onClick={onPublish}
-                  className={
-                    bannerIsDark
-                      ? "border-white text-white"
-                      : "border-[#262626] text-[#262626]"
-                  }
-                >
-                  {publishLabel}
-                </SecondaryButton>
-
-                <button
-                  type="button"
-                  aria-label="Open preview"
-                  onClick={onOpenPreview}
+                <div
                   className={[
-                    "flex h-[30px] w-[30px] items-center justify-center rounded-full border cursor-pointer",
-                    bannerIsDark ? "border-white" : "border-[#262626]",
+                    "w-full justify-center gap-x-[18px] gap-y-[10px]",
+                    localPrevVends.length === 4
+                      ? "grid grid-cols-2 justify-items-center"
+                      : "flex flex-wrap items-center",
                   ].join(" ")}
                 >
-                  <OpenTabIcon
-                    className={[
-                      "h-[16px] w-[16px]",
-                      bannerIsDark ? "[&_path]:stroke-white" : "[&_path]:stroke-[#262626]",
-                    ].join(" ")}
-                  />
-                </button>
+                  {parsedPrevVends.map((ev, i) => (
+                    <div
+                      key={`${ev.title}-${ev.year ?? ""}-${i}`}
+                      className="group flex items-baseline justify-center gap-[6px]"
+                    >
+                      <span
+                        className={[
+                          "text-center font-inter text-[15px] font-normal leading-[140%]",
+                          primaryTextClass,
+                        ].join(" ")}
+                      >
+                        {ev.title}
+                      </span>
+
+                      {ev.year ? (
+                        <span className="font-inter text-[12px] italic leading-[140%] text-[#A5A5A5]">
+                          {ev.year}
+                        </span>
+                      ) : null}
+
+                      {editable ? (
+                        <button
+                          type="button"
+                          aria-label="Delete event"
+                          onClick={() => deleteVendAt(i)}
+                          className="text-[#A5A5A5] cursor-pointer"
+                        >
+                          <DeleteIcon className="h-[14px] w-[14px]" />
+                        </button>
+                      ) : null}
+                    </div>
+                  ))}
+
+                  {editable && localPrevVends.length < 4 ? (
+                    <input
+                      ref={addInputRef}
+                      value={newVend}
+                      onChange={(e) => setNewVend(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault()
+                          addVend(newVend)
+                        }
+                      }}
+                      placeholder={localPrevVends.length > 0 ? "Type an event..." : "Vended Event 2026"}
+                      className="w-full bg-transparent text-center font-inter text-[15px] leading-[140%] text-[#D3D3D3] placeholder:text-[#D3D3D3] outline-none"
+                    />
+                  ) : null}
+                </div>
               </div>
             ) : null}
-          </div>
+
+            <div className="flex w-full flex-col items-center gap-[10px]">
+              <div className="flex max-w-full items-center justify-center gap-[5px] text-[#A5A5A5]">
+                <LocationIcon className="h-[12px] w-[12px] shrink-0" />
+
+                {editable ? (
+                  <input
+                    value={localLocation}
+                    onChange={(e) => {
+                      setLocalLocation(e.target.value)
+                      onChangeLocationText?.(e.target.value)
+                    }}
+                    placeholder="City, State"
+                    className="min-w-0 bg-transparent text-center font-inter text-[15px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
+                  />
+                ) : (
+                  <span className="min-w-0 truncate text-center font-inter text-[15px] leading-[140%] text-[#A5A5A5]">
+                    {safeStr(localLocation) || "City, State"}
+                  </span>
+                )}
+              </div>
+
+              {editable ? (
+                <input
+                  value={localEmail}
+                  onChange={(e) => {
+                    setLocalEmail(e.target.value)
+                    onChangeEmail?.(e.target.value)
+                  }}
+                  placeholder="myemailaddress@konfolio.com"
+                  className="w-full bg-transparent text-center font-inter text-[15px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
+                />
+              ) : (
+                <p className="m-0 w-full truncate text-center font-inter text-[15px] leading-[140%] text-[#A5A5A5]">
+                  {safeStr(localEmail) || "myemailaddress@konfolio.com"}
+                </p>
+              )}
+            </div>
+
+            {editable ? (
+              <>
+                <div ref={colorButtonsWrapRef} className="relative flex w-full items-center justify-center -ml-[30px] gap-[8px]">
+                  <BrushIcon
+                    className={[
+                      "h-[16px] w-[16px]",
+                      bannerIsDark ? "text-white" : "text-[#262626]",
+                    ].join(" ")}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => togglePicker("banner")}
+                    aria-label="Pick banner color"
+                    className="relative h-[36px] w-[36px] overflow-hidden rounded-full border border-[rgba(165,165,165,0.5)] bg-white cursor-pointer"
+                  >
+                    <span className="absolute inset-0" style={{ backgroundColor: localBanner }} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => togglePicker("background")}
+                    aria-label="Pick background color"
+                    className="relative h-[36px] w-[36px] overflow-hidden rounded-full border border-[rgba(165,165,165,0.5)] bg-white cursor-pointer"
+                  >
+                    <span className="absolute inset-0" style={{ backgroundColor: localBg }} />
+                  </button>
+
+                  {openPicker ? (
+                    <div ref={colorPopoverRef} className="absolute left-1/2 top-[48px] z-[120] w-[276px] -translate-x-1/2">
+                      <ColorPicker
+                        label={pickerLabel}
+                        valueHex={pickerHex}
+                        onChangeHex={setPickerHex}
+                        swatches={pickerSwatches}
+                        onChangeSwatches={setPickerSwatches}
+                        onRequestClose={() => setOpenPicker(null)}
+                      />
+                    </div>
+                  ) : null}
+                </div>
+
+                <div className="flex w-full items-center justify-center gap-[10px] pt-[4px]">
+                  <SecondaryButton
+                    onClick={onPublish}
+                    className={
+                      bannerIsDark
+                        ? "border-white text-white"
+                        : "border-[#262626] text-[#262626]"
+                    }
+                  >
+                    {publishLabel}
+                  </SecondaryButton>
+
+                  <button
+                    type="button"
+                    aria-label="Open preview"
+                    onClick={onOpenPreview}
+                    className={[
+                      "flex h-[30px] w-[30px] items-center justify-center rounded-full border cursor-pointer",
+                      bannerIsDark ? "border-white" : "border-[#262626]",
+                    ].join(" ")}
+                  >
+                    <OpenTabIcon
+                      className={[
+                        "h-[16px] w-[16px]",
+                        bannerIsDark ? "[&_path]:stroke-white" : "[&_path]:stroke-[#262626]",
+                      ].join(" ")}
+                    />
+                  </button>
+                </div>
+              </>
+            ) : null}
+          </>
         ) : null}
       </section>
     )

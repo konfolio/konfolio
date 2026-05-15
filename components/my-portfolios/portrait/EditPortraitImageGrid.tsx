@@ -24,7 +24,7 @@ type Props = {
   onChangeImages?: (images: Cell[]) => void
 
   previousVendsLabel?: string
-  previousVendsValue?: string
+  previousVends?: string[]
   onChangePreviousVends?: (vals: string[]) => void
 }
 
@@ -98,12 +98,6 @@ function parseEventLine(line: string): { title: string; year?: string } {
   return { title: trimmed }
 }
 
-const splitPrevVendsValue = (raw: string) =>
-  (raw || "")
-    .split("|")
-    .map((s) => s.trim())
-    .filter(Boolean)
-
 function arraysEqual(a: string[], b: string[]) {
   if (a.length !== b.length) return false
   for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false
@@ -117,7 +111,7 @@ export default function EditPortraitImageGrid({
   images,
   onChangeImages,
   previousVendsLabel = "Previous Vends",
-  previousVendsValue = "Vended Event 2026",
+  previousVends = [],
   onChangePreviousVends,
 }: Props) {
   const [cells, setCells] = useState<Cell[]>(() => {
@@ -165,9 +159,10 @@ export default function EditPortraitImageGrid({
   const lastSyncedPrevRef = useRef<string[]>([])
 
   useEffect(() => {
-    const incoming = splitPrevVendsValue(previousVendsValue)
-    const isJustSample = incoming.length === 1 && incoming[0]?.toLowerCase() === "vended event 2026"
-    const nextLocal = (isJustSample ? [] : incoming).slice(0, 4)
+    const nextLocal = (previousVends ?? [])
+      .map((s) => (s || "").trim())
+      .filter(Boolean)
+      .slice(0, 4)
 
     if (arraysEqual(nextLocal, lastSyncedPrevRef.current)) return
     lastSyncedPrevRef.current = nextLocal
@@ -175,7 +170,7 @@ export default function EditPortraitImageGrid({
     setLocalPrevVends(nextLocal)
     setEditingIdx(null)
     setEditingValue("")
-  }, [previousVendsValue])
+  }, [previousVends])
 
   useEffect(() => {
     if (!editable) return
@@ -354,7 +349,7 @@ export default function EditPortraitImageGrid({
 
   const cardShellClass = backgroundIsDark
     ? "border-0 bg-[rgba(165,165,165,0.068)] backdrop-blur-[7.58px]"
-    : "border-0 min-[701px]:border min-[701px]:border-white bg-[rgba(165,165,165,0.068)] backdrop-blur-[7.58px]"
+    : "border-0 min-[851px]:border min-[851px]:border-white bg-[rgba(165,165,165,0.068)] backdrop-blur-[7.58px]"
 
   const cardShellStyle: React.CSSProperties = backgroundIsDark
     ? {
@@ -381,9 +376,9 @@ export default function EditPortraitImageGrid({
   const prevVendTextClass = backgroundIsDark ? "text-white" : "text-[#262626]"
 
   return (
-    <section className="mx-0 flex w-full min-w-0 max-w-none flex-col items-center justify-center px-0 py-0 min-[701px]:max-w-[1182px] min-[701px]:min-w-[600px] min-[701px]:py-[30px]">
-      <div className="w-full min-w-[600px] max-w-[1182px] max-[700px]:min-w-0">
-        <div className="grid w-full grid-cols-1 gap-0 overflow-visible min-[701px]:grid-cols-4 min-[701px]:gap-[15px]">
+    <section className="mx-0 flex w-full min-w-0 max-w-none flex-col items-center justify-center px-0 py-0 min-[851px]:max-w-[1182px] min-[851px]:min-w-[600px] min-[851px]:py-[30px]">
+      <div className="w-full min-w-[600px] max-w-[1182px] max-[850px]:min-w-0">
+        <div className="grid w-full grid-cols-1 gap-0 overflow-visible min-[851px]:grid-cols-4 min-[851px]:gap-[15px]">
           {cells.map((cell, idx) => {
             const hasImage = Boolean(cell.src)
             const isDragOver = dragOverIdx === idx
@@ -402,7 +397,7 @@ export default function EditPortraitImageGrid({
                   aspect-[274/345]
                   w-full
                   overflow-visible
-                  rounded-none min-[701px]:rounded-[15px]
+                  rounded-none min-[851px]:rounded-[15px]
                   transition
                   ${isEditorOpen ? "z-[200]" : "z-[0]"}
                 `}
@@ -422,7 +417,7 @@ export default function EditPortraitImageGrid({
 
                 <div
                   className={[
-                    "relative h-full w-full overflow-hidden rounded-none min-[701px]:rounded-[15px]",
+                    "relative h-full w-full overflow-hidden rounded-none min-[851px]:rounded-[15px]",
                     cardShellClass,
                   ].join(" ")}
                   style={cardShellStyle}
@@ -442,7 +437,6 @@ export default function EditPortraitImageGrid({
                   />
 
                   {hasImage ? (
-                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={cell.src}
                       alt=""
@@ -476,7 +470,7 @@ export default function EditPortraitImageGrid({
                       z-[2]
                       flex h-[70px] flex-col items-start justify-end
                       px-[15px] pb-[10px] pt-[12px]
-                      opacity-100 min-[701px]:opacity-0 min-[701px]:group-hover:opacity-100
+                      opacity-100 min-[851px]:opacity-0 min-[851px]:group-hover:opacity-100
                       transition-opacity
                     "
                     style={gradientStyle}
@@ -502,10 +496,11 @@ export default function EditPortraitImageGrid({
                       className="
                         absolute right-[10px] top-[10px]
                         z-[10]
-                        flex h-[24px] w-[24px]
+                        hidden
+                        h-[24px] w-[24px]
                         cursor-pointer
                         items-center justify-center
-                        min-[701px]:hidden min-[701px]:group-hover:flex
+                        min-[851px]:group-hover:flex
                       "
                       onClick={(e) => {
                         e.stopPropagation()
@@ -552,7 +547,7 @@ export default function EditPortraitImageGrid({
       </div>
 
       {showPrevVendsSection ? (
-        <div className="flex w-full flex-col items-center gap-[6px] px-2 pt-[20px] pb-[30px]">
+        <div className="hidden w-full flex-col items-center gap-[6px] px-2 pt-[20px] pb-[30px] min-[851px]:flex">
           <p className="m-0 text-center font-inter text-[13px] font-normal leading-[16px] text-[#A5A5A5]">
             {previousVendsLabel}
           </p>

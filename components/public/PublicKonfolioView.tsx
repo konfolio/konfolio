@@ -28,6 +28,21 @@ function firstColor(...values: any[]) {
   return ""
 }
 
+function isColorDark(color: string) {
+  const c = safeStr(color).replace("#", "")
+
+  if (c.length !== 6) return false
+
+  const r = parseInt(c.substring(0, 2), 16)
+  const g = parseInt(c.substring(2, 4), 16)
+  const b = parseInt(c.substring(4, 6), 16)
+
+  if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return false
+
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+  return luminance < 0.5
+}
+
 function toLinksValue(raw: any) {
   if (
     raw &&
@@ -45,16 +60,6 @@ function toLinksValue(raw: any) {
   )
 
   return { activeKeys, linksByKey }
-}
-
-function toPrevVendsValue(content: any): string {
-  const v = safeStr(content?.previousVendsValue)
-  if (v) return v
-
-  const arr = safeArr(content?.previousVends)
-  if (arr.length === 0) return "Vended Event 2026"
-
-  return arr.slice(0, 4).join("|")
 }
 
 export default function PublicKonfolioView({
@@ -88,6 +93,8 @@ export default function PublicKonfolioView({
       content?.profile?.background,
     ) || "#F7F7F7"
 
+  const backgroundIsDark = isColorDark(backgroundColor)
+
   const profileImageUrl = safeStr(content?.profileImageUrl)
   const displayName = safeStr(content?.displayName) || "Your Name"
   const locationText = safeStr(content?.locationText) || "City, State"
@@ -115,8 +122,6 @@ export default function PublicKonfolioView({
     () => safeArr(content?.backgroundSwatches),
     [content],
   )
-
-  const prevVendsValue = React.useMemo(() => toPrevVendsValue(content), [content])
 
   const backHref = "/"
 
@@ -149,7 +154,11 @@ export default function PublicKonfolioView({
                 publishLabel=""
               />
 
-              <EditSquareImageGrid editable={false} images={images} />
+              <EditSquareImageGrid
+                editable={false}
+                images={images}
+                backgroundIsDark={backgroundIsDark}
+              />
             </div>
 
             <div className="hidden w-full flex-row items-start justify-start gap-[20px] min-[701px]:flex">
@@ -173,7 +182,11 @@ export default function PublicKonfolioView({
                 publishLabel=""
               />
 
-              <EditSquareImageGrid editable={false} images={images} />
+              <EditSquareImageGrid
+                editable={false}
+                images={images}
+                backgroundIsDark={backgroundIsDark}
+              />
             </div>
           </div>
         </div>
@@ -183,7 +196,7 @@ export default function PublicKonfolioView({
 
   return (
     <main className="w-full min-h-screen overflow-x-hidden" style={{ backgroundColor }}>
-      <div className="hidden w-full flex-col max-[900px]:flex">
+      <div className="hidden w-full flex-col max-[700px]:flex">
         <EditPortraitProfile
           editable={false}
           mobileCollapsed={true}
@@ -201,6 +214,7 @@ export default function PublicKonfolioView({
           email={email}
           linksValue={linksValue}
           merchTags={merchTags}
+          previousVends={previousVendsArr}
           showAddLink={false}
           publishLabel=""
         />
@@ -209,11 +223,12 @@ export default function PublicKonfolioView({
           editable={false}
           images={images}
           previousVendsLabel="Previous Vends"
-          previousVendsValue={prevVendsValue}
+          previousVends={previousVendsArr}
+          backgroundIsDark={backgroundIsDark}
         />
       </div>
 
-      <div className="hidden w-full flex-col min-[901px]:flex">
+      <div className="hidden w-full flex-col min-[701px]:flex">
         <EditPortraitProfile
           editable={false}
           backHref={backHref}
@@ -228,6 +243,7 @@ export default function PublicKonfolioView({
           email={email}
           linksValue={linksValue}
           merchTags={merchTags}
+          previousVends={previousVendsArr}
           showAddLink={false}
           publishLabel=""
         />
@@ -238,7 +254,8 @@ export default function PublicKonfolioView({
               editable={false}
               images={images}
               previousVendsLabel="Previous Vends"
-              previousVendsValue={prevVendsValue}
+              previousVends={previousVendsArr}
+              backgroundIsDark={backgroundIsDark}
             />
           </div>
         </div>
