@@ -312,12 +312,27 @@ function FieldRenderer({
     );
   }
 
+  if (field.type === "date") {
+    return (
+      <div className="flex flex-col gap-[8px]">
+        {label}
+        <input
+          type="date"
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+          className="h-[48px] rounded-[10px] border border-[#E9E9E9] bg-white px-[14px] text-[14px] text-[#262626] outline-none focus:border-[#C0BDB4]"
+        />
+      </div>
+    );
+  }
+
   return null;
 }
 
 export default function ApplyFormPage() {
   const { slug } = useParams();
   const [form, setForm] = useState<Form | null>(null);
+  const [alreadySubmitted, setAlreadySubmitted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -370,8 +385,13 @@ export default function ApplyFormPage() {
         setSubmitted(true);
       } else {
         const json = await res.json();
-        console.error("Submit failed:", json.error);
-        alert("Something went wrong. Please try again.");
+        if (res.status === 409 || json.error === "already_submitted") {
+          setAlreadySubmitted(true);
+        } else if (res.status === 403) {
+          alert(json.error);
+        } else {
+          alert("Something went wrong. Please try again.");
+        }
       }
     } catch (err) {
       console.error("Submit error:", err);
@@ -425,14 +445,136 @@ export default function ApplyFormPage() {
       <main className="min-h-screen bg-[#F7F7F7]">
         <Navbar />
         <div className="w-full flex justify-center px-[16px] sm:px-[40px] py-[40px]">
-          <div className="w-full max-w-[720px]">
+          <div className="w-full max-w-[720px] flex flex-col gap-[24px]">
             <FormHeader form={form} />
-            <StatusBanner
-              formTitle={form.title}
-              organizerName={organizerName}
-              organizerLinks={organizerLinks}
-              closed={false}
-            />
+            <div className="w-full bg-white rounded-[16px] border-[0.5px] border-[#E9E9E9] px-[32px] py-[32px] flex flex-col gap-[8px]">
+              <p className="text-[16px] font-medium text-[#262626]">
+                Application Submitted!
+              </p>
+              <p className="text-[14px] text-[#A5A5A5]">
+                Your application has been successfully submitted to{" "}
+                <span className="text-[#262626] font-medium">{form.title}</span>
+                . The organizer will review it and get back to you.
+              </p>
+              {(organizerName || Object.keys(organizerLinks).length > 0) && (
+                <>
+                  <p className="text-[13px] text-[#A5A5A5] mt-[8px]">
+                    Stay updated with {organizerName || "the organizer"} here:
+                  </p>
+                  <div className="flex items-center gap-[14px] mt-[4px]">
+                    {organizerLinks.website && (
+                      <Link
+                        href={organizerLinks.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#262626] hover:opacity-70"
+                      >
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 18 18"
+                          fill="none"
+                        >
+                          <rect
+                            x="1.5"
+                            y="1.5"
+                            width="15"
+                            height="15"
+                            rx="2"
+                            stroke="currentColor"
+                            strokeWidth="1.3"
+                          />
+                          <path
+                            d="M1.5 9h15M9 1.5C9 1.5 6.5 4.5 6.5 9s2.5 7.5 2.5 7.5M9 1.5C9 1.5 11.5 4.5 11.5 9S9 16.5 9 16.5"
+                            stroke="currentColor"
+                            strokeWidth="1.3"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </Link>
+                    )}
+                    {organizerLinks.instagram && (
+                      <Link
+                        href={organizerLinks.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#262626] hover:opacity-70"
+                      >
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 18 18"
+                          fill="none"
+                        >
+                          <rect
+                            x="1.5"
+                            y="1.5"
+                            width="15"
+                            height="15"
+                            rx="4"
+                            stroke="currentColor"
+                            strokeWidth="1.3"
+                          />
+                          <circle
+                            cx="9"
+                            cy="9"
+                            r="3"
+                            stroke="currentColor"
+                            strokeWidth="1.3"
+                          />
+                          <circle cx="13" cy="5" r="0.75" fill="currentColor" />
+                        </svg>
+                      </Link>
+                    )}
+                    {organizerLinks.x && (
+                      <Link
+                        href={organizerLinks.x}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#262626] hover:opacity-70"
+                      >
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 18 18"
+                          fill="none"
+                        >
+                          <path
+                            d="M2 2l14 14M16 2L2 16"
+                            stroke="currentColor"
+                            strokeWidth="1.3"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </Link>
+                    )}
+                    {organizerLinks.facebook && (
+                      <Link
+                        href={organizerLinks.facebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#262626] hover:opacity-70"
+                      >
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 18 18"
+                          fill="none"
+                        >
+                          <path
+                            d="M12 2h-2a3 3 0 0 0-3 3v2H5v3h2v6h3v-6h2l1-3h-3V5a1 1 0 0 1 1-1h2V2Z"
+                            stroke="currentColor"
+                            strokeWidth="1.3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </Link>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
         <Footer />
@@ -477,6 +619,44 @@ export default function ApplyFormPage() {
           </button>
         </div>
       </div>
+      {alreadySubmitted && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4">
+          <div className="bg-white rounded-[20px] w-full max-w-[420px] px-[32px] py-[40px] flex flex-col items-center gap-[12px] relative">
+            <button
+              onClick={() => setAlreadySubmitted(false)}
+              className="absolute top-[16px] right-[16px] text-[#A5A5A5] hover:text-[#262626]"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M3 3l10 10M13 3L3 13"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+
+            <p className="text-[12px] text-[#A5A5A5] self-start">
+              Already Submitted
+            </p>
+
+            <h2 className="text-[18px] font-medium text-[#262626] text-center mt-[8px]">
+              You already submitted to this form.
+            </h2>
+            <p className="text-[13px] text-[#A5A5A5] text-center">
+              If this is incorrect, check with event organizer or contact
+              Konfolio team.
+            </p>
+
+            <button
+              onClick={() => setAlreadySubmitted(false)}
+              className="mt-[8px] h-[44px] px-[32px] rounded-full border border-[#262626] text-[14px] text-[#262626] hover:opacity-70"
+            >
+              Return
+            </button>
+          </div>
+        </div>
+      )}
       <Footer />
     </main>
   );
