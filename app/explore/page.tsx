@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 import SearchBar from "@/components/explore/SearchBar";
 import ExploreGrid from "@/components/explore/ExploreGrid";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-//test
+
 export const dynamic = "force-dynamic";
 
 type ExploreItem = {
@@ -12,6 +12,8 @@ type ExploreItem = {
   updated_at: string | null;
   thumbnailUrl: string;
   businessName: string;
+  portfolioName: string;
+  portfolioSlug: string | null;
   displayName: string;
   locationText: string;
   profileImageUrl: string;
@@ -34,7 +36,7 @@ export default async function ExplorePage({
 
   const { data: konfolios, error: konfoliosError } = await supabase
     .from("konfolios")
-    .select("id, user_id, template, updated_at")
+    .select("id, user_id, template, updated_at, portfolio_name, portfolio_slug")
     .eq("status", "published")
     .eq("explore_enabled", true)
     .order("updated_at", { ascending: false });
@@ -86,6 +88,8 @@ export default async function ExplorePage({
       updated_at: row.updated_at ?? null,
       thumbnailUrl,
       businessName: profile.business_name ?? "",
+      portfolioName: row.portfolio_name ?? "",
+      portfolioSlug: row.portfolio_slug ?? null,
       displayName: profile.display_name ?? "",
       locationText: profile.location ?? "",
       profileImageUrl: profile.profile_image_url ?? "",
@@ -96,11 +100,13 @@ export default async function ExplorePage({
   if (searchQuery) {
     items = items.filter((item) => {
       const business = item.businessName.toLowerCase();
+      const portfolio = item.portfolioName.toLowerCase();
       const display = item.displayName.toLowerCase();
       const location = item.locationText.toLowerCase();
 
       return (
         business.includes(searchQuery) ||
+        portfolio.includes(searchQuery) ||
         display.includes(searchQuery) ||
         location.includes(searchQuery)
       );
@@ -133,11 +139,20 @@ export default async function ExplorePage({
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F7F7] flex flex-col">
+    <div className="flex min-h-screen flex-col bg-[#F7F7F7]">
       <Navbar />
 
-      <main className="flex flex-col items-center gap-[20px] sm:gap-[30px] py-[20px] sm:py-[30px] px-[16px] sm:px-10 lg:px-16 xl:px-24 2xl:px-[150px] flex-1">
-        <div className="w-full max-w-[1512px] flex flex-col items-center gap-[20px] sm:gap-[30px]">
+      <main
+        className="
+          flex flex-1 flex-col items-center gap-[30px]
+          px-[25px] py-[30px]
+          sm:px-10
+          lg:px-16
+          xl:px-24
+          2xl:px-[150px]
+        "
+      >
+        <div className="flex w-full max-w-[1512px] flex-col items-center gap-[30px]">
           <SearchBar value={q} selectedFilters={selectedFilters} />
           <div className="w-full bg-transparent">
             <ExploreGrid items={items} />

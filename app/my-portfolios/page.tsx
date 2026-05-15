@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 
 import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
 import DashboardProfileHeader from "@/components/my-portfolios/dashboard/DashboardProfileHeader"
 import DashPortfolioEmpty from "@/components/my-portfolios/dashboard/DashPortfolioEmpty"
 import DashPortfolioGrid, {
@@ -218,8 +219,8 @@ export default function MyPortfoliosPage() {
         konfolioCount={publishedCount}
       />
 
-      <section className="w-full flex justify-center px-6">
-        <div className="w-full max-w-[1212px] py-[60px]">
+      <section className="flex w-full justify-center px-4 sm:px-6">
+        <div className="w-full max-w-[1212px] py-[35px] sm:py-[60px]">
           {loading ? null : hasPublished ? (
             <DashPortfolioGrid
               items={items}
@@ -275,6 +276,7 @@ export default function MyPortfoliosPage() {
           setCreatePopoverOpen(false)
         }}
       />
+      <Footer />
     </main>
   )
 }

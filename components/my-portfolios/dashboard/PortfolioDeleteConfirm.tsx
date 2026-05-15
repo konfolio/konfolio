@@ -89,7 +89,7 @@ export default function PortfolioDeleteConfirm({
         role="dialog"
         aria-modal="true"
         className={[
-          "relative flex h-[310px] w-[745px] flex-col items-center justify-center gap-[50px]",
+          "relative flex h-[310px] w-[calc(100%-32px)] max-w-[745px] flex-col items-center justify-center gap-[50px]",
           "rounded-[15px] bg-white px-[25px] py-[50px]",
           "shadow-[5px_5px_25px_rgba(0,0,0,0.1)]",
           "transition-[opacity,transform] duration-[160ms] ease-out",

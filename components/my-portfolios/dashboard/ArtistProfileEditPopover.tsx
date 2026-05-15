@@ -56,12 +56,9 @@ type Props = {
   open: boolean
   onClose: () => void
   data?: ArtistProfilePopupData
-
   onSaved?: (patch: SavedProfilePatch) => void
-
   onToggleExploreTag?: (label: string) => void
   onAddSalesPermit?: () => void
-
   onSupport?: () => void
   onReportIssue?: () => void
   onSignOut?: () => void
@@ -277,37 +274,27 @@ export default function ArtistProfileEditPopover({
 
   const [businessNameText, setBusinessNameText] = useState(businessName)
   const [locationText, setLocationText] = useState(locationTextFromProps)
-
   const [firstNameText, setFirstNameText] = useState(firstName)
   const [lastNameText, setLastNameText] = useState(lastName)
   const [preferredNameText, setPreferredNameText] = useState(preferredName)
-
   const [emailText, setEmailText] = useState("myemailaddress@konfolio.com")
-
   const [memberSince, setMemberSince] = useState("Member since —")
-
   const [previousVends, setPreviousVends] = useState<string[]>(previousVendsFromProps)
   const [merchTags, setMerchTags] = useState<string[]>(merchTagsFromProps)
-
   const [salesPermitYes, setSalesPermitYes] = useState(false)
   const [linksMap, setLinksMap] = useState<LinksMap>({})
-
   const [exploreTags, setExploreTags] = useState<{ label: string; checked: boolean }[]>(
     exploreTagsProp ?? defaultExploreTags(),
   )
-
   const [linkValue, setLinkValue] = useState("")
   const [linkFocused, setLinkFocused] = useState(false)
-
   const [eventValue, setEventValue] = useState("")
   const [eventFocused, setEventFocused] = useState(false)
-
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState("")
   const [isDirty, setIsDirty] = useState(false)
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle")
 
-  // Avatar (deferred upload until Save)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [pendingAvatarFile, setPendingAvatarFile] = useState<File | null>(null)
   const [pendingAvatarPreviewUrl, setPendingAvatarPreviewUrl] = useState<string>("")
@@ -337,13 +324,9 @@ export default function ArtistProfileEditPopover({
   useEffect(() => setFirstNameText(firstName), [firstName])
   useEffect(() => setLastNameText(lastName), [lastName])
   useEffect(() => setPreferredNameText(preferredName), [preferredName])
-
   useEffect(() => setPreviousVends(previousVendsFromProps), [previousVendsFromProps])
   useEffect(() => setMerchTags(merchTagsFromProps), [merchTagsFromProps])
-
-  useEffect(() => {
-    setProfileImageUrlText(profileImageUrl || "")
-  }, [profileImageUrl])
+  useEffect(() => setProfileImageUrlText(profileImageUrl || ""), [profileImageUrl])
 
   useEffect(() => {
     return () => {
@@ -364,10 +347,8 @@ export default function ArtistProfileEditPopover({
     setLinkFocused(false)
     setEventValue("")
     setEventFocused(false)
-
     setExploreTags(exploreTagsProp ?? defaultExploreTags())
     setMerchTags(merchTagsFromProps)
-
     setIsSaving(false)
     setSaveError("")
     setIsDirty(false)
@@ -431,11 +412,7 @@ export default function ArtistProfileEditPopover({
       }
 
       const dbAvatar = String(row.profile_image_url ?? "").trim()
-      if (dbAvatar) {
-        setProfileImageUrlText(dbAvatar)
-      } else {
-        setProfileImageUrlText(profileImageUrl || "")
-      }
+      setProfileImageUrlText(dbAvatar || profileImageUrl || "")
 
       const optionalRes = await supabase
         .from("profiles")
@@ -677,10 +654,8 @@ export default function ArtistProfileEditPopover({
         setPendingAvatarPreviewUrl("")
       }
 
-      const finalAvatarForInit = String(newProfileImageUrl ?? "").trim()
-
       initialRef.current = {
-        profileImageUrlText: finalAvatarForInit,
+        profileImageUrlText: String(newProfileImageUrl ?? "").trim(),
         businessNameText: String(payload.business_name ?? "").trim(),
         firstNameText: String(payload.first_name ?? "").trim(),
         lastNameText: String(payload.last_name ?? "").trim(),
@@ -719,39 +694,57 @@ export default function ArtistProfileEditPopover({
 
   const showChecker = !avatarSrc
 
+  const saveButtonLabel =
+    saveStatus === "saving" ? "Saving..." : saveStatus === "saved" ? "Saved!" : "Save"
+
+  const saveButtonClasses = [
+    "group flex items-center justify-center gap-[7px]",
+    "h-[39px] min-w-[150px]",
+    "px-[40px] py-[13px]",
+    "rounded-[100px]",
+    "text-[14px] leading-[140%] font-normal",
+    "transition-all duration-300 ease-out",
+    "whitespace-nowrap",
+    saveStatus === "saved"
+      ? "bg-[#4CAF50] text-white opacity-100"
+      : "bg-[#262626] text-white hover:bg-[#262626CC] active:bg-[#262626B2]",
+    !isDirty && saveStatus !== "saved" ? "opacity-50 pointer-events-none" : "",
+  ].join(" ")
+
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center px-6">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto overflow-x-hidden px-4 py-6 sm:px-6">
       <button aria-label="Close" onClick={onClose} className="absolute inset-0 bg-black/30" />
 
       <div
         ref={modalRef}
-        className={[
-          "relative bg-white rounded-[15px]",
-          "shadow-[5px_5px_25px_rgba(0,0,0,0.10)]",
-          "w-[995px]",
-          "max-h-[calc(100vh-64px)]",
-          "overflow-hidden",
-        ].join(" ")}
-        role="dialog"
-        aria-modal="true"
+        className="
+          relative z-[1]
+          w-full
+          max-w-[995px]
+          max-h-[calc(100vh-48px)]
+          overflow-hidden
+          rounded-[15px]
+          bg-white
+          shadow-[5px_5px_25px_rgba(0,0,0,0.10)]
+        "
       >
         <button
           type="button"
           aria-label="Close popup"
           onClick={onClose}
-          className="absolute right-[20px] top-[20px] w-[26px] h-[26px] flex items-center justify-center z-[5]"
+          className="absolute right-[18px] top-[18px] z-[5] flex h-[26px] w-[26px] items-center justify-center"
         >
-          <DeleteIcon className="w-[26px] h-[26px]" />
+          <DeleteIcon className="h-[26px] w-[26px]" />
         </button>
 
-        <div className="relative max-h-[calc(100vh-64px)] overflow-y-auto px-[130px]">
+        <div className="max-h-[calc(100vh-48px)] overflow-y-auto overflow-x-hidden px-5 pb-[92px] pt-0 sm:px-8 md:px-[80px] md:pb-0 lg:px-[130px]">
           <div className="sticky top-0 z-[2] bg-white">
-            <div className="flex flex-row items-center py-[25px]">
-              <p className="flex-1 text-[12px] leading-[130%] text-[#A5A5A5] whitespace-nowrap">
+            <div className="flex flex-col gap-[12px] py-[25px] pr-[44px] md:flex-row md:items-center md:pr-0">
+              <p className="flex-1 text-[12px] leading-[130%] text-[#A5A5A5] md:whitespace-nowrap">
                 {noticeText}
               </p>
 
-              <div className="flex items-center gap-[12px]">
+              <div className="hidden items-center gap-[12px] md:flex">
                 {saveError ? (
                   <p className="m-0 text-[12px] leading-[130%] text-[#FF4603] whitespace-nowrap">
                     {saveError}
@@ -762,35 +755,17 @@ export default function ArtistProfileEditPopover({
                   type="button"
                   onClick={handleSave}
                   disabled={!isDirty || isSaving}
-                  className={[
-                    "group flex items-center justify-center gap-[7px]",
-                    "h-[39px] min-w-[150px]",
-                    "px-[40px] py-[13px]",
-                    "rounded-[100px]",
-                    "text-[14px] leading-[140%] font-normal",
-                    "transition-all duration-300 ease-out",
-                    "whitespace-nowrap",
-                    saveStatus === "saved"
-                      ? "bg-[#4CAF50] text-white opacity-100"
-                      : "bg-[#262626] text-white hover:bg-[#262626CC] active:bg-[#262626B2]",
-                    !isDirty && saveStatus !== "saved" ? "opacity-50 pointer-events-none" : "",
-                  ].join(" ")}
+                  className={saveButtonClasses}
                   aria-label="Save changes"
                 >
-                  <span>
-                    {saveStatus === "saving"
-                      ? "Saving..."
-                      : saveStatus === "saved"
-                        ? "Saved!"
-                        : "Save"}
-                  </span>
+                  <span>{saveButtonLabel}</span>
                 </button>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-row items-start gap-[29px] py-[20px]">
-            <div className="w-[80px] h-[80px] shrink-0 relative">
+          <div className="flex flex-col items-center gap-[24px] py-[20px] md:flex-row md:items-start md:gap-[29px]">
+            <div className="relative h-[80px] w-[80px] shrink-0">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -802,16 +777,12 @@ export default function ArtistProfileEditPopover({
               <button
                 type="button"
                 onClick={onPickAvatarClick}
-                className={[
-                  "group relative w-[80px] h-[80px]",
-                  "rounded-[71.4286px] overflow-hidden bg-[#F7F7F7]",
-                  "cursor-pointer",
-                ].join(" ")}
+                className="group relative h-[80px] w-[80px] cursor-pointer overflow-hidden rounded-[71.4286px] bg-[#F7F7F7]"
                 aria-label="Choose profile photo"
               >
                 {!showChecker ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={avatarSrc} alt="Profile" className="w-full h-full object-cover" />
+                  <img src={avatarSrc} alt="Profile" className="h-full w-full object-cover" />
                 ) : (
                   <div
                     className="absolute inset-0"
@@ -824,25 +795,16 @@ export default function ArtistProfileEditPopover({
                   />
                 )}
 
-                <span
-                  className={[
-                    "absolute bottom-[6px] right-[6px]",
-                    "w-[25px] h-[25px] p-[3px]",
-                    "flex items-center justify-center",
-                    "bg-white rounded-[15.5px]",
-                    "shadow-[0_0_4px_rgba(0,0,0,0.1)]",
-                    "opacity-0 group-hover:opacity-100 transition-opacity",
-                  ].join(" ")}
-                >
-                  <PencilIcon className="w-[18px] h-[18px]" />
+                <span className="absolute bottom-[6px] right-[6px] flex h-[25px] w-[25px] items-center justify-center rounded-[15.5px] bg-white p-[3px] opacity-0 shadow-[0_0_4px_rgba(0,0,0,0.1)] transition-opacity group-hover:opacity-100">
+                  <PencilIcon className="h-[18px] w-[18px]" />
                 </span>
               </button>
             </div>
 
-            <div className="w-[526px] flex flex-col gap-[50px]">
-              <div className="w-[300px] flex flex-col gap-[15px]">
-                <div className="flex flex-row items-center py-[5px] gap-[10px]">
-                  <div className="flex-1">
+            <div className="flex w-full max-w-[526px] flex-col gap-[44px] md:gap-[50px]">
+              <div className="flex w-full max-w-[300px] flex-col gap-[15px]">
+                <div className="flex flex-row items-center gap-[10px] py-[5px]">
+                  <div className="min-w-0 flex-1">
                     <EditableInline
                       value={businessNameText}
                       placeholder="Business Name"
@@ -853,12 +815,12 @@ export default function ArtistProfileEditPopover({
                   </div>
                 </div>
 
-                <div className="flex flex-row items-center gap-[5px] -mt-[10px]">
-                  <span className="w-[12px] h-[12px] flex items-center justify-center">
-                    <LocationIcon className="w-[12px] h-[12px] text-[#A5A5A5]" />
+                <div className="-mt-[10px] flex flex-row items-center gap-[5px]">
+                  <span className="flex h-[12px] w-[12px] items-center justify-center">
+                    <LocationIcon className="h-[12px] w-[12px] text-[#A5A5A5]" />
                   </span>
 
-                  <div className="flex-1 min-w-0">
+                  <div className="min-w-0 flex-1">
                     <EditableInline
                       value={locationText}
                       placeholder="City, State"
@@ -870,9 +832,9 @@ export default function ArtistProfileEditPopover({
                 </div>
               </div>
 
-              <div className="flex flex-col gap-[10px] w-full">
-                <div className="flex flex-wrap items-start content-start gap-x-[15px] gap-y-[10px]">
-                  <div className="w-[200px]">
+              <div className="flex w-full flex-col gap-[10px]">
+                <div className="flex flex-wrap content-start items-start gap-x-[15px] gap-y-[10px]">
+                  <div className="w-full sm:w-[200px]">
                     <EditableInline
                       value={firstNameText}
                       placeholder="First"
@@ -882,7 +844,7 @@ export default function ArtistProfileEditPopover({
                     />
                   </div>
 
-                  <div className="w-[200px]">
+                  <div className="w-full sm:w-[200px]">
                     <EditableInline
                       value={lastNameText}
                       placeholder="Last"
@@ -892,7 +854,7 @@ export default function ArtistProfileEditPopover({
                     />
                   </div>
 
-                  <div className="w-[200px]">
+                  <div className="w-full sm:w-[200px]">
                     <EditableInline
                       value={preferredNameText}
                       placeholder="Preferred Name"
@@ -907,7 +869,7 @@ export default function ArtistProfileEditPopover({
                   “First Last” will be shown on your portfolio.
                 </p>
 
-                <div className="w-full mt-[50px]">
+                <div className="mt-[40px] w-full md:mt-[50px]">
                   <HoverOnlyInline
                     value={emailText || "myemailaddress@konfolio.com"}
                     textClassName="text-[#262626]"
@@ -923,18 +885,18 @@ export default function ArtistProfileEditPopover({
               <div className="flex flex-col items-start gap-[15px]">
                 <p className="w-full text-[15px] leading-[150%] text-[#A5A5A5]">Explore Tags</p>
 
-                <div className="flex flex-wrap items-start content-start gap-x-[30px] gap-y-[15px] w-full">
+                <div className="flex w-full flex-wrap content-start items-start gap-x-[30px] gap-y-[15px]">
                   {exploreTags.map((t) => (
                     <button
                       key={t.label}
                       type="button"
                       onClick={() => toggleCollab(t.label as CollabOption)}
-                      className="flex items-center gap-[10px] h-[13px] p-0 bg-transparent border-0 cursor-pointer"
+                      className="flex h-[13px] cursor-pointer items-center gap-[10px] border-0 bg-transparent p-0"
                     >
                       <span
                         className={[
-                          "relative w-[13px] h-[13px] rounded-[3.25px] flex-shrink-0",
-                          t.checked ? "bg-[#262626]" : "bg-white border border-[#262626]",
+                          "relative h-[13px] w-[13px] flex-shrink-0 rounded-[3.25px]",
+                          t.checked ? "bg-[#262626]" : "border border-[#262626] bg-white",
                         ].join(" ")}
                         aria-hidden="true"
                       >
@@ -953,7 +915,7 @@ export default function ArtistProfileEditPopover({
                         )}
                       </span>
 
-                      <span className="text-[15px] leading-[150%] text-[#262626] text-center">
+                      <span className="text-center text-[15px] leading-[150%] text-[#262626]">
                         {t.label}
                       </span>
                     </button>
@@ -961,15 +923,15 @@ export default function ArtistProfileEditPopover({
                 </div>
               </div>
 
-              <div className="flex flex-col items-start gap-[15px] w-full">
+              <div className="flex w-full flex-col items-start gap-[15px]">
                 <p className="w-full text-[15px] leading-[150%] text-[#A5A5A5]">Sales Permit</p>
 
                 {salesPermitYes ? (
                   <div className="flex flex-row items-center gap-[10px]">
-                    <div className="relative group">
+                    <div className="group relative">
                       <Tag
                         label={locationText}
-                        className="h-[25px] px-[20px] py-0 text-[15px] leading-[150%] border-[#A5A5A5] bg-white/10"
+                        className="h-[25px] bg-white/10 px-[20px] py-0 text-[15px] leading-[150%] border-[#A5A5A5]"
                       />
 
                       <button
@@ -980,21 +942,9 @@ export default function ArtistProfileEditPopover({
                           e.stopPropagation()
                           removeSalesPermit()
                         }}
-                        className="
-                          absolute
-                          right-[-5.25px] top-1/2 -translate-y-1/2
-                          w-[17.25px] h-[17.25px]
-                          flex items-center justify-center
-                          bg-[#A5A5A5]
-                          rounded-full
-                          opacity-0 transition-opacity
-                          group-hover:opacity-100
-                          z-10
-                          [&_path]:stroke-[#FFFFFF]
-                          [&_path]:fill-[#FFFFFF]
-                        "
+                        className="absolute right-[-5.25px] top-1/2 z-10 flex h-[17.25px] w-[17.25px] -translate-y-1/2 items-center justify-center rounded-full bg-[#A5A5A5] opacity-0 transition-opacity group-hover:opacity-100 [&_path]:fill-[#FFFFFF] [&_path]:stroke-[#FFFFFF]"
                       >
-                        <DeleteIcon className="w-[13.42px] h-[13.42px]" />
+                        <DeleteIcon className="h-[13.42px] w-[13.42px]" />
                       </button>
                     </div>
 
@@ -1002,9 +952,9 @@ export default function ArtistProfileEditPopover({
                       type="button"
                       aria-label="Add sales permit"
                       onClick={onAddSalesPermit}
-                      className="w-[16px] h-[16px] flex items-center justify-center"
+                      className="flex h-[16px] w-[16px] items-center justify-center"
                     >
-                      <PlusIcon className="w-[16px] h-[16px] text-[#A5A5A5]" />
+                      <PlusIcon className="h-[16px] w-[16px] text-[#A5A5A5]" />
                     </button>
                   </div>
                 ) : (
@@ -1012,10 +962,10 @@ export default function ArtistProfileEditPopover({
                 )}
               </div>
 
-              <div className="flex flex-col items-start gap-[15px] w-full">
+              <div className="flex w-full flex-col items-start gap-[15px]">
                 <p className="w-full text-[15px] leading-[150%] text-[#A5A5A5]">My Links</p>
 
-                <div className="flex flex-col gap-[10px] w-full">
+                <div className="flex w-full flex-col gap-[10px]">
                   {SOCIAL_ROWS.map((r) => {
                     const href = linksMap[r.key]
                     if (!isNonEmptyString(href)) return null
@@ -1044,10 +994,10 @@ export default function ArtistProfileEditPopover({
                   })}
 
                   {canAddLink ? (
-                    <div className="flex items-center gap-[10px] w-full">
-                      <LinkIcon className="w-[16px] h-[16px] text-[#D3D3D3] shrink-0" />
+                    <div className="flex w-full items-center gap-[10px]">
+                      <LinkIcon className="h-[16px] w-[16px] shrink-0 text-[#D3D3D3]" />
 
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         <input
                           value={linkValue}
                           onChange={(e) => setLinkValue(e.target.value)}
@@ -1056,7 +1006,6 @@ export default function ArtistProfileEditPopover({
                           onKeyDown={(e) => {
                             if (e.key !== "Enter") return
                             e.preventDefault()
-
                             if (countLinks(linksMap) >= 5) return
 
                             const raw = linkValue.trim()
@@ -1067,10 +1016,8 @@ export default function ArtistProfileEditPopover({
 
                             setLinksMap((prev) => {
                               if (countLinks(prev) >= 5) return prev
-
                               const chosen = key ?? pickFallbackLinkKey(prev)
                               const next = { ...prev, [chosen]: url }
-
                               if (countLinks(next) > 5) return prev
                               return next
                             })
@@ -1080,11 +1027,9 @@ export default function ArtistProfileEditPopover({
                           }}
                           placeholder="Add Link"
                           className={[
-                            "w-full bg-transparent outline-none",
-                            "text-[15px] leading-[150%]",
+                            "w-full bg-transparent pb-[4px] text-[15px] leading-[150%] outline-none",
                             linkValue ? "text-[#262626]" : "text-[#D3D3D3]",
                             "placeholder:text-[#D3D3D3]",
-                            "pb-[4px]",
                           ].join(" ")}
                           aria-label="Add Link"
                         />
@@ -1101,7 +1046,7 @@ export default function ArtistProfileEditPopover({
                 </div>
               </div>
 
-              <div className="flex flex-col items-start gap-[15px] w-full">
+              <div className="flex w-full flex-col items-start gap-[15px]">
                 <p className="w-full text-[14px] leading-[130%] text-black">My Merchandise</p>
 
                 <div className="w-full">
@@ -1114,12 +1059,12 @@ export default function ArtistProfileEditPopover({
                 </div>
               </div>
 
-              <div className="flex flex-col items-start gap-[20px] w-full">
+              <div className="flex w-full flex-col items-start gap-[20px]">
                 <p className="w-full text-[15px] leading-[150%] text-[#A5A5A5]">Previous Vends</p>
 
-                <div className="flex flex-col items-start gap-[5px] w-full">
+                <div className="flex w-full flex-col items-start gap-[5px]">
                   {previousVends.length === 0 ? (
-                    <p className="m-0 w-full font-inter font-normal text-[15px] leading-[140%] text-[#A5A5A5]">
+                    <p className="m-0 w-full font-inter text-[15px] font-normal leading-[140%] text-[#A5A5A5]">
                       —
                     </p>
                   ) : (
@@ -1170,11 +1115,9 @@ export default function ArtistProfileEditPopover({
                         }}
                         placeholder="Add Event (Event 2026)"
                         className={[
-                          "w-full bg-transparent outline-none",
-                          "text-[15px] leading-[150%]",
+                          "w-full bg-transparent pb-[4px] text-[15px] leading-[150%] outline-none",
                           eventValue ? "text-[#262626]" : "text-[#D3D3D3]",
                           "placeholder:text-[#D3D3D3]",
-                          "pb-[4px]",
                         ].join(" ")}
                         aria-label="Add Event"
                       />
@@ -1192,7 +1135,7 @@ export default function ArtistProfileEditPopover({
 
               <p className="text-[15px] leading-[150%] text-[#A5A5A5]">{memberSince}</p>
 
-              <div className="flex flex-col items-start w-full">
+              <div className="flex w-full flex-col items-start">
                 <AsideRow label="Support" onClick={onSupport} />
                 <AsideRow label="Report issue" onClick={onReportIssue} />
                 <AsideRow
@@ -1205,9 +1148,27 @@ export default function ArtistProfileEditPopover({
                 />
               </div>
 
-              <p className="text-[15px] leading-[150%] text-[#A5A5A5] pb-[40px]">{betaText}</p>
+              <p className="pb-[40px] text-[15px] leading-[150%] text-[#A5A5A5]">{betaText}</p>
             </div>
           </div>
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0 z-[4] flex flex-col gap-[8px] border-t border-[#E9E9E9] bg-white px-5 py-4 md:hidden">
+          {saveError ? (
+            <p className="m-0 text-center text-[12px] leading-[130%] text-[#FF4603]">
+              {saveError}
+            </p>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={!isDirty || isSaving}
+            className={`${saveButtonClasses} w-full`}
+            aria-label="Save changes"
+          >
+            <span>{saveButtonLabel}</span>
+          </button>
         </div>
       </div>
     </div>
@@ -1242,12 +1203,12 @@ function EditableInline({
     <div className="group w-full">
       <div
         className={[
-          "flex items-center gap-[10px] w-full",
+          "flex w-full items-center gap-[10px]",
           editing ? "border-b border-[#D3D3D3] pb-[4px]" : "",
         ].join(" ")}
         onClick={() => setEditing(true)}
       >
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           {editing ? (
             <input
               ref={inputRef}
@@ -1261,10 +1222,7 @@ function EditableInline({
                 }
               }}
               placeholder={placeholder}
-              className={[
-                "w-full bg-transparent outline-none placeholder:text-[#D3D3D3]",
-                textClassName,
-              ].join(" ")}
+              className={["w-full bg-transparent outline-none placeholder:text-[#D3D3D3]", textClassName].join(" ")}
             />
           ) : (
             <span className={["block w-full min-w-0 truncate", textClassName].join(" ")}>
@@ -1273,24 +1231,24 @@ function EditableInline({
           )}
         </div>
 
-        <div className="flex items-center gap-[10px] opacity-0 group-hover:opacity-100 transition-opacity text-[#A5A5A5]">
+        <div className="flex items-center gap-[10px] text-[#A5A5A5] opacity-0 transition-opacity group-hover:opacity-100">
           <button
             type="button"
             aria-label="Edit"
-            className="w-[16px] h-[16px] flex items-center justify-center"
+            className="flex h-[16px] w-[16px] items-center justify-center"
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
               setEditing(true)
             }}
           >
-            <PencilIcon className="w-[16px] h-[16px]" />
+            <PencilIcon className="h-[16px] w-[16px]" />
           </button>
 
           <button
             type="button"
             aria-label="Clear"
-            className="w-[16px] h-[16px] flex items-center justify-center"
+            className="flex h-[16px] w-[16px] items-center justify-center"
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
@@ -1298,7 +1256,7 @@ function EditableInline({
               onTrash()
             }}
           >
-            <TrashIcon className="w-[16px] h-[16px]" />
+            <TrashIcon className="h-[16px] w-[16px]" />
           </button>
         </div>
       </div>
@@ -1315,11 +1273,11 @@ function HoverOnlyInline({
 }) {
   return (
     <div className="group w-full">
-      <div className="flex items-center gap-[10px] w-full">
-        <div className="flex-1 min-w-0">
+      <div className="flex w-full items-center gap-[10px]">
+        <div className="min-w-0 flex-1">
           <span
             className={[
-              "block w-full min-w-0 truncate text-[15px] leading-[150%] font-normal",
+              "block w-full min-w-0 truncate text-[15px] font-normal leading-[150%]",
               textClassName,
             ].join(" ")}
           >
@@ -1327,12 +1285,12 @@ function HoverOnlyInline({
           </span>
         </div>
 
-        <div className="flex items-center gap-[10px] opacity-0 group-hover:opacity-100 transition-opacity text-[#A5A5A5]">
-          <span className="w-[16px] h-[16px] flex items-center justify-center">
-            <PencilIcon className="w-[16px] h-[16px]" />
+        <div className="flex items-center gap-[10px] text-[#A5A5A5] opacity-0 transition-opacity group-hover:opacity-100">
+          <span className="flex h-[16px] w-[16px] items-center justify-center">
+            <PencilIcon className="h-[16px] w-[16px]" />
           </span>
-          <span className="w-[16px] h-[16px] flex items-center justify-center">
-            <TrashIcon className="w-[16px] h-[16px]" />
+          <span className="flex h-[16px] w-[16px] items-center justify-center">
+            <TrashIcon className="h-[16px] w-[16px]" />
           </span>
         </div>
       </div>
@@ -1368,17 +1326,17 @@ function EditableLinkRow({
   }, [editing])
 
   return (
-    <div className="flex flex-row items-center gap-[10px] h-[24px] w-full group">
-      <Icon className="w-[16px] h-[16px]" />
+    <div className="group flex h-[24px] w-full flex-row items-center gap-[10px]">
+      <Icon className="h-[16px] w-[16px] shrink-0" />
 
       <div
         className={[
-          "flex-1 min-w-0 flex items-center gap-[10px]",
+          "flex min-w-0 flex-1 items-center gap-[10px]",
           editing ? "border-b border-[#D3D3D3] pb-[4px]" : "",
         ].join(" ")}
         onClick={() => setEditing(true)}
       >
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           {editing ? (
             <input
               ref={inputRef}
@@ -1402,34 +1360,34 @@ function EditableLinkRow({
                   setEditing(false)
                 }
               }}
-              className="w-full bg-transparent outline-none text-[15px] leading-[150%] text-[#262626]"
+              className="w-full bg-transparent text-[15px] leading-[150%] text-[#262626] outline-none"
               aria-label="Edit link"
             />
           ) : (
-            <span className="block w-full min-w-0 text-[15px] leading-[150%] text-[#262626] truncate">
+            <span className="block w-full min-w-0 truncate text-[15px] leading-[150%] text-[#262626]">
               {value}
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-[10px] opacity-0 group-hover:opacity-100 transition-opacity text-[#A5A5A5]">
+        <div className="flex items-center gap-[10px] text-[#A5A5A5] opacity-0 transition-opacity group-hover:opacity-100">
           <button
             type="button"
             aria-label="Edit"
-            className="w-[16px] h-[16px] flex items-center justify-center"
+            className="flex h-[16px] w-[16px] items-center justify-center"
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
               setEditing(true)
             }}
           >
-            <PencilIcon className="w-[16px] h-[16px]" />
+            <PencilIcon className="h-[16px] w-[16px]" />
           </button>
 
           <button
             type="button"
             aria-label="Remove"
-            className="w-[16px] h-[16px] flex items-center justify-center"
+            className="flex h-[16px] w-[16px] items-center justify-center"
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
@@ -1437,7 +1395,7 @@ function EditableLinkRow({
               onTrash()
             }}
           >
-            <TrashIcon className="w-[16px] h-[16px]" />
+            <TrashIcon className="h-[16px] w-[16px]" />
           </button>
         </div>
       </div>
@@ -1470,15 +1428,15 @@ function EditableVendRow({
   const { name, year, tail } = splitYear(value)
 
   return (
-    <div className="w-full group">
+    <div className="group w-full">
       <div
         className={[
-          "flex items-center gap-[10px] w-full",
+          "flex w-full items-center gap-[10px]",
           editing ? "border-b border-[#D3D3D3] pb-[4px]" : "",
         ].join(" ")}
         onClick={() => setEditing(true)}
       >
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           {editing ? (
             <input
               ref={inputRef}
@@ -1499,38 +1457,36 @@ function EditableVendRow({
                   setEditing(false)
                 }
               }}
-              className="w-full bg-transparent outline-none font-inter font-normal text-[15px] leading-[140%] text-[#262626]"
+              className="w-full bg-transparent font-inter text-[15px] font-normal leading-[140%] text-[#262626] outline-none"
               aria-label="Edit event"
             />
           ) : (
-            <p className="m-0 font-inter font-normal text-[15px] leading-[140%] text-[#262626] truncate">
+            <p className="m-0 truncate font-inter text-[15px] font-normal leading-[140%] text-[#262626]">
               <span>{name}</span>
-              {year ? (
-                <span className="ml-[6px] italic text-[12px] text-[#A5A5A5]">{year}</span>
-              ) : null}
+              {year ? <span className="ml-[6px] text-[12px] italic text-[#A5A5A5]">{year}</span> : null}
               {tail ? <span className="ml-[6px]">{tail}</span> : null}
             </p>
           )}
         </div>
 
-        <div className="flex items-center gap-[10px] opacity-0 group-hover:opacity-100 transition-opacity text-[#A5A5A5]">
+        <div className="flex items-center gap-[10px] text-[#A5A5A5] opacity-0 transition-opacity group-hover:opacity-100">
           <button
             type="button"
             aria-label="Edit"
-            className="w-[16px] h-[16px] flex items-center justify-center"
+            className="flex h-[16px] w-[16px] items-center justify-center"
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
               setEditing(true)
             }}
           >
-            <PencilIcon className="w-[16px] h-[16px]" />
+            <PencilIcon className="h-[16px] w-[16px]" />
           </button>
 
           <button
             type="button"
             aria-label="Remove"
-            className="w-[16px] h-[16px] flex items-center justify-center"
+            className="flex h-[16px] w-[16px] items-center justify-center"
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
@@ -1538,7 +1494,7 @@ function EditableVendRow({
               onTrash()
             }}
           >
-            <TrashIcon className="w-[16px] h-[16px]" />
+            <TrashIcon className="h-[16px] w-[16px]" />
           </button>
         </div>
       </div>
@@ -1568,11 +1524,11 @@ function AsideRow({
     <button
       type="button"
       onClick={onClick}
-      className="w-[526px] h-[40px] px-[10px] flex items-center rounded-[10px] hover:bg-black/5"
+      className="flex h-[40px] w-full max-w-[526px] items-center rounded-[10px] px-[10px] hover:bg-black/5"
     >
       <span
         className={[
-          "text-[14px] leading-[130%] font-normal flex items-center",
+          "flex items-center text-[14px] font-normal leading-[130%]",
           danger ? "text-[#FF4603]" : "text-[#262626]",
         ].join(" ")}
       >

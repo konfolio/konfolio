@@ -34,7 +34,7 @@ type LinkOption = {
   key: LinkKey
   label: string
   rightText?: string
-  icon: React.ReactNode
+  Icon: React.ComponentType<{ className?: string }>
 }
 
 export type LinkPickerValue = {
@@ -51,6 +51,8 @@ type Props = {
 
   /** Max number of total active links (default 5) */
   maxLinks?: number
+
+  bannerIsDark?: boolean
 }
 
 const EMPTY: LinkPickerValue = {
@@ -72,6 +74,7 @@ export default function LinkPicker({
   value,
   onChange,
   maxLinks = 5,
+  bannerIsDark = false,
 }: Props) {
   // internal fallback (uncontrolled mode)
   const [internal, setInternal] = useState<LinkPickerValue>(EMPTY)
@@ -87,50 +90,54 @@ export default function LinkPicker({
 
   const wrapRef = useRef<HTMLDivElement | null>(null)
 
+  const selectedIconClass = bannerIsDark ? "text-white" : "text-[#262626]"
+  const activeIconClass = "text-[#A5A5A5]"
+  const addLinkIconClass = bannerIsDark ? "text-white" : "text-[#A5A5A5]"
+
   const linkOptions: LinkOption[] = useMemo(
     () => [
       {
         key: "website",
         label: "Main Website",
         rightText: "Recommended",
-        icon: <HomeIcon className="text-[#262626] w-[24px] h-[24px] cursor-pointer" />,
+        Icon: HomeIcon,
       },
       {
         key: "shop",
         label: "Main Shop",
         rightText: "Recommended",
-        icon: <ShopIcon className="text-[#262626] w-[24px] h-[24px] cursor-pointer" />,
+        Icon: ShopIcon,
       },
       {
         key: "instagram",
         label: "Instagram",
         rightText: "Recommended",
-        icon: <InstagramIcon className="text-[#262626] w-[24px] h-[24px] cursor-pointer" />,
+        Icon: InstagramIcon,
       },
       {
         key: "x",
         label: "X / Twitter",
-        icon: <XIcon className="text-[#262626] w-[24px] h-[24px] cursor-pointer" />,
+        Icon: XIcon,
       },
       {
         key: "facebook",
         label: "Facebook",
-        icon: <FacebookIcon className="text-[#262626] w-[24px] h-[24px] cursor-pointer" />,
+        Icon: FacebookIcon,
       },
       {
         key: "tumblr",
         label: "Tumblr",
-        icon: <TumblrIcon className="text-[#262626] w-[24px] h-[24px] cursor-pointer" />,
+        Icon: TumblrIcon,
       },
       {
         key: "pixiv",
         label: "Pixiv",
-        icon: <PixivIcon className="text-[#262626] w-[24px] h-[24px] cursor-pointer" />,
+        Icon: PixivIcon,
       },
       {
         key: "bluesky",
         label: "Bluesky",
-        icon: <BlueskyIcon className="text-[#262626] w-[24px] h-[24px] cursor-pointer" />,
+        Icon: BlueskyIcon,
       },
     ],
     []
@@ -205,19 +212,7 @@ export default function LinkPicker({
                 w-[18px] h-[18px]
                 flex items-center justify-center
                 transition-colors
-                ${
-                  isActive
-                    ? `
-                      text-[#A5A5A5]
-                      [&_path]:stroke-[#A5A5A5]
-                      [&_path]:fill-[#A5A5A5]
-                    `
-                    : `
-                      text-[#262626]
-                      [&_path]:stroke-[#262626]
-                      [&_path]:fill-[#262626]
-                    `
-                }
+                ${isActive ? activeIconClass : selectedIconClass}
               `}
               onClick={(e) => {
                 e.preventDefault()
@@ -226,7 +221,12 @@ export default function LinkPicker({
                 setActiveInputKey((cur) => (cur === k ? null : k))
               }}
             >
-              {opt.icon}
+              <opt.Icon
+                className={`
+                  w-[24px] h-[24px] cursor-pointer
+                  ${isActive ? activeIconClass : selectedIconClass}
+                `}
+              />
             </button>
 
             {/* remove icon on hover */}
@@ -268,7 +268,14 @@ export default function LinkPicker({
             setActiveInputKey(null)
             setLinksOpen((v) => !v)
           }}
-          className="w-[18px] h-[18px] flex items-center justify-center text-[#A5A5A5] cursor-pointer"
+          className={`
+            w-[18px] h-[18px]
+            flex items-center justify-center
+            cursor-pointer
+            ${addLinkIconClass}
+            [&_path]:!fill-none
+            [&_path]:!stroke-current
+          `}
           aria-label="Add link"
         >
           <LinkIcon className="w-[18px] h-[18px]" />

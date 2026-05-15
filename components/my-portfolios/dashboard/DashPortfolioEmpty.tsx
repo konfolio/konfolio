@@ -19,8 +19,10 @@ export default function DashPortfolioEmpty({ className = "", onClick }: Props) {
         p-[12.7837px]
         gap-[15.98px]
 
-        w-[390px]
-        h-[380px]
+        w-full
+        max-w-[390px]
+        min-h-[320px]
+        sm:h-[380px]
 
         bg-white
         border border-[rgba(165,165,165,0.3)]

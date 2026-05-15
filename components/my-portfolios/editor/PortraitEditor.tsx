@@ -1,3 +1,4 @@
+// components/my-portfolios/portrait/PortraitEditor.tsx
 "use client"
 
 import { useCallback, useEffect, useMemo, useState } from "react"
@@ -31,6 +32,18 @@ function slugify(input: string): string {
 
 function cleanString(x: any): string {
   return String(x ?? "").trim()
+}
+
+function isDarkHexColor(hex: string) {
+  const cleaned = cleanString(hex).replace("#", "")
+  if (!/^[0-9A-Fa-f]{6}$/.test(cleaned)) return false
+
+  const r = parseInt(cleaned.slice(0, 2), 16)
+  const g = parseInt(cleaned.slice(2, 4), 16)
+  const b = parseInt(cleaned.slice(4, 6), 16)
+
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000
+  return brightness < 150
 }
 
 function isMeaningfulText(x: any): boolean {
@@ -107,7 +120,8 @@ function hasAnyBusinessLink(links: any): boolean {
   if (!links) return false
 
   const activeKeys = Array.isArray(links?.activeKeys) ? links.activeKeys : []
-  const linksByKey = links?.linksByKey && typeof links.linksByKey === "object" ? links.linksByKey : null
+  const linksByKey =
+    links?.linksByKey && typeof links.linksByKey === "object" ? links.linksByKey : null
 
   if (activeKeys.length > 0 && linksByKey) {
     for (const k of activeKeys) {
@@ -170,7 +184,9 @@ function computeMissingLabelsPortrait(draft: any) {
 
 function snapshotForDirtyCheck(draft: any) {
   const bannerSwatches = Array.isArray(draft?.bannerSwatches) ? draft.bannerSwatches : []
-  const backgroundSwatches = Array.isArray(draft?.backgroundSwatches) ? draft.backgroundSwatches : []
+  const backgroundSwatches = Array.isArray(draft?.backgroundSwatches)
+    ? draft.backgroundSwatches
+    : []
 
   return {
     template: draft?.template ?? "portrait",
@@ -237,14 +253,16 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
   const patchDraft = useKonfolioDraftStore((s) => s.patchDraft)
 
   const [publishOpen, setPublishOpen] = useState(false)
-  const [publishStatus, setPublishStatus] = useState<"idle" | "publishing" | "success" | "error">(
-    "idle"
-  )
+  const [publishStatus, setPublishStatus] = useState<
+    "idle" | "publishing" | "success" | "error"
+  >("idle")
   const [publishError, setPublishError] = useState("")
   const [publishedUrl, setPublishedUrl] = useState("")
   const [publishedPortfolioName, setPublishedPortfolioName] = useState("")
-  const [allowExploreSearch, setAllowExploreSearch] = useState<boolean>(!!draft?.explore_enabled)
+  const [allowExploreSearch, setAllowExploreSearch] = useState<boolean>(false)
   const [isTogglingExploreSearch, setIsTogglingExploreSearch] = useState(false)
+  const [mobileProfileExpanded, setMobileProfileExpanded] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   const [savedSnapshot, setSavedSnapshot] = useState("")
 
@@ -252,11 +270,25 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
   const [missingRequired, setMissingRequired] = useState<string[]>([])
   const [missingOptional, setMissingOptional] = useState<string[]>([])
 
-  if (!draft || draft.template !== "portrait") return null
+  useEffect(() => {
+    const handleResize = () => {
+      const nextIsMobile = window.innerWidth < 850
+      setIsMobile(nextIsMobile)
+
+      if (!nextIsMobile) {
+        setMobileProfileExpanded(false)
+      }
+    }
+
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
   useEffect(() => {
+    if (!draft) return
     setAllowExploreSearch(!!draft.explore_enabled)
-  }, [draft.explore_enabled])
+  }, [draft?.explore_enabled, draft])
 
   useEffect(() => {
     if (!draft) return
@@ -268,8 +300,11 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
   const currentSnapshot = useMemo(() => JSON.stringify(snapshotForDirtyCheck(draft)), [draft])
   const hasUnsavedChanges = Boolean(savedSnapshot) && currentSnapshot !== savedSnapshot
 
-  const bannerSwatches = Array.isArray(draft.bannerSwatches) ? draft.bannerSwatches : []
-  const backgroundSwatches = Array.isArray(draft.backgroundSwatches) ? draft.backgroundSwatches : []
+  const bannerSwatches = Array.isArray(draft?.bannerSwatches) ? draft.bannerSwatches : []
+  const backgroundSwatches = Array.isArray(draft?.backgroundSwatches)
+    ? draft.backgroundSwatches
+    : []
+  const backgroundIsDark = isDarkHexColor(draft?.backgroundColor)
 
   const liveUrl = useMemo(() => {
     if (publishedUrl) return publishedUrl
@@ -277,7 +312,8 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
     return `${window.location.origin}/my-portfolios/${draftId}/preview`
   }, [publishedUrl, draftId])
 
-  const exitGuardEnabled = !readOnly && (draft.status === "draft" || hasUnsavedChanges)
+  const exitGuardEnabled =
+    !readOnly && !!draft && (draft.status === "draft" || hasUnsavedChanges)
 
   async function handleToggleExploreSearch(next: boolean) {
     if (isTogglingExploreSearch || readOnly) return
@@ -321,7 +357,7 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
   }
 
   async function handlePublish() {
-    if (readOnly) return
+    if (readOnly || !draft) return
 
     setPublishOpen(true)
     setPublishStatus("publishing")
@@ -346,7 +382,11 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
       for (let i = 0; i < images.length; i++) {
         const src = cleanString(images[i]?.src)
         if (src.startsWith("blob:")) {
-          const imageUrl = await uploadBlobSrcToStorage({ blobSrc: src, konfolioId: draftId, token })
+          const imageUrl = await uploadBlobSrcToStorage({
+            blobSrc: src,
+            konfolioId: draftId,
+            token,
+          })
           images[i] = { ...images[i], src: imageUrl }
         }
       }
@@ -407,8 +447,8 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
             images: content.images,
             profileImageUrl,
             explore_enabled: allowExploreSearch,
-          })
-        )
+          }),
+        ),
       )
 
       const pubRes = await fetch(`/api/konfolios/${draftId}/publish`, {
@@ -458,7 +498,7 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
   }
 
   const onPressPublishWithValidation = useCallback(() => {
-    if (readOnly) return
+    if (readOnly || !draft) return
 
     const missing = computeMissingLabelsPortrait(draft)
 
@@ -489,72 +529,107 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
     }
   }, [onPressPublishWithValidation, readOnly])
 
+  if (!draft || draft.template !== "portrait") return null
+
   const isOptionalOnlyMode =
     !readOnly && missingOpen && missingRequired.length === 0 && missingOptional.length > 0
 
+  const profileProps = {
+    backHref: "/my-portfolios",
+    bannerColor: draft.bannerColor,
+    backgroundColor: draft.backgroundColor,
+    backgroundIsDark,
+    bannerSwatches,
+    backgroundSwatches,
+    profileImageUrl: draft.profileImageUrl,
+    businessName: draft.businessName,
+    displayName: draft.displayName,
+    locationText: draft.locationText,
+    email: draft.email,
+    linksValue: draft.links,
+    merchTags: draft.merchTags,
+    publishLabel: readOnly ? "" : "Publish",
+  }
+
   const content = (
-    <main className="w-full min-h-[982px]" style={{ backgroundColor: draft.backgroundColor }}>
-      <div className="w-full px-[25px] sm:px-10 lg:px-[150px]">
-        <div className="mx-auto max-w-[1512px]">
-          <div className="flex flex-col items-center">
-            <EditPortraitProfile
-              editable={!readOnly}
-              backHref="/my-portfolios"
-              onBack={() => {
-                if (readOnly) {
-                  const editHref = `/my-portfolios/${draftId}/edit`
-                  if (typeof window === "undefined") return
-                  if (window.history.length > 1) window.history.back()
-                  else window.location.href = editHref
-                  return
-                }
+    <main
+      className="w-full min-h-screen overflow-x-hidden"
+      style={{ backgroundColor: draft.backgroundColor }}
+    >
+      <div className="w-full px-0 py-0">
+        <div className="mx-auto w-full max-w-[1512px]">
+          {readOnly ? (
+            <div className="flex w-full flex-col items-center justify-center gap-[20px]">
+              <EditPortraitProfile
+                editable={false}
+                mobileCollapsed={isMobile}
+                mobileExpanded={mobileProfileExpanded}
+                onToggleMobile={() => setMobileProfileExpanded((v) => !v)}
+                previousVends={draft.previousVends}
+                showAddLink={false}
+                {...profileProps}
+              />
 
-                const fn = (window as any).__konfolio_attempt_exit
-                if (typeof fn === "function") {
-                  fn("/my-portfolios")
-                  return
+              <div className="w-full px-0 min-[851px]:px-[16px] min-[851px]:sm:px-6 min-[851px]:md:px-10 min-[851px]:lg:px-[80px] min-[851px]:xl:px-[120px]">
+                <EditPortraitImageGrid
+                  editable={false}
+                  backgroundIsDark={backgroundIsDark}
+                  images={draft.images}
+                  previousVends={draft.previousVends}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="flex w-full flex-col items-center justify-center gap-[20px]">
+              <EditPortraitProfile
+                editable={true}
+                mobileCollapsed={isMobile}
+                mobileExpanded={mobileProfileExpanded}
+                onToggleMobile={() => setMobileProfileExpanded((v) => !v)}
+                previousVends={draft.previousVends}
+                onChangePreviousVends={(vals) => patchDraft(draftId, { previousVends: vals })}
+                onBack={() => {
+                  const fn = (window as any).__konfolio_attempt_exit
+                  if (typeof fn === "function") {
+                    fn("/my-portfolios")
+                    return
+                  }
+                  window.location.href = "/my-portfolios"
+                }}
+                onChangeBannerColor={(hex) => patchDraft(draftId, { bannerColor: hex })}
+                onChangeBackgroundColor={(hex) => patchDraft(draftId, { backgroundColor: hex })}
+                onChangeBannerSwatches={(next) => patchDraft(draftId, { bannerSwatches: next })}
+                onChangeBackgroundSwatches={(next) =>
+                  patchDraft(draftId, { backgroundSwatches: next })
                 }
-                window.location.href = "/my-portfolios"
-              }}
-              bannerColor={draft.bannerColor}
-              backgroundColor={draft.backgroundColor}
-              onChangeBannerColor={readOnly ? undefined : (hex) => patchDraft(draftId, { bannerColor: hex })}
-              onChangeBackgroundColor={readOnly ? undefined : (hex) => patchDraft(draftId, { backgroundColor: hex })}
-              bannerSwatches={bannerSwatches}
-              backgroundSwatches={backgroundSwatches}
-              onChangeBannerSwatches={readOnly ? undefined : (next) => patchDraft(draftId, { bannerSwatches: next })}
-              onChangeBackgroundSwatches={readOnly ? undefined : (next) => patchDraft(draftId, { backgroundSwatches: next })}
-              profileImageUrl={draft.profileImageUrl}
-              onChangeProfileImage={readOnly ? undefined : (_file, objectUrl) => patchDraft(draftId, { profileImageUrl: objectUrl })}
-              businessName={draft.businessName}
-              onChangeBusinessName={readOnly ? undefined : (val) => patchDraft(draftId, { businessName: val })}
-              displayName={draft.displayName}
-              onChangeDisplayName={readOnly ? undefined : (val) => patchDraft(draftId, { displayName: val })}
-              locationText={draft.locationText}
-              onChangeLocationText={readOnly ? undefined : (val) => patchDraft(draftId, { locationText: val })}
-              email={draft.email}
-              onChangeEmail={readOnly ? undefined : (val) => patchDraft(draftId, { email: val })}
-              linksValue={draft.links}
-              onChangeLinks={readOnly ? undefined : (next) => patchDraft(draftId, { links: next })}
-              merchTags={draft.merchTags}
-              onChangeMerchTags={readOnly ? undefined : (next) => patchDraft(draftId, { merchTags: next })}
-              publishLabel={readOnly ? "" : "Publish"}
-              onPublish={readOnly ? undefined : () => onPressPublishWithValidation()}
-              onOpenPreview={
-                readOnly
-                  ? undefined
-                  : () => window.open(`/my-portfolios/${draftId}/preview`, "_blank", "noopener,noreferrer")
-              }
-            />
+                onChangeProfileImage={(_file, objectUrl) =>
+                  patchDraft(draftId, { profileImageUrl: objectUrl })
+                }
+                onChangeBusinessName={(val) => patchDraft(draftId, { businessName: val })}
+                onChangeDisplayName={(val) => patchDraft(draftId, { displayName: val })}
+                onChangeLocationText={(val) => patchDraft(draftId, { locationText: val })}
+                onChangeEmail={(val) => patchDraft(draftId, { email: val })}
+                onChangeLinks={(next) => patchDraft(draftId, { links: next })}
+                onChangeMerchTags={(next) => patchDraft(draftId, { merchTags: next })}
+                onPublish={() => onPressPublishWithValidation()}
+                onOpenPreview={() =>
+                  window.open(`/my-portfolios/${draftId}/preview`, "_blank", "noopener,noreferrer")
+                }
+                {...profileProps}
+              />
 
-            <EditPortraitImageGrid
-              editable={!readOnly}
-              images={draft.images}
-              onChangeImages={readOnly ? undefined : (images) => patchDraft(draftId, { images })}
-              previousVendsValue={(draft.previousVends ?? []).join(" | ")}
-              onChangePreviousVends={readOnly ? undefined : (vals) => patchDraft(draftId, { previousVends: vals })}
-            />
-          </div>
+              <div className="w-full px-[16px] sm:px-6 md:px-10 lg:px-[80px] xl:px-[120px]">
+                <EditPortraitImageGrid
+                  editable={true}
+                  backgroundIsDark={backgroundIsDark}
+                  images={draft.images}
+                  onChangeImages={(images) => patchDraft(draftId, { images })}
+                  previousVends={draft.previousVends}
+                  onChangePreviousVends={(vals) => patchDraft(draftId, { previousVends: vals })}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
