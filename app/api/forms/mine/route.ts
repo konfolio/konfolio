@@ -9,21 +9,44 @@ export async function GET(req: Request) {
     const organizerId = searchParams.get("organizerId");
 
     if (!organizerId) {
-      return NextResponse.json({ error: "Missing organizerId" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing organizerId" },
+        { status: 400 }
+      );
     }
 
     const {
-        data: { user },
-        error: userErr,
+      data: { user },
+      error: userErr,
     } = await supabase.auth.getUser();
 
     if (userErr) {
-        console.error("userErr:", userErr);
+      console.error("userErr:", userErr);
     }
 
     const { data: forms, error: formsErr } = await supabase
       .from("alley_forms")
-      .select("id, organizer_id, title, description, is_open, created_at, updated_at")
+      .select(`
+        id,
+        organizer_id,
+        title,
+        description,
+        slug,
+        status,
+        event_date_start,
+        event_date_end,
+        event_address,
+        cover_image_url,
+        application_limit,
+        fields,
+        published_at,
+        is_open,
+        start_date,
+        end_date,
+        location,
+        created_at,
+        updated_at
+      `)
       .eq("organizer_id", organizerId)
       .order("created_at", { ascending: false });
 
@@ -48,13 +71,16 @@ export async function GET(req: Request) {
       }
 
       for (const app of applications ?? []) {
-        countsByFormId[app.form_id] = (countsByFormId[app.form_id] ?? 0) + 1;
+        countsByFormId[app.form_id] =
+          (countsByFormId[app.form_id] ?? 0) + 1;
       }
     }
 
     const { data: profile, error: profileErr } = await supabase
       .from("profiles")
-      .select("id, display_name, business_name, location, profile_image_url, organization, links, created_at")
+      .select(
+        "id, display_name, business_name, location, profile_image_url, organization, links, created_at"
+      )
       .eq("id", organizerId)
       .maybeSingle();
 
@@ -63,37 +89,65 @@ export async function GET(req: Request) {
     }
 
     const normalized =
-      forms?.map((form) => ({
-        id: form.id,
-        title: form.title || "Untitled Form",
-        status: form.is_open ? "receiving" : "closed",
-        created_at: form.created_at,
-        close_date: null,
-        views: 0,
-        applications_count: countsByFormId[form.id] ?? 0,
-        description: form.description || "",
-      })) ?? [];
+      forms?.map((form) => {
+        // New status is preferred.
+        // But this fallback keeps old forms working if they still relied on is_open.
+        const normalizedStatus =
+          form.status && form.status !== "draft"
+            ? form.status
+            : form.is_open
+              ? "receiving"
+              : form.status || "draft";
+
+        return {
+          id: form.id,
+          organizer_id: form.organizer_id,
+          title: form.title || "Untitled Form",
+          description: form.description || "",
+
+          slug: form.slug || null,
+          public_url: form.slug ? `/apply/${form.slug}` : null,
+
+          status: normalizedStatus,
+
+          event_date_start: form.event_date_start || form.start_date || null,
+          event_date_end: form.event_date_end || form.end_date || null,
+          event_address: form.event_address || form.location || "",
+
+          cover_image_url: form.cover_image_url || null,
+          application_limit: form.application_limit ?? null,
+          fields: form.fields || [],
+
+          published_at: form.published_at || null,
+          created_at: form.created_at,
+          updated_at: form.updated_at,
+
+          close_date: null,
+          views: 0,
+          applications_count: countsByFormId[form.id] ?? 0,
+        };
+      }) ?? [];
 
     return NextResponse.json({
       profile: {
-  id: organizerId,
-  name:
-    profile?.business_name ||
-    profile?.organization ||
-    profile?.display_name ||
-    "Organization Name",
-  location: profile?.location || "City, Country",
-  salesLocation: profile?.location || "",
-  profile_image_url: profile?.profile_image_url || null,
-  email: user?.email || null,
-  created_at: profile?.created_at || null,
-  organization_name:
-    profile?.organization ||
-    profile?.business_name ||
-    profile?.display_name ||
-    null,
-  links: profile?.links ?? {},
-},
+        id: organizerId,
+        name:
+          profile?.business_name ||
+          profile?.organization ||
+          profile?.display_name ||
+          "Organization Name",
+        location: profile?.location || "City, Country",
+        salesLocation: profile?.location || "",
+        profile_image_url: profile?.profile_image_url || null,
+        email: user?.email || null,
+        created_at: profile?.created_at || null,
+        organization_name:
+          profile?.organization ||
+          profile?.business_name ||
+          profile?.display_name ||
+          null,
+        links: profile?.links ?? {},
+      },
       forms: normalized,
     });
   } catch (err: any) {

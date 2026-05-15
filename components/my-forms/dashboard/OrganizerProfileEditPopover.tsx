@@ -1,49 +1,49 @@
 // components/my-forms/dashboard/OrganizerProfileEditPopover.tsx
-"use client"
+"use client";
 
-import { useEffect, useRef, useState } from "react"
-import type React from "react"
-import useClickOutside from "@/components/hooks/useClickOutside"
-import { supabase } from "@/lib/supabase/browser"
-import { useRouter } from "next/navigation"
+import { useEffect, useRef, useState } from "react";
+import type React from "react";
+import useClickOutside from "@/components/hooks/useClickOutside";
+import { supabase } from "@/lib/supabase/browser";
+import { useRouter } from "next/navigation";
 
-import DeleteIcon from "@/components/icons/DeleteIcon"
-import LinkIcon from "@/components/icons/LinkIcon"
-import LocationIcon from "@/components/icons/LocationIcon"
+import DeleteIcon from "@/components/icons/DeleteIcon";
+import LinkIcon from "@/components/icons/LinkIcon";
+import LocationIcon from "@/components/icons/LocationIcon";
 
-import PencilIcon from "@/components/icons/PencilIcon"
-import TrashIcon from "@/components/icons/TrashIcon"
+import PencilIcon from "@/components/icons/PencilIcon";
+import TrashIcon from "@/components/icons/TrashIcon";
 
-import HomeIcon from "@/components/icons/HomeIcon"
-import ShopIcon from "@/components/icons/ShopIcon"
-import InstagramIcon from "@/components/icons/InstagramIcon"
-import XIcon from "@/components/icons/XIcon"
-import FacebookIcon from "@/components/icons/FacebookIcon"
-import TumblrIcon from "@/components/icons/TumblrIcon"
-import PixivIcon from "@/components/icons/PixivIcon"
-import BlueskyIcon from "@/components/icons/BlueskyIcon"
+import HomeIcon from "@/components/icons/HomeIcon";
+import ShopIcon from "@/components/icons/ShopIcon";
+import InstagramIcon from "@/components/icons/InstagramIcon";
+import XIcon from "@/components/icons/XIcon";
+import FacebookIcon from "@/components/icons/FacebookIcon";
+import TumblrIcon from "@/components/icons/TumblrIcon";
+import PixivIcon from "@/components/icons/PixivIcon";
+import BlueskyIcon from "@/components/icons/BlueskyIcon";
 
-import Tag from "@/components/onboarding/Tag"
+import Tag from "@/components/onboarding/Tag";
 
 export type OrganizerProfilePopupData = {
-  noticeText?: string
-  profileImageUrl?: string
-  organizationName?: string
-  eventLocationText?: string
-  formsFilled?: number
-  visitors?: number
-  betaText?: string
-}
+  noticeText?: string;
+  profileImageUrl?: string;
+  organizationName?: string;
+  eventLocationText?: string;
+  formsFilled?: number;
+  visitors?: number;
+  betaText?: string;
+};
 
 type Props = {
-  open: boolean
-  onClose: () => void
-  data?: OrganizerProfilePopupData
+  open: boolean;
+  onClose: () => void;
+  data?: OrganizerProfilePopupData;
 
-  onSupport?: () => void
-  onReportIssue?: () => void
-  onSignOut?: () => void
-}
+  onSupport?: () => void;
+  onReportIssue?: () => void;
+  onSignOut?: () => void;
+};
 
 type SocialKey =
   | "website"
@@ -53,11 +53,15 @@ type SocialKey =
   | "facebook"
   | "tumblr"
   | "pixiv"
-  | "bluesky"
+  | "bluesky";
 
-type LinksMap = Partial<Record<SocialKey, string>>
+type LinksMap = Partial<Record<SocialKey, string>>;
 
-const SOCIAL_ROWS: { key: SocialKey; label: string; Icon: React.ComponentType<any> }[] = [
+const SOCIAL_ROWS: {
+  key: SocialKey;
+  label: string;
+  Icon: React.ComponentType<any>;
+}[] = [
   { key: "website", label: "Main Website", Icon: HomeIcon },
   { key: "instagram", label: "Instagram", Icon: InstagramIcon },
   { key: "x", label: "X", Icon: XIcon },
@@ -66,60 +70,60 @@ const SOCIAL_ROWS: { key: SocialKey; label: string; Icon: React.ComponentType<an
   { key: "facebook", label: "Facebook", Icon: FacebookIcon },
   { key: "tumblr", label: "Tumblr", Icon: TumblrIcon },
   { key: "pixiv", label: "Pixiv", Icon: PixivIcon },
-]
+];
 
 function formatMemberSince(createdAt?: string | null) {
-  if (!createdAt) return "Member since —"
-  const d = new Date(createdAt)
-  if (Number.isNaN(d.getTime())) return "Member since —"
+  if (!createdAt) return "Member since —";
+  const d = new Date(createdAt);
+  if (Number.isNaN(d.getTime())) return "Member since —";
 
   return `Member since ${d.toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
     year: "numeric",
-  })}`
+  })}`;
 }
 
 function isNonEmptyString(v: any): v is string {
-  return typeof v === "string" && v.trim().length > 0
+  return typeof v === "string" && v.trim().length > 0;
 }
 
 function normalizeLinksMap(v: any): LinksMap {
-  if (!v || typeof v !== "object" || Array.isArray(v)) return {}
-  const out: LinksMap = {}
+  if (!v || typeof v !== "object" || Array.isArray(v)) return {};
+  const out: LinksMap = {};
   for (const row of SOCIAL_ROWS) {
-    const raw = (v as any)[row.key]
-    if (isNonEmptyString(raw)) out[row.key] = String(raw).trim()
+    const raw = (v as any)[row.key];
+    if (isNonEmptyString(raw)) out[row.key] = String(raw).trim();
   }
-  return out
+  return out;
 }
 
 function stableJson(v: any) {
   try {
-    return JSON.stringify(v ?? null)
+    return JSON.stringify(v ?? null);
   } catch {
-    return ""
+    return "";
   }
 }
 
 function normalizeUrlInput(raw: string) {
-  const s = raw.trim()
-  if (!s) return ""
-  if (/^https?:\/\//i.test(s)) return s
-  return `https://${s}`
+  const s = raw.trim();
+  if (!s) return "";
+  if (/^https?:\/\//i.test(s)) return s;
+  return `https://${s}`;
 }
 
 function inferSocialKey(url: string): SocialKey | null {
   try {
-    const u = new URL(url)
-    const host = u.hostname.toLowerCase()
+    const u = new URL(url);
+    const host = u.hostname.toLowerCase();
 
-    if (host.includes("instagram.com")) return "instagram"
-    if (host === "x.com" || host.includes("twitter.com")) return "x"
-    if (host.includes("bsky.app") || host.includes("bluesky")) return "bluesky"
-    if (host.includes("facebook.com")) return "facebook"
-    if (host.includes("tumblr.com")) return "tumblr"
-    if (host.includes("pixiv.net")) return "pixiv"
+    if (host.includes("instagram.com")) return "instagram";
+    if (host === "x.com" || host.includes("twitter.com")) return "x";
+    if (host.includes("bsky.app") || host.includes("bluesky")) return "bluesky";
+    if (host.includes("facebook.com")) return "facebook";
+    if (host.includes("tumblr.com")) return "tumblr";
+    if (host.includes("pixiv.net")) return "pixiv";
 
     if (
       host.includes("etsy.com") ||
@@ -127,24 +131,24 @@ function inferSocialKey(url: string): SocialKey | null {
       host.includes("bigcartel.com") ||
       host.includes("shopify.com")
     ) {
-      return "shop"
+      return "shop";
     }
 
-    return null
+    return null;
   } catch {
-    return null
+    return null;
   }
 }
 
 function pickFallbackLinkKey(current: LinksMap): SocialKey {
-  if (!current.website) return "website"
-  if (!current.shop) return "shop"
-  if (!current.instagram) return "instagram"
-  return "website"
+  if (!current.website) return "website";
+  if (!current.shop) return "shop";
+  if (!current.instagram) return "instagram";
+  return "website";
 }
 
 function countLinks(m: LinksMap) {
-  return Object.values(m).filter((v) => isNonEmptyString(v)).length
+  return Object.values(m).filter((v) => isNonEmptyString(v)).length;
 }
 
 export default function OrganizerProfileEditPopover({
@@ -155,25 +159,25 @@ export default function OrganizerProfileEditPopover({
   onReportIssue,
   onSignOut,
 }: Props) {
-  const modalRef = useRef<HTMLDivElement | null>(null)
-  const router = useRouter()
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
 
   useClickOutside(modalRef, () => {
-    if (open) onClose()
-  })
+    if (open) onClose();
+  });
 
   async function handleSignOut() {
-    setSaveError("")
+    setSaveError("");
     try {
-      await supabase.auth.signOut()
+      await supabase.auth.signOut();
     } catch (e: any) {
-      setSaveError(e?.message ?? "Failed to sign out")
-      return
+      setSaveError(e?.message ?? "Failed to sign out");
+      return;
     }
 
-    onClose()
-    router.push("/")
-    router.refresh()
+    onClose();
+    router.push("/");
+    router.refresh();
   }
 
   const {
@@ -184,173 +188,196 @@ export default function OrganizerProfileEditPopover({
     formsFilled = 0,
     visitors = 0,
     betaText = "Beta v.1.0",
-  } = data ?? {}
+  } = data ?? {};
 
-  const [organizationNameText, setOrganizationNameText] = useState(organizationName)
-  const [eventLocationText, setEventLocationText] = useState(eventLocationTextFromProps)
+  const [organizationNameText, setOrganizationNameText] =
+    useState(organizationName);
+  const [eventLocationText, setEventLocationText] = useState(
+    eventLocationTextFromProps,
+  );
 
-  const [emailText, setEmailText] = useState("myemailaddress@konfolio.com")
-  const [memberSince, setMemberSince] = useState("Member since —")
+  const [emailText, setEmailText] = useState("myemailaddress@konfolio.com");
+  const [memberSince, setMemberSince] = useState("Member since —");
 
-  const [linksMap, setLinksMap] = useState<LinksMap>({})
+  const [linksMap, setLinksMap] = useState<LinksMap>({});
 
-  const [linkValue, setLinkValue] = useState("")
-  const [linkFocused, setLinkFocused] = useState(false)
+  const [linkValue, setLinkValue] = useState("");
+  const [linkFocused, setLinkFocused] = useState(false);
 
-  const [isSaving, setIsSaving] = useState(false)
-  const [saveError, setSaveError] = useState("")
-  const [isDirty, setIsDirty] = useState(false)
-  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle")
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const [isDirty, setIsDirty] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">(
+    "idle",
+  );
 
   const initialRef = useRef<{
-    organizationNameText: string
-    eventLocationText: string
-    linksMap: LinksMap
-  } | null>(null)
+    organizationNameText: string;
+    eventLocationText: string;
+    linksMap: LinksMap;
+  } | null>(null);
 
-  const saveTimeoutRef = useRef<number | null>(null)
+  const saveTimeoutRef = useRef<number | null>(null);
 
-  useEffect(() => setOrganizationNameText(organizationName), [organizationName])
-  useEffect(() => setEventLocationText(eventLocationTextFromProps), [eventLocationTextFromProps])
+  useEffect(
+    () => setOrganizationNameText(organizationName),
+    [organizationName],
+  );
+  useEffect(
+    () => setEventLocationText(eventLocationTextFromProps),
+    [eventLocationTextFromProps],
+  );
 
   useEffect(() => {
     return () => {
-      if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current)
-    }
-  }, [])
+      if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current);
+    };
+  }, []);
 
   useEffect(() => {
-    if (!open) return
+    if (!open) return;
 
-    setLinkValue("")
-    setLinkFocused(false)
+    setLinkValue("");
+    setLinkFocused(false);
 
-    setIsSaving(false)
-    setSaveError("")
-    setIsDirty(false)
-    setSaveStatus("idle")
-    initialRef.current = null
-    if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current)
+    setIsSaving(false);
+    setSaveError("");
+    setIsDirty(false);
+    setSaveStatus("idle");
+    initialRef.current = null;
+    if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current);
 
-    let cancelled = false
+    let cancelled = false;
 
     async function loadProfileMeta() {
-      const sessionRes = await supabase.auth.getSession()
-      const user = sessionRes.data.session?.user
-      const userId = user?.id
-      const authEmail = user?.email
-      if (authEmail) setEmailText(authEmail)
-      if (!userId) return
+      const sessionRes = await supabase.auth.getSession();
+      const user = sessionRes.data.session?.user;
+      const userId = user?.id;
+      const authEmail = user?.email;
+
+      if (authEmail) setEmailText(authEmail);
+
+      if (user?.created_at) setMemberSince(formatMemberSince(user.created_at));
+
+      if (!userId) return;
 
       const metaRes = await supabase
         .from("profiles")
-        .select("organization, event_location, links, created_at")
+        .select("organization, event_location, links")
         .eq("id", userId)
-        .maybeSingle()
+        .maybeSingle();
 
-      if (cancelled) return
+      if (cancelled) return;
       if (metaRes.error) {
-        console.log("[OrganizerProfileEditPopover] profile meta error:", metaRes.error)
-        return
+        console.log(
+          "[OrganizerProfileEditPopover] profile meta error:",
+          metaRes.error,
+        );
+        return;
       }
 
-      const row: any = metaRes.data ?? {}
+      const row: any = metaRes.data ?? {};
 
-      const org = String(row.organization ?? "").trim()
-      if (org) setOrganizationNameText(org)
+      const org = String(row.organization ?? "").trim();
+      if (org) setOrganizationNameText(org);
 
-      const loc = String(row.event_location ?? "").trim()
-      if (loc) setEventLocationText(loc)
+      const loc = String(row.event_location ?? "").trim();
+      if (loc) setEventLocationText(loc);
 
-      setMemberSince(formatMemberSince(row.created_at ?? null))
-
-      const nextLinks = normalizeLinksMap(row.links)
-      setLinksMap(nextLinks)
+      const nextLinks = normalizeLinksMap(row.links);
+      setLinksMap(nextLinks);
 
       initialRef.current = {
         organizationNameText: String(org || organizationName).trim(),
         eventLocationText: String(loc || eventLocationTextFromProps).trim(),
         linksMap: nextLinks,
-      }
+      };
 
-      setIsDirty(false)
-      setSaveError("")
-      setSaveStatus("idle")
+      setIsDirty(false);
+      setSaveError("");
+      setSaveStatus("idle");
     }
 
-    loadProfileMeta()
+    loadProfileMeta();
 
     return () => {
-      cancelled = true
-    }
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, eventLocationTextFromProps])
+  }, [open, eventLocationTextFromProps]);
 
   useEffect(() => {
-    const init = initialRef.current
-    if (!init) return
+    const init = initialRef.current;
+    if (!init) return;
 
     const same =
       organizationNameText.trim() === init.organizationNameText.trim() &&
       eventLocationText.trim() === init.eventLocationText.trim() &&
-      stableJson(linksMap) === stableJson(init.linksMap)
+      stableJson(linksMap) === stableJson(init.linksMap);
 
-    setIsDirty(!same)
+    setIsDirty(!same);
 
     if (!same && saveStatus === "saved") {
-      setSaveStatus("idle")
-      if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current)
+      setSaveStatus("idle");
+      if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current);
     }
-  }, [organizationNameText, eventLocationText, linksMap, saveStatus])
+  }, [organizationNameText, eventLocationText, linksMap, saveStatus]);
 
   async function handleSave() {
-    setSaveError("")
-    setIsSaving(true)
-    setSaveStatus("saving")
-    if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current)
+    setSaveError("");
+    setIsSaving(true);
+    setSaveStatus("saving");
+    if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current);
 
     try {
-      const sessionRes = await supabase.auth.getSession()
-      const userId = sessionRes.data.session?.user?.id
-      if (!userId) throw new Error("Not signed in")
+      const sessionRes = await supabase.auth.getSession();
+      const userId = sessionRes.data.session?.user?.id;
+      if (!userId) throw new Error("Not signed in");
 
       const payload = {
         organization: organizationNameText.trim() || null,
         event_location: eventLocationText.trim() || null,
         links: linksMap,
-      }
+      };
 
-      const res = await supabase.from("profiles").update(payload).eq("id", userId)
-      if (res.error) throw res.error
+      const res = await supabase
+        .from("profiles")
+        .update(payload)
+        .eq("id", userId);
+      if (res.error) throw res.error;
 
       initialRef.current = {
         organizationNameText: String(payload.organization ?? "").trim(),
         eventLocationText: String(payload.event_location ?? "").trim(),
         linksMap,
-      }
+      };
 
-      setIsDirty(false)
-      setSaveStatus("saved")
+      setIsDirty(false);
+      setSaveStatus("saved");
 
       saveTimeoutRef.current = window.setTimeout(() => {
-        setSaveStatus("idle")
-      }, 2000)
+        setSaveStatus("idle");
+      }, 2000);
     } catch (e: any) {
-      setSaveError(e?.message ?? "Failed to save")
-      setSaveStatus("idle")
+      setSaveError(e?.message ?? "Failed to save");
+      setSaveStatus("idle");
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
   }
 
-  if (!open) return null
+  if (!open) return null;
 
-  const linksCount = countLinks(linksMap)
-  const canAddLink = linksCount < 5
+  const linksCount = countLinks(linksMap);
+  const canAddLink = linksCount < 5;
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center px-6">
-      <button aria-label="Close" onClick={onClose} className="absolute inset-0 bg-black/30" />
+      <button
+        aria-label="Close"
+        onClick={onClose}
+        className="absolute inset-0 bg-black/30"
+      />
 
       <div
         ref={modalRef}
@@ -402,7 +429,9 @@ export default function OrganizerProfileEditPopover({
                     saveStatus === "saved"
                       ? "bg-[#4CAF50] text-white opacity-100"
                       : "bg-[#262626] text-white hover:bg-[#262626CC] active:bg-[#262626B2]",
-                    !isDirty && saveStatus !== "saved" ? "opacity-50 pointer-events-none" : "",
+                    !isDirty && saveStatus !== "saved"
+                      ? "opacity-50 pointer-events-none"
+                      : "",
                   ].join(" ")}
                   aria-label="Save changes"
                 >
@@ -422,7 +451,11 @@ export default function OrganizerProfileEditPopover({
             <div className="w-[80px] h-[80px] rounded-[71.4286px] overflow-hidden bg-[#F7F7F7] shrink-0 relative">
               {profileImageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={profileImageUrl} alt="Profile" className="w-full h-full object-cover" />
+                <img
+                  src={profileImageUrl}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 <div
                   className="absolute inset-0"
@@ -446,7 +479,9 @@ export default function OrganizerProfileEditPopover({
                       placeholder="Organization Name"
                       textClassName="text-[22px] leading-[140%] text-[#262626] font-normal"
                       onChange={setOrganizationNameText}
-                      onTrash={() => setOrganizationNameText("Organization Name")}
+                      onTrash={() =>
+                        setOrganizationNameText("Organization Name")
+                      }
                     />
                   </div>
                 </div>
@@ -486,7 +521,9 @@ export default function OrganizerProfileEditPopover({
 
               {/* Sales Location (uses event_location) */}
               <div className="flex flex-col items-start gap-[15px] w-full">
-                <p className="w-full text-[15px] leading-[150%] text-[#A5A5A5]">Sales Location</p>
+                <p className="w-full text-[15px] leading-[150%] text-[#A5A5A5]">
+                  Sales Location
+                </p>
 
                 {eventLocationText.trim() ? (
                   <div className="flex flex-row items-center gap-[10px]">
@@ -496,18 +533,22 @@ export default function OrganizerProfileEditPopover({
                     />
                   </div>
                 ) : (
-                  <div className="text-[15px] leading-[150%] text-[#D3D3D3]">—</div>
+                  <div className="text-[15px] leading-[150%] text-[#D3D3D3]">
+                    —
+                  </div>
                 )}
               </div>
 
               {/* Links (limit 5) */}
               <div className="flex flex-col items-start gap-[15px] w-full">
-                <p className="w-full text-[15px] leading-[150%] text-[#A5A5A5]">My Links</p>
+                <p className="w-full text-[15px] leading-[150%] text-[#A5A5A5]">
+                  My Links
+                </p>
 
                 <div className="flex flex-col gap-[10px] w-full">
                   {SOCIAL_ROWS.map((r) => {
-                    const href = linksMap[r.key]
-                    if (!isNonEmptyString(href)) return null
+                    const href = linksMap[r.key];
+                    if (!isNonEmptyString(href)) return null;
 
                     return (
                       <EditableLinkRow
@@ -515,21 +556,24 @@ export default function OrganizerProfileEditPopover({
                         Icon={r.Icon}
                         value={href}
                         onChangeValue={(next) => {
-                          setLinksMap((prev) => ({ ...prev, [r.key]: next }))
+                          setLinksMap((prev) => ({ ...prev, [r.key]: next }));
                         }}
                         onCommit={(finalValue) => {
-                          const trimmed = finalValue.trim()
-                          setLinksMap((prev) => ({ ...prev, [r.key]: trimmed }))
+                          const trimmed = finalValue.trim();
+                          setLinksMap((prev) => ({
+                            ...prev,
+                            [r.key]: trimmed,
+                          }));
                         }}
                         onTrash={() => {
                           setLinksMap((prev) => {
-                            const next: LinksMap = { ...prev }
-                            delete (next as any)[r.key]
-                            return next
-                          })
+                            const next: LinksMap = { ...prev };
+                            delete (next as any)[r.key];
+                            return next;
+                          });
                         }}
                       />
-                    )
+                    );
                   })}
 
                   {canAddLink ? (
@@ -543,30 +587,31 @@ export default function OrganizerProfileEditPopover({
                           onFocus={() => setLinkFocused(true)}
                           onBlur={() => setLinkFocused(false)}
                           onKeyDown={(e) => {
-                            if (e.key !== "Enter") return
-                            e.preventDefault()
+                            if (e.key !== "Enter") return;
+                            e.preventDefault();
 
-                            if (countLinks(linksMap) >= 5) return
+                            if (countLinks(linksMap) >= 5) return;
 
-                            const raw = linkValue.trim()
-                            if (!raw) return
+                            const raw = linkValue.trim();
+                            if (!raw) return;
 
-                            const url = normalizeUrlInput(raw)
-                            const inferred = inferSocialKey(url)
+                            const url = normalizeUrlInput(raw);
+                            const inferred = inferSocialKey(url);
 
                             setLinksMap((prev) => {
-                              const prevCount = countLinks(prev)
-                              if (prevCount >= 5) return prev
+                              const prevCount = countLinks(prev);
+                              if (prevCount >= 5) return prev;
 
-                              const chosen = inferred ?? pickFallbackLinkKey(prev)
+                              const chosen =
+                                inferred ?? pickFallbackLinkKey(prev);
 
-                              const next = { ...prev, [chosen]: url }
-                              if (countLinks(next) > 5) return prev
-                              return next
-                            })
+                              const next = { ...prev, [chosen]: url };
+                              if (countLinks(next) > 5) return prev;
+                              return next;
+                            });
 
-                            setLinkValue("")
-                            setLinkFocused(false)
+                            setLinkValue("");
+                            setLinkFocused(false);
                           }}
                           placeholder="Add Link"
                           className={[
@@ -591,7 +636,9 @@ export default function OrganizerProfileEditPopover({
                 </div>
               </div>
 
-              <p className="text-[15px] leading-[150%] text-[#A5A5A5]">{memberSince}</p>
+              <p className="text-[15px] leading-[150%] text-[#A5A5A5]">
+                {memberSince}
+              </p>
 
               <div className="flex flex-col items-start w-full">
                 <AsideRow label="Support" onClick={onSupport} />
@@ -600,19 +647,21 @@ export default function OrganizerProfileEditPopover({
                   label="Sign out"
                   danger
                   onClick={() => {
-                    onSignOut?.()
-                    handleSignOut()
+                    onSignOut?.();
+                    handleSignOut();
                   }}
                 />
               </div>
 
-              <p className="text-[15px] leading-[150%] text-[#A5A5A5] pb-[40px]">{betaText}</p>
+              <p className="text-[15px] leading-[150%] text-[#A5A5A5] pb-[40px]">
+                {betaText}
+              </p>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function EditableInline({
@@ -622,22 +671,22 @@ function EditableInline({
   onChange,
   onTrash,
 }: {
-  value: string
-  placeholder: string
-  textClassName: string
-  onChange: (v: string) => void
-  onTrash: () => void
+  value: string;
+  placeholder: string;
+  textClassName: string;
+  onChange: (v: string) => void;
+  onTrash: () => void;
 }) {
-  const [editing, setEditing] = useState(false)
-  const inputRef = useRef<HTMLInputElement | null>(null)
+  const [editing, setEditing] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    if (!editing) return
+    if (!editing) return;
     queueMicrotask(() => {
-      inputRef.current?.focus()
-      inputRef.current?.select()
-    })
-  }, [editing])
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    });
+  }, [editing]);
 
   return (
     <div className="group w-full">
@@ -657,8 +706,8 @@ function EditableInline({
               onBlur={() => setEditing(false)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === "Escape") {
-                  e.preventDefault()
-                  setEditing(false)
+                  e.preventDefault();
+                  setEditing(false);
                 }
               }}
               placeholder={placeholder}
@@ -668,7 +717,11 @@ function EditableInline({
               ].join(" ")}
             />
           ) : (
-            <span className={["block w-full min-w-0 truncate", textClassName].join(" ")}>
+            <span
+              className={["block w-full min-w-0 truncate", textClassName].join(
+                " ",
+              )}
+            >
               {value?.trim() ? value : placeholder}
             </span>
           )}
@@ -680,9 +733,9 @@ function EditableInline({
             aria-label="Edit"
             className="w-[16px] h-[16px] flex items-center justify-center"
             onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              setEditing(true)
+              e.preventDefault();
+              e.stopPropagation();
+              setEditing(true);
             }}
           >
             <PencilIcon className="w-[16px] h-[16px]" />
@@ -693,10 +746,10 @@ function EditableInline({
             aria-label="Clear"
             className="w-[16px] h-[16px] flex items-center justify-center"
             onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              setEditing(false)
-              onTrash()
+              e.preventDefault();
+              e.stopPropagation();
+              setEditing(false);
+              onTrash();
             }}
           >
             <TrashIcon className="w-[16px] h-[16px]" />
@@ -704,15 +757,15 @@ function EditableInline({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function HoverOnlyInline({
   value,
   textClassName = "text-[#D3D3D3]",
 }: {
-  value: string
-  textClassName?: string
+  value: string;
+  textClassName?: string;
 }) {
   return (
     <div className="group w-full">
@@ -738,7 +791,7 @@ function HoverOnlyInline({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function EditableLinkRow({
@@ -748,25 +801,25 @@ function EditableLinkRow({
   onCommit,
   onTrash,
 }: {
-  Icon: React.ComponentType<any>
-  value: string
-  onChangeValue: (next: string) => void
-  onCommit: (finalValue: string) => void
-  onTrash: () => void
+  Icon: React.ComponentType<any>;
+  value: string;
+  onChangeValue: (next: string) => void;
+  onCommit: (finalValue: string) => void;
+  onTrash: () => void;
 }) {
-  const [editing, setEditing] = useState(false)
-  const inputRef = useRef<HTMLInputElement | null>(null)
-  const [draft, setDraft] = useState(value)
+  const [editing, setEditing] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [draft, setDraft] = useState(value);
 
-  useEffect(() => setDraft(value), [value])
+  useEffect(() => setDraft(value), [value]);
 
   useEffect(() => {
-    if (!editing) return
+    if (!editing) return;
     queueMicrotask(() => {
-      inputRef.current?.focus()
-      inputRef.current?.select()
-    })
-  }, [editing])
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    });
+  }, [editing]);
 
   return (
     <div className="flex flex-row items-center gap-[10px] h-[24px] w-full group">
@@ -785,22 +838,22 @@ function EditableLinkRow({
               ref={inputRef}
               value={draft}
               onChange={(e) => {
-                setDraft(e.target.value)
-                onChangeValue(e.target.value)
+                setDraft(e.target.value);
+                onChangeValue(e.target.value);
               }}
               onBlur={() => {
-                setEditing(false)
-                onCommit(draft)
+                setEditing(false);
+                onCommit(draft);
               }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  e.preventDefault()
-                  setEditing(false)
-                  onCommit(draft)
+                  e.preventDefault();
+                  setEditing(false);
+                  onCommit(draft);
                 }
                 if (e.key === "Escape") {
-                  e.preventDefault()
-                  setEditing(false)
+                  e.preventDefault();
+                  setEditing(false);
                 }
               }}
               className="w-full bg-transparent outline-none text-[15px] leading-[150%] text-[#262626]"
@@ -819,9 +872,9 @@ function EditableLinkRow({
             aria-label="Edit"
             className="w-[16px] h-[16px] flex items-center justify-center"
             onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              setEditing(true)
+              e.preventDefault();
+              e.stopPropagation();
+              setEditing(true);
             }}
           >
             <PencilIcon className="w-[16px] h-[16px]" />
@@ -832,10 +885,10 @@ function EditableLinkRow({
             aria-label="Remove"
             className="w-[16px] h-[16px] flex items-center justify-center"
             onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              setEditing(false)
-              onTrash()
+              e.preventDefault();
+              e.stopPropagation();
+              setEditing(false);
+              onTrash();
             }}
           >
             <TrashIcon className="w-[16px] h-[16px]" />
@@ -843,7 +896,7 @@ function EditableLinkRow({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function CountBlock({ label, value }: { label: string; value: number }) {
@@ -852,7 +905,7 @@ function CountBlock({ label, value }: { label: string; value: number }) {
       <span className="text-[15px] leading-[150%] text-[#A5A5A5]">{label}</span>
       <span className="text-[15px] leading-[150%] text-[#262626]">{value}</span>
     </div>
-  )
+  );
 }
 
 function AsideRow({
@@ -860,9 +913,9 @@ function AsideRow({
   danger = false,
   onClick,
 }: {
-  label: string
-  danger?: boolean
-  onClick?: () => void
+  label: string;
+  danger?: boolean;
+  onClick?: () => void;
 }) {
   return (
     <button
@@ -879,5 +932,5 @@ function AsideRow({
         {label}
       </span>
     </button>
-  )
+  );
 }

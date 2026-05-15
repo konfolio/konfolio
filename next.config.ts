@@ -2,6 +2,7 @@
 import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
+  
   images: {
     remotePatterns: [
       {
@@ -12,7 +13,7 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  serverExternalPackages: ["@sparticuz/chromium", "puppeteer-core"],
+  serverExternalPackages: ["ws","@sparticuz/chromium", "puppeteer-core"],
 
   outputFileTracingIncludes: {
     "/api/konfolios/[id]/publish": [

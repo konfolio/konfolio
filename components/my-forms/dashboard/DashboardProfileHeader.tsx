@@ -1,46 +1,47 @@
 // components/my-forms/dashboard/DashboardProfileHeader.tsx
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useEffect, useMemo, useState } from "react"
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 
-import SecondaryButton from "@/components/buttons/SecondaryButton"
-import PencilIcon from "@/components/icons/PencilIcon"
-import { supabase } from "@/lib/supabase/browser"
+import SecondaryButton from "@/components/buttons/SecondaryButton";
+import PencilIcon from "@/components/icons/PencilIcon";
+import { supabase } from "@/lib/supabase/browser";
 
 import OrganizerProfileEditPopover, {
   type OrganizerProfilePopupData,
-} from "@/components/my-forms/dashboard/OrganizerProfileEditPopover"
+} from "@/components/my-forms/dashboard/OrganizerProfileEditPopover";
+import CreateFormWizard from "@/components/organizer/CreateFormWizard";
 
 type Profile = {
-  first_name: string | null
-  last_name: string | null
-  organization: string | null
-  event_location: string | null
-  profile_image_url: string | null
-}
+  first_name: string | null;
+  last_name: string | null;
+  organization: string | null;
+  event_location: string | null;
+  profile_image_url: string | null;
+};
 
 type Props = {
   // Optional overrides
-  profileImageUrl?: string
-  organizationName?: string
-  locationLine?: string
-  formCount?: number
+  profileImageUrl?: string;
+  organizationName?: string;
+  locationLine?: string;
+  formCount?: number;
 
-  editHref?: string
-  createHref?: string
-  className?: string
-}
+  editHref?: string;
+  createHref?: string;
+  className?: string;
+};
 
 function pad2(n: number) {
-  const s = String(Math.max(0, Math.floor(n)))
-  return s.length >= 2 ? s : `0${s}`
+  const s = String(Math.max(0, Math.floor(n)));
+  return s.length >= 2 ? s : `0${s}`;
 }
 
 function fullNameFromProfile(p: Profile | null) {
-  const first = (p?.first_name || "").trim()
-  const last = (p?.last_name || "").trim()
-  return [first, last].filter(Boolean).join(" ").trim()
+  const first = (p?.first_name || "").trim();
+  const last = (p?.last_name || "").trim();
+  return [first, last].filter(Boolean).join(" ").trim();
 }
 
 export default function DashboardProfileHeader({
@@ -53,75 +54,83 @@ export default function DashboardProfileHeader({
   createHref = "/create",
   className = "",
 }: Props) {
-  const [signedIn, setSignedIn] = useState(false)
-  const [profile, setProfile] = useState<Profile | null>(null)
+  const [signedIn, setSignedIn] = useState(false);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [open, setOpen] = useState(false);
 
-  const [profilePopoverOpen, setProfilePopoverOpen] = useState(false)
+  const [profilePopoverOpen, setProfilePopoverOpen] = useState(false);
 
   useEffect(() => {
-    let mounted = true
+    let mounted = true;
 
     async function load() {
-      const sessionRes = await supabase.auth.getSession()
-      const user = sessionRes.data.session?.user
+      const sessionRes = await supabase.auth.getSession();
+      const user = sessionRes.data.session?.user;
 
-      if (!mounted) return
+      if (!mounted) return;
 
       if (!user) {
-        setSignedIn(false)
-        setProfile(null)
-        return
+        setSignedIn(false);
+        setProfile(null);
+        return;
       }
 
-      setSignedIn(true)
+      setSignedIn(true);
 
       const profileRes = await supabase
         .from("profiles")
-        .select("first_name,last_name,organization,event_location,profile_image_url")
+        .select(
+          "first_name,last_name,organization,event_location,profile_image_url",
+        )
         .eq("id", user.id)
-        .maybeSingle()
+        .maybeSingle();
 
-      if (!mounted) return
+      if (!mounted) return;
 
       if (profileRes.error) {
-        console.log("[MyForms DashboardProfileHeader] profile error:", profileRes.error)
-        setProfile(null)
-        return
+        console.log(
+          "[MyForms DashboardProfileHeader] profile error:",
+          profileRes.error,
+        );
+        setProfile(null);
+        return;
       }
 
-      setProfile((profileRes.data as Profile | null) ?? null)
+      setProfile((profileRes.data as Profile | null) ?? null);
     }
 
-    load()
+    load();
 
     const { data: sub } = supabase.auth.onAuthStateChange(() => {
-      load()
-    })
+      load();
+    });
 
     return () => {
-      mounted = false
-      sub.subscription.unsubscribe()
-    }
-  }, [])
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
 
-  const fullName = useMemo(() => fullNameFromProfile(profile), [profile])
+  const fullName = useMemo(() => fullNameFromProfile(profile), [profile]);
 
   const resolvedProfileImageUrl =
-    (profileImageUrlOverride ?? profile?.profile_image_url) || ""
+    (profileImageUrlOverride ?? profile?.profile_image_url) || "";
 
   const resolvedOrganizationName =
-    (organizationNameOverride?.trim() || "") ||
+    organizationNameOverride?.trim() ||
+    "" ||
     (profile?.organization || "").trim() ||
     fullName ||
-    "Organization Name"
+    "Organization Name";
 
   const resolvedLocationLine =
-    (locationLineOverride?.trim() || "") ||
+    locationLineOverride?.trim() ||
+    "" ||
     (profile?.event_location || "").trim() ||
-    "City, Country"
+    "City, Country";
 
-  const resolvedCount = formCountOverride ?? 0
-  const showChecker = !resolvedProfileImageUrl
+  const resolvedCount = formCountOverride ?? 0;
+  const showChecker = !resolvedProfileImageUrl;
 
   const popoverData: OrganizerProfilePopupData = useMemo(
     () => ({
@@ -132,7 +141,7 @@ export default function DashboardProfileHeader({
       visitors: 0,
     }),
     [resolvedProfileImageUrl, resolvedOrganizationName, resolvedLocationLine],
-  )
+  );
 
   return (
     <>
@@ -210,13 +219,15 @@ export default function DashboardProfileHeader({
 
               <SecondaryButton
                 onClick={() => {
-                  // no-op for now
+                  setOpen(true);
                 }}
                 className="w-[150px] min-w-[150px] h-[30px] px-[40px] py-[10px] gap-[7px]"
                 disabled={!signedIn}
               >
                 <span className="inline-flex items-center gap-[7px]">
-                  <span className="text-[14px] leading-[14px] font-normal">+</span>
+                  <span className="text-[14px] leading-[14px] font-normal">
+                    +
+                  </span>
                   <span>Create</span>
                 </span>
               </SecondaryButton>
@@ -235,6 +246,7 @@ export default function DashboardProfileHeader({
         onClose={() => setProfilePopoverOpen(false)}
         data={popoverData}
       />
+      <CreateFormWizard open={open} onClose={() => setOpen(false)} />
     </>
-  )
+  );
 }
