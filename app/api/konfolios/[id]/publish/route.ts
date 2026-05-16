@@ -3,17 +3,40 @@ import { createClient } from "@supabase/supabase-js"
 import chromium from "@sparticuz/chromium"
 import puppeteer from "puppeteer-core"
 import fs from "fs"
-
-async function getExecutablePath() {
-  if (process.env.CHROME_EXECUTABLE_PATH) return process.env.CHROME_EXECUTABLE_PATH
-
-  const macChrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-  if (fs.existsSync(macChrome)) return macChrome
-
-  return await chromium.executablePath()
-}
+import path from "path"
 
 export const runtime = "nodejs"
+export const maxDuration = 60
+
+const THUMBNAIL_TARGET_SELECTOR = '[data-thumbnail-target="konfolio-grid"]'
+
+async function getExecutablePath() {
+  if (process.env.CHROME_EXECUTABLE_PATH) {
+    return process.env.CHROME_EXECUTABLE_PATH
+  }
+
+  // Local Mac Chrome for development
+  const macChrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+  if (fs.existsSync(macChrome)) {
+    return macChrome
+  }
+
+  // Vercel/serverless path. This only works if next.config.ts includes the bin folder.
+  const chromiumBinPath = path.join(
+    process.cwd(),
+    "node_modules",
+    "@sparticuz",
+    "chromium",
+    "bin"
+  )
+
+  if (fs.existsSync(chromiumBinPath)) {
+    return await chromium.executablePath(chromiumBinPath)
+  }
+
+  // Fallback, but if Vercel did not bundle the bin folder, this is where the old error happens.
+  return await chromium.executablePath()
+}
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -143,15 +166,19 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     console.log("[THUMBNAIL] publicUrl:", publicUrl)
 
     const executablePath = await getExecutablePath()
-    const isMacLocal = executablePath.includes("Google Chrome.app")
+    const isLocalChrome = executablePath.includes("Google Chrome.app")
 
     console.log("[THUMBNAIL] executablePath:", executablePath)
-    console.log("[THUMBNAIL] isMacLocal:", isMacLocal)
+    console.log("[THUMBNAIL] isLocalChrome:", isLocalChrome)
+
+    const headlessMode: true | "shell" = isLocalChrome ? true : "shell"
 
     browser = await puppeteer.launch({
-      args: isMacLocal ? [] : chromium.args,
+      args: isLocalChrome
+        ? puppeteer.defaultArgs({ headless: true })
+        : puppeteer.defaultArgs({ args: chromium.args, headless: "shell" }),
       executablePath,
-      headless: true,
+      headless: headlessMode,
       defaultViewport: { width: 1512, height: 982 },
     })
 
@@ -167,12 +194,55 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
 
     console.log("[THUMBNAIL] Public page loaded successfully")
 
-    const png = await page.screenshot({
-      type: "png",
-      fullPage: true,
+    // Make sure images are fully loaded before screenshotting.
+    await page.evaluate(async () => {
+      const images = Array.from(document.images)
+
+      await Promise.all(
+        images.map((img) => {
+          if (img.complete) return Promise.resolve()
+
+          return new Promise<void>((resolve) => {
+            img.onload = () => resolve()
+            img.onerror = () => resolve()
+          })
+        })
+      )
     })
 
-    console.log("[THUMBNAIL] Screenshot captured from public page")
+    console.log("[THUMBNAIL] Images loaded")
+
+    let png: string | Uint8Array
+
+    try {
+      await page.waitForSelector(THUMBNAIL_TARGET_SELECTOR, {
+        timeout: 10000,
+      })
+
+      const thumbnailTarget = await page.$(THUMBNAIL_TARGET_SELECTOR)
+
+      if (!thumbnailTarget) {
+        throw new Error("Thumbnail target not found after waitForSelector")
+      }
+
+      png = await thumbnailTarget.screenshot({
+        type: "png",
+      })
+
+      console.log("[THUMBNAIL] Screenshot captured from Konfolio image grid")
+    } catch (screenshotErr: any) {
+      console.log(
+        "[THUMBNAIL] Could not capture grid only. Falling back to full-page screenshot:",
+        screenshotErr?.message ?? screenshotErr
+      )
+
+      png = await page.screenshot({
+        type: "png",
+        fullPage: true,
+      })
+
+      console.log("[THUMBNAIL] Fallback full-page screenshot captured")
+    }
 
     const thumbPath = `${userId}/${konfolioId}/thumbnail.png`
     console.log("[THUMBNAIL] Uploading thumbnail to:", thumbPath)
