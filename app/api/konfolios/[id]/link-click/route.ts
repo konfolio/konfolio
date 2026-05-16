@@ -31,34 +31,46 @@ export async function POST(
     const visitorId =
       typeof body?.visitorId === "string" ? body.visitorId : null;
 
-    const referrer =
-      typeof body?.referrer === "string" ? body.referrer : null;
+    const linkKey =
+      typeof body?.linkKey === "string" ? body.linkKey : null;
 
-    const userAgent = req.headers.get("user-agent");
+    const label =
+      typeof body?.label === "string" ? body.label : null;
+
+    const url =
+      typeof body?.url === "string" ? body.url : null;
+
+    if (!url) {
+      return NextResponse.json(
+        { error: "Missing link URL" },
+        { status: 400 }
+      );
+    }
 
     const supabase = createAdminClient();
 
-    const { data, error } = await supabase.rpc("track_konfolio_view", {
+    const { data, error } = await supabase.rpc("track_konfolio_link_click", {
       p_konfolio_id: konfolioId,
       p_visitor_id: visitorId,
-      p_user_agent: userAgent,
-      p_referrer: referrer,
+      p_link_key: linkKey,
+      p_label: label,
+      p_url: url,
     });
 
     if (error) {
-      console.error("[TRACK VIEW ERROR]", error);
+      console.error("[TRACK LINK CLICK ERROR]", error);
       return NextResponse.json(
-        { error: "Failed to track view" },
+        { error: "Failed to track link click" },
         { status: 500 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      analytics: data?.[0] ?? null,
+      link_click_count: data,
     });
   } catch (err) {
-    console.error("[TRACK VIEW ROUTE ERROR]", err);
+    console.error("[TRACK LINK CLICK ROUTE ERROR]", err);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
