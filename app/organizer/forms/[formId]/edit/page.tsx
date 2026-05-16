@@ -12,6 +12,8 @@ const FIELD_TYPES = [
   {
     type: "short_text",
     label: "Text",
+    description:
+      "Short answer text, ideal for names, titles, or brief responses.",
     icon: (
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
         <path
@@ -26,6 +28,8 @@ const FIELD_TYPES = [
   {
     type: "long_text",
     label: "Long Text",
+    description:
+      "Long answer text, suitable for descriptions, explanations, or detailed responses.",
     icon: (
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
         <path
@@ -40,6 +44,7 @@ const FIELD_TYPES = [
   {
     type: "radio",
     label: "Multiple Choice",
+    description: "Respondents can select one option from a list of choices.",
     icon: (
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
         <circle cx="4" cy="5" r="2" stroke="currentColor" strokeWidth="1.3" />
@@ -56,6 +61,8 @@ const FIELD_TYPES = [
   {
     type: "checkbox",
     label: "Checklist",
+    description:
+      "Respondents can select multiple options from a list of choices.",
     icon: (
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
         <rect
@@ -88,6 +95,7 @@ const FIELD_TYPES = [
   {
     type: "dropdown",
     label: "Dropdown",
+    description: "Respondents can select one option from a dropdown menu.",
     icon: (
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
         <rect
@@ -112,6 +120,7 @@ const FIELD_TYPES = [
   {
     type: "date",
     label: "Date",
+    description: "Respondents can select a date from a calendar view.",
     icon: (
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
         <rect
@@ -641,10 +650,6 @@ function EditableField({
 }) {
   const [editingLabel, setEditingLabel] = useState(false);
 
-  const hasOptions = ["dropdown", "radio", "checkbox", "select"].includes(
-    field.type,
-  );
-
   return (
     <div className="flex flex-col gap-[8px] group">
       {/* Label row */}
@@ -956,7 +961,6 @@ export default function EditOrganizerFormPage() {
   const [saving, setSaving] = useState(false);
 
   const [tags, setTags] = useState<string[]>([]);
-  const [tagsOpen, setTagsOpen] = useState(false);
   const [description, setDescription] = useState("");
   const [editingDescription, setEditingDescription] = useState(false);
   const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);

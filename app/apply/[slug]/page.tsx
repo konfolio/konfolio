@@ -364,6 +364,14 @@ export default function ApplyFormPage() {
         const json = await res.json();
         setForm(json.form);
 
+        const submitCheck = await fetch(
+          `/api/forms/apply/check?formId=${json.form.id}`,
+        );
+        if (submitCheck.ok) {
+          const { submitted } = await submitCheck.json();
+          if (submitted) setAlreadySubmitted(true);
+        }
+
         const profileRes = await fetch(
           `/api/organizer/profile?organizerId=${json.form.organizer_id}`,
         );
@@ -427,6 +435,32 @@ export default function ApplyFormPage() {
   }
 
   if (!form) return null;
+
+  if (alreadySubmitted) {
+    return (
+      <main className="min-h-screen bg-[#F7F7F7]">
+        <Navbar />
+        <div className="w-full flex justify-center px-[16px] sm:px-[40px] py-[40px]">
+          <div className="w-full max-w-[720px] flex flex-col gap-[24px]">
+            <FormHeader form={form} />
+            <div className="bg-white rounded-[20px] border-[0.5px] border-[#E9E9E9] px-[32px] py-[40px] flex flex-col items-center gap-[12px]">
+              <p className="text-[12px] text-[#A5A5A5] self-start">
+                Already Submitted
+              </p>
+              <h2 className="text-[18px] font-medium text-[#262626] text-center mt-[8px]">
+                You already submitted to this form.
+              </h2>
+              <p className="text-[13px] text-[#A5A5A5] text-center">
+                If this is incorrect, check with event organizer or contact
+                Konfolio team.
+              </p>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
 
   if (form.status === "closed") {
     return (
