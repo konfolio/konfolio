@@ -69,13 +69,13 @@ export default function PublishMissingFieldsPopover({
   const buttonsJustify = isOptionalOnlyMode ? "justify-between" : "justify-center"
 
   return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center">
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/30" />
 
       <div
         ref={ref}
-        className="relative flex flex-col items-center bg-white rounded-[15px] shadow-[5px_5px_25px_rgba(0,0,0,0.1)]"
-        style={{ width: 760, height, padding: "50px 111px" }}
+        className="relative flex max-h-[calc(100vh-32px)] w-full max-w-[760px] flex-col items-center overflow-y-auto rounded-[15px] bg-white px-5 py-[50px] shadow-[5px_5px_25px_rgba(0,0,0,0.1)] sm:px-10 lg:px-[111px]"
+        style={{ minHeight: height }}
         role="dialog"
         aria-modal="true"
         aria-label="Missing fields"
@@ -98,7 +98,7 @@ export default function PublishMissingFieldsPopover({
         </div>
 
         {/* Lists container */}
-        <div className="mt-[50px] flex flex-col items-stretch gap-[10px]" style={{ width: 538 }}>
+        <div className="mt-[50px] flex w-full max-w-[538px] flex-col items-stretch gap-[10px]">
           {/* Required list (red) */}
           {hasRequired ? (
             <div className="flex flex-col gap-[10px]">

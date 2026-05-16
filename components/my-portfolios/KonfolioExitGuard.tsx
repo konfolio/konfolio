@@ -171,9 +171,9 @@ export default function KonfolioExitGuard({
       {children}
 
       {open ? (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/30" onClick={cancelExit} />
-          <div className="relative w-[420px] rounded-[16px] bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+          <div className="relative w-full max-w-[420px] rounded-[16px] bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
             <div className="text-[18px] font-semibold text-[#262626]">Leave editor?</div>
             <div className="mt-2 text-[14px] leading-[140%] text-[#6B6B6B]">
               If you leave now, your unsaved changes will be discarded.

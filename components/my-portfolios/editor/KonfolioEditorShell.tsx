@@ -199,15 +199,15 @@ export default function KonfolioEditorShell({ konfolioId, initialDraft, mode = "
 
   if (booting || !readyDraft) {
     return (
-      <main className="w-full min-h-[982px] bg-[#F7F7F7]">
-        <div className="w-full px-[25px] sm:px-10 lg:px-[150px]">
-          <div className="mx-auto max-w-[1512px]">
-            <div className="flex items-start justify-center gap-[20px]">
-              <div className="w-[316px] h-[982px] rounded-[15px] bg-white/60 animate-pulse" />
-              <div className="w-[922px] h-[982px] flex items-center justify-center">
-                <div className="w-[922px] h-[922px] grid grid-cols-3 gap-[15px]">
+      <main className="w-full min-h-screen overflow-x-hidden bg-[#F7F7F7]">
+        <div className="w-full px-[16px] py-[20px] sm:px-6 md:px-10 lg:px-[80px] xl:px-[120px]">
+          <div className="mx-auto w-full max-w-[1512px]">
+            <div className="flex w-full flex-col items-center justify-center gap-[20px] lg:flex-row lg:items-start">
+              <div className="h-[520px] w-full max-w-[316px] rounded-[15px] bg-white/60 animate-pulse lg:h-[982px]" />
+              <div className="flex w-full max-w-[922px] items-center justify-center">
+                <div className="grid w-full grid-cols-3 gap-[8px] sm:gap-[12px] lg:gap-[15px]">
                   {Array.from({ length: 9 }).map((_, i) => (
-                    <div key={i} className="rounded-[15px] bg-white/60 animate-pulse" />
+                    <div key={i} className="aspect-square rounded-[15px] bg-white/60 animate-pulse" />
                   ))}
                 </div>
               </div>

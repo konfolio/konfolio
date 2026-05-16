@@ -1,5 +1,7 @@
 "use client"
 
+import * as React from "react"
+
 import PrimaryButton from "@/components/buttons/PrimaryButton"
 import ArrowLeft from "@/components/icons/ArrowLeft"
 import { useOnboardingDraft } from "@/stores/onboardingDraft"
@@ -16,12 +18,23 @@ export default function BetaAccessHostCard({ backHref, nextHref }: Props) {
   const setBetaCode = useOnboardingDraft((s) => s.setBetaCode)
   const setMode = useOnboardingDraft((s) => s.setMode)
 
+  const [showError, setShowError] = React.useState(false)
+
+  React.useEffect(() => {
+    setBetaCode("")
+  }, [setBetaCode])
+
   const trimmedCode = betaCode.trim()
-  const showError = trimmedCode !== "" && trimmedCode !== REQUIRED_CODE
   const canContinue = trimmedCode === REQUIRED_CODE
 
-  function handleNextClick() {
-    if (!canContinue) return
+  function handleNextClick(e: React.MouseEvent) {
+    if (!canContinue) {
+      e.preventDefault()
+      setShowError(true)
+      return
+    }
+
+    setShowError(false)
     setMode("host")
   }
 
@@ -40,7 +53,7 @@ export default function BetaAccessHostCard({ backHref, nextHref }: Props) {
       <ArrowLeft href={backHref} className="absolute left-[45px] top-[50px]" />
 
       <div className="flex flex-col items-center gap-[15px]">
-        <p className="m-0 text-center font-inter font-normal text-[15px] leading-[18px] text-black">
+        <p className="m-0 text-center font-inter text-[15px] leading-[18px] text-black">
           Hello! Welcome to
         </p>
 
@@ -100,11 +113,7 @@ export default function BetaAccessHostCard({ backHref, nextHref }: Props) {
         </p>
       </div>
 
-      <PrimaryButton
-        href={canContinue ? nextHref : "#"}
-        onClick={handleNextClick}
-        className={!canContinue ? "pointer-events-none opacity-40" : ""}
-      >
+      <PrimaryButton href={nextHref} onClick={handleNextClick}>
         Next
       </PrimaryButton>
     </div>
