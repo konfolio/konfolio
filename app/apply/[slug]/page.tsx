@@ -331,6 +331,7 @@ function FieldRenderer({
 
 export default function ApplyFormPage() {
   const { slug } = useParams();
+  const [currentPage, setCurrentPage] = useState(1);
   const [form, setForm] = useState<Form | null>(null);
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -341,6 +342,14 @@ export default function ApplyFormPage() {
   const [organizerName, setOrganizerName] = useState("");
   const [organizerLinks, setOrganizerLinks] = useState<Record<string, string>>(
     {},
+  );
+
+  const totalPages = form
+    ? Math.max(...(form.fields ?? []).map((f: any) => f.page ?? 1), 1)
+    : 1;
+
+  const currentFields = (form?.fields ?? []).filter(
+    (f: any) => (f.page ?? 1) === currentPage,
   );
 
   useEffect(() => {
@@ -590,10 +599,27 @@ export default function ApplyFormPage() {
         <div className="w-full max-w-[720px] flex flex-col gap-[32px]">
           <FormHeader form={form} />
 
-          {/* Fields */}
-          {(form.fields ?? []).length > 0 ? (
+          {/* Page indicator */}
+          {totalPages > 1 && (
+            <div className="flex items-center gap-[8px]">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <div
+                  key={p}
+                  className={`w-[8px] h-[8px] rounded-full ${
+                    p === currentPage ? "bg-[#262626]" : "bg-[#E9E9E9]"
+                  }`}
+                />
+              ))}
+              <span className="text-[12px] text-[#A5A5A5] ml-[4px]">
+                Page {currentPage} of {totalPages}
+              </span>
+            </div>
+          )}
+
+          {/* Fields for current page */}
+          {currentFields.length > 0 ? (
             <div className="flex flex-col gap-[24px]">
-              {form.fields.map((field) => (
+              {currentFields.map((field: any) => (
                 <FieldRenderer
                   key={field.id}
                   field={field}
@@ -606,57 +632,39 @@ export default function ApplyFormPage() {
             </div>
           ) : (
             <p className="text-[14px] text-[#A5A5A5]">
-              This form has no fields yet.
+              No fields on this page.
             </p>
           )}
 
-          <button
-            onClick={handleSubmit}
-            disabled={submitting}
-            className="self-start h-[44px] px-[32px] rounded-full bg-[#262626] text-[14px] text-white hover:opacity-80 disabled:opacity-50"
-          >
-            {submitting ? "Submitting..." : "Submit Application"}
-          </button>
-        </div>
-      </div>
-      {alreadySubmitted && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4">
-          <div className="bg-white rounded-[20px] w-full max-w-[420px] px-[32px] py-[40px] flex flex-col items-center gap-[12px] relative">
-            <button
-              onClick={() => setAlreadySubmitted(false)}
-              className="absolute top-[16px] right-[16px] text-[#A5A5A5] hover:text-[#262626]"
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path
-                  d="M3 3l10 10M13 3L3 13"
-                  stroke="currentColor"
-                  strokeWidth="1.4"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
-
-            <p className="text-[12px] text-[#A5A5A5] self-start">
-              Already Submitted
-            </p>
-
-            <h2 className="text-[18px] font-medium text-[#262626] text-center mt-[8px]">
-              You already submitted to this form.
-            </h2>
-            <p className="text-[13px] text-[#A5A5A5] text-center">
-              If this is incorrect, check with event organizer or contact
-              Konfolio team.
-            </p>
-
-            <button
-              onClick={() => setAlreadySubmitted(false)}
-              className="mt-[8px] h-[44px] px-[32px] rounded-full border border-[#262626] text-[14px] text-[#262626] hover:opacity-70"
-            >
-              Return
-            </button>
+          {/* Navigation */}
+          <div className="flex items-center gap-[12px]">
+            {currentPage > 1 && (
+              <button
+                onClick={() => setCurrentPage((p) => p - 1)}
+                className="h-[44px] px-[24px] rounded-full border border-[#E9E9E9] text-[14px] text-[#262626] hover:opacity-70"
+              >
+                ← Back
+              </button>
+            )}
+            {currentPage < totalPages ? (
+              <button
+                onClick={() => setCurrentPage((p) => p + 1)}
+                className="h-[44px] px-[32px] rounded-full bg-[#262626] text-[14px] text-white hover:opacity-80"
+              >
+                Next →
+              </button>
+            ) : (
+              <button
+                onClick={handleSubmit}
+                disabled={submitting}
+                className="h-[44px] px-[32px] rounded-full bg-[#262626] text-[14px] text-white hover:opacity-80 disabled:opacity-50"
+              >
+                {submitting ? "Submitting..." : "Submit Application"}
+              </button>
+            )}
           </div>
         </div>
-      )}
+      </div>
       <Footer />
     </main>
   );

@@ -3,7 +3,6 @@ import Footer from "@/components/Footer";
 import SearchBar from "@/components/explore/SearchBar";
 import ExploreGrid from "@/components/explore/ExploreGrid";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-//test
 export const dynamic = "force-dynamic";
 
 type ExploreItem = {
