@@ -6,6 +6,7 @@ import ArrowLeft from "@/components/icons/ArrowLeft"
 import ArrowDown from "@/components/icons/ArrowDown"
 import ImageIcon from "@/components/icons/ImageIcon"
 import SecondaryButton from "@/components/buttons/SecondaryButton"
+import Link from "next/link"
 
 import BrushIcon from "@/components/icons/BrushIcon"
 import LocationIcon from "@/components/icons/LocationIcon"
@@ -75,6 +76,12 @@ type Props = {
   publishLabel?: string
   onPublish?: () => void
   onOpenPreview?: () => void
+
+  onSocialLinkClick?: (link: {
+    key?: string
+    label?: string
+    url?: string
+  }) => void
 }
 
 function parseEventLine(line: string): { title: string; year?: string } {
@@ -167,9 +174,10 @@ function IconForKey({ k }: { k: string }) {
 
 function KonfolioLogo({ primaryTextColor }: { primaryTextColor: string }) {
   return (
-    <div
-      aria-label="Konfolio"
-      className="absolute left-1/2 -translate-x-1/2 top-[30px] w-[84px] h-[18.67px] opacity-50 pointer-events-none select-none"
+    <Link
+      href="/explore"
+      aria-label="Go to Explore"
+      className="absolute left-1/2 -translate-x-1/2 top-[30px] w-[84px] h-[18.67px] opacity-50 select-none cursor-pointer"
     >
       <div
         className="absolute left-1/2 -translate-x-1/2 top-0"
@@ -186,7 +194,7 @@ function KonfolioLogo({ primaryTextColor }: { primaryTextColor: string }) {
       >
         konfolio
       </div>
-    </div>
+    </Link>
   )
 }
 
@@ -238,6 +246,8 @@ export default function EditSquareProfileSidebar({
   publishLabel = "Publish",
   onPublish,
   onOpenPreview,
+
+  onSocialLinkClick,
 }: Props) {
   const [localBusiness, setLocalBusiness] = useState(businessName)
   const [localDisplay, setLocalDisplay] = useState(displayName)
@@ -533,6 +543,13 @@ export default function EditSquareProfileSidebar({
                       href={l.url}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() =>
+                        onSocialLinkClick?.({
+                          key: l.key,
+                          label: l.key,
+                          url: l.url,
+                        })
+                      }
                       aria-label={iconLabelForKey(l.key)}
                       className={[
                         "flex h-[33px] w-[33px] items-center justify-center cursor-pointer",
@@ -955,6 +972,13 @@ export default function EditSquareProfileSidebar({
                   href={l.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() =>
+                    onSocialLinkClick?.({
+                      key: l.key,
+                      label: l.key,
+                      url: l.url,
+                    })
+                  }
                   aria-label={iconLabelForKey(l.key)}
                   className={[
                     "w-[24px] h-[24px] flex items-center justify-center cursor-pointer",

@@ -101,15 +101,15 @@ export default function ExploreGrid({ items }: Props) {
 
   return (
     <div className="flex w-full justify-center">
-      <div className="flex w-full max-w-[1212px] flex-col">
+      <div className="flex w-full max-w-[1212px] flex-col items-center">
         <div
           className="
-            grid
+            grid w-full
             grid-cols-1
             justify-items-center
             gap-[15px]
-            sm:grid-cols-2
-            lg:grid-cols-3
+            min-[820px]:grid-cols-2
+            min-[1240px]:grid-cols-3
           "
         >
           {visibleItems.map((item) => (
@@ -123,7 +123,11 @@ export default function ExploreGrid({ items }: Props) {
               previewImageUrl={item.previewImageUrl}
               avatarUrl={item.profileImageUrl}
               labels={item.labels}
-              className="h-[320px] w-[390px]"
+              className="
+                h-[320px]
+                w-full
+                max-w-[390px]
+              "
             />
           ))}
         </div>

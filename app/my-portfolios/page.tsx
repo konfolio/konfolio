@@ -38,6 +38,10 @@ type KonfolioRow = {
   updated_at: string | null
   published_at: string | null
   explore_enabled: boolean | null
+
+  view_count: number | null
+  unique_visitor_count: number | null
+  link_click_count: number | null
 }
 
 export default function MyPortfoliosPage() {
@@ -94,7 +98,7 @@ export default function MyPortfoliosPage() {
     const res = await supabase
       .from("konfolios")
       .select(
-        "id, user_id, portfolio_name, portfolio_slug, status, thumbnail_url, updated_at, published_at, explore_enabled"
+        "id, user_id, portfolio_name, portfolio_slug, status, thumbnail_url, updated_at, published_at, explore_enabled, view_count, unique_visitor_count, link_click_count"
       )
       .eq("user_id", user.id)
       .order("updated_at", { ascending: false })
@@ -122,9 +126,9 @@ export default function MyPortfoliosPage() {
           : null,
         updatedAt: r.updated_at,
         exploreEnabled: r.explore_enabled ?? false,
-        views: 0,
-        uniqueViewers: 0,
-        linkClicks: 0,
+        views: r.view_count ?? 0,
+        uniqueViewers: r.unique_visitor_count ?? 0,
+        linkClicks: r.link_click_count ?? 0,
       }
     })
 

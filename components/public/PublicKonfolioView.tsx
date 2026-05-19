@@ -63,17 +63,78 @@ function toLinksValue(raw: any) {
 }
 
 export default function PublicKonfolioView({
+  konfolioId,
   template,
   content,
   ownerBusinessName,
   portfolioName,
 }: {
+  konfolioId: string
   template: Template
   content: any
   ownerBusinessName: string
   portfolioName: string
 }) {
   const [mobileProfileOpen, setMobileProfileOpen] = React.useState(false)
+
+  React.useEffect(() => {
+    const key = "konfolio_visitor_id"
+    let visitorId = window.localStorage.getItem(key)
+  
+    if (!visitorId) {
+      visitorId = window.crypto.randomUUID()
+      window.localStorage.setItem(key, visitorId)
+    }
+  
+    fetch(`/api/konfolios/${konfolioId}/view`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        visitorId,
+        referrer: document.referrer || null,
+      }),
+    }).catch(console.error)
+  }, [konfolioId])
+
+  function getVisitorId() {
+    const key = "konfolio_visitor_id"
+    let visitorId = window.localStorage.getItem(key)
+  
+    if (!visitorId) {
+      visitorId = window.crypto.randomUUID()
+      window.localStorage.setItem(key, visitorId)
+    }
+  
+    return visitorId
+  }
+  
+  const handleSocialLinkClick = React.useCallback(
+    (link: {
+      key?: string
+      id?: string
+      label?: string
+      title?: string
+      url?: string
+    }) => {
+      if (!link.url) return
+  
+      fetch(`/api/konfolios/${konfolioId}/link-click`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          visitorId: getVisitorId(),
+          linkKey: link.key ?? link.id ?? null,
+          label: link.label ?? link.title ?? null,
+          url: link.url,
+        }),
+      }).catch(console.error)
+    },
+    [konfolioId]
+  )
 
   const bannerColor =
     firstColor(
@@ -152,6 +213,7 @@ export default function PublicKonfolioView({
                 showAddLink={false}
                 showMerchTag={false}
                 publishLabel=""
+                onSocialLinkClick={handleSocialLinkClick}
               />
 
               <EditSquareImageGrid
@@ -180,6 +242,7 @@ export default function PublicKonfolioView({
                 showAddLink={false}
                 showMerchTag={false}
                 publishLabel=""
+                onSocialLinkClick={handleSocialLinkClick}
               />
 
               <EditSquareImageGrid
@@ -217,6 +280,7 @@ export default function PublicKonfolioView({
           previousVends={previousVendsArr}
           showAddLink={false}
           publishLabel=""
+          onSocialLinkClick={handleSocialLinkClick}
         />
 
         <EditPortraitImageGrid
@@ -246,6 +310,7 @@ export default function PublicKonfolioView({
           previousVends={previousVendsArr}
           showAddLink={false}
           publishLabel=""
+          onSocialLinkClick={handleSocialLinkClick}
         />
 
         <div className="w-full px-[24px] min-[1200px]:px-[80px] xl:px-[120px]">

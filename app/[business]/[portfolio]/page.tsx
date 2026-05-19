@@ -58,6 +58,7 @@ export default async function PublicKonfolioPage({
 
   return (
     <PublicKonfolioView
+      konfolioId={k.id}
       template={template}
       content={content}
       ownerBusinessName={String(owner.business_name ?? "")}

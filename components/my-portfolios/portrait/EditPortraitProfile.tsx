@@ -11,6 +11,7 @@ import LocationIcon from "@/components/icons/LocationIcon"
 import OpenTabIcon from "@/components/icons/OpenTabIcon"
 import SecondaryButton from "@/components/buttons/SecondaryButton"
 import DeleteIcon from "@/components/icons/DeleteIcon"
+import Link from "next/link"
 
 import HomeIcon from "@/components/icons/HomeIcon"
 import ShopIcon from "@/components/icons/ShopIcon"
@@ -78,6 +79,12 @@ type Props = {
   publishLabel?: string
   onPublish?: () => void
   onOpenPreview?: () => void
+
+  onSocialLinkClick?: (link: {
+    key?: string
+    label?: string
+    url?: string
+  }) => void
 }
 
 const BUSINESS_PLACEHOLDER = "Business Name"
@@ -148,7 +155,11 @@ function IconForKey({ k, className = "w-[24px] h-[24px]" }: { k: string; classNa
 
 function KonfolioLogoInline({ color = "#262626" }: { color?: string }) {
   return (
-    <div aria-label="Konfolio" className="w-[84px] h-[18.67px] opacity-50 pointer-events-none select-none">
+    <Link
+      href="/explore"
+      aria-label="Go to Explore"
+      className="w-[84px] h-[18.67px] opacity-50 select-none cursor-pointer"
+    >
       <div
         style={{
           fontFamily: "Inknut Antiqua",
@@ -163,7 +174,7 @@ function KonfolioLogoInline({ color = "#262626" }: { color?: string }) {
       >
         konfolio
       </div>
-    </div>
+    </Link>
   )
 }
 
@@ -237,6 +248,8 @@ export default function EditPortraitProfile({
   publishLabel = "Publish",
   onPublish,
   onOpenPreview,
+
+  onSocialLinkClick,
 }: Props) {
   const handleBack = () => {
     if (onBack) {
@@ -618,6 +631,13 @@ export default function EditPortraitProfile({
                         href={l.url}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() =>
+                          onSocialLinkClick?.({
+                            key: l.key,
+                            label: l.key,
+                            url: l.url,
+                          })
+                        }
                         aria-label={iconLabelForKey(l.key)}
                         className={[
                           "flex h-[33px] w-[33px] items-center justify-center cursor-pointer",
@@ -952,6 +972,13 @@ export default function EditPortraitProfile({
                         href={l.url}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() =>
+                          onSocialLinkClick?.({
+                            key: l.key,
+                            label: l.key,
+                            url: l.url,
+                          })
+                        }
                         aria-label={iconLabelForKey(l.key)}
                         className={`w-[24px] h-[24px] flex items-center justify-center cursor-pointer ${bannerPrimaryIconClass}`}
                       >
