@@ -1,12 +1,13 @@
 "use client";
 
+import IfYesAccordion from "@/components/IfYesAccordion";
 import Navbar from "@/components/Navbar";
 import PublishFormModal from "@/components/modals/PublishFormModal";
 import SetLimitModal from "@/components/modals/SetLimitModal";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const FIELD_TYPES = [
   {
@@ -639,6 +640,9 @@ function EditableField({
   onOptionAdd,
   onOptionChange,
   onOptionDelete,
+  onDragStart,
+  onDragOver,
+  onDrop,
 }: {
   field: Field;
   isProtected: boolean;
@@ -647,13 +651,41 @@ function EditableField({
   onOptionAdd: () => void;
   onOptionChange: (i: number, val: string) => void;
   onOptionDelete: (i: number) => void;
+  onDragStart?: () => void;
+  onDragOver?: (e: React.DragEvent) => void;
+  onDrop?: () => void;
 }) {
   const [editingLabel, setEditingLabel] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   return (
-    <div className="flex flex-col gap-[8px] group">
+    <div
+      className={`flex flex-col gap-[8px] group rounded-[8px] transition-colors ${isDragOver ? "bg-[#F7F7F7] ring-1 ring-[#E9E9E9]" : ""}`}
+      draggable
+      onDragStart={onDragStart}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setIsDragOver(true);
+        onDragOver?.(e);
+      }}
+      onDragLeave={() => setIsDragOver(false)}
+      onDrop={() => {
+        setIsDragOver(false);
+        onDrop?.();
+      }}
+    >
       {/* Label row */}
       <div className="flex items-center gap-[8px]">
+        <div className="opacity-0 group-hover:opacity-100 cursor-grab text-[#C0BDB4] shrink-0 -ml-[20px]">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+            <circle cx="5" cy="4" r="1.2" fill="currentColor" />
+            <circle cx="5" cy="8" r="1.2" fill="currentColor" />
+            <circle cx="5" cy="12" r="1.2" fill="currentColor" />
+            <circle cx="11" cy="4" r="1.2" fill="currentColor" />
+            <circle cx="11" cy="8" r="1.2" fill="currentColor" />
+            <circle cx="11" cy="12" r="1.2" fill="currentColor" />
+          </svg>
+        </div>
         {editingLabel ? (
           <input
             autoFocus
@@ -948,6 +980,8 @@ export default function EditOrganizerFormPage() {
   const params = useParams();
   const formId = params.formId as string;
 
+  const dragFieldId = useRef<string | null>(null);
+
   const [pages, setPages] = useState([1]);
   const [appCount, setAppCount] = useState(0);
   const [addFieldOpen, setAddFieldOpen] = useState(false);
@@ -1098,6 +1132,21 @@ export default function EditOrganizerFormPage() {
       const updated = [...prev, newField];
       saveFields(updated);
       return updated;
+    });
+  };
+
+  const handleReorder = (targetId: string) => {
+    if (!dragFieldId.current || dragFieldId.current === targetId) return;
+    setFields((prev) => {
+      const from = prev.findIndex((f) => f.id === dragFieldId.current);
+      const to = prev.findIndex((f) => f.id === targetId);
+      if (from === -1 || to === -1) return prev;
+      const updated = [...prev];
+      const [moved] = updated.splice(from, 1);
+      updated.splice(to, 0, moved);
+      const reordered = updated.map((f, i) => ({ ...f, sortOrder: i }));
+      saveFields(reordered);
+      return reordered;
     });
   };
 
@@ -1441,22 +1490,31 @@ export default function EditOrganizerFormPage() {
                 {fields
                   .filter((f) => (f.page ?? 1) === 1)
                   .map((field) => (
-                    <EditableField
-                      key={field.id}
-                      field={field}
-                      isProtected={PROTECTED_FIELD_KEYS.includes(
-                        field.field_key,
+                    <div key={field.id} className="flex flex-col gap-[28px]">
+                      <EditableField
+                        field={field}
+                        isProtected={PROTECTED_FIELD_KEYS.includes(
+                          field.field_key,
+                        )}
+                        onLabelChange={(val) =>
+                          updateField(field.id, { label: val })
+                        }
+                        onDelete={() => deleteField(field.id)}
+                        onOptionAdd={() => addOption(field.id)}
+                        onOptionChange={(i, val) =>
+                          updateOption(field.id, i, val)
+                        }
+                        onOptionDelete={(i) => deleteOption(field.id, i)}
+                        onDragStart={() => {
+                          dragFieldId.current = field.id;
+                        }}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={() => handleReorder(field.id)}
+                      />
+                      {field.field_key === "sharing_table" && (
+                        <IfYesAccordion />
                       )}
-                      onLabelChange={(val) =>
-                        updateField(field.id, { label: val })
-                      }
-                      onDelete={() => deleteField(field.id)}
-                      onOptionAdd={() => addOption(field.id)}
-                      onOptionChange={(i, val) =>
-                        updateOption(field.id, i, val)
-                      }
-                      onOptionDelete={(i) => deleteOption(field.id, i)}
-                    />
+                    </div>
                   ))}
 
                 <AddFieldButton onAdd={addField} />
