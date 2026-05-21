@@ -1035,7 +1035,16 @@ export default function EditOrganizerFormPage() {
           body: JSON.stringify({ fields: DEFAULT_FIELDS }),
         });
       } else {
-        setFields(formJson.form.fields);
+        const withPage = formJson.form.fields.map((f: any) => ({
+          ...f,
+          page: f.page ?? 1,
+        }));
+        setFields(withPage);
+        await fetch(`/api/forms/${formId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fields: withPage }),
+        });
       }
     };
     fetchForm();
@@ -1490,7 +1499,7 @@ export default function EditOrganizerFormPage() {
                 {fields
                   .filter((f) => (f.page ?? 1) === 1)
                   .map((field) => (
-                    <div key={field.id} className="flex flex-col gap-[28px]">
+                    <div key={field.id} className="flex flex-col gap-[12px]">
                       <EditableField
                         field={field}
                         isProtected={PROTECTED_FIELD_KEYS.includes(
@@ -1511,12 +1520,12 @@ export default function EditOrganizerFormPage() {
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={() => handleReorder(field.id)}
                       />
-                      {field.field_key === "sharing_table" && (
+                      {(field.field_key === "sharing_table" ||
+                        field.label === "Are you sharing a table?") && (
                         <IfYesAccordion />
                       )}
                     </div>
                   ))}
-
                 <AddFieldButton onAdd={addField} />
               </div>
             </>
