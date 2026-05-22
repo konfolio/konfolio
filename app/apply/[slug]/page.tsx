@@ -326,6 +326,60 @@ function FieldRenderer({
     );
   }
 
+  if (field.type === "image") {
+    return (
+      <div className="flex flex-col gap-[8px]">
+        {label}
+        <label className="h-[80px] rounded-[10px] border border-dashed border-[#C0BDB4] bg-white flex items-center justify-center gap-[8px] text-[13px] text-[#A5A5A5] cursor-pointer hover:border-[#262626] hover:text-[#262626] transition-colors">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect
+              x="1.5"
+              y="3.5"
+              width="13"
+              height="10"
+              rx="1.5"
+              stroke="currentColor"
+              strokeWidth="1.3"
+            />
+            <circle
+              cx="5.5"
+              cy="7"
+              r="1.2"
+              stroke="currentColor"
+              strokeWidth="1.3"
+            />
+            <path
+              d="M1.5 11l3.5-2.5 2.5 2 2-1.5 4 3"
+              stroke="currentColor"
+              strokeWidth="1.3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          {value ? (value as File).name : "Click to upload image"}
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) onChange(file);
+            }}
+          />
+        </label>
+        {value && (
+          <Image
+            src={URL.createObjectURL(value as File)}
+            alt="Preview"
+            className="h-[120px] w-full object-cover rounded-[10px]"
+            width={720}
+            height={120}
+          />
+        )}
+      </div>
+    );
+  }
+
   return null;
 }
 
@@ -393,10 +447,29 @@ export default function ApplyFormPage() {
     if (!form) return;
     setSubmitting(true);
     try {
+      const { supabase } = await import("@/lib/supabaseClient");
+      const uploadedResponses = { ...responses };
+
+      for (const [fieldId, val] of Object.entries(responses)) {
+        if (val instanceof File) {
+          const ext = val.name.split(".").pop();
+          const path = `form-images/${form.id}/${fieldId}-${Date.now()}.${ext}`;
+          const { error } = await supabase.storage
+            .from("konfolio-images")
+            .upload(path, val, { upsert: true });
+          if (!error) {
+            const { data } = supabase.storage
+              .from("konfolio-images")
+              .getPublicUrl(path);
+            uploadedResponses[fieldId] = data.publicUrl;
+          }
+        }
+      }
+
       const res = await fetch("/api/forms/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ formId: form.id, responses }),
+        body: JSON.stringify({ formId: form.id, responses: uploadedResponses }),
       });
       if (res.ok) {
         setSubmitted(true);

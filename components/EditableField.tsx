@@ -258,6 +258,35 @@ export default function EditableField({
             </button>
           </div>
         </div>
+      ) : field.type === "image" ? (
+        <div className="h-[80px] rounded-[10px] border border-dashed border-[#C0BDB4] bg-white flex items-center justify-center gap-[8px] text-[13px] text-[#C0BDB4] cursor-default">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect
+              x="1.5"
+              y="3.5"
+              width="13"
+              height="10"
+              rx="1.5"
+              stroke="currentColor"
+              strokeWidth="1.3"
+            />
+            <circle
+              cx="5.5"
+              cy="7"
+              r="1.2"
+              stroke="currentColor"
+              strokeWidth="1.3"
+            />
+            <path
+              d="M1.5 11l3.5-2.5 2.5 2 2-1.5 4 3"
+              stroke="currentColor"
+              strokeWidth="1.3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          Upload image
+        </div>
       ) : null}
     </div>
   );
