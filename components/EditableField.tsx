@@ -25,6 +25,7 @@ export default function EditableField({
   onDragStart,
   onDragOver,
   onDrop,
+  onToggleRequired,
 }: {
   field: Field;
   isProtected: boolean;
@@ -36,6 +37,7 @@ export default function EditableField({
   onDragStart?: () => void;
   onDragOver?: (e: React.DragEvent) => void;
   onDrop?: () => void;
+  onToggleRequired?: () => void;
 }) {
   const [editingLabel, setEditingLabel] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -101,22 +103,34 @@ export default function EditableField({
             </svg>
           </button>
         )}
-
-        {!isProtected && (
+        <div className="opacity-0 group-hover:opacity-100 ml-auto flex items-center gap-[8px] shrink-0">
           <button
-            onClick={onDelete}
-            className="opacity-0 group-hover:opacity-100 ml-auto text-[#C0BDB4] hover:text-[#A32D2D] shrink-0"
+            onClick={onToggleRequired}
+            className={`text-[11px] px-[8px] py-[2px] rounded-full border transition-colors ${
+              field.required
+                ? "border-[#262626] text-[#262626]"
+                : "border-[#E9E9E9] text-[#A5A5A5]"
+            }`}
           >
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-              <path
-                d="M3 3l10 10M13 3L3 13"
-                stroke="currentColor"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-              />
-            </svg>
+            {field.required ? "Required" : "Optional"}
           </button>
-        )}
+
+          {!isProtected && (
+            <button
+              onClick={onDelete}
+              className="text-[#C0BDB4] hover:text-[#A32D2D]"
+            >
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M3 3l10 10M13 3L3 13"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Input preview */}

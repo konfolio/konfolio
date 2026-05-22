@@ -445,6 +445,23 @@ export default function ApplyFormPage() {
 
   const handleSubmit = async () => {
     if (!form) return;
+
+    const missing = currentFields.filter(
+      (f: any) =>
+        f.required &&
+        (responses[f.id] === undefined ||
+          responses[f.id] === "" ||
+          responses[f.id] === null ||
+          (Array.isArray(responses[f.id]) && responses[f.id].length === 0)),
+    );
+
+    if (missing.length > 0) {
+      alert(
+        `Please fill in all required fields: ${missing.map((f: any) => f.label).join(", ")}`,
+      );
+      return;
+    }
+
     setSubmitting(true);
     try {
       const { supabase } = await import("@/lib/supabaseClient");
@@ -755,7 +772,24 @@ export default function ApplyFormPage() {
             )}
             {currentPage < totalPages ? (
               <button
-                onClick={() => setCurrentPage((p) => p + 1)}
+                onClick={() => {
+                  const missing = currentFields.filter(
+                    (f: any) =>
+                      f.required &&
+                      (responses[f.id] === undefined ||
+                        responses[f.id] === "" ||
+                        responses[f.id] === null ||
+                        (Array.isArray(responses[f.id]) &&
+                          responses[f.id].length === 0)),
+                  );
+                  if (missing.length > 0) {
+                    alert(
+                      `Please fill in: ${missing.map((f: any) => f.label).join(", ")}`,
+                    );
+                    return;
+                  }
+                  setCurrentPage((p) => p + 1);
+                }}
                 className="h-[44px] px-[32px] rounded-full bg-[#262626] text-[14px] text-white hover:opacity-80"
               >
                 Next →

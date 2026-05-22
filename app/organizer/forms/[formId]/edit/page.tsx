@@ -466,6 +466,16 @@ export default function EditOrganizerFormPage() {
     });
   };
 
+  const toggleRequired = (id: string) => {
+    setFields((prev) => {
+      const updated = prev.map((f) =>
+        f.id === id ? { ...f, required: !f.required } : f,
+      );
+      saveFields(updated);
+      return updated;
+    });
+  };
+
   const handlePublish = async () => {
     setPublishing(true);
     try {
@@ -826,6 +836,7 @@ export default function EditOrganizerFormPage() {
                         }}
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={() => handleReorder(field.id)}
+                        onToggleRequired={() => toggleRequired(field.id)}
                       />
                       {(field.field_key === "sharing_table" ||
                         field.label === "Are you sharing a table?") && (
@@ -857,6 +868,7 @@ export default function EditOrganizerFormPage() {
                     onOptionAdd={() => addOption(field.id)}
                     onOptionChange={(i, val) => updateOption(field.id, i, val)}
                     onOptionDelete={(i) => deleteOption(field.id, i)}
+                    onToggleRequired={() => toggleRequired(field.id)}
                   />
                 ))}
               <AddFieldButton onAdd={addField} />
