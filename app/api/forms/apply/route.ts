@@ -11,41 +11,77 @@ function createAdminClient() {
 
 export async function POST(req: Request) {
   try {
+
     const { formId, responses } = await req.json();
     if (!formId) return NextResponse.json({ error: "Missing formId" }, { status: 400 });
 
-    const supabase = createAdminClient();
-
-    const { data: form, error: formErr } = await supabase
-      .from("alley_forms")
-      .select("organizer_id")
-      .eq("id", formId)
-      .single();
-
-    if (formErr || !form) {
-      return NextResponse.json({ error: "Form not found" }, { status: 404 });
-    }
-
     const authSupabase = await createSupabaseServerClient();
     const { data: { user } } = await authSupabase.auth.getUser();
-
-    let konfolioId: string | null = null;
 
     if (!user) {
       return NextResponse.json({ error: "You must be logged in to apply." }, { status: 401 });
     }
 
-    if (user) {
-      const { data: konfolio } = await supabase
-        .from("konfolios")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("status", "published")
-        .order("updated_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+    const supabase = createAdminClient();
 
-      konfolioId = konfolio?.id ?? null;
+    const { data: form, error: formErr } = await supabase
+    .from("alley_forms")
+    .select("organizer_id, application_limit, is_open")
+    .eq("id", formId)
+    .single();
+
+    if (formErr || !form) {
+      return NextResponse.json({ error: "Form not found" }, { status: 404 });
+    }
+
+    const { count } = await supabase
+      .from("alley_applications")
+      .select("*", { count: "exact", head: true })
+      .eq("form_id", formId);
+
+    if (form.application_limit && count != null && count >= form.application_limit) {
+      await supabase
+        .from("alley_forms")
+        .update({ is_open: false, status: "closed" })
+        .eq("id", formId);
+    }
+
+    // Check duplicate submission
+    const { data: existing } = await supabase
+      .from("alley_applications")
+      .select("id")
+      .eq("form_id", formId)
+      .eq("applicant_id", user.id)
+      .maybeSingle();
+
+    if (existing) {
+      return NextResponse.json({ error: "already_submitted" }, { status: 409 });
+    }
+
+    // Get user role
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    const role = profile?.role;
+
+    // Look up konfolio
+    const { data: konfolio } = await supabase
+      .from("konfolios")
+      .select("id")
+      .eq("user_id", user.id)
+      .order("updated_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    // Artists must have a konfolio
+    if (role === "artist" && !konfolio) {
+      return NextResponse.json(
+        { error: "You need a published konfolio to apply." },
+        { status: 403 }
+      );
     }
 
     const { error } = await supabase
@@ -53,8 +89,8 @@ export async function POST(req: Request) {
       .insert({
         form_id: formId,
         organizer_id: form.organizer_id,
-        applicant_id: user?.id ?? null,
-        konfolio_id: konfolioId,
+        applicant_id: user.id,
+        konfolio_id: konfolio?.id ?? null,
         answers: responses,
         status: "pending",
       });
@@ -62,7 +98,7 @@ export async function POST(req: Request) {
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
     return NextResponse.json({ success: true });
-  } catch (err: any) {
-    return NextResponse.json({ error: err?.message || "Server error" }, { status: 500 });
+  } catch (err: unknown) {
+    return NextResponse.json({ error: (err as Error)?.message || "Server error" }, { status: 500 });
   }
 }

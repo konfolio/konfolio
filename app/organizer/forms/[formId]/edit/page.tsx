@@ -1,33 +1,25 @@
 "use client";
 
+import EditableField, { Field } from "@/components/EditableField";
+import IfYesAccordion from "@/components/IfYesAccordion";
 import Navbar from "@/components/Navbar";
+import TagPicker from "@/components/TagPicker";
+import AddFieldButton from "@/components/buttons/AddFieldButton";
+import AddFieldModal from "@/components/modals/AddFieldModal";
 import PublishFormModal from "@/components/modals/PublishFormModal";
 import SetLimitModal from "@/components/modals/SetLimitModal";
+import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-function FormField({
-  label,
-  required = false,
-  className = "",
-}: {
-  label: string;
-  required?: boolean;
-  className?: string;
-}) {
-  return (
-    <div className={`flex flex-col gap-[8px] ${className}`}>
-      <label className="text-[14px] text-[#262626]">
-        {label} {required && <span className="text-[#C0BDB4]">*</span>}
-      </label>
-      <input
-        type="text"
-        className="h-[48px] rounded-[10px] border border-[#E9E9E9] bg-white px-[14px] text-[14px] text-[#262626] outline-none focus:border-[#C0BDB4]"
-      />
-    </div>
-  );
-}
+const PROTECTED_FIELD_KEYS = [
+  "first_name",
+  "last_name",
+  "preferred_name",
+  "email",
+  "business_name",
+];
 
 const DEFAULT_FIELDS = [
   {
@@ -39,6 +31,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: [],
     sortOrder: 0,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -49,6 +42,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: [],
     sortOrder: 1,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -59,6 +53,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: [],
     sortOrder: 2,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -69,6 +64,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: [],
     sortOrder: 3,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -79,6 +75,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: [],
     sortOrder: 4,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -89,6 +86,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: [],
     sortOrder: 5,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -99,6 +97,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: ["Yes", "No"],
     sortOrder: 6,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -109,6 +108,7 @@ const DEFAULT_FIELDS = [
     placeholder: "https://konfolio.com/",
     options: [],
     sortOrder: 7,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -119,6 +119,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: [],
     sortOrder: 8,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -129,6 +130,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: [],
     sortOrder: 9,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -139,6 +141,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: [],
     sortOrder: 10,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -149,6 +152,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: [],
     sortOrder: 11,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -159,6 +163,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: [],
     sortOrder: 12,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -169,6 +174,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: ["Yes", "No"],
     sortOrder: 13,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -185,6 +191,7 @@ const DEFAULT_FIELDS = [
       "No, I have not.",
     ],
     sortOrder: 14,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -195,6 +202,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: [],
     sortOrder: 15,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -205,6 +213,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: [],
     sortOrder: 16,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -215,6 +224,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: [],
     sortOrder: 17,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -225,6 +235,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: [],
     sortOrder: 18,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -235,6 +246,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: [],
     sortOrder: 19,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -245,16 +257,18 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: [],
     sortOrder: 20,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
-    type: "short_text",
+    type: "date",
     label: "What is the latest date we can inform you of an opening?",
     field_key: "latest_opening_date",
     required: true,
-    placeholder: "MM / DD / YYYY",
+    placeholder: "",
     options: [],
     sortOrder: 21,
+    page: 1,
   },
   {
     id: crypto.randomUUID(),
@@ -265,6 +279,7 @@ const DEFAULT_FIELDS = [
     placeholder: "",
     options: ["Yes, I agree."],
     sortOrder: 22,
+    page: 1,
   },
 ];
 
@@ -272,36 +287,194 @@ export default function EditOrganizerFormPage() {
   const params = useParams();
   const formId = params.formId as string;
 
+  const dragFieldId = useRef<string | null>(null);
+
   const [pages, setPages] = useState([1]);
+  const [appCount, setAppCount] = useState(0);
+  const [addFieldOpen, setAddFieldOpen] = useState(false);
+  const [activePage, setActivePage] = useState(1);
   const [setLimitOpen, setSetLimitOpen] = useState(false);
   const [publishOpen, setPublishOpen] = useState(false);
-  const [activePage, setActivePage] = useState(1);
-  const [sharingTable, setSharingTable] = useState<string | null>(null);
-  const [ifYesOpen, setIfYesOpen] = useState(false);
-  const [hasPartner, setHasPartner] = useState<string | null>(null);
   const [publicUrl, setPublicUrl] = useState<string | null>(null);
   const [publishing, setPublishing] = useState(false);
   const [formData, setFormData] = useState<any>(null);
+  const [fields, setFields] = useState<Field[]>(DEFAULT_FIELDS);
+  const [saving, setSaving] = useState(false);
+
+  const [tags, setTags] = useState<string[]>([]);
+  const [description, setDescription] = useState("");
+  const [editingDescription, setEditingDescription] = useState(false);
+  const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     if (!formId) return;
     const fetchForm = async () => {
-      const res = await fetch(`/api/forms/${formId}`);
-      const json = await res.json();
-      if (!res.ok) return;
-      setFormData(json.form);
+      const [formRes, appsRes] = await Promise.all([
+        fetch(`/api/forms/${formId}`),
+        fetch(`/api/forms/${formId}/applications`),
+      ]);
 
-      // If no fields yet, seed the defaults
-      if (!json.form.fields || json.form.fields.length === 0) {
+      const formJson = await formRes.json();
+      const appsJson = await appsRes.json();
+
+      setFormData(formJson.form);
+      setTags(formJson.form.tags ?? []);
+      setDescription(formJson.form.description ?? "");
+      setCoverImageUrl(formJson.form.cover_image_url ?? null);
+
+      if (!formRes.ok) return;
+      setFormData(formJson.form);
+
+      if (appsRes.ok) {
+        setAppCount(
+          Array.isArray(appsJson.applications)
+            ? appsJson.applications.length
+            : 0,
+        );
+      }
+
+      if (!formJson.form.fields || formJson.form.fields.length === 0) {
+        setFields(DEFAULT_FIELDS);
         await fetch(`/api/forms/${formId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ fields: DEFAULT_FIELDS }),
         });
+      } else {
+        const withPage = formJson.form.fields.map((f: any) => ({
+          ...f,
+          page: f.page ?? 1,
+        }));
+        setFields(withPage);
+        await fetch(`/api/forms/${formId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fields: withPage }),
+        });
       }
     };
     fetchForm();
   }, [formId]);
+
+  const saveFormMeta = async (updates: Record<string, any>) => {
+    await fetch(`/api/forms/${formId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updates),
+    });
+  };
+
+  const saveFields = async (updatedFields: Field[]) => {
+    setSaving(true);
+    await fetch(`/api/forms/${formId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fields: updatedFields }),
+    });
+    setSaving(false);
+  };
+
+  const updateField = (id: string, updates: Partial<Field>) => {
+    setFields((prev) => {
+      const updated = prev.map((f) => (f.id === id ? { ...f, ...updates } : f));
+      saveFields(updated);
+      return updated;
+    });
+  };
+
+  const deleteField = (id: string) => {
+    setFields((prev) => {
+      const updated = prev.filter((f) => f.id !== id);
+      saveFields(updated);
+      return updated;
+    });
+  };
+
+  const addOption = (id: string) => {
+    setFields((prev) => {
+      const updated = prev.map((f) =>
+        f.id === id
+          ? { ...f, options: [...(f.options ?? []), "New option"] }
+          : f,
+      );
+      saveFields(updated);
+      return updated;
+    });
+  };
+
+  const updateOption = (fieldId: string, optIndex: number, val: string) => {
+    setFields((prev) => {
+      const updated = prev.map((f) => {
+        if (f.id !== fieldId) return f;
+        const newOptions = [...(f.options ?? [])];
+        newOptions[optIndex] = val;
+        return { ...f, options: newOptions };
+      });
+      saveFields(updated);
+      return updated;
+    });
+  };
+
+  const deleteOption = (fieldId: string, optIndex: number) => {
+    setFields((prev) => {
+      const updated = prev.map((f) => {
+        if (f.id !== fieldId) return f;
+        return {
+          ...f,
+          options: (f.options ?? []).filter((_, i) => i !== optIndex),
+        };
+      });
+      saveFields(updated);
+      return updated;
+    });
+  };
+
+  const addField = (type: string = "short_text") => {
+    const newField: Field = {
+      id: crypto.randomUUID(),
+      type,
+      label: "New Question",
+      field_key: `custom_${Date.now()}`,
+      required: false,
+      placeholder: "",
+      options: ["radio", "checkbox", "dropdown", "select"].includes(type)
+        ? ["Option 1"]
+        : [],
+      sortOrder: fields.length,
+      page: activePage,
+    };
+    setFields((prev) => {
+      const updated = [...prev, newField];
+      saveFields(updated);
+      return updated;
+    });
+  };
+
+  const handleReorder = (targetId: string) => {
+    if (!dragFieldId.current || dragFieldId.current === targetId) return;
+    setFields((prev) => {
+      const from = prev.findIndex((f) => f.id === dragFieldId.current);
+      const to = prev.findIndex((f) => f.id === targetId);
+      if (from === -1 || to === -1) return prev;
+      const updated = [...prev];
+      const [moved] = updated.splice(from, 1);
+      updated.splice(to, 0, moved);
+      const reordered = updated.map((f, i) => ({ ...f, sortOrder: i }));
+      saveFields(reordered);
+      return reordered;
+    });
+  };
+
+  const toggleRequired = (id: string) => {
+    setFields((prev) => {
+      const updated = prev.map((f) =>
+        f.id === id ? { ...f, required: !f.required } : f,
+      );
+      saveFields(updated);
+      return updated;
+    });
+  };
 
   const handlePublish = async () => {
     setPublishing(true);
@@ -321,6 +494,83 @@ export default function EditOrganizerFormPage() {
     }
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingImage(true);
+
+    try {
+      const { supabase } = await import("@/lib/supabase/browser");
+      const ext = file.name.split(".").pop();
+      const path = `form-covers/${formId}.${ext}`;
+
+      const { error: uploadErr } = await supabase.storage
+        .from("konfolio-images")
+        .upload(path, file, { upsert: true });
+
+      if (uploadErr) throw uploadErr;
+
+      const { data } = supabase.storage
+        .from("konfolio-images")
+        .getPublicUrl(path);
+      const url = data.publicUrl;
+
+      setCoverImageUrl(url);
+      await saveFormMeta({ cover_image_url: url });
+    } catch (err) {
+      console.error("Image upload failed:", err);
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const PageNavigator = () => (
+    <div className="w-full flex items-center justify-center gap-[10px] py-[20px]">
+      <button className="text-[#C0BDB4] hover:text-[#262626]">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path
+            d="M10 12L6 8l4-4"
+            stroke="currentColor"
+            strokeWidth="1.3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
+      <span className="text-[14px] text-[#A5A5A5]">Pages</span>
+      {pages.map((page) => (
+        <button
+          key={page}
+          onClick={() => setActivePage(page)}
+          className={`text-[14px] pb-[1px] ${activePage === page ? "text-[#262626] border-b border-[#262626]" : "text-[#A5A5A5] border-b border-transparent"}`}
+        >
+          {page}
+        </button>
+      ))}
+      <button
+        onClick={() => {
+          const next = pages.length + 1;
+          setPages([...pages, next]);
+          setActivePage(next);
+        }}
+        className="w-[22px] h-[22px] rounded-full border border-[#E9E9E9] bg-white flex items-center justify-center text-[#A5A5A5] text-[16px] hover:opacity-70 leading-none"
+      >
+        +
+      </button>
+      <button className="text-[#C0BDB4] hover:text-[#262626]">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path
+            d="M6 4l4 4-4 4"
+            stroke="currentColor"
+            strokeWidth="1.3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
+    </div>
+  );
+
   return (
     <main
       className={`min-h-screen bg-[#F7F7F7] ${setLimitOpen || publishOpen ? "overflow-hidden h-screen" : ""}`}
@@ -339,10 +589,17 @@ export default function EditOrganizerFormPage() {
           </div>
           <div className="flex items-center gap-[12px] text-[13px] text-[#A5A5A5]">
             <span className="flex items-center gap-[5px]">
-              <span className="w-[7px] h-[7px] rounded-full bg-[#639922] inline-block" />
-              <span className="text-[#262626]">Receiving</span>
+              <span
+                className={`w-[7px] h-[7px] rounded-full inline-block ${formData?.status === "receiving" ? "bg-[#639922]" : "bg-[#A5A5A5]"}`}
+              />
+              <span className="text-[#262626] capitalize">
+                {formData?.status ?? "draft"}
+              </span>
             </span>
-            <span>{formData?.applications_count ?? 0} applications</span>
+            <span>
+              {appCount} application{appCount === 1 ? "" : "s"}
+            </span>
+            {saving && <span className="text-[#C0BDB4]">Saving...</span>}
           </div>
         </div>
 
@@ -374,582 +631,259 @@ export default function EditOrganizerFormPage() {
         </div>
       </div>
 
-      {/* Page Navigator */}
-      <div className="w-full flex items-center justify-center gap-[10px] py-[20px]">
-        <button className="text-[#C0BDB4] hover:text-[#262626]">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path
-              d="M10 12L6 8l4-4"
-              stroke="currentColor"
-              strokeWidth="1.3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-
-        <span className="text-[14px] text-[#A5A5A5]">Pages</span>
-
-        {pages.map((page) => (
-          <button
-            key={page}
-            onClick={() => setActivePage(page)}
-            className={`text-[14px] pb-[1px] ${
-              activePage === page
-                ? "text-[#262626] border-b border-[#262626]"
-                : "text-[#A5A5A5] border-b border-transparent"
-            }`}
-          >
-            {page}
-          </button>
-        ))}
-
-        <button
-          onClick={() => {
-            const next = pages.length + 1;
-            setPages([...pages, next]);
-            setActivePage(next);
-          }}
-          className="w-[22px] h-[22px] rounded-full border border-[#E9E9E9] bg-white flex items-center justify-center text-[#A5A5A5] text-[16px] hover:opacity-70 leading-none"
-        >
-          +
-        </button>
-
-        <button className="text-[#C0BDB4] hover:text-[#262626]">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path
-              d="M6 4l4 4-4 4"
-              stroke="currentColor"
-              strokeWidth="1.3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-      </div>
+      <PageNavigator />
 
       {/* Main Content */}
       <div className="w-full flex justify-center px-[40px]">
         <div className="w-full max-w-[1040px] flex flex-col gap-[24px]">
           {/* Cover Image Area */}
-          <div className="w-full h-[200px] bg-white rounded-[12px] border-[0.5px] border-[#E9E9E9] relative">
-            <button className="absolute top-[12px] right-[12px] text-[#C0BDB4] hover:text-[#262626]">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path
-                  d="M1 9s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6Z"
-                  stroke="currentColor"
-                  strokeWidth="1.3"
-                />
-                <circle
-                  cx="9"
-                  cy="9"
-                  r="2.5"
-                  stroke="currentColor"
-                  strokeWidth="1.3"
-                />
-              </svg>
-            </button>
-            <button className="absolute bottom-[12px] right-[12px] text-[#C0BDB4] hover:text-[#262626]">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <rect
-                  x="1.5"
-                  y="3.5"
-                  width="15"
-                  height="11"
-                  rx="2"
-                  stroke="currentColor"
-                  strokeWidth="1.3"
-                />
-                <circle
-                  cx="6"
-                  cy="7.5"
-                  r="1.5"
-                  stroke="currentColor"
-                  strokeWidth="1.3"
-                />
-                <path
-                  d="M1.5 12l4-3 3 2.5 2.5-2 5 4"
-                  stroke="currentColor"
-                  strokeWidth="1.3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
+          <div className="w-full h-[200px] bg-white rounded-[12px] border-[0.5px] border-[#E9E9E9] relative overflow-hidden">
+            {coverImageUrl ? (
+              <Image
+                src={coverImageUrl}
+                alt="Cover"
+                className="w-full h-full object-cover"
+                width={300}
+                height={200}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-[13px] text-[#C0BDB4]">
+                No cover image
+              </div>
+            )}
+            {/* Upload button */}
+            <label className="absolute bottom-[12px] right-[12px] text-[#C0BDB4] hover:text-[#262626] cursor-pointer">
+              {uploadingImage ? (
+                <span className="text-[12px]">Uploading...</span>
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <rect
+                    x="1.5"
+                    y="3.5"
+                    width="15"
+                    height="11"
+                    rx="2"
+                    stroke="currentColor"
+                    strokeWidth="1.3"
+                  />
+                  <circle
+                    cx="6"
+                    cy="7.5"
+                    r="1.5"
+                    stroke="currentColor"
+                    strokeWidth="1.3"
+                  />
+                  <path
+                    d="M1.5 12l4-3 3 2.5 2.5-2 5 4"
+                    stroke="currentColor"
+                    strokeWidth="1.3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageUpload}
+              />
+            </label>
+            {/* Remove button */}
+            {coverImageUrl && (
+              <button
+                onClick={() => {
+                  setCoverImageUrl(null);
+                  saveFormMeta({ cover_image_url: null });
+                }}
+                className="absolute top-[12px] right-[12px] text-[#C0BDB4] hover:text-[#A32D2D]"
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path
+                    d="M3 3l10 10M13 3L3 13"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
+            )}
           </div>
 
-          {/* Form Title + Meta */}
-          <div className="flex flex-col gap-[12px]">
-            <h1 className="text-[32px] font-medium text-[#262626]">
-              Untitled Form
-            </h1>
-            <div className="flex items-center gap-[8px] text-[14px] text-[#262626]">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <rect
-                  x="2"
-                  y="3"
-                  width="12"
-                  height="11"
-                  rx="1.5"
-                  stroke="#A5A5A5"
-                  strokeWidth="1.2"
-                />
-                <path
-                  d="M5 2v2M11 2v2M2 7h12"
-                  stroke="#A5A5A5"
-                  strokeWidth="1.2"
-                  strokeLinecap="round"
-                />
-              </svg>
-              <span>September 13 - 14 2025</span>
-            </div>
-            <div className="flex items-center gap-[8px] text-[14px] text-[#262626]">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path
-                  d="M8 1.5a5 5 0 0 1 5 5c0 3.5-5 8.5-5 8.5S3 10 3 6.5a5 5 0 0 1 5-5Z"
-                  stroke="#A5A5A5"
-                  strokeWidth="1.2"
-                />
-                <circle
-                  cx="8"
-                  cy="6.5"
-                  r="1.5"
-                  stroke="#A5A5A5"
-                  strokeWidth="1.2"
-                />
-              </svg>
-              <span>Event Address</span>
-            </div>
-            <button className="self-start mt-[4px] h-[32px] px-[16px] rounded-full border border-[#E9E9E9] text-[13px] text-[#A5A5A5] hover:opacity-70">
-              + Tag
-            </button>
-            <p className="text-[14px] text-[#C0BDB4]">
-              Tell applicants about your event.
-            </p>
-          </div>
-
-          {/* Form Fields */}
-          <div className="flex flex-col gap-[32px] pb-[80px]">
-            {/* Row 1: First + Last Name */}
-            <div className="grid grid-cols-2 gap-[24px]">
-              <FormField label="First Name" required />
-              <FormField label="Last Name" required />
-            </div>
-
-            {/* Preferred Name */}
-            <div className="grid grid-cols-2 gap-[24px]">
-              <FormField label="Preferred Name" />
-            </div>
-
-            {/* Row 2: Business Name + Email */}
-            <div className="grid grid-cols-2 gap-[24px]">
-              <FormField label="Business Name" required />
-              <FormField label="Email" required />
-            </div>
-
-            {/* Location */}
-            <div className="grid grid-cols-2 gap-[24px]">
-              <FormField label="Location" />
-            </div>
-
-            {/* Are you sharing a table? */}
-            <div className="flex flex-col gap-[12px]">
-              <label className="text-[14px] text-[#262626]">
-                Are you sharing a table?{" "}
-                <span className="text-[#C0BDB4]">*</span>
-              </label>
-              {["Yes", "No"].map((option) => (
-                <label
-                  key={option}
-                  className="flex items-center gap-[10px] cursor-pointer"
-                >
-                  <div
-                    onClick={() => setSharingTable(option)}
-                    className={`w-[20px] h-[20px] rounded-full border-[1.5px] flex items-center justify-center cursor-pointer ${
-                      sharingTable === option
-                        ? "border-[#262626]"
-                        : "border-[#C0BDB4]"
-                    }`}
-                  >
-                    {sharingTable === option && (
-                      <div className="w-[10px] h-[10px] rounded-full bg-[#262626]" />
-                    )}
-                  </div>
-                  <span className="text-[14px] text-[#262626]">{option}</span>
-                </label>
-              ))}
-
-              <div className="mt-[8px] w-full bg-white rounded-[12px] border-[0.5px] border-[#E9E9E9] overflow-hidden">
-                {/* Accordion Header */}
-                <button
-                  onClick={() => setIfYesOpen(!ifYesOpen)}
-                  className="w-full px-[20px] py-[16px] flex items-center gap-[10px] hover:opacity-70"
-                >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    className={`transition-transform ${ifYesOpen ? "rotate-180" : ""}`}
-                  >
-                    <path
-                      d="M4 6l4 4 4-4"
+          {activePage === 1 && (
+            <>
+              <div className="flex flex-col gap-[12px]">
+                <h1 className="text-[32px] font-medium text-[#262626]">
+                  {formData?.title ?? "Untitled Form"}
+                </h1>
+                <div className="flex items-center gap-[8px] text-[14px] text-[#262626]">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <rect
+                      x="2"
+                      y="3"
+                      width="12"
+                      height="11"
+                      rx="1.5"
                       stroke="#A5A5A5"
-                      strokeWidth="1.3"
+                      strokeWidth="1.2"
+                    />
+                    <path
+                      d="M5 2v2M11 2v2M2 7h12"
+                      stroke="#A5A5A5"
+                      strokeWidth="1.2"
                       strokeLinecap="round"
-                      strokeLinejoin="round"
                     />
                   </svg>
-                  <span className="text-[14px] text-[#A5A5A5]">
-                    If &quot;yes&quot;
-                  </span>
-                </button>
+                  <span>{formData?.event_date_start ?? "Event Date"}</span>
+                </div>
+                <div className="flex items-center gap-[8px] text-[14px] text-[#262626]">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M8 1.5a5 5 0 0 1 5 5c0 3.5-5 8.5-5 8.5S3 10 3 6.5a5 5 0 0 1 5-5Z"
+                      stroke="#A5A5A5"
+                      strokeWidth="1.2"
+                    />
+                    <circle
+                      cx="8"
+                      cy="6.5"
+                      r="1.5"
+                      stroke="#A5A5A5"
+                      strokeWidth="1.2"
+                    />
+                  </svg>
+                  <span>{formData?.event_address ?? "Event Address"}</span>
+                </div>
 
-                {/* Expanded Content */}
-                {ifYesOpen && (
-                  <div className="px-[20px] pb-[28px] flex flex-col gap-[24px] border-t border-[#F3F3F3]">
-                    {/* Do you have a partner? */}
-                    <div className="flex flex-col gap-[12px] pt-[24px]">
-                      <label className="text-[14px] text-[#262626]">
-                        Do you have a partner?{" "}
-                        <span className="text-[#C0BDB4]">*</span>
-                      </label>
-                      {["Yes, I have a partner.", "No, I need a partner."].map(
-                        (option) => (
-                          <label
-                            key={option}
-                            className="flex items-center gap-[10px] cursor-pointer"
-                          >
-                            <div
-                              onClick={() => setHasPartner(option)}
-                              className={`w-[20px] h-[20px] rounded-full border-[1.5px] flex items-center justify-center cursor-pointer ${
-                                hasPartner === option
-                                  ? "border-[#262626]"
-                                  : "border-[#C0BDB4]"
-                              }`}
-                            >
-                              {hasPartner === option && (
-                                <div className="w-[10px] h-[10px] rounded-full bg-[#262626]" />
-                              )}
-                            </div>
-                            <span className="text-[14px] text-[#262626]">
-                              {option}
-                            </span>
-                          </label>
-                        ),
-                      )}
-                    </div>
+                {/* Tags */}
+                <TagPicker
+                  selected={tags}
+                  onChange={(next) => {
+                    setTags(next);
+                    saveFormMeta({ tags: next });
+                  }}
+                />
 
-                    {/* Table partner information */}
-                    <p className="text-[14px] text-[#C0BDB4]">
-                      Table partner information:
-                    </p>
-
-                    {/* First + Last Name */}
-                    <div className="grid grid-cols-2 gap-[24px]">
-                      <FormField label="First Name" />
-                      <FormField label="Last Name" />
-                    </div>
-
-                    {/* Preferred Name */}
-                    <div className="grid grid-cols-2 gap-[24px]">
-                      <FormField label="Preferred Name" />
-                    </div>
-
-                    {/* Business Name + Email */}
-                    <div className="grid grid-cols-2 gap-[24px]">
-                      <FormField label="Business Name" />
-                      <FormField label="Email" />
-                    </div>
-
-                    <p className="text-[13px] text-[#C0BDB4]">
-                      Please fill in the application jointly and as accurately
-                      as possible.
-                    </p>
+                {/* Selected tags display */}
+                {tags.length > 0 && (
+                  <div className="flex flex-wrap gap-[6px]">
+                    {tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="inline-flex items-center gap-[4px] h-[26px] px-[10px] rounded-full bg-[#F1EFE8] text-[12px] text-[#5F5E5A]"
+                      >
+                        {tag}
+                        <button
+                          onClick={() => {
+                            const next = tags.filter((t) => t !== tag);
+                            setTags(next);
+                            saveFormMeta({ tags: next });
+                          }}
+                          className="hover:opacity-70 leading-none"
+                        >
+                          X
+                        </button>
+                      </span>
+                    ))}
                   </div>
                 )}
-              </div>
-            </div>
-          </div>
-          {/* Konfolio Link + Portfolio Link */}
-          <div className="grid grid-cols-2 gap-[24px]">
-            <div className="flex flex-col gap-[8px]">
-              <label className="text-[14px] text-[#262626]">
-                Konfolio Link <span className="text-[#C0BDB4]">*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="https//:konfolio.com/"
-                className="h-[48px] rounded-[10px] border border-[#E9E9E9] bg-white px-[14px] text-[14px] text-[#262626] placeholder:text-[#C0BDB4] outline-none focus:border-[#C0BDB4]"
-              />
-              <p className="text-[12px] text-[#C0BDB4]">
-                Konfolio does not show preview of external portfolios.
-              </p>
-            </div>
-            <FormField label="Portfolio Link" />
-          </div>
 
-          {/* Social Media Link + Online Shop */}
-          <div className="grid grid-cols-2 gap-[24px]">
-            <FormField label="Social Media Link" required />
-            <FormField label="Online Shop" required />
-          </div>
-
-          {/* Additional Link */}
-          <div className="grid grid-cols-2 gap-[24px]">
-            <FormField label="Additional Link" />
-          </div>
-
-          {/* Your Merchandise */}
-          <div className="grid grid-cols-2 gap-[24px]">
-            <div className="flex flex-col gap-[8px]">
-              <label className="text-[14px] text-[#262626]">
-                Your Merchandise <span className="text-[#C0BDB4]">*</span>
-              </label>
-              <div className="relative">
-                <select className="w-full h-[48px] rounded-[10px] border border-[#E9E9E9] bg-white px-[14px] text-[14px] text-[#C0BDB4] appearance-none outline-none focus:border-[#C0BDB4]">
-                  <option value="" disabled defaultValue={""}>
-                    Select
-                  </option>
-                </select>
-                <svg
-                  className="absolute right-[14px] top-1/2 -translate-y-1/2 pointer-events-none"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                >
-                  <path
-                    d="M4 6l4 4 4-4"
-                    stroke="#C0BDB4"
-                    strokeWidth="1.3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                {/* Editable description */}
+                {editingDescription ? (
+                  <textarea
+                    autoFocus
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    onBlur={() => {
+                      setEditingDescription(false);
+                      saveFormMeta({ description });
+                    }}
+                    rows={3}
+                    placeholder="Tell applicants about your event."
+                    className="text-[14px] text-[#262626] border border-[#E9E9E9] rounded-[10px] px-[14px] py-[10px] bg-white outline-none focus:border-[#C0BDB4] resize-none"
                   />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          {/* Sales Permit */}
-          <div className="grid grid-cols-2 gap-[24px]">
-            <div className="flex flex-col gap-[8px]">
-              <label className="text-[14px] text-[#262626]">
-                Do you have a valid sales permit in California (CA)?{" "}
-                <span className="text-[#C0BDB4]">*</span>
-              </label>
-              <div className="relative">
-                <select className="w-full h-[48px] rounded-[10px] border border-[#E9E9E9] bg-white px-[14px] text-[14px] text-[#C0BDB4] appearance-none outline-none focus:border-[#C0BDB4]">
-                  <option value="" disabled defaultValue={""}>
-                    Select
-                  </option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
-                </select>
-                <svg
-                  className="absolute right-[14px] top-1/2 -translate-y-1/2 pointer-events-none"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                >
-                  <path
-                    d="M4 6l4 4 4-4"
-                    stroke="#C0BDB4"
-                    strokeWidth="1.3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          {/* Have you vended previously? */}
-          <div className="flex flex-col gap-[12px]">
-            <label className="text-[14px] text-[#262626]">
-              Have you vended for us previously?{" "}
-              <span className="text-[#C0BDB4]">*</span>
-            </label>
-            {[
-              "2025",
-              "2024",
-              "2023",
-              "Yes, but not listed above.",
-              "No, I have not.",
-            ].map((option) => (
-              <label
-                key={option}
-                className="flex items-center gap-[10px] cursor-pointer"
-              >
-                <div className="w-[18px] h-[18px] rounded-[4px] border border-[#C0BDB4] bg-white shrink-0" />
-                <span className="text-[14px] text-[#262626]">{option}</span>
-              </label>
-            ))}
-          </div>
-
-          {/* Vend Experience 1-4 */}
-          <div className="grid grid-cols-2 gap-[24px]">
-            <FormField label="Vend Experience 1" />
-            <FormField label="Vend Experience 2" />
-          </div>
-          <div className="grid grid-cols-2 gap-[24px]">
-            <FormField label="Vend Experience 3" />
-            <FormField label="Vend Experience 4" />
-          </div>
-
-          {/* First-Choice + Second-Choice Option */}
-          <div className="grid grid-cols-2 gap-[24px]">
-            {["First-Choice Option", "Second-Choice Option"].map((label) => (
-              <div key={label} className="flex flex-col gap-[8px]">
-                <label className="text-[14px] text-[#262626]">
-                  {label} <span className="text-[#C0BDB4]">*</span>
-                </label>
-                <div className="relative">
-                  <select className="w-full h-[48px] rounded-[10px] border border-[#E9E9E9] bg-white px-[14px] text-[14px] text-[#C0BDB4] appearance-none outline-none focus:border-[#C0BDB4]">
-                    <option value="" disabled defaultValue={""}>
-                      Select
-                    </option>
-                  </select>
-                  <svg
-                    className="absolute right-[14px] top-1/2 -translate-y-1/2 pointer-events-none"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    fill="none"
+                ) : (
+                  <button
+                    onClick={() => setEditingDescription(true)}
+                    className="text-left text-[14px] text-[#C0BDB4] hover:text-[#A5A5A5]"
                   >
-                    <path
-                      d="M4 6l4 4 4-4"
-                      stroke="#C0BDB4"
-                      strokeWidth="1.3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
+                    {description || "Tell applicants about your event."}
+                  </button>
+                )}
               </div>
-            ))}
-          </div>
 
-          {/* Latest date for opening */}
-          <div className="grid grid-cols-2 gap-[24px]">
-            <div className="flex flex-col gap-[8px]">
-              <label className="text-[14px] text-[#262626]">
-                What is the latest date we can inform you of an opening?{" "}
-                <span className="text-[#C0BDB4]">*</span>
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="MM / DD / YYYY"
-                  className="w-full h-[48px] rounded-[10px] border border-[#E9E9E9] bg-white px-[14px] pr-[40px] text-[14px] text-[#262626] placeholder:text-[#C0BDB4] outline-none focus:border-[#C0BDB4]"
-                />
-                <svg
-                  className="absolute right-[14px] top-1/2 -translate-y-1/2 pointer-events-none"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                >
-                  <rect
-                    x="2"
-                    y="3"
-                    width="12"
-                    height="11"
-                    rx="1.5"
-                    stroke="#C0BDB4"
-                    strokeWidth="1.2"
-                  />
-                  <path
-                    d="M5 2v2M11 2v2M2 7h12"
-                    stroke="#C0BDB4"
-                    strokeWidth="1.2"
-                    strokeLinecap="round"
-                  />
-                </svg>
+              {/* Editable Fields */}
+              <div className="flex flex-col gap-[28px] pb-[40px]">
+                {fields
+                  .filter((f) => (f.page ?? 1) === 1)
+                  .map((field) => (
+                    <div key={field.id} className="flex flex-col gap-[12px]">
+                      <EditableField
+                        field={field}
+                        isProtected={PROTECTED_FIELD_KEYS.includes(
+                          field.field_key,
+                        )}
+                        onLabelChange={(val) =>
+                          updateField(field.id, { label: val })
+                        }
+                        onDelete={() => deleteField(field.id)}
+                        onOptionAdd={() => addOption(field.id)}
+                        onOptionChange={(i, val) =>
+                          updateOption(field.id, i, val)
+                        }
+                        onOptionDelete={(i) => deleteOption(field.id, i)}
+                        onDragStart={() => {
+                          dragFieldId.current = field.id;
+                        }}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={() => handleReorder(field.id)}
+                        onToggleRequired={() => toggleRequired(field.id)}
+                      />
+                      {(field.field_key === "sharing_table" ||
+                        field.label === "Are you sharing a table?") && (
+                        <IfYesAccordion />
+                      )}
+                    </div>
+                  ))}
+                <AddFieldButton onAdd={addField} />
               </div>
+            </>
+          )}
+
+          {activePage > 1 && (
+            <div className="flex flex-col gap-[24px] pb-[80px]">
+              <p className="text-[14px] text-[#C0BDB4]">
+                Page {activePage} — Add your questions below.
+              </p>
+              {fields
+                .filter((f) => f.page === activePage)
+                .map((field) => (
+                  <EditableField
+                    key={field.id}
+                    field={field}
+                    isProtected={false}
+                    onLabelChange={(val) =>
+                      updateField(field.id, { label: val })
+                    }
+                    onDelete={() => deleteField(field.id)}
+                    onOptionAdd={() => addOption(field.id)}
+                    onOptionChange={(i, val) => updateOption(field.id, i, val)}
+                    onOptionDelete={(i) => deleteOption(field.id, i)}
+                    onToggleRequired={() => toggleRequired(field.id)}
+                  />
+                ))}
+              <AddFieldButton onAdd={addField} />
             </div>
-          </div>
+          )}
 
-          {/* Terms of Service */}
-          <div className="flex flex-col gap-[12px]">
-            <p className="text-[14px] text-[#262626]">
-              <a
-                href="/terms-of-service"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#262626] underline"
-              >
-                I agree to the Terms of Service
-              </a>
-              <span className="font-medium">(add link to text)</span> of Event
-              Name. <span className="text-[#C0BDB4]">*</span>
-            </p>
-            <label className="flex items-center gap-[10px] cursor-pointer">
-              <div className="w-[20px] h-[20px] rounded-full border-[1.5px] border-[#C0BDB4] flex items-center justify-center" />
-              <span className="text-[14px] text-[#262626]">Yes, I agree.</span>
-            </label>
-          </div>
-
-          {/* Bottom Page Navigator */}
-          <div className="w-full flex items-center justify-center gap-[10px] py-[48px]">
-            <button className="text-[#C0BDB4] hover:text-[#262626]">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path
-                  d="M10 12L6 8l4-4"
-                  stroke="currentColor"
-                  strokeWidth="1.3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-
-            <span className="text-[14px] text-[#A5A5A5]">Pages</span>
-
-            {pages.map((page) => (
-              <button
-                key={page}
-                onClick={() => setActivePage(page)}
-                className={`text-[14px] pb-[1px] ${
-                  activePage === page
-                    ? "text-[#262626] border-b border-[#262626]"
-                    : "text-[#A5A5A5] border-b border-transparent"
-                }`}
-              >
-                {page}
-              </button>
-            ))}
-
-            <button
-              onClick={() => {
-                const next = pages.length + 1;
-                setPages([...pages, next]);
-                setActivePage(next);
-              }}
-              className="w-[22px] h-[22px] rounded-full border border-[#E9E9E9] bg-white flex items-center justify-center text-[#A5A5A5] text-[16px] hover:opacity-70 leading-none"
-            >
-              +
-            </button>
-
-            <button className="text-[#C0BDB4] hover:text-[#262626]">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path
-                  d="M6 4l4 4-4 4"
-                  stroke="currentColor"
-                  strokeWidth="1.3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-          </div>
+          <PageNavigator />
         </div>
       </div>
+
       {setLimitOpen && (
         <SetLimitModal
           formTitle={formData?.title ?? "Untitled Form"}
-          applicationsCount={formData?.applications_count ?? 0}
+          formId={formId}
+          applicationsCount={appCount}
           onClose={() => setSetLimitOpen(false)}
         />
       )}
@@ -959,6 +893,12 @@ export default function EditOrganizerFormPage() {
           publicUrl={publicUrl}
           formId={formId}
           onClose={() => setPublishOpen(false)}
+        />
+      )}
+      {addFieldOpen && (
+        <AddFieldModal
+          onSelect={(type) => addField(type)}
+          onClose={() => setAddFieldOpen(false)}
         />
       )}
     </main>

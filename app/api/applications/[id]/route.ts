@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 function createAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -12,20 +13,24 @@ function createAdminClient() {
   return createClient(url, serviceRoleKey);
 }
 
-const DEV_ORGANIZER_ID = "a0d1b45e-e482-4eba-ba34-54a4c88d33d4";
-
 export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
-
     const body = await req.json().catch(() => null);
     const status = body?.status as string;
 
     if (!["accepted", "rejected", "pending"].includes(status)) {
       return NextResponse.json({ error: "Invalid status" }, { status: 400 });
+    }
+
+    const authSupabase = await createSupabaseServerClient();
+    const { data: { user } } = await authSupabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const supabase = createAdminClient();
@@ -40,10 +45,8 @@ export async function PATCH(
       return NextResponse.json({ error: "Application not found" }, { status: 404 });
     }
 
-    if (
-      process.env.NODE_ENV === "development" &&
-      appRow.organizer_id !== DEV_ORGANIZER_ID
-    ) {
+    // Only the organizer of this form can update status
+    if (appRow.organizer_id !== user.id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -51,7 +54,7 @@ export async function PATCH(
       .from("alley_applications")
       .update({ status })
       .eq("id", id)
-      .select("id,status")
+      .select("id, status")
       .single();
 
     if (error) {
