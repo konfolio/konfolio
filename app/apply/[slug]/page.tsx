@@ -7,6 +7,8 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 import Image from "next/image";
 
+import AutofillDrawer from "@/components/autofill/AutofillDrawer";
+
 type Form = {
   id: string;
   organizer_id: string;
@@ -394,9 +396,21 @@ export default function ApplyFormPage() {
   const [submitting, setSubmitting] = useState(false);
   const [responses, setResponses] = useState<Record<string, any>>({});
   const [organizerName, setOrganizerName] = useState("");
+  const [autofillOpen, setAutofillOpen] = useState(false);
   const [organizerLinks, setOrganizerLinks] = useState<Record<string, string>>(
     {},
   );
+
+  const handleAutofill = (data: Record<string, string>) => {
+    if (!form) return;
+    const newResponses: Record<string, any> = { ...responses };
+    form.fields.forEach((field: any) => {
+      if (field.field_key && data[field.field_key]) {
+        newResponses[field.id] = data[field.field_key];
+      }
+    });
+    setResponses(newResponses);
+  };
 
   const totalPages = form
     ? Math.max(...(form.fields ?? []).map((f: any) => f.page ?? 1), 1)
@@ -533,6 +547,30 @@ export default function ApplyFormPage() {
         <div className="w-full flex justify-center px-[16px] sm:px-[40px] py-[40px]">
           <div className="w-full max-w-[720px] flex flex-col gap-[24px]">
             <FormHeader form={form} />
+            <div className="flex justify-end">
+              <button
+                onClick={() => setAutofillOpen(true)}
+                className="flex items-center gap-[6px] h-[34px] px-[16px] rounded-full bg-[#262626] text-[13px] text-white hover:opacity-80"
+              >
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                  <path
+                    d="M3 8h10M8 3l5 5-5 5"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                Autofill
+              </button>
+            </div>
+
+            {autofillOpen && (
+              <AutofillDrawer
+                onClose={() => setAutofillOpen(false)}
+                onAutofill={handleAutofill}
+              />
+            )}
             <div className="bg-white rounded-[20px] border-[0.5px] border-[#E9E9E9] px-[32px] py-[40px] flex flex-col items-center gap-[12px]">
               <p className="text-[12px] text-[#A5A5A5] self-start">
                 Already Submitted
