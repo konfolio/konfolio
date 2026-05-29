@@ -193,31 +193,7 @@ export default function ApplyFormPage() {
         <div className="w-full flex justify-center px-[16px] sm:px-[40px] py-[40px]">
           <div className="w-full max-w-[720px] flex flex-col gap-[24px]">
             <FormHeader form={form} />
-            <div className="flex justify-end">
-              <button
-                onClick={() => setAutofillOpen(true)}
-                className="flex items-center gap-[6px] h-[34px] px-[16px] rounded-full bg-[#262626] text-[13px] text-white hover:opacity-80"
-              >
-                <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M3 8h10M8 3l5 5-5 5"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                Autofill
-              </button>
-            </div>
 
-            {autofillOpen && (
-              <AutofillDrawer
-                autofillData={autofillData}
-                onClose={() => setAutofillOpen(false)}
-                onAutofill={handleAutofill}
-              />
-            )}
             <div className="bg-white rounded-[20px] border-[0.5px] border-[#E9E9E9] px-[32px] py-[40px] flex flex-col items-center gap-[12px]">
               <p className="text-[12px] text-[#A5A5A5] self-start">
                 Already Submitted
@@ -406,7 +382,33 @@ export default function ApplyFormPage() {
       <Navbar />
       <div className="w-full flex justify-center px-[16px] sm:px-[40px] py-[40px]">
         <div className="w-full max-w-[720px] flex flex-col gap-[32px]">
-          <FormHeader form={form} />
+          {/* Header row with Autofill button */}
+          <div className="flex items-start justify-between gap-[16px]">
+            <FormHeader form={form} />
+            <button
+              onClick={() => setAutofillOpen(true)}
+              className="flex items-center gap-[6px] h-[34px] px-[16px] rounded-full bg-[#262626] text-[13px] text-white hover:opacity-80 shrink-0 mt-[6px]"
+            >
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M3 8h10M8 3l5 5-5 5"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              Autofill
+            </button>
+          </div>
+
+          {autofillOpen && (
+            <AutofillDrawer
+              autofillData={autofillData}
+              onClose={() => setAutofillOpen(false)}
+              onAutofill={handleAutofill}
+            />
+          )}
 
           {/* Page indicator */}
           {totalPages > 1 && (

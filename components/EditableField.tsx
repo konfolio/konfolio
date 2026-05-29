@@ -26,6 +26,7 @@ export default function EditableField({
   onDragOver,
   onDrop,
   onToggleRequired,
+  onPlaceholderChange,
 }: {
   field: Field;
   isProtected: boolean;
@@ -38,6 +39,7 @@ export default function EditableField({
   onDragOver?: (e: React.DragEvent) => void;
   onDrop?: () => void;
   onToggleRequired?: () => void;
+  onPlaceholderChange?: (val: string) => void;
 }) {
   const [editingLabel, setEditingLabel] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -70,7 +72,7 @@ export default function EditableField({
             <circle cx="11" cy="12" r="1.2" fill="currentColor" />
           </svg>
         </div>
-        {editingLabel ? (
+        {field.type !== "plain_text" && editingLabel ? (
           <input
             autoFocus
             value={field.label}
@@ -104,16 +106,18 @@ export default function EditableField({
           </button>
         )}
         <div className="opacity-0 group-hover:opacity-100 ml-auto flex items-center gap-[8px] shrink-0">
-          <button
-            onClick={onToggleRequired}
-            className={`text-[11px] px-[8px] py-[2px] rounded-full border transition-colors ${
-              field.required
-                ? "border-[#262626] text-[#262626]"
-                : "border-[#E9E9E9] text-[#A5A5A5]"
-            }`}
-          >
-            {field.required ? "Required" : "Optional"}
-          </button>
+          {field.type !== "plain_text" && (
+            <button
+              onClick={onToggleRequired}
+              className={`text-[11px] px-[8px] py-[2px] rounded-full border transition-colors ${
+                field.required
+                  ? "border-[#262626] text-[#262626]"
+                  : "border-[#E9E9E9] text-[#A5A5A5]"
+              }`}
+            >
+              {field.required ? "Required" : "Optional"}
+            </button>
+          )}
 
           {!isProtected && (
             <button
@@ -301,6 +305,14 @@ export default function EditableField({
           </svg>
           Upload image
         </div>
+      ) : field.type === "plain_text" ? (
+        <textarea
+          value={field.placeholder}
+          onChange={(e) => onPlaceholderChange?.(e.target.value)}
+          placeholder="Write instructions or context for applicants..."
+          rows={3}
+          className="w-full rounded-[10px] border border-dashed border-[#E9E9E9] bg-[#FAFAFA] px-[14px] py-[12px] text-[14px] text-[#262626] outline-none resize-none"
+        />
       ) : null}
     </div>
   );

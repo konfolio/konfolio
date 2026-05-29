@@ -25,6 +25,16 @@ export default function FieldRenderer({
     </label>
   );
 
+  if (field.type === "plain_text") {
+    return (
+      <div className="rounded-[10px] bg-[#F7F7F7] px-[16px] py-[14px]">
+        <p className="text-[14px] text-[#262626] whitespace-pre-wrap">
+          {field.placeholder || ""}
+        </p>
+      </div>
+    );
+  }
+
   if (field.type === "short_text" || field.type === "text") {
     return (
       <div className="flex flex-col gap-[8px]">

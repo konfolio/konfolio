@@ -6,56 +6,34 @@ export async function GET(
   { params }: { params: Promise<{ formId: string }> }
 ) {
   const { formId } = await params;
-
   const supabase = await createSupabaseServerClient();
 
-  const {
-    data: { user },
-    error: userErr,
-  } = await supabase.auth.getUser();
-
+  const { data: { user }, error: userErr } = await supabase.auth.getUser();
   if (userErr || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { data: fields, error: fieldsErr } = await supabase
-    .from("alley_form_fields")
-    .select("id,label,field_key,type,required,options,sort_order")
-    .eq("form_id", formId)
-    .order("sort_order", { ascending: true });
+  // Get fields from alley_forms.fields jsonb
+  const { data: formRow } = await supabase
+    .from("alley_forms")
+    .select("fields")
+    .eq("id", formId)
+    .single();
 
-  if (fieldsErr) {
-    return NextResponse.json({ error: fieldsErr.message }, { status: 400 });
-  }
+  const fields: any[] = formRow?.fields ?? [];
 
   const { data, error } = await supabase
     .from("alley_applications")
-    .select(
-      `
-      id,
-      status,
-      created_at,
-      answers,
-      applicant_id,
-      konfolio_id,
+    .select(`
+      id, status, created_at, answers, applicant_id, konfolio_id,
       profiles:applicant_id (
-        id,
-        first_name,
-        last_name,
-        preferred_name,
-        business_name,
-        location,
-        profile_image_url
+        id, first_name, last_name, preferred_name,
+        business_name, location, profile_image_url, email
       ),
       konfolios:konfolio_id (
-        id,
-        template,
-        status,
-        content,
-        thumbnail_url
+        id, template, thumbnail_url
       )
-    `
-    )
+    `)
     .eq("form_id", formId)
     .order("created_at", { ascending: false });
 
@@ -63,45 +41,39 @@ export async function GET(
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
+  // Build a map of field_id -> field_key for answer lookup
+  const fieldIdToKey: Record<string, string> = {};
+  const fieldKeyToId: Record<string, string> = {};
+  for (const f of fields) {
+    if (f.id && f.field_key) {
+      fieldIdToKey[f.id] = f.field_key;
+      fieldKeyToId[f.field_key] = f.id;
+    }
+  }
+
   const applications = (data ?? []).map((row: any) => {
+    // answers are keyed by field id — normalize to field_key too
+    const answersByKey: Record<string, any> = {};
+    for (const [fieldId, val] of Object.entries(row.answers ?? {})) {
+      const key = fieldIdToKey[fieldId];
+      if (key) answersByKey[key] = val;
+    }
+
     return {
       id: row.id,
       status: row.status,
       createdAt: row.created_at,
-      answers: row.answers ?? {},
+      answers: answersByKey, // now keyed by field_key
       applicant: {
-  id: row.profiles?.id ?? row.applicant_id ?? null,
-  firstName:
-    row.profiles?.first_name ??
-    row.answers?.first_name ??
-    row.answers?.firstName ??
-    null,
-  lastName:
-    row.profiles?.last_name ??
-    row.answers?.last_name ??
-    row.answers?.lastName ??
-    null,
-  displayName:
-    row.profiles?.preferred_name ||
-    row.profiles?.business_name ||
-    row.answers?.preferred_name ||
-    row.answers?.preferredName ||
-    row.answers?.business_name ||
-    row.answers?.businessName ||
-    row.answers?.first_name ||
-    row.answers?.firstName ||
-    "Unnamed",
-  businessName:
-    row.profiles?.business_name ??
-    row.answers?.business_name ??
-    row.answers?.businessName ??
-    null,
-  location:
-    row.profiles?.location ??
-    row.answers?.location ??
-    null,
-  avatarUrl: row.profiles?.profile_image_url ?? null,
-},
+        id: row.profiles?.id ?? row.applicant_id,
+        firstName: row.profiles?.first_name ?? answersByKey["first_name"] ?? null,
+        lastName: row.profiles?.last_name ?? answersByKey["last_name"] ?? null,
+        displayName: row.profiles?.preferred_name || row.profiles?.business_name || answersByKey["preferred_name"] || answersByKey["first_name"] || "Unnamed",
+        businessName: row.profiles?.business_name ?? answersByKey["business_name"] ?? null,
+        location: row.profiles?.location ?? answersByKey["location"] ?? null,
+        avatarUrl: row.profiles?.profile_image_url ?? null,
+        email: row.profiles?.email ?? answersByKey["email"] ?? null,
+      },
       konfolio: {
         id: row.konfolios?.id ?? null,
         template: row.konfolios?.template ?? null,
@@ -110,5 +82,16 @@ export async function GET(
     };
   });
 
-  return NextResponse.json({ fields: fields ?? [], applications });
+  // Return fields in the format the table expects
+  const normalizedFields = fields.map((f: any) => ({
+    id: f.id,
+    label: f.label,
+    field_key: f.field_key,
+    type: f.type,
+    required: f.required,
+    options: f.options ?? [],
+    sort_order: f.sortOrder ?? 0,
+  }));
+
+  return NextResponse.json({ fields: normalizedFields, applications });
 }

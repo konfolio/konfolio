@@ -16,6 +16,21 @@ export default function ApplicationDrawer({
 }) {
   const [status, setStatus] = useState(app?.status ?? "pending");
   const [notes, setNotes] = useState("");
+  const [otherApplications, setOtherApplications] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!app?.applicant?.id) return;
+    const load = async () => {
+      const res = await fetch(
+        `/api/applicants/${app.applicant.id}/applications`,
+      );
+      if (res.ok) {
+        const json = await res.json();
+        setOtherApplications(json.applications ?? []);
+      }
+    };
+    load();
+  }, [app?.applicant?.id]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -206,6 +221,33 @@ export default function ApplicationDrawer({
               </svg>
             </div>
           </div>
+
+          {/* Found in other forms */}
+          {otherApplications.length > 0 && (
+            <div className="flex flex-col gap-[8px]">
+              <p className="text-[13px] text-[#A5A5A5]">Found in other forms</p>
+              <div className="flex flex-col gap-[6px]">
+                {otherApplications.map((a) => (
+                  <div key={a.id} className="flex items-center justify-between">
+                    <span className="text-[13px] text-[#262626]">
+                      {a.formTitle ?? "Untitled Form"}
+                    </span>
+                    <span
+                      className={`text-[11px] px-[8px] py-[2px] rounded-full capitalize ${
+                        a.status === "accepted"
+                          ? "bg-[#EAF3DE] text-[#3B6D11]"
+                          : a.status === "rejected"
+                            ? "bg-[#FCEBEB] text-[#A32D2D]"
+                            : "bg-[#F7F7F7] text-[#A5A5A5]"
+                      }`}
+                    >
+                      {a.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Form answers */}
           {Object.keys(app.answers ?? {}).length > 0 && (

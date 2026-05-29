@@ -365,6 +365,16 @@ export default function EditOrganizerFormPage() {
     });
   };
 
+  const updatePlaceholder = (id: string, val: string) => {
+    setFields((prev) => {
+      const updated = prev.map((f) =>
+        f.id === id ? { ...f, placeholder: val } : f,
+      );
+      saveFields(updated);
+      return updated;
+    });
+  };
+
   const saveFields = async (updatedFields: Field[]) => {
     setSaving(true);
     await fetch(`/api/forms/${formId}`, {
@@ -837,6 +847,9 @@ export default function EditOrganizerFormPage() {
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={() => handleReorder(field.id)}
                         onToggleRequired={() => toggleRequired(field.id)}
+                        onPlaceholderChange={(val) =>
+                          updatePlaceholder(field.id, val)
+                        }
                       />
                       {(field.field_key === "sharing_table" ||
                         field.label === "Are you sharing a table?") && (
@@ -869,6 +882,9 @@ export default function EditOrganizerFormPage() {
                     onOptionChange={(i, val) => updateOption(field.id, i, val)}
                     onOptionDelete={(i) => deleteOption(field.id, i)}
                     onToggleRequired={() => toggleRequired(field.id)}
+                    onPlaceholderChange={(val) =>
+                      updatePlaceholder(field.id, val)
+                    }
                   />
                 ))}
               <AddFieldButton onAdd={addField} />

@@ -265,10 +265,10 @@ export default function ApplicationsTable({
                     "Notes";
 
                   const appEmail =
+                    a.applicant.email ??
                     (emailKey
                       ? (a.answers?.[emailKey] as string | undefined)
                       : undefined) ??
-                    a.applicant.email ??
                     "—";
 
                   // ✅ do NOT name this `location` (avoids DOM Location confusion)
