@@ -28,7 +28,7 @@ export async function GET(
       id, status, created_at, answers, applicant_id, konfolio_id,
       profiles:applicant_id (
         id, first_name, last_name, preferred_name,
-        business_name, location, profile_image_url, email
+        business_name, location, profile_image_url
       ),
       konfolios:konfolio_id (
         id, template, thumbnail_url
@@ -72,7 +72,7 @@ export async function GET(
         businessName: row.profiles?.business_name ?? answersByKey["business_name"] ?? null,
         location: row.profiles?.location ?? answersByKey["location"] ?? null,
         avatarUrl: row.profiles?.profile_image_url ?? null,
-        email: row.profiles?.email ?? answersByKey["email"] ?? null,
+        email: row.answers?.email ?? row.answers?.Email ?? null,
       },
       konfolio: {
         id: row.konfolios?.id ?? null,
