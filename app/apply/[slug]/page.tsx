@@ -413,6 +413,7 @@ export default function ApplyFormPage() {
           {autofillOpen && (
             <AutofillDrawer
               autofillData={autofillData}
+              fields={form.fields}
               onClose={() => setAutofillOpen(false)}
               onAutofill={handleAutofill}
             />
