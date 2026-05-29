@@ -18,12 +18,12 @@ export async function GET(
   );
 
   const { data, error } = await supabase
-    .from("alley_applications")
-    .select(`
-      id, status,
-      alley_forms:form_id ( id, title )
-    `)
-    .eq("applicant_id", applicantId)
+  .from("alley_applications")
+  .select(`
+    id, status,
+    alley_forms:form_id ( id, title )
+  `)
+  .eq("applicant_id", applicantId)
     .order("created_at", { ascending: false });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

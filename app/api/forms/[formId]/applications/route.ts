@@ -13,6 +13,25 @@ export async function GET(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Fetch the form fields too
+  const { data: formData } = await supabase
+    .from("alley_forms")
+    .select("fields")
+    .eq("id", formId)
+    .single();
+
+  const formFields = formData?.fields ?? [];
+
+  // Helper to get answer by field_key
+  const getAnswer = (answers: Record<string, any>, fieldKey: string) => {
+    // Try direct key first (old format)
+    if (answers[fieldKey] !== undefined) return answers[fieldKey];
+    // Find field by field_key and use its id
+    const field = formFields.find((f: any) => f.field_key === fieldKey);
+    if (field && answers[field.id] !== undefined) return answers[field.id];
+    return null;
+  };
+
   // Get fields from alley_forms.fields jsonb
   const { data: formRow } = await supabase
     .from("alley_forms")
@@ -63,16 +82,30 @@ export async function GET(
       id: row.id,
       status: row.status,
       createdAt: row.created_at,
-      answers: answersByKey, // now keyed by field_key
+      answers: answersByKey,
       applicant: {
-        id: row.profiles?.id ?? row.applicant_id,
-        firstName: row.profiles?.first_name ?? answersByKey["first_name"] ?? null,
-        lastName: row.profiles?.last_name ?? answersByKey["last_name"] ?? null,
-        displayName: row.profiles?.preferred_name || row.profiles?.business_name || answersByKey["preferred_name"] || answersByKey["first_name"] || "Unnamed",
-        businessName: row.profiles?.business_name ?? answersByKey["business_name"] ?? null,
-        location: row.profiles?.location ?? answersByKey["location"] ?? null,
+        id: row.profiles?.id ?? row.applicant_id ?? null,
+        firstName:
+          row.profiles?.first_name ??
+          getAnswer(row.answers ?? {}, "first_name") ?? null,
+        lastName:
+          row.profiles?.last_name ??
+          getAnswer(row.answers ?? {}, "last_name") ?? null,
+        displayName:
+          row.profiles?.preferred_name ||
+          row.profiles?.business_name ||
+          getAnswer(row.answers ?? {}, "preferred_name") ||
+          getAnswer(row.answers ?? {}, "first_name") ||
+          "Unnamed",
+        businessName:
+          row.profiles?.business_name ??
+          getAnswer(row.answers ?? {}, "business_name") ?? null,
+        location:
+          row.profiles?.location ??
+          getAnswer(row.answers ?? {}, "location") ?? null,
         avatarUrl: row.profiles?.profile_image_url ?? null,
-        email: row.answers?.email ?? row.answers?.Email ?? null,
+        email:
+          getAnswer(row.answers ?? {}, "email") ?? null,
       },
       konfolio: {
         id: row.konfolios?.id ?? null,
