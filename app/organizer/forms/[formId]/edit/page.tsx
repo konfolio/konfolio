@@ -1,7 +1,6 @@
 "use client";
 
 import EditableField, { Field } from "@/components/EditableField";
-import IfYesAccordion from "@/components/IfYesAccordion";
 import Navbar from "@/components/Navbar";
 import TagPicker from "@/components/TagPicker";
 import AddFieldButton from "@/components/buttons/AddFieldButton";
@@ -101,13 +100,85 @@ const DEFAULT_FIELDS = [
   },
   {
     id: crypto.randomUUID(),
+    type: "radio",
+    label: "Do you have a partner?",
+    field_key: "has_partner",
+    required: true,
+    placeholder: "",
+    options: ["Yes, I have a partner.", "No, I need a partner."],
+    sortOrder: 7,
+    page: 1,
+    conditional: { fieldKey: "sharing_table", value: "Yes" },
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Partner First Name",
+    field_key: "partner_first_name",
+    required: false,
+    placeholder: "",
+    options: [],
+    sortOrder: 8,
+    page: 1,
+    conditional: { fieldKey: "sharing_table", value: "Yes" },
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Partner Last Name",
+    field_key: "partner_last_name",
+    required: false,
+    placeholder: "",
+    options: [],
+    sortOrder: 9,
+    page: 1,
+    conditional: { fieldKey: "sharing_table", value: "Yes" },
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Partner Preferred Name",
+    field_key: "partner_preferred_name",
+    required: false,
+    placeholder: "",
+    options: [],
+    sortOrder: 10,
+    page: 1,
+    conditional: { fieldKey: "sharing_table", value: "Yes" },
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Partner Business Name",
+    field_key: "partner_business_name",
+    required: false,
+    placeholder: "",
+    options: [],
+    sortOrder: 11,
+    page: 1,
+    conditional: { fieldKey: "sharing_table", value: "Yes" },
+  },
+  {
+    id: crypto.randomUUID(),
+    type: "short_text",
+    label: "Partner Email",
+    field_key: "partner_email",
+    required: false,
+    placeholder: "",
+    options: [],
+    sortOrder: 12,
+    page: 1,
+    conditional: { fieldKey: "sharing_table", value: "Yes" },
+  },
+  {
+    id: crypto.randomUUID(),
     type: "short_text",
     label: "Konfolio Link",
     field_key: "konfolio_link",
     required: true,
     placeholder: "https://konfolio.com/",
     options: [],
-    sortOrder: 7,
+    sortOrder: 13,
     page: 1,
   },
   {
@@ -118,7 +189,7 @@ const DEFAULT_FIELDS = [
     required: false,
     placeholder: "",
     options: [],
-    sortOrder: 8,
+    sortOrder: 14,
     page: 1,
   },
   {
@@ -129,7 +200,7 @@ const DEFAULT_FIELDS = [
     required: true,
     placeholder: "",
     options: [],
-    sortOrder: 9,
+    sortOrder: 15,
     page: 1,
   },
   {
@@ -140,7 +211,7 @@ const DEFAULT_FIELDS = [
     required: true,
     placeholder: "",
     options: [],
-    sortOrder: 10,
+    sortOrder: 16,
     page: 1,
   },
   {
@@ -151,7 +222,7 @@ const DEFAULT_FIELDS = [
     required: false,
     placeholder: "",
     options: [],
-    sortOrder: 11,
+    sortOrder: 17,
     page: 1,
   },
   {
@@ -162,7 +233,7 @@ const DEFAULT_FIELDS = [
     required: true,
     placeholder: "",
     options: [],
-    sortOrder: 12,
+    sortOrder: 18,
     page: 1,
   },
   {
@@ -173,7 +244,7 @@ const DEFAULT_FIELDS = [
     required: true,
     placeholder: "",
     options: ["Yes", "No"],
-    sortOrder: 13,
+    sortOrder: 19,
     page: 1,
   },
   {
@@ -190,7 +261,7 @@ const DEFAULT_FIELDS = [
       "Yes, but not listed above.",
       "No, I have not.",
     ],
-    sortOrder: 14,
+    sortOrder: 20,
     page: 1,
   },
   {
@@ -201,7 +272,7 @@ const DEFAULT_FIELDS = [
     required: false,
     placeholder: "",
     options: [],
-    sortOrder: 15,
+    sortOrder: 21,
     page: 1,
   },
   {
@@ -212,7 +283,7 @@ const DEFAULT_FIELDS = [
     required: false,
     placeholder: "",
     options: [],
-    sortOrder: 16,
+    sortOrder: 22,
     page: 1,
   },
   {
@@ -223,7 +294,7 @@ const DEFAULT_FIELDS = [
     required: false,
     placeholder: "",
     options: [],
-    sortOrder: 17,
+    sortOrder: 23,
     page: 1,
   },
   {
@@ -234,7 +305,7 @@ const DEFAULT_FIELDS = [
     required: false,
     placeholder: "",
     options: [],
-    sortOrder: 18,
+    sortOrder: 24,
     page: 1,
   },
   {
@@ -245,7 +316,7 @@ const DEFAULT_FIELDS = [
     required: true,
     placeholder: "",
     options: [],
-    sortOrder: 19,
+    sortOrder: 25,
     page: 1,
   },
   {
@@ -256,7 +327,7 @@ const DEFAULT_FIELDS = [
     required: true,
     placeholder: "",
     options: [],
-    sortOrder: 20,
+    sortOrder: 26,
     page: 1,
   },
   {
@@ -267,7 +338,7 @@ const DEFAULT_FIELDS = [
     required: true,
     placeholder: "",
     options: [],
-    sortOrder: 21,
+    sortOrder: 27,
     page: 1,
   },
   {
@@ -278,7 +349,7 @@ const DEFAULT_FIELDS = [
     required: true,
     placeholder: "",
     options: ["Yes, I agree."],
-    sortOrder: 22,
+    sortOrder: 28,
     page: 1,
   },
 ];
@@ -826,7 +897,14 @@ export default function EditOrganizerFormPage() {
                 {fields
                   .filter((f) => (f.page ?? 1) === 1)
                   .map((field) => (
-                    <div key={field.id} className="flex flex-col gap-[12px]">
+                    <div
+                      key={field.id}
+                      className={
+                        field.conditional
+                          ? "pl-[24px] border-l-2 border-[#F1EFE8]"
+                          : ""
+                      }
+                    >
                       <EditableField
                         field={field}
                         isProtected={PROTECTED_FIELD_KEYS.includes(
@@ -851,10 +929,6 @@ export default function EditOrganizerFormPage() {
                           updatePlaceholder(field.id, val)
                         }
                       />
-                      {(field.field_key === "sharing_table" ||
-                        field.label === "Are you sharing a table?") && (
-                        <IfYesAccordion />
-                      )}
                     </div>
                   ))}
                 <AddFieldButton onAdd={addField} />

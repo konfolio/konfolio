@@ -12,6 +12,10 @@ export type Field = {
   options: string[];
   sortOrder: number;
   page: number;
+  conditional?: {
+    fieldKey: string;
+    value: string;
+  };
 };
 
 export default function EditableField({

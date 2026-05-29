@@ -47,8 +47,16 @@ export default function ApplyFormPage() {
     ? Math.max(...(form.fields ?? []).map((f: any) => f.page ?? 1), 1)
     : 1;
 
+  const isFieldVisible = (field: any): boolean => {
+    if (!field.conditional) return true;
+    const { fieldKey, value } = field.conditional;
+    const dependsOn = form?.fields.find((f: any) => f.field_key === fieldKey);
+    if (!dependsOn) return true;
+    return responses[dependsOn.id] === value;
+  };
+
   const currentFields = (form?.fields ?? []).filter(
-    (f: any) => (f.page ?? 1) === currentPage,
+    (f: any) => (f.page ?? 1) === currentPage && isFieldVisible(f),
   );
 
   useEffect(() => {
