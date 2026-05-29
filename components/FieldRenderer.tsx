@@ -27,10 +27,11 @@ export default function FieldRenderer({
 
   if (field.type === "plain_text") {
     return (
-      <div className="rounded-[10px] bg-[#F7F7F7] px-[16px] py-[14px]">
-        <p className="text-[14px] text-[#262626] whitespace-pre-wrap">
-          {field.placeholder || ""}
-        </p>
+      <div className="flex flex-col gap-[4px]">
+        <p className="text-[14px] text-[#262626]">{field.label}</p>
+        {field.placeholder && (
+          <p className="text-[13px] text-[#A5A5A5]">{field.placeholder}</p>
+        )}
       </div>
     );
   }

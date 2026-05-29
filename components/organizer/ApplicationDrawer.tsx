@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AppRow } from "./ApplicationsTable";
-import Image from "next/image";
 
 export default function ApplicationDrawer({
   app,
@@ -39,9 +38,6 @@ export default function ApplicationDrawer({
   }, [onClose]);
 
   if (!app) return null;
-
-  const thumb =
-    app.konfolio.thumbnailUrl ?? (app.konfolio as any).thumbnail_url ?? null;
 
   const fullName =
     [app.applicant.firstName, app.applicant.lastName]
@@ -156,25 +152,30 @@ export default function ApplicationDrawer({
 
           {/* Konfolio thumbnail */}
           {app.konfolio.id && (
-            <Link
-              href={`${konfolioViewerBasePath}/${app.konfolio.id}`}
-              target="_blank"
-              className="block w-full rounded-[10px] overflow-hidden border border-[#E9E9E9] hover:opacity-90"
-            >
-              {thumb ? (
-                <Image
-                  src={thumb}
-                  alt="Portfolio"
-                  width={420}
-                  height={180}
-                  className="w-full h-[180px] object-cover"
-                />
-              ) : (
-                <div className="w-full h-[180px] bg-[#F7F7F7] flex items-center justify-center text-[13px] text-[#A5A5A5]">
-                  View Portfolio →
-                </div>
-              )}
-            </Link>
+            <div className="w-full rounded-[10px] overflow-hidden border border-[#E9E9E9]">
+              <iframe
+                src={`${konfolioViewerBasePath}/${app.konfolio.id}`}
+                className="w-full h-[480px] border-0"
+                title="Applicant Portfolio"
+              />
+              <Link
+                href={`${konfolioViewerBasePath}/${app.konfolio.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-[6px] py-[10px] text-[12px] text-[#A5A5A5] hover:text-[#262626] border-t border-[#E9E9E9]"
+              >
+                Open full portfolio
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                  <path
+                    d="M4 2H2.5A1.5 1.5 0 0 0 1 3.5v6A1.5 1.5 0 0 0 2.5 11h6A1.5 1.5 0 0 0 10 9.5V8M7 1h4m0 0v4m0-4L4.5 7.5"
+                    stroke="currentColor"
+                    strokeWidth="1.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </Link>
+            </div>
           )}
 
           {/* Notes */}
