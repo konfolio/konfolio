@@ -25,10 +25,12 @@ type Profile = {
 
 export default function AutofillDrawer({
   autofillData,
+  fields,
   onClose,
   onAutofill,
 }: {
   autofillData: Record<string, string>;
+  fields: any[];
   onClose: () => void;
   onAutofill: (data: Record<string, string>, konfolioId: string) => void;
 }) {
@@ -81,24 +83,20 @@ export default function AutofillDrawer({
   const handleSelect = (konfolio: Konfolio) => {
     if (!profile) return;
 
-    // Start with API autofill data as base
-    const autofillMerged: Record<string, string> = { ...autofillData };
+    // This object will hold values keyed by the 'field_key'
+    const autofillDataMap: Record<string, string> = {
+      first_name: profile.firstName || "",
+      last_name: profile.lastName || "",
+      preferred_name: profile.displayName || "",
+      business_name: profile.businessName || "",
+      email: profile.email || "",
+      location: profile.location || "",
+      konfolio_link: konfolio.portfolio_slug
+        ? `https://konfolio.com/${konfolio.portfolio_slug}`
+        : "",
+    };
 
-    // Override/add with profile + selected konfolio data
-    if (profile.firstName) autofillMerged["first_name"] = profile.firstName;
-    if (profile.lastName) autofillMerged["last_name"] = profile.lastName;
-    if (profile.displayName)
-      autofillMerged["preferred_name"] = profile.displayName;
-    if (profile.businessName)
-      autofillMerged["business_name"] = profile.businessName;
-    if (profile.email) autofillMerged["email"] = profile.email;
-    if (profile.location) autofillMerged["location"] = profile.location;
-    if (konfolio.portfolio_slug) {
-      autofillMerged["konfolio_link"] =
-        `https://konfolio.com/${konfolio.portfolio_slug}`;
-    }
-
-    onAutofill(autofillMerged, konfolio.id);
+    onAutofill(autofillDataMap, konfolio.id);
     onClose();
   };
 
