@@ -16,7 +16,7 @@ export default function PublishFormModal({
   formId,
   onClose,
 }: Props) {
-  const displayUrl = `localhost:3001${publicUrl}`;
+  const displayUrl = `konfolio.com${publicUrl}`;
   const absoluteUrl = publicUrl;
   const fullUrl =
     typeof window !== "undefined"
