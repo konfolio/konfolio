@@ -46,33 +46,44 @@ export async function GET(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const token = getBearerToken(req)
-  if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
   const { id } = await params
   if (!id) return NextResponse.json({ error: "Missing id param" }, { status: 400 })
 
-  const supabase = supabaseAuthed(token)
+  const token = getBearerToken(req)
 
-  const { data: auth, error: authErr } = await supabase.auth.getUser()
-  if (authErr || !auth?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
+  let userId: string | null = null
+
+  if (token) {
+    const { data: userRes } = await supabaseAdmin.auth.getUser(token)
+    userId = userRes?.user?.id ?? null
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("konfolios")
     .select(
-      "id, template, status, updated_at, content, explore_enabled, portfolio_name, portfolio_slug"
+      "id, user_id, template, status, updated_at, content, explore_enabled, portfolio_name, portfolio_slug"
     )
     .eq("id", id)
-    .single()
+    .maybeSingle()
 
   if (error) {
-    const status = error.code === "PGRST116" ? 404 : 500
-    return NextResponse.json(
-      { error: status === 404 ? "Not found" : error.message },
-      { status }
-    )
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+
+  if (!data) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 })
+  }
+
+  const isOwner = userId === data.user_id
+  const isPublished = data.status === "published"
+
+  if (!isOwner && !isPublished) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 })
   }
 
   return NextResponse.json({

@@ -5,6 +5,12 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+function isValidUuid(value: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    value
+  );
+}
+
 export default async function PortfolioPage({
   params,
 }: {
@@ -13,15 +19,30 @@ export default async function PortfolioPage({
   const { portfolioId } = await params;
   const supabase = await createSupabaseServerClient();
 
-  const { data: portfolio, error: portfolioError } = await supabase
-    .from("konfolios")
-    .select("id, user_id, template, content")
-    .eq("id", portfolioId)
-    .eq("status", "published")
-    .eq("explore_enabled", true)
-    .single();
+  const cleanPortfolioId = decodeURIComponent(portfolioId).trim();
 
-  if (portfolioError || !portfolio) {
+  let portfolioQuery = supabase
+    .from("konfolios")
+    .select("id, user_id, template, content, portfolio_slug")
+    .eq("status", "published")
+    .eq("explore_enabled", true);
+
+  if (isValidUuid(cleanPortfolioId)) {
+    portfolioQuery = portfolioQuery.eq("id", cleanPortfolioId);
+  } else {
+    portfolioQuery = portfolioQuery.eq("portfolio_slug", cleanPortfolioId);
+  }
+
+  const { data: portfolio, error: portfolioError } =
+    await portfolioQuery.maybeSingle();
+
+  if (portfolioError) {
+    console.error("Portfolio query error:", portfolioError);
+    notFound();
+  }
+
+  if (!portfolio) {
+    console.error("Portfolio not found for:", cleanPortfolioId);
     notFound();
   }
 
@@ -31,11 +52,7 @@ export default async function PortfolioPage({
       "display_name, business_name, location, profile_image_url, prev_vends",
     )
     .eq("id", portfolio.user_id)
-    .single();
-  //console.log("portfolio.user_id:", portfolio.user_id)
-  //console.log("profile:", profile)
-  //console.log("portfolio.content:", portfolio.content)
-  //console.log("profile:", profile)
+    .maybeSingle();
 
   if (profileError) {
     console.error("Portfolio profile query error:", profileError);

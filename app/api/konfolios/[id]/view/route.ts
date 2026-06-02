@@ -12,16 +12,23 @@ function createAdminClient() {
   return createClient(url, serviceRoleKey);
 }
 
+function isValidUuid(value: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    value
+  );
+}
+
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: konfolioId } = await params;
+    const { id } = await params;
+    const konfolioId = typeof id === "string" ? id.trim() : "";
 
-    if (!konfolioId) {
+    if (!konfolioId || !isValidUuid(konfolioId)) {
       return NextResponse.json(
-        { error: "Missing konfolio id" },
+        { error: "Invalid konfolio id" },
         { status: 400 }
       );
     }
@@ -55,7 +62,7 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      analytics: data?.[0] ?? null,
+      analytics: Array.isArray(data) ? data[0] ?? null : data ?? null,
     });
   } catch (err) {
     console.error("[TRACK VIEW ROUTE ERROR]", err);

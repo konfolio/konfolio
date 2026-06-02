@@ -16,16 +16,6 @@ type Props = {
   className?: string
 }
 
-function slugify(input: string): string {
-  return (input || "")
-    .toLowerCase()
-    .trim()
-    .replace(/['"]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "")
-}
-
 function CheckIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -63,13 +53,7 @@ export default function ExplorePortfolioCard({
   labels = [],
   className = "",
 }: Props) {
-  const businessSlug = slugify(businessName)
-  const finalPortfolioSlug = slugify(portfolioSlug || portfolioName)
-
-  const publicHref =
-    businessSlug && finalPortfolioSlug
-      ? `/${businessSlug}/${finalPortfolioSlug}`
-      : `/explore/${portfolioId}`
+  const publicHref = `/explore/${portfolioId}`
 
   return (
     <div
