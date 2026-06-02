@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import SearchBar from "@/components/explore/SearchBar";
 import ExploreGrid from "@/components/explore/ExploreGrid";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+
 export const dynamic = "force-dynamic";
 
 type ExploreItem = {
@@ -26,6 +27,7 @@ export default async function ExplorePage({
 }) {
   const { q = "", filters = "" } = await searchParams;
   const searchQuery = q.trim().toLowerCase();
+
   const selectedFilters = filters
     .split(",")
     .map((x) => x.trim())
@@ -35,7 +37,9 @@ export default async function ExplorePage({
 
   const { data: konfolios, error: konfoliosError } = await supabase
     .from("konfolios")
-    .select("id, user_id, template, updated_at, portfolio_name, portfolio_slug")
+    .select(
+      "id, user_id, template, updated_at, portfolio_name, portfolio_slug, thumbnail_url"
+    )
     .eq("status", "published")
     .eq("explore_enabled", true)
     .order("updated_at", { ascending: false });
@@ -77,9 +81,15 @@ export default async function ExplorePage({
   let items: ExploreItem[] = (konfolios ?? []).map((row) => {
     const profile = profilesById[row.user_id] ?? {};
 
-    const thumbnailUrl = supabase.storage
+    const fallbackThumbnailUrl = supabase.storage
       .from("konfolio-images")
       .getPublicUrl(`${row.user_id}/${row.id}/thumbnail.png`).data.publicUrl;
+
+    const rawThumbnailUrl = row.thumbnail_url || fallbackThumbnailUrl;
+
+    const thumbnailUrl = row.updated_at
+      ? `${rawThumbnailUrl}?t=${encodeURIComponent(row.updated_at)}`
+      : rawThumbnailUrl;
 
     return {
       id: row.id,

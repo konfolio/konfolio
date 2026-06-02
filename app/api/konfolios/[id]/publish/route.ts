@@ -21,7 +21,7 @@ async function getExecutablePath() {
     return macChrome
   }
 
-  // Vercel/serverless path. This only works if next.config.ts includes the bin folder.
+  // Vercel/serverless path
   const chromiumBinPath = path.join(
     process.cwd(),
     "node_modules",
@@ -34,7 +34,6 @@ async function getExecutablePath() {
     return await chromium.executablePath(chromiumBinPath)
   }
 
-  // Fallback, but if Vercel did not bundle the bin folder, this is where the old error happens.
   return await chromium.executablePath()
 }
 
@@ -47,16 +46,6 @@ function getBearerToken(req: Request) {
   const authHeader = req.headers.get("authorization") || ""
   if (!authHeader.startsWith("Bearer ")) return null
   return authHeader.slice("Bearer ".length).trim()
-}
-
-function slugify(input: string): string {
-  return (input || "")
-    .toLowerCase()
-    .trim()
-    .replace(/['"]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "")
 }
 
 function getAppBaseUrl(req: Request) {
@@ -73,20 +62,29 @@ function getAppBaseUrl(req: Request) {
   return url.origin.replace(/\/+$/, "")
 }
 
-export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
+export async function POST(
+  req: Request,
+  ctx: { params: Promise<{ id: string }> }
+) {
   let browser: Awaited<ReturnType<typeof puppeteer.launch>> | null = null
 
   try {
     const { id: konfolioId } = await ctx.params
-    console.log("[THUMBNAIL] Starting publish thumbnail generation for konfolio:", konfolioId)
+    console.log(
+      "[THUMBNAIL] Starting publish thumbnail generation for konfolio:",
+      konfolioId
+    )
 
     const token = getBearerToken(req)
+
     if (!token) {
       console.log("[THUMBNAIL] Missing bearer token")
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { data: userData, error: userErr } = await supabaseAdmin.auth.getUser(token)
+    const { data: userData, error: userErr } =
+      await supabaseAdmin.auth.getUser(token)
+
     if (userErr || !userData.user) {
       console.log("[THUMBNAIL] Failed auth:", userErr?.message ?? "No user")
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -97,7 +95,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
 
     const { data: k, error: kErr } = await supabaseAdmin
       .from("konfolios")
-      .select("id, user_id, template, content, status, portfolio_slug")
+      .select("id, user_id, template, content, status, explore_enabled, portfolio_slug")
       .eq("id", konfolioId)
       .maybeSingle()
 
@@ -115,40 +113,22 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       id: k.id,
       status: k.status,
       template: k.template,
+      explore_enabled: k.explore_enabled,
       portfolio_slug: k.portfolio_slug,
     })
-
-    const { data: profile, error: profileErr } = await supabaseAdmin
-      .from("profiles")
-      .select("business_name")
-      .eq("id", userId)
-      .maybeSingle()
-
-    if (profileErr) {
-      console.log("[THUMBNAIL] Profile fetch error:", profileErr.message)
-      return NextResponse.json({ error: profileErr.message }, { status: 500 })
-    }
-
-    const businessSlug = slugify(String(profile?.business_name ?? ""))
-    const portfolioSlug = slugify(String(k.portfolio_slug ?? ""))
-
-    console.log("[THUMBNAIL] businessSlug:", businessSlug)
-    console.log("[THUMBNAIL] portfolioSlug:", portfolioSlug)
-
-    if (!businessSlug || !portfolioSlug) {
-      console.log("[THUMBNAIL] Missing slug data for screenshot")
-      return NextResponse.json(
-        { error: "Missing business or portfolio slug for thumbnail generation" },
-        { status: 400 }
-      )
-    }
 
     const publishedAt = new Date().toISOString()
 
     const { error: pubErr } = await supabaseAdmin
-      .from("konfolios")
-      .update({ status: "published", published_at: publishedAt })
-      .eq("id", konfolioId)
+  .from("konfolios")
+  .update({
+    status: "published",
+    explore_enabled: true,
+    published_at: publishedAt,
+    updated_at: publishedAt,
+  })
+  .eq("id", konfolioId)
+  .eq("user_id", userId)
 
     if (pubErr) {
       console.log("[THUMBNAIL] Publish update error:", pubErr.message)
@@ -158,12 +138,16 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     console.log("[THUMBNAIL] Marked konfolio published at:", publishedAt)
 
     const baseUrl = getAppBaseUrl(req)
-    const publicUrl = `${baseUrl}/${businessSlug}/${portfolioSlug}?thumbnail=1&t=${encodeURIComponent(
+
+    // IMPORTANT:
+    // Use the working UUID explore route, not the old slug route.
+    // The old slug route was causing thumbnails to screenshot the 404 page.
+    const screenshotUrl = `${baseUrl}/explore/${konfolioId}?thumbnail=1&t=${encodeURIComponent(
       publishedAt
     )}`
 
     console.log("[THUMBNAIL] baseUrl:", baseUrl)
-    console.log("[THUMBNAIL] publicUrl:", publicUrl)
+    console.log("[THUMBNAIL] screenshotUrl:", screenshotUrl)
 
     const executablePath = await getExecutablePath()
     const isLocalChrome = executablePath.includes("Google Chrome.app")
@@ -187,10 +171,25 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     const page = await browser.newPage()
     console.log("[THUMBNAIL] New page created")
 
-    await page.goto(publicUrl, {
+    const response = await page.goto(screenshotUrl, {
       waitUntil: "networkidle0",
       timeout: 60000,
     })
+
+    if (!response || !response.ok()) {
+      throw new Error(
+        `Thumbnail page failed to load. Status: ${response?.status()} URL: ${screenshotUrl}`
+      )
+    }
+
+    const pageText = await page.evaluate(() => document.body.innerText)
+
+    if (
+      pageText.includes("404") ||
+      pageText.includes("This page could not be found")
+    ) {
+      throw new Error(`Thumbnail target rendered a 404 page: ${screenshotUrl}`)
+    }
 
     console.log("[THUMBNAIL] Public page loaded successfully")
 
@@ -244,14 +243,17 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       console.log("[THUMBNAIL] Fallback full-page screenshot captured")
     }
 
-    const thumbPath = `${userId}/${konfolioId}/thumbnail.png`
+    // Use a fresh filename every time so the browser/CDN does not keep showing
+    // the old 404 thumbnail from cache.
+    const thumbPath = `${userId}/${konfolioId}/thumbnail-${Date.now()}.png`
     console.log("[THUMBNAIL] Uploading thumbnail to:", thumbPath)
 
     const { error: upErr } = await supabaseAdmin.storage
       .from("konfolio-images")
       .upload(thumbPath, png, {
         contentType: "image/png",
-        upsert: true,
+        cacheControl: "3600",
+        upsert: false,
       })
 
     if (upErr) {
@@ -270,6 +272,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       .from("konfolios")
       .update({ thumbnail_url: thumbnailUrl })
       .eq("id", konfolioId)
+      .eq("user_id", userId)
 
     if (tErr) {
       console.log("[THUMBNAIL] thumbnail_url save error:", tErr.message)
@@ -282,20 +285,26 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       ok: true,
       status: "published",
       publishedAt,
-      publicUrl,
+      publicUrl: screenshotUrl,
       thumbnailUrl,
       thumbnailUrlWithBust: `${thumbnailUrl}?t=${encodeURIComponent(publishedAt)}`,
     })
   } catch (e: any) {
     console.log("[THUMBNAIL] Fatal error:", e?.message ?? e)
-    return NextResponse.json({ error: e?.message ?? "Unknown error" }, { status: 500 })
+    return NextResponse.json(
+      { error: e?.message ?? "Unknown error" },
+      { status: 500 }
+    )
   } finally {
     if (browser) {
       try {
         await browser.close()
         console.log("[THUMBNAIL] Browser closed")
       } catch (closeErr: any) {
-        console.log("[THUMBNAIL] Browser close error:", closeErr?.message ?? closeErr)
+        console.log(
+          "[THUMBNAIL] Browser close error:",
+          closeErr?.message ?? closeErr
+        )
       }
     }
   }
