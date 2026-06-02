@@ -26,6 +26,7 @@ export default function GoogleSignInButton() {
         provider: "google",
         options: {
           redirectTo,
+          
           // optional: helps ensure refresh tokens in some setups
           queryParams: { access_type: "offline", prompt: "consent" },
         },
