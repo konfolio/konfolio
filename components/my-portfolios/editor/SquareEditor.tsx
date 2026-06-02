@@ -19,16 +19,6 @@ async function getAccessToken(): Promise<string | null> {
   return data.session?.access_token ?? null
 }
 
-function slugify(input: string): string {
-  return (input || "")
-    .toLowerCase()
-    .trim()
-    .replace(/['"]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "")
-}
-
 async function uploadBlobSrcToStorage(opts: {
   blobSrc: string
   konfolioId: string
@@ -453,23 +443,30 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
       const getJson = await getRes.json().catch(() => ({}))
 
       const portfolioNameFromDb = cleanString(getJson?.portfolioName ?? getJson?.portfolio_name)
-
-      const portfolioSlug =
-        cleanString(getJson?.portfolioSlug ?? getJson?.portfolio_slug) ||
-        slugify(portfolioNameFromDb) ||
-        slugify(cleanString(draft.displayName)) ||
-        "portfolio"
-
       setPublishedPortfolioName(portfolioNameFromDb || initialName)
 
-      const businessSlug = slugify(cleanString(content.businessName)) || "business"
       const origin = typeof window === "undefined" ? "" : window.location.origin
-      setPublishedUrl(`${origin}/${businessSlug}/${portfolioSlug}`)
+
+      const backendViewUrl = cleanString(pubJson?.viewUrl)
+      const fallbackViewUrl = `${origin}/explore/${draftId}`
+
+      setPublishedUrl(backendViewUrl || fallbackViewUrl)
+
+      const nextExploreEnabled =
+        typeof getJson?.exploreEnabled === "boolean"
+          ? getJson.exploreEnabled
+          : typeof getJson?.explore_enabled === "boolean"
+            ? getJson.explore_enabled
+            : true
 
       patchDraft(draftId, {
         status: "published",
-        explore_enabled: allowExploreSearch,
-        thumbnail_url: getJson?.thumbnail_url ?? null,
+        explore_enabled: nextExploreEnabled,
+        thumbnail_url:
+          pubJson?.thumbnailUrl ??
+          getJson?.thumbnailUrl ??
+          getJson?.thumbnail_url ??
+          null,
       })
 
       setPublishStatus("success")
@@ -598,7 +595,7 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
               mobileExpanded: mobileProfileOpen,
               onToggleMobile: () => setMobileProfileOpen((prev) => !prev),
             })}
-  
+
             <EditSquareImageGrid
               editable={!readOnly}
               images={draft.images}
@@ -606,10 +603,10 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
               backgroundIsDark={backgroundIsDark}
             />
           </div>
-  
+
           <div className="w-full flex-row items-start justify-start gap-[20px] max-[700px]:hidden min-[701px]:flex">
             {renderProfileSidebar()}
-  
+
             <EditSquareImageGrid
               editable={!readOnly}
               images={draft.images}
@@ -619,7 +616,7 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
           </div>
         </div>
       </div>
-  
+
       {!readOnly && (
         <>
           <PublishMissingFieldsPopover
@@ -637,7 +634,7 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
                 : undefined
             }
           />
-  
+
           <PublishPopover
             open={publishOpen}
             onClose={() => {
