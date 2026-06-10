@@ -95,13 +95,15 @@ export default function ExplorePortfolioCard({
           "
         />
 
-        <Image
-          src={previewImageUrl}
-          alt={`${businessName} preview`}
-          fill
-          className="object-cover transition-opacity duration-200 group-hover:opacity-90"
-          sizes="390px"
-        />
+        <div className="absolute inset-[12px]">
+  <Image
+    src={previewImageUrl}
+    alt={`${businessName} preview`}
+    fill
+    className="object-contain transition-opacity duration-200 group-hover:opacity-90"
+    sizes="366px"
+  />
+</div>
 
         <button
           type="button"
