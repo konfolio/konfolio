@@ -466,12 +466,13 @@ export default function DashPortfolio({
         ].join(" ")}
       >
         {thumbnailUrl ? (
+          <div className="absolute inset-[12px]">
           <img
             src={thumbnailUrl}
-            alt={`${portfolioName} thumbnail`}
-            className="w-full h-full object-cover"
-            draggable={false}
+            alt=""
+            className="h-full w-full object-contain"
           />
+        </div>
         ) : (
           <div className="w-full h-full bg-[linear-gradient(45deg,rgba(165,165,165,0.18)_25%,transparent_25%,transparent_50%,rgba(165,165,165,0.18)_50%,rgba(165,165,165,0.18)_75%,transparent_75%,transparent)] bg-[length:18px_18px]" />
         )}
