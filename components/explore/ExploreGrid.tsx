@@ -27,7 +27,7 @@ type ExploreItem = {
   displayName: string
   locationText: string
   profileImageUrl: string
-  merchTags: string[]
+  collabs: string[]
 }
 
 type Props = {
@@ -48,7 +48,10 @@ export default function ExploreGrid({ items }: Props) {
       creatorName: item.displayName,
       previewImageUrl: item.thumbnailUrl,
       profileImageUrl: item.profileImageUrl,
-      labels: item.merchTags ?? [],
+      labels:
+        (item.collabs ?? []).filter(
+          (tag) => tag.toLowerCase() !== "not open for collabs"
+        ),
     }))
   }, [items])
 

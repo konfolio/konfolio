@@ -257,7 +257,7 @@ export default function PublicKonfolioView({
               />
             </div>
 
-            <div className="hidden w-full flex-row items-start justify-start gap-[20px] min-[701px]:flex">
+            <div className="hidden w-full flex-row items-start justify-center gap-[20px] min-[701px]:flex">
               <EditSquareProfileSidebar
                 editable={false}
                 backHref={backHref}

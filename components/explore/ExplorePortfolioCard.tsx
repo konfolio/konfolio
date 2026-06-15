@@ -1,9 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
+import { useRouter } from "next/navigation"
 import Image from "next/image"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
 import ThreeDotsIcon from "@/components/icons/ThreeDotsIcon"
+import useClickOutside from "@/components/hooks/useClickOutside"
 
 type Props = {
   portfolioId: string
@@ -15,6 +17,16 @@ type Props = {
   avatarUrl?: string
   labels?: string[]
   className?: string
+}
+
+function slugify(input: string): string {
+  return (input || "")
+    .toLowerCase()
+    .trim()
+    .replace(/['"]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
 }
 
 function CheckIcon({ className = "" }: { className?: string }) {
@@ -74,9 +86,23 @@ export default function ExplorePortfolioCard({
   labels = [],
   className = "",
 }: Props) {
+  const router = useRouter()
   const [moreOpen, setMoreOpen] = useState(false)
+  const moreRef = useRef<HTMLDivElement | null>(null)
 
-  const publicHref = `/explore/${portfolioId}`
+  const publicHref = `/${slugify(businessName)}/${
+    portfolioSlug || slugify(portfolioName)
+  }`
+
+  useClickOutside(moreRef, () => {
+    setMoreOpen(false)
+  })
+
+  const reportHref = `mailto:konfolios@gmail.com?subject=${encodeURIComponent(
+    `Report Issue: ${portfolioName}`
+  )}&body=${encodeURIComponent(
+    `Hi Konfolio team,\n\nI want to report an issue with this portfolio:\n\nPortfolio: ${portfolioName}\nBusiness: ${businessName}\nCreator: ${creatorName}\nPortfolio ID: ${portfolioId}\nLink: ${publicHref}\n\nIssue:\n`
+  )}`
 
   return (
     <div
@@ -90,11 +116,21 @@ export default function ExplorePortfolioCard({
       `}
     >
       <div
+        role="link"
+        tabIndex={0}
+        onClick={() => router.push(publicHref)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            router.push(publicHref)
+          }
+        }}
         className="
           relative w-[390px] h-[260px]
           rounded-[15px] overflow-visible
           bg-[rgba(165,165,165,0.068)]
           border border-white
+          cursor-pointer
           transition-shadow duration-200 ease-out
           [backdrop-filter:blur(14.65328598022461px)]
           group-hover:[box-shadow:var(--hoverShadow)]
@@ -132,81 +168,83 @@ export default function ExplorePortfolioCard({
 
           <div
             className="
+              pointer-events-none
               absolute inset-0 flex items-center justify-center
-              opacity-0 pointer-events-none
+              opacity-0
               transition-opacity duration-150
-              group-hover:opacity-100 group-hover:pointer-events-auto
+              group-hover:opacity-100
             "
           >
-            <PrimaryButton
-              href={publicHref}
-              icon="open"
-              className="h-[33px] min-w-[150px] px-[40px] py-[10px]"
-            >
-              View
-            </PrimaryButton>
+            <div className="pointer-events-auto">
+              <PrimaryButton
+                href={publicHref}
+                icon="open"
+                className="h-[33px] min-w-[150px] px-[40px] py-[10px]"
+              >
+                View
+              </PrimaryButton>
+            </div>
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation()
-            setMoreOpen((prev) => !prev)
-          }}
-          className={`
-            absolute right-[15px] top-[15px] z-20 cursor-pointer
-            transition-opacity duration-150
-            ${
-              moreOpen
-                ? "opacity-100"
-                : "opacity-0 group-hover:opacity-100"
-            }
-          `}
-          aria-label="More options"
-        >
-          <ThreeDotsIcon />
-        </button>
-
-        {moreOpen && (
-          <div
-            className="
-              absolute z-30
-              right-[15px] top-[45px]
-              w-[200px] h-[50px]
-              flex flex-col items-center
-              p-[10px] gap-[5px]
-              bg-white
-              shadow-[2px_2px_10px_rgba(0,0,0,0.1)]
-              rounded-[15px]
-            "
+        <div ref={moreRef}>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              setMoreOpen((prev) => !prev)
+            }}
+            className={`
+              absolute right-[15px] top-[15px] z-20 cursor-pointer
+              transition-opacity duration-150
+              ${moreOpen ? "opacity-100" : "opacity-0 group-hover:opacity-100"}
+            `}
+            aria-label="More options"
           >
-            <button
-              type="button"
+            <ThreeDotsIcon />
+          </button>
+
+          {moreOpen && (
+            <div
+              onClick={(e) => e.stopPropagation()}
               className="
-                w-[180px] h-[30px]
-                flex flex-row items-center
-                px-[10px] gap-[10px]
-                rounded-[10px]
-                cursor-pointer
-                hover:bg-[rgba(255,70,3,0.06)]
+                absolute z-30
+                right-[15px] top-[45px]
+                w-[200px] h-[50px]
+                flex flex-col items-center
+                p-[10px] gap-[5px]
+                bg-white
+                shadow-[2px_2px_10px_rgba(0,0,0,0.1)]
+                rounded-[15px]
               "
             >
-              <div className="w-[160px] h-[18px] flex items-center gap-[10px] flex-1">
-                <ReportIcon className="w-[14px] h-[14px] shrink-0" />
-                <span
-                  className="
-                    flex-1 text-left
-                    text-[14px] leading-[130%] font-normal
-                    text-[#FF4603]
-                  "
-                >
-                  Report Issue
-                </span>
-              </div>
-            </button>
-          </div>
-        )}
+              <a
+                href={reportHref}
+                className="
+                  w-[180px] h-[30px]
+                  flex flex-row items-center
+                  px-[10px] gap-[10px]
+                  rounded-[10px]
+                  cursor-pointer
+                  hover:bg-[rgba(255,70,3,0.06)]
+                "
+              >
+                <div className="w-[160px] h-[18px] flex items-center gap-[10px] flex-1">
+                  <ReportIcon className="w-[14px] h-[14px] shrink-0" />
+                  <span
+                    className="
+                      flex-1 text-left
+                      text-[14px] leading-[130%] font-normal
+                      text-[#FF4603]
+                    "
+                  >
+                    Report Issue
+                  </span>
+                </div>
+              </a>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="w-[390px] h-[35px] px-[15px] flex flex-col justify-center gap-[12px]">

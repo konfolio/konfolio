@@ -17,7 +17,7 @@ type ExploreItem = {
   displayName: string;
   locationText: string;
   profileImageUrl: string;
-  merchTags: string[];
+  collabs: string[];
 };
 
 export default async function ExplorePage({
@@ -49,7 +49,7 @@ export default async function ExplorePage({
   }
 
   const userIds = Array.from(
-    new Set((konfolios ?? []).map((k) => k.user_id).filter(Boolean)),
+    new Set((konfolios ?? []).map((k) => k.user_id).filter(Boolean))
   );
 
   let profilesById: Record<
@@ -59,7 +59,7 @@ export default async function ExplorePage({
       business_name?: string | null;
       location?: string | null;
       profile_image_url?: string | null;
-      merch_tags?: string[] | null;
+      collabs?: string[] | null;
     }
   > = {};
 
@@ -67,7 +67,7 @@ export default async function ExplorePage({
     const { data: profiles, error: profilesError } = await supabase
       .from("profiles")
       .select(
-        "id, display_name, business_name, location, profile_image_url, merch_tags",
+        "id, display_name, business_name, location, profile_image_url, collabs"
       )
       .in("id", userIds);
 
@@ -102,7 +102,7 @@ export default async function ExplorePage({
       displayName: profile.display_name ?? "",
       locationText: profile.location ?? "",
       profileImageUrl: profile.profile_image_url ?? "",
-      merchTags: Array.isArray(profile.merch_tags) ? profile.merch_tags : [],
+      collabs: Array.isArray(profile.collabs) ? profile.collabs : [],
     };
   });
 
@@ -135,15 +135,15 @@ export default async function ExplorePage({
         (wantsSquare && item.template === "square") ||
         (wantsPortrait && item.template === "portrait");
 
-      const merchTagsLower = item.merchTags.map((tag) => tag.toLowerCase());
+      const collabsLower = item.collabs.map((tag) => tag.toLowerCase());
 
-      const merchMatch =
+      const collabMatch =
         (!wantsStamp && !wantsShare && !wantsOther) ||
-        (wantsStamp && merchTagsLower.includes("stamp rally")) ||
-        (wantsShare && merchTagsLower.includes("share table")) ||
-        (wantsOther && merchTagsLower.includes("other collabs"));
+        (wantsStamp && collabsLower.includes("stamp rally")) ||
+        (wantsShare && collabsLower.includes("share table")) ||
+        (wantsOther && collabsLower.includes("other collabs"));
 
-      return templateMatch && merchMatch;
+      return templateMatch && collabMatch;
     });
   }
 
