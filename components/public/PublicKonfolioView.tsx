@@ -5,7 +5,6 @@ import * as React from "react"
 
 import EditSquareProfileSidebar from "@/components/my-portfolios/square/EditSquareProfileSidebar"
 import EditSquareImageGrid from "@/components/my-portfolios/square/EditSquareImageGrid"
-
 import EditPortraitProfile from "@/components/my-portfolios/portrait/EditPortraitProfile"
 import EditPortraitImageGrid from "@/components/my-portfolios/portrait/EditPortraitImageGrid"
 
