@@ -13,6 +13,7 @@ import LocationIcon from "@/components/icons/LocationIcon";
 
 import PencilIcon from "@/components/icons/PencilIcon";
 import TrashIcon from "@/components/icons/TrashIcon";
+import PlusIcon from "@/components/icons/PlusIcon";
 
 import HomeIcon from "@/components/icons/HomeIcon";
 import ShopIcon from "@/components/icons/ShopIcon";
@@ -56,6 +57,8 @@ type SocialKey =
   | "bluesky";
 
 type LinksMap = Partial<Record<SocialKey, string>>;
+
+const PROFILE_IMAGE_BUCKET = "profile-images";
 
 const SOCIAL_ROWS: {
   key: SocialKey;
@@ -160,25 +163,12 @@ export default function OrganizerProfileEditPopover({
   onSignOut,
 }: Props) {
   const modalRef = useRef<HTMLDivElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
 
   useClickOutside(modalRef, () => {
     if (open) onClose();
   });
-
-  async function handleSignOut() {
-    setSaveError("");
-    try {
-      await supabase.auth.signOut();
-    } catch (e: any) {
-      setSaveError(e?.message ?? "Failed to sign out");
-      return;
-    }
-
-    onClose();
-    router.push("/");
-    router.refresh();
-  }
 
   const {
     noticeText = "Changes made here will carry onto your next uses of autofills.",
@@ -190,6 +180,8 @@ export default function OrganizerProfileEditPopover({
     betaText = "Beta v.1.0",
   } = data ?? {};
 
+  const [profileImageUrlText, setProfileImageUrlText] =
+    useState(profileImageUrl);
   const [organizationNameText, setOrganizationNameText] =
     useState(organizationName);
   const [eventLocationText, setEventLocationText] = useState(
@@ -204,7 +196,11 @@ export default function OrganizerProfileEditPopover({
   const [linkValue, setLinkValue] = useState("");
   const [linkFocused, setLinkFocused] = useState(false);
 
+  const [addingSalesLocation, setAddingSalesLocation] = useState(false);
+  const [salesLocationDraft, setSalesLocationDraft] = useState("");
+
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [isDirty, setIsDirty] = useState(false);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">(
@@ -212,13 +208,16 @@ export default function OrganizerProfileEditPopover({
   );
 
   const initialRef = useRef<{
+    profileImageUrlText: string;
     organizationNameText: string;
     eventLocationText: string;
+    emailText: string;
     linksMap: LinksMap;
   } | null>(null);
 
   const saveTimeoutRef = useRef<number | null>(null);
 
+  useEffect(() => setProfileImageUrlText(profileImageUrl), [profileImageUrl]);
   useEffect(
     () => setOrganizationNameText(organizationName),
     [organizationName],
@@ -239,8 +238,11 @@ export default function OrganizerProfileEditPopover({
 
     setLinkValue("");
     setLinkFocused(false);
+    setAddingSalesLocation(false);
+    setSalesLocationDraft("");
 
     setIsSaving(false);
+    setIsUploadingImage(false);
     setSaveError("");
     setIsDirty(false);
     setSaveStatus("idle");
@@ -263,7 +265,7 @@ export default function OrganizerProfileEditPopover({
 
       const metaRes = await supabase
         .from("profiles")
-        .select("organization, event_location, links")
+        .select("organization, event_location, email, profile_image_url, links")
         .eq("id", userId)
         .maybeSingle();
 
@@ -284,12 +286,20 @@ export default function OrganizerProfileEditPopover({
       const loc = String(row.event_location ?? "").trim();
       if (loc) setEventLocationText(loc);
 
+      const email = String(row.email ?? authEmail ?? "").trim();
+      if (email) setEmailText(email);
+
+      const profileUrl = String(row.profile_image_url ?? profileImageUrl).trim();
+      if (profileUrl) setProfileImageUrlText(profileUrl);
+
       const nextLinks = normalizeLinksMap(row.links);
       setLinksMap(nextLinks);
 
       initialRef.current = {
+        profileImageUrlText: profileUrl,
         organizationNameText: String(org || organizationName).trim(),
         eventLocationText: String(loc || eventLocationTextFromProps).trim(),
+        emailText: email,
         linksMap: nextLinks,
       };
 
@@ -311,8 +321,10 @@ export default function OrganizerProfileEditPopover({
     if (!init) return;
 
     const same =
+      profileImageUrlText.trim() === init.profileImageUrlText.trim() &&
       organizationNameText.trim() === init.organizationNameText.trim() &&
       eventLocationText.trim() === init.eventLocationText.trim() &&
+      emailText.trim() === init.emailText.trim() &&
       stableJson(linksMap) === stableJson(init.linksMap);
 
     setIsDirty(!same);
@@ -321,7 +333,59 @@ export default function OrganizerProfileEditPopover({
       setSaveStatus("idle");
       if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current);
     }
-  }, [organizationNameText, eventLocationText, linksMap, saveStatus]);
+  }, [
+    profileImageUrlText,
+    organizationNameText,
+    eventLocationText,
+    emailText,
+    linksMap,
+    saveStatus,
+  ]);
+
+  async function handleProfileImageChange(
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+
+    if (!file) return;
+
+    setSaveError("");
+    setIsUploadingImage(true);
+
+    const localPreviewUrl = URL.createObjectURL(file);
+    setProfileImageUrlText(localPreviewUrl);
+
+    try {
+      const sessionRes = await supabase.auth.getSession();
+      const userId = sessionRes.data.session?.user?.id;
+      if (!userId) throw new Error("Not signed in");
+
+      const ext = file.name.split(".").pop() || "jpg";
+      const path = `${userId}/organizer-profile-${Date.now()}.${ext}`;
+
+      const uploadRes = await supabase.storage
+        .from(PROFILE_IMAGE_BUCKET)
+        .upload(path, file, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+
+      if (uploadRes.error) throw uploadRes.error;
+
+      const publicUrlRes = supabase.storage
+        .from(PROFILE_IMAGE_BUCKET)
+        .getPublicUrl(path);
+
+      const nextUrl = publicUrlRes.data.publicUrl;
+      setProfileImageUrlText(nextUrl);
+    } catch (err: any) {
+      setSaveError(err?.message ?? "Failed to upload profile image");
+    } finally {
+      setIsUploadingImage(false);
+      URL.revokeObjectURL(localPreviewUrl);
+    }
+  }
 
   async function handleSave() {
     setSaveError("");
@@ -337,6 +401,8 @@ export default function OrganizerProfileEditPopover({
       const payload = {
         organization: organizationNameText.trim() || null,
         event_location: eventLocationText.trim() || null,
+        email: emailText.trim() || null,
+        profile_image_url: profileImageUrlText.trim() || null,
         links: linksMap,
       };
 
@@ -344,11 +410,14 @@ export default function OrganizerProfileEditPopover({
         .from("profiles")
         .update(payload)
         .eq("id", userId);
+
       if (res.error) throw res.error;
 
       initialRef.current = {
+        profileImageUrlText: String(payload.profile_image_url ?? "").trim(),
         organizationNameText: String(payload.organization ?? "").trim(),
         eventLocationText: String(payload.event_location ?? "").trim(),
+        emailText: String(payload.email ?? "").trim(),
         linksMap,
       };
 
@@ -366,6 +435,20 @@ export default function OrganizerProfileEditPopover({
     }
   }
 
+  async function handleSignOut() {
+    setSaveError("");
+    try {
+      await supabase.auth.signOut();
+    } catch (e: any) {
+      setSaveError(e?.message ?? "Failed to sign out");
+      return;
+    }
+
+    onClose();
+    router.push("/");
+    router.refresh();
+  }
+
   if (!open) return null;
 
   const linksCount = countLinks(linksMap);
@@ -376,7 +459,7 @@ export default function OrganizerProfileEditPopover({
       <button
         aria-label="Close"
         onClick={onClose}
-        className="absolute inset-0 bg-black/30"
+        className="absolute inset-0 bg-black/30 cursor-pointer"
       />
 
       <div
@@ -395,7 +478,7 @@ export default function OrganizerProfileEditPopover({
           type="button"
           aria-label="Close popup"
           onClick={onClose}
-          className="absolute right-[20px] top-[20px] w-[26px] h-[26px] flex items-center justify-center z-[5]"
+          className="absolute right-[20px] top-[20px] w-[26px] h-[26px] flex items-center justify-center z-[5] cursor-pointer"
         >
           <DeleteIcon className="w-[26px] h-[26px]" />
         </button>
@@ -417,7 +500,7 @@ export default function OrganizerProfileEditPopover({
                 <button
                   type="button"
                   onClick={handleSave}
-                  disabled={!isDirty || isSaving}
+                  disabled={!isDirty || isSaving || isUploadingImage}
                   className={[
                     "group flex items-center justify-center gap-[7px]",
                     "h-[39px] min-w-[150px]",
@@ -425,7 +508,7 @@ export default function OrganizerProfileEditPopover({
                     "rounded-[100px]",
                     "text-[14px] leading-[140%] font-normal",
                     "transition-all duration-300 ease-out",
-                    "whitespace-nowrap",
+                    "whitespace-nowrap cursor-pointer",
                     saveStatus === "saved"
                       ? "bg-[#4CAF50] text-white opacity-100"
                       : "bg-[#262626] text-white hover:bg-[#262626CC] active:bg-[#262626B2]",
@@ -436,11 +519,13 @@ export default function OrganizerProfileEditPopover({
                   aria-label="Save changes"
                 >
                   <span>
-                    {saveStatus === "saving"
-                      ? "Saving..."
-                      : saveStatus === "saved"
-                        ? "Saved!"
-                        : "Save"}
+                    {isUploadingImage
+                      ? "Uploading..."
+                      : saveStatus === "saving"
+                        ? "Saving..."
+                        : saveStatus === "saved"
+                          ? "Saved!"
+                          : "Save"}
                   </span>
                 </button>
               </div>
@@ -448,11 +533,20 @@ export default function OrganizerProfileEditPopover({
           </div>
 
           <div className="flex flex-row items-start gap-[29px] py-[20px]">
-            <div className="w-[80px] h-[80px] rounded-[71.4286px] overflow-hidden bg-[#F7F7F7] shrink-0 relative">
-              {profileImageUrl ? (
+            <button
+              type="button"
+              aria-label="Upload profile image"
+              onClick={() => fileInputRef.current?.click()}
+              className={[
+                "w-[80px] h-[80px] rounded-[71.4286px] overflow-hidden bg-[#F7F7F7]",
+                "shrink-0 relative cursor-pointer group",
+                "focus:outline-none focus:ring-2 focus:ring-[#262626]/20",
+              ].join(" ")}
+            >
+              {profileImageUrlText ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={profileImageUrl}
+                  src={profileImageUrlText}
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
@@ -467,7 +561,21 @@ export default function OrganizerProfileEditPopover({
                   }}
                 />
               )}
-            </div>
+
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <PencilIcon className="w-[18px] h-[18px] text-white" />
+              </div>
+            </button>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleProfileImageChange}
+            />
 
             <div className="w-[526px] flex flex-col gap-[50px]">
               {/* Organization + Event Location */}
@@ -497,18 +605,21 @@ export default function OrganizerProfileEditPopover({
                       placeholder="City, Country"
                       textClassName="text-[15px] leading-[150%] text-[#262626] font-normal"
                       onChange={setEventLocationText}
-                      onTrash={() => setEventLocationText("City, Country")}
+                      onTrash={() => setEventLocationText("")}
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Email (no name section) */}
+              {/* Email */}
               <div className="flex flex-col gap-[10px] w-full">
                 <div className="w-full">
-                  <HoverOnlyInline
-                    value={emailText || "myemailaddress@konfolio.com"}
-                    textClassName="text-[#262626]"
+                  <EditableInline
+                    value={emailText}
+                    placeholder="myemailaddress@konfolio.com"
+                    textClassName="text-[15px] leading-[150%] text-[#262626] font-normal"
+                    onChange={setEmailText}
+                    onTrash={() => setEmailText("")}
                   />
                 </div>
               </div>
@@ -519,27 +630,78 @@ export default function OrganizerProfileEditPopover({
                 <CountBlock label="Visitors" value={visitors} />
               </div>
 
-              {/* Sales Location (uses event_location) */}
+              {/* Sales Location */}
               <div className="flex flex-col items-start gap-[15px] w-full">
                 <p className="w-full text-[15px] leading-[150%] text-[#A5A5A5]">
                   Sales Location
                 </p>
 
-                {eventLocationText.trim() ? (
-                  <div className="flex flex-row items-center gap-[10px]">
-                    <Tag
+                <div className="flex flex-row flex-wrap items-center gap-[10px]">
+                  {eventLocationText.trim() ? (
+                    <SalesLocationTag
                       label={eventLocationText.trim()}
-                      className="h-[25px] px-[20px] py-0 text-[15px] leading-[150%] border-[#A5A5A5] bg-white/10"
+                      onDelete={() => setEventLocationText("")}
                     />
-                  </div>
-                ) : (
-                  <div className="text-[15px] leading-[150%] text-[#D3D3D3]">
-                    —
-                  </div>
-                )}
+                  ) : null}
+
+                  {addingSalesLocation ? (
+                    <input
+                      value={salesLocationDraft}
+                      onChange={(e) => setSalesLocationDraft(e.target.value)}
+                      autoFocus
+                      onBlur={() => {
+                        const next = salesLocationDraft.trim();
+                        if (next) setEventLocationText(next);
+                        setSalesLocationDraft("");
+                        setAddingSalesLocation(false);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          const next = salesLocationDraft.trim();
+                          if (next) setEventLocationText(next);
+                          setSalesLocationDraft("");
+                          setAddingSalesLocation(false);
+                        }
+
+                        if (e.key === "Escape") {
+                          e.preventDefault();
+                          setSalesLocationDraft("");
+                          setAddingSalesLocation(false);
+                        }
+                      }}
+                      placeholder="Add sales location"
+                      className={[
+                        "h-[25px] min-w-[160px] bg-transparent outline-none",
+                        "text-[15px] leading-[150%] text-[#262626]",
+                        "placeholder:text-[#D3D3D3]",
+                        "border-b border-[#D3D3D3]",
+                      ].join(" ")}
+                      aria-label="Add sales location"
+                    />
+                  ) : (
+                    <button
+                      type="button"
+                      aria-label="Add sales location"
+                      onClick={() => {
+                        setSalesLocationDraft("");
+                        setAddingSalesLocation(true);
+                      }}
+                      className="flex items-center justify-center cursor-pointer text-[#A5A5A5] hover:text-[#262626] transition-colors"
+                    >
+                      <PlusIcon className="w-[12px] h-[12px]" />
+                    </button>
+                  )}
+
+                  {!eventLocationText.trim() && !addingSalesLocation ? (
+                    <span className="text-[15px] leading-[150%] text-[#D3D3D3]">
+                      —
+                    </span>
+                  ) : null}
+                </div>
               </div>
 
-              {/* Links (limit 5) */}
+              {/* Links */}
               <div className="flex flex-col items-start gap-[15px] w-full">
                 <p className="w-full text-[15px] leading-[150%] text-[#A5A5A5]">
                   My Links
@@ -619,7 +781,7 @@ export default function OrganizerProfileEditPopover({
                             "text-[15px] leading-[150%]",
                             linkValue ? "text-[#262626]" : "text-[#D3D3D3]",
                             "placeholder:text-[#D3D3D3]",
-                            "pb-[4px]",
+                            "pb-[4px] cursor-text",
                           ].join(" ")}
                           aria-label="Add Link"
                         />
@@ -641,14 +803,28 @@ export default function OrganizerProfileEditPopover({
               </p>
 
               <div className="flex flex-col items-start w-full">
-                <AsideRow label="Support" onClick={onSupport} />
-                <AsideRow label="Report issue" onClick={onReportIssue} />
+                <AsideRow
+                  label="Support"
+                  onClick={() => {
+                    window.location.href =
+                      "mailto:konfolios@gmail.com?subject=Konfolio Support Request&body=Hi Konfolio team,%0A%0AI need help with:%0A"
+                  }}
+                />
+
+                <AsideRow
+                  label="Report issue"
+                  onClick={() => {
+                    window.location.href =
+                      "mailto:konfolios@gmail.com?subject=Konfolio Bug Report&body=Please describe the issue:%0A%0ASteps to reproduce:%0A1.%0A2.%0A3.%0A"
+                  }}
+                />
+
                 <AsideRow
                   label="Sign out"
                   danger
                   onClick={() => {
-                    onSignOut?.();
-                    handleSignOut();
+                    onSignOut?.()
+                    handleSignOut()
                   }}
                 />
               </div>
@@ -692,7 +868,7 @@ function EditableInline({
     <div className="group w-full">
       <div
         className={[
-          "flex items-center gap-[10px] w-full",
+          "flex items-center gap-[10px] w-full cursor-pointer",
           editing ? "border-b border-[#D3D3D3] pb-[4px]" : "",
         ].join(" ")}
         onClick={() => setEditing(true)}
@@ -712,7 +888,7 @@ function EditableInline({
               }}
               placeholder={placeholder}
               className={[
-                "w-full bg-transparent outline-none placeholder:text-[#D3D3D3]",
+                "w-full bg-transparent outline-none placeholder:text-[#D3D3D3] cursor-text",
                 textClassName,
               ].join(" ")}
             />
@@ -731,7 +907,7 @@ function EditableInline({
           <button
             type="button"
             aria-label="Edit"
-            className="w-[16px] h-[16px] flex items-center justify-center"
+            className="w-[16px] h-[16px] flex items-center justify-center cursor-pointer"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -744,7 +920,7 @@ function EditableInline({
           <button
             type="button"
             aria-label="Clear"
-            className="w-[16px] h-[16px] flex items-center justify-center"
+            className="w-[16px] h-[16px] flex items-center justify-center cursor-pointer"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -760,36 +936,32 @@ function EditableInline({
   );
 }
 
-function HoverOnlyInline({
-  value,
-  textClassName = "text-[#D3D3D3]",
+function SalesLocationTag({
+  label,
+  onDelete,
 }: {
-  value: string;
-  textClassName?: string;
+  label: string;
+  onDelete: () => void;
 }) {
   return (
-    <div className="group w-full">
-      <div className="flex items-center gap-[10px] w-full">
-        <div className="flex-1 min-w-0">
-          <span
-            className={[
-              "block w-full min-w-0 truncate text-[15px] leading-[150%] font-normal",
-              textClassName,
-            ].join(" ")}
-          >
-            {value}
-          </span>
-        </div>
+    <div className="group relative inline-flex items-center">
+      <Tag
+        label={label}
+        className="h-[25px] px-[20px] py-0 pr-[32px] text-[15px] leading-[150%] border-[#A5A5A5] bg-white/10"
+      />
 
-        <div className="flex items-center gap-[10px] opacity-0 group-hover:opacity-100 transition-opacity text-[#A5A5A5]">
-          <span className="w-[16px] h-[16px] flex items-center justify-center">
-            <PencilIcon className="w-[16px] h-[16px]" />
-          </span>
-          <span className="w-[16px] h-[16px] flex items-center justify-center">
-            <TrashIcon className="w-[16px] h-[16px]" />
-          </span>
-        </div>
-      </div>
+      <button
+        type="button"
+        aria-label="Remove sales location"
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          onDelete()
+        }}
+        className="absolute right-[-5.25px] top-1/2 z-10 flex h-[17.25px] w-[17.25px] -translate-y-1/2 items-center justify-center rounded-full bg-[#A5A5A5] opacity-0 transition-opacity group-hover:opacity-100 [&_path]:fill-[#FFFFFF] [&_path]:stroke-[#FFFFFF]"
+      >
+        <DeleteIcon className="h-[13.42px] w-[13.42px]" />
+      </button>
     </div>
   );
 }
@@ -827,7 +999,7 @@ function EditableLinkRow({
 
       <div
         className={[
-          "flex-1 min-w-0 flex items-center gap-[10px]",
+          "flex-1 min-w-0 flex items-center gap-[10px] cursor-pointer",
           editing ? "border-b border-[#D3D3D3] pb-[4px]" : "",
         ].join(" ")}
         onClick={() => setEditing(true)}
@@ -856,7 +1028,7 @@ function EditableLinkRow({
                   setEditing(false);
                 }
               }}
-              className="w-full bg-transparent outline-none text-[15px] leading-[150%] text-[#262626]"
+              className="w-full bg-transparent outline-none text-[15px] leading-[150%] text-[#262626] cursor-text"
               aria-label="Edit link"
             />
           ) : (
@@ -870,7 +1042,7 @@ function EditableLinkRow({
           <button
             type="button"
             aria-label="Edit"
-            className="w-[16px] h-[16px] flex items-center justify-center"
+            className="w-[16px] h-[16px] flex items-center justify-center cursor-pointer"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -883,7 +1055,7 @@ function EditableLinkRow({
           <button
             type="button"
             aria-label="Remove"
-            className="w-[16px] h-[16px] flex items-center justify-center"
+            className="w-[16px] h-[16px] flex items-center justify-center cursor-pointer"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -921,7 +1093,7 @@ function AsideRow({
     <button
       type="button"
       onClick={onClick}
-      className="w-[526px] h-[40px] px-[10px] flex items-center rounded-[10px] hover:bg-black/5"
+      className="w-[526px] h-[40px] px-[10px] flex items-center rounded-[10px] hover:bg-black/5 cursor-pointer"
     >
       <span
         className={[
