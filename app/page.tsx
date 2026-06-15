@@ -20,7 +20,9 @@ function Section({
 
   return (
     <section className={isAlt ? "bg-white" : "bg-[#F7F7F7]"}>
-      <div className="w-full max-w-[1512px] mx-auto">{children}</div>
+      <div className="w-full max-w-[1512px] mx-auto overflow-visible">
+        {children}
+      </div>
     </section>
   );
 }
@@ -44,9 +46,11 @@ export default function Home() {
       <Navbar />
 
       <Section index={0}>
-        <div className="h-[846px] px-[25px] sm:px-10 lg:px-[150px] relative overflow-hidden">
+        <div className="h-[846px] px-[25px] sm:px-10 lg:px-[150px] relative overflow-visible">
           {/* Left: photo mosaic */}
-          <HeroPhotoMosaic />
+          <div className="relative xl:-translate-x-[110px] xl:-translate-y-[80px]">
+            <HeroPhotoMosaic />
+          </div>
 
           <div className="relative z-10 mt-[40px] flex w-full justify-center xl:mt-[121px] xl:ml-auto xl:block xl:w-fit xl:translate-x-[100px]">
             <HeroFrame />
@@ -82,6 +86,7 @@ export default function Home() {
               <span className="font-light">for a great portfolio</span>
             </h2>
           </div>
+
           <Section3Example />
         </div>
       </Section>
