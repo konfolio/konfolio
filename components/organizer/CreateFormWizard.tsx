@@ -13,7 +13,17 @@ type WizardData = {
   startDate: string;
   endDate: string;
   isRecurring: boolean;
+  recurrenceText: string;
   location: string;
+};
+
+const emptyWizardData: WizardData = {
+  title: "",
+  startDate: "",
+  endDate: "",
+  isRecurring: false,
+  recurrenceText: "",
+  location: "",
 };
 
 export default function CreateFormWizard({ open, onClose }: Props) {
@@ -22,25 +32,13 @@ export default function CreateFormWizard({ open, onClose }: Props) {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [loading, setLoading] = useState(false);
 
-  const [data, setData] = useState<WizardData>({
-    title: "",
-    startDate: "",
-    endDate: "",
-    isRecurring: false,
-    location: "",
-  });
+  const [data, setData] = useState<WizardData>(emptyWizardData);
 
   useEffect(() => {
     if (!open) {
       setStep(1);
       setLoading(false);
-      setData({
-        title: "",
-        startDate: "",
-        endDate: "",
-        isRecurring: false,
-        location: "",
-      });
+      setData(emptyWizardData);
     }
   }, [open]);
 
@@ -58,7 +56,12 @@ export default function CreateFormWizard({ open, onClose }: Props) {
     }
 
     if (step === 2) {
-      if (!data.startDate || !data.endDate) return;
+      if (data.isRecurring) {
+        if (!data.recurrenceText.trim()) return;
+      } else {
+        if (!data.startDate || !data.endDate) return;
+      }
+
       setStep(3);
     }
   }
@@ -201,48 +204,72 @@ export default function CreateFormWizard({ open, onClose }: Props) {
 
           {step === 2 && (
             <div className="flex flex-1 flex-col items-center justify-center">
-              <div
-                style={{
-                  width: "470px",
-                  borderBottom: "1px solid #b8b8b8",
-                  paddingBottom: "12px",
-                }}
-              >
-                <div className="flex items-center justify-center gap-4">
+              {data.isRecurring ? (
+                <div
+                  style={{
+                    width: "470px",
+                    borderBottom: "1px solid #b8b8b8",
+                    paddingBottom: "12px",
+                  }}
+                >
                   <input
-                    type="date"
-                    value={data.startDate}
-                    onChange={(e) => update("startDate", e.target.value)}
+                    value={data.recurrenceText}
+                    onChange={(e) => update("recurrenceText", e.target.value)}
+                    placeholder="Every Friday at 6 PM"
                     className="bg-transparent text-center text-black outline-none"
                     style={{
-                      width: "180px",
+                      width: "100%",
+                      border: "none",
                       fontSize: "22px",
                       fontWeight: 400,
-                    }}
-                  />
-
-                  <span
-                    style={{
-                      fontSize: "22px",
-                      color: "#bdbdbd",
-                    }}
-                  >
-                    -
-                  </span>
-
-                  <input
-                    type="date"
-                    value={data.endDate}
-                    onChange={(e) => update("endDate", e.target.value)}
-                    className="bg-transparent text-center text-black outline-none"
-                    style={{
-                      width: "180px",
-                      fontSize: "22px",
-                      fontWeight: 400,
+                      color: "#111111",
                     }}
                   />
                 </div>
-              </div>
+              ) : (
+                <div
+                  style={{
+                    width: "470px",
+                    borderBottom: "1px solid #b8b8b8",
+                    paddingBottom: "12px",
+                  }}
+                >
+                  <div className="flex items-center justify-center gap-4">
+                    <input
+                      type="date"
+                      value={data.startDate}
+                      onChange={(e) => update("startDate", e.target.value)}
+                      className="bg-transparent text-center text-black outline-none"
+                      style={{
+                        width: "180px",
+                        fontSize: "22px",
+                        fontWeight: 400,
+                      }}
+                    />
+
+                    <span
+                      style={{
+                        fontSize: "22px",
+                        color: "#bdbdbd",
+                      }}
+                    >
+                      -
+                    </span>
+
+                    <input
+                      type="date"
+                      value={data.endDate}
+                      onChange={(e) => update("endDate", e.target.value)}
+                      className="bg-transparent text-center text-black outline-none"
+                      style={{
+                        width: "180px",
+                        fontSize: "22px",
+                        fontWeight: 400,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
 
               <label
                 className="flex items-center gap-3"
@@ -257,7 +284,17 @@ export default function CreateFormWizard({ open, onClose }: Props) {
                 <input
                   type="checkbox"
                   checked={data.isRecurring}
-                  onChange={(e) => update("isRecurring", e.target.checked)}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+
+                    setData((prev) => ({
+                      ...prev,
+                      isRecurring: checked,
+                      startDate: checked ? "" : prev.startDate,
+                      endDate: checked ? "" : prev.endDate,
+                      recurrenceText: checked ? prev.recurrenceText : "",
+                    }));
+                  }}
                   style={{
                     width: "16px",
                     height: "16px",

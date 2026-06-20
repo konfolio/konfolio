@@ -174,6 +174,7 @@ export default function ExplorePortfolioCard({
               transition-opacity duration-150
               group-hover:opacity-100
             "
+          
           >
             <div className="pointer-events-auto">
               <PrimaryButton

@@ -83,7 +83,9 @@ export async function GET(
         start_date,
         end_date,
         location,
-        is_open
+        is_open,
+        is_recurring,
+        recurrence_text
       `)
       .eq("id", formId)
       .single();
@@ -102,6 +104,13 @@ export async function GET(
         event_date_start: form.event_date_start || form.start_date || null,
         event_date_end: form.event_date_end || form.end_date || null,
         event_address: form.event_address || form.location || "",
+        is_recurring: Boolean(form.is_recurring),
+        recurrence_text: form.recurrence_text || null,
+
+        // Frontend-friendly aliases.
+        isRecurring: Boolean(form.is_recurring),
+        recurrenceText: form.recurrence_text || "",
+
         fields: form.fields || [],
         public_url: form.slug ? `/apply/${form.slug}` : null,
       },
@@ -172,6 +181,26 @@ export async function PATCH(
 
     if ("description" in body) {
       updates.description = body.description?.trim() || null;
+    }
+
+    if ("is_recurring" in body || "isRecurring" in body) {
+      const isRecurring = Boolean(body.is_recurring ?? body.isRecurring);
+
+      updates.is_recurring = isRecurring;
+
+      if (isRecurring) {
+        updates.event_date_start = null;
+        updates.event_date_end = null;
+        updates.start_date = null;
+        updates.end_date = null;
+      } else {
+        updates.recurrence_text = null;
+      }
+    }
+
+    if ("recurrence_text" in body || "recurrenceText" in body) {
+      const recurrenceText = body.recurrence_text ?? body.recurrenceText;
+      updates.recurrence_text = recurrenceText?.trim?.() || null;
     }
 
     if ("event_date_start" in body || "startDate" in body || "start_date" in body) {
@@ -254,7 +283,13 @@ export async function PATCH(
         fields,
         published_at,
         created_at,
-        updated_at
+        updated_at,
+        start_date,
+        end_date,
+        location,
+        is_open,
+        is_recurring,
+        recurrence_text
       `)
       .single();
 
@@ -266,6 +301,16 @@ export async function PATCH(
     return NextResponse.json({
       form: {
         ...updatedForm,
+        event_date_start: updatedForm.event_date_start || updatedForm.start_date || null,
+        event_date_end: updatedForm.event_date_end || updatedForm.end_date || null,
+        event_address: updatedForm.event_address || updatedForm.location || "",
+        is_recurring: Boolean(updatedForm.is_recurring),
+        recurrence_text: updatedForm.recurrence_text || null,
+
+        // Frontend-friendly aliases.
+        isRecurring: Boolean(updatedForm.is_recurring),
+        recurrenceText: updatedForm.recurrence_text || "",
+
         public_url: updatedForm.slug ? `/apply/${updatedForm.slug}` : null,
       },
     });

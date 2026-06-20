@@ -17,13 +17,29 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => null);
 
     const title = body?.title?.trim();
-    const startDate = body?.startDate || null;
-    const endDate = body?.endDate || null;
-    const location = body?.location?.trim() || null;
     const isRecurring = Boolean(body?.isRecurring);
+    const recurrenceText = body?.recurrenceText?.trim() || null;
+
+    const startDate = isRecurring ? null : body?.startDate || null;
+    const endDate = isRecurring ? null : body?.endDate || null;
+    const location = body?.location?.trim() || null;
 
     if (!title) {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
+    }
+
+    if (isRecurring && !recurrenceText) {
+      return NextResponse.json(
+        { error: "Recurrence text is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!isRecurring && (!startDate || !endDate)) {
+      return NextResponse.json(
+        { error: "Start date and end date are required" },
+        { status: 400 }
+      );
     }
 
     const { data, error } = await supabase
@@ -32,21 +48,35 @@ export async function POST(req: Request) {
         organizer_id: user.id,
         title,
 
-        // New canonical columns
+        // Canonical event columns
         event_date_start: startDate,
         event_date_end: endDate,
         event_address: location,
+
+        // Regular recurrence
+        is_recurring: isRecurring,
+        recurrence_text: isRecurring ? recurrenceText : null,
+
         status: "draft",
         fields: [],
 
-        // Keep these only because your old table/code still has them
+        // Old compatibility columns
         start_date: startDate,
         end_date: endDate,
         location,
-        is_recurring: isRecurring,
         is_open: false,
       })
-      .select("id, organizer_id, title, status")
+      .select(`
+        id,
+        organizer_id,
+        title,
+        status,
+        event_date_start,
+        event_date_end,
+        event_address,
+        is_recurring,
+        recurrence_text
+      `)
       .single();
 
     if (error) {
