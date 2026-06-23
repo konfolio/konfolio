@@ -20,16 +20,6 @@ async function getAccessToken(): Promise<string | null> {
   return data.session?.access_token ?? null
 }
 
-function slugify(input: string): string {
-  return (input || "")
-    .toLowerCase()
-    .trim()
-    .replace(/['"]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "")
-}
-
 function cleanString(x: any): string {
   return String(x ?? "").trim()
 }
@@ -470,23 +460,36 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
       const getJson = await getRes.json().catch(() => ({}))
 
       const portfolioNameFromDb = cleanString(getJson?.portfolioName ?? getJson?.portfolio_name)
-
-      const portfolioSlug =
-        cleanString(getJson?.portfolioSlug ?? getJson?.portfolio_slug) ||
-        slugify(portfolioNameFromDb) ||
-        slugify(cleanString(draft.displayName)) ||
-        "portfolio"
-
       setPublishedPortfolioName(portfolioNameFromDb || initialName)
 
-      const businessSlug = slugify(cleanString(content.businessName)) || "business"
       const origin = typeof window === "undefined" ? "" : window.location.origin
-      setPublishedUrl(`${origin}/${businessSlug}/${portfolioSlug}`)
+      const backendViewUrl = cleanString(pubJson?.viewUrl)
+      const backendPublicUrl = cleanString(pubJson?.publicUrl)
+      const fallbackViewUrl = `${origin}/explore/${draftId}`
+
+      const safeBackendPublicUrl =
+        backendPublicUrl.includes(`/explore/${draftId}`) &&
+        !backendPublicUrl.includes("thumbnail=1")
+          ? backendPublicUrl
+          : ""
+
+      setPublishedUrl(backendViewUrl || safeBackendPublicUrl || fallbackViewUrl)
+
+      const nextExploreEnabled =
+        typeof getJson?.exploreEnabled === "boolean"
+          ? getJson.exploreEnabled
+          : typeof getJson?.explore_enabled === "boolean"
+            ? getJson.explore_enabled
+            : true
 
       patchDraft(draftId, {
         status: "published",
-        explore_enabled: allowExploreSearch,
-        thumbnail_url: getJson?.thumbnail_url ?? null,
+        explore_enabled: nextExploreEnabled,
+        thumbnail_url:
+          pubJson?.thumbnailUrl ??
+          getJson?.thumbnailUrl ??
+          getJson?.thumbnail_url ??
+          null,
       })
 
       setPublishStatus("success")

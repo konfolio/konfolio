@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import SearchBar from "@/components/explore/SearchBar";
 import ExploreGrid from "@/components/explore/ExploreGrid";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+
 export const dynamic = "force-dynamic";
 
 type ExploreItem = {
@@ -16,7 +17,7 @@ type ExploreItem = {
   displayName: string;
   locationText: string;
   profileImageUrl: string;
-  merchTags: string[];
+  collabs: string[];
 };
 
 export default async function ExplorePage({
@@ -26,6 +27,7 @@ export default async function ExplorePage({
 }) {
   const { q = "", filters = "" } = await searchParams;
   const searchQuery = q.trim().toLowerCase();
+
   const selectedFilters = filters
     .split(",")
     .map((x) => x.trim())
@@ -35,7 +37,9 @@ export default async function ExplorePage({
 
   const { data: konfolios, error: konfoliosError } = await supabase
     .from("konfolios")
-    .select("id, user_id, template, updated_at, portfolio_name, portfolio_slug")
+    .select(
+      "id, user_id, template, updated_at, portfolio_name, portfolio_slug, thumbnail_url"
+    )
     .eq("status", "published")
     .eq("explore_enabled", true)
     .order("updated_at", { ascending: false });
@@ -45,7 +49,7 @@ export default async function ExplorePage({
   }
 
   const userIds = Array.from(
-    new Set((konfolios ?? []).map((k) => k.user_id).filter(Boolean)),
+    new Set((konfolios ?? []).map((k) => k.user_id).filter(Boolean))
   );
 
   let profilesById: Record<
@@ -55,7 +59,7 @@ export default async function ExplorePage({
       business_name?: string | null;
       location?: string | null;
       profile_image_url?: string | null;
-      merch_tags?: string[] | null;
+      collabs?: string[] | null;
     }
   > = {};
 
@@ -63,7 +67,7 @@ export default async function ExplorePage({
     const { data: profiles, error: profilesError } = await supabase
       .from("profiles")
       .select(
-        "id, display_name, business_name, location, profile_image_url, merch_tags",
+        "id, display_name, business_name, location, profile_image_url, collabs"
       )
       .in("id", userIds);
 
@@ -77,9 +81,15 @@ export default async function ExplorePage({
   let items: ExploreItem[] = (konfolios ?? []).map((row) => {
     const profile = profilesById[row.user_id] ?? {};
 
-    const thumbnailUrl = supabase.storage
+    const fallbackThumbnailUrl = supabase.storage
       .from("konfolio-images")
       .getPublicUrl(`${row.user_id}/${row.id}/thumbnail.png`).data.publicUrl;
+
+    const rawThumbnailUrl = row.thumbnail_url || fallbackThumbnailUrl;
+
+    const thumbnailUrl = row.updated_at
+      ? `${rawThumbnailUrl}?t=${encodeURIComponent(row.updated_at)}`
+      : rawThumbnailUrl;
 
     return {
       id: row.id,
@@ -92,7 +102,7 @@ export default async function ExplorePage({
       displayName: profile.display_name ?? "",
       locationText: profile.location ?? "",
       profileImageUrl: profile.profile_image_url ?? "",
-      merchTags: Array.isArray(profile.merch_tags) ? profile.merch_tags : [],
+      collabs: Array.isArray(profile.collabs) ? profile.collabs : [],
     };
   });
 
@@ -125,15 +135,15 @@ export default async function ExplorePage({
         (wantsSquare && item.template === "square") ||
         (wantsPortrait && item.template === "portrait");
 
-      const merchTagsLower = item.merchTags.map((tag) => tag.toLowerCase());
+      const collabsLower = item.collabs.map((tag) => tag.toLowerCase());
 
-      const merchMatch =
+      const collabMatch =
         (!wantsStamp && !wantsShare && !wantsOther) ||
-        (wantsStamp && merchTagsLower.includes("stamp rally")) ||
-        (wantsShare && merchTagsLower.includes("share table")) ||
-        (wantsOther && merchTagsLower.includes("other collabs"));
+        (wantsStamp && collabsLower.includes("stamp rally")) ||
+        (wantsShare && collabsLower.includes("share table")) ||
+        (wantsOther && collabsLower.includes("other collabs"));
 
-      return templateMatch && merchMatch;
+      return templateMatch && collabMatch;
     });
   }
 

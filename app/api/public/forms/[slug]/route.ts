@@ -139,14 +139,10 @@ function buildAutofill(
   const autofill: Record<string, any> = {};
 
   for (const field of fields) {
-    // Use field_key if it exists, otherwise fall back to the field id.
-   
     const autofillKey = field.field_key ?? field.fieldKey ?? field.id;
 
     const rawValue = getRawAutofillValue(autofillKey, profile, userEmail);
     const formattedValue = formatAutofillValueForField(rawValue, field);
-
-    
 
     if (formattedValue !== undefined) {
       autofill[field.id] = formattedValue;
@@ -181,7 +177,12 @@ export async function GET(
         fields,
         published_at,
         created_at,
-        updated_at
+        updated_at,
+        start_date,
+        end_date,
+        location,
+        is_recurring,
+        recurrence_text
       `)
       .eq("slug", slug)
       .single();
@@ -201,33 +202,31 @@ export async function GET(
 
     const authSupabase = await createSupabaseServerClient();
 
-const authResult = await authSupabase.auth.getUser();
-let user = authResult.data.user;
+    const authResult = await authSupabase.auth.getUser();
+    let user = authResult.data.user;
 
-// Fallback for frontend/client-side Supabase sessions.
-// If the server cannot read cookies, allow the frontend to pass:
-// Authorization: Bearer <access_token>
-if (!user) {
-  const authHeader = req.headers.get("authorization");
-  const token = authHeader?.startsWith("Bearer ")
-    ? authHeader.slice("Bearer ".length)
-    : null;
+    // Fallback for frontend/client-side Supabase sessions.
+    // If the server cannot read cookies, allow the frontend to pass:
+    // Authorization: Bearer <access_token>
+    if (!user) {
+      const authHeader = req.headers.get("authorization");
+      const token = authHeader?.startsWith("Bearer ")
+        ? authHeader.slice("Bearer ".length)
+        : null;
 
-  if (token) {
-    const { data: tokenUserData, error: tokenUserError } =
-      await supabase.auth.getUser(token);
+      if (token) {
+        const { data: tokenUserData, error: tokenUserError } =
+          await supabase.auth.getUser(token);
 
-    if (tokenUserError) {
-      console.error("PUBLIC FORM TOKEN USER ERROR:", tokenUserError);
+        if (tokenUserError) {
+          console.error("PUBLIC FORM TOKEN USER ERROR:", tokenUserError);
+        }
+
+        user = tokenUserData.user ?? null;
+      }
     }
 
-    user = tokenUserData.user ?? null;
-  }
-}
-
-
-
-let autofill: Record<string, any> = {};
+    let autofill: Record<string, any> = {};
 
     if (user) {
       const { data: profile, error: profileError } = await supabase
@@ -250,8 +249,6 @@ let autofill: Record<string, any> = {};
         `)
         .eq("id", user.id)
         .maybeSingle();
-      
-   
 
       if (profileError) {
         console.error("Failed to load applicant profile:", profileError);
@@ -261,12 +258,26 @@ let autofill: Record<string, any> = {};
         autofill = buildAutofill(fields, profile, user.email);
       }
     }
-    
-    
+
+    const eventDateStart = form.event_date_start || form.start_date || null;
+    const eventDateEnd = form.event_date_end || form.end_date || null;
+    const eventAddress = form.event_address || form.location || null;
+    const isRecurring = Boolean(form.is_recurring);
+    const recurrenceText = form.recurrence_text || null;
 
     return NextResponse.json({
       form: {
         ...form,
+        event_date_start: eventDateStart,
+        event_date_end: eventDateEnd,
+        event_address: eventAddress,
+        is_recurring: isRecurring,
+        recurrence_text: recurrenceText,
+
+        // CamelCase aliases for frontend compatibility.
+        isRecurring,
+        recurrenceText: recurrenceText || "",
+
         fields,
       },
       autofill,
@@ -280,4 +291,3 @@ let autofill: Record<string, any> = {};
     );
   }
 }
-  

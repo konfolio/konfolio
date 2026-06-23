@@ -458,42 +458,73 @@ export default function DashPortfolio({
       ].join(" ")}
     >
       <div
+        role="button"
+        tabIndex={0}
+        onClick={onEdit}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            onEdit?.()
+          }
+        }}
         className={[
-          "relative w-full h-[236.12px] rounded-[10px] overflow-hidden",
-          "shadow-[inset_2.21021px_2.05988px_9.51447px_rgba(165,165,165,0.126),inset_1.25341px_1.16816px_4.75724px_rgba(165,165,165,0.126)]",
-          "drop-shadow-[2.05941px_4.11882px_25.7426px_rgba(165,165,165,0.1)]",
-          "bg-[#F7F7F7]",
+          "relative w-full h-[236.12px] rounded-[15px] overflow-visible",
+          "bg-[rgba(165,165,165,0.068)] border border-white",
+          "cursor-pointer transition-shadow duration-200 ease-out",
+          "[backdrop-filter:blur(14.65328598022461px)]",
+          "group-hover:shadow-[2px_4px_25px_rgba(165,165,165,0.14)]",
         ].join(" ")}
       >
-        {thumbnailUrl ? (
-          <img
-            src={thumbnailUrl}
-            alt={`${portfolioName} thumbnail`}
-            className="w-full h-full object-cover"
-            draggable={false}
+        <div className="absolute inset-0 rounded-[15px] overflow-hidden">
+          <div
+            className="
+              pointer-events-none absolute inset-0 rounded-[15px]
+              p-[1.5px]
+              [background:conic-gradient(from_90deg_at_0%_0%,rgba(165,165,165,0)_-47.02deg,rgba(165,165,165,0.22)_42.98deg,rgba(165,165,165,0)_132.98deg,rgba(165,165,165,0.22)_222.98deg,rgba(165,165,165,0)_312.98deg,rgba(165,165,165,0.22)_402.98deg)]
+              [mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)]
+              [mask-composite:exclude]
+              [-webkit-mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)]
+              [-webkit-mask-composite:xor]
+            "
           />
-        ) : (
-          <div className="w-full h-full bg-[linear-gradient(45deg,rgba(165,165,165,0.18)_25%,transparent_25%,transparent_50%,rgba(165,165,165,0.18)_50%,rgba(165,165,165,0.18)_75%,transparent_75%,transparent)] bg-[length:18px_18px]" />
-        )}
 
-        <button
-          type="button"
-          onClick={onEdit}
-          className={[
-            "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
-            "h-[30px] min-w-[150px] px-[40px] py-[10px] rounded-[100px]",
-            "flex items-center justify-center gap-[7px]",
-            "border border-[#262626] bg-[rgba(255,255,255,0.5)] backdrop-blur-[7.80516px]",
-            "opacity-0 pointer-events-none",
-            "group-hover:opacity-100 group-hover:pointer-events-auto",
-            "transition-opacity",
-            "text-[#262626] text-[14px] leading-[130%] font-normal",
-            "cursor-pointer",
-          ].join(" ")}
-          aria-label="Edit"
-        >
-          Edit
-        </button>
+          {thumbnailUrl ? (
+            <img
+              src={thumbnailUrl}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-200 group-hover:opacity-90"
+              style={{ objectPosition: "center 0px" }}
+            />
+          ) : (
+            <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(165,165,165,0.18)_25%,transparent_25%,transparent_50%,rgba(165,165,165,0.18)_50%,rgba(165,165,165,0.18)_75%,transparent_75%,transparent)] bg-[length:18px_18px]" />
+          )}
+
+          <div
+            className="
+              pointer-events-none absolute inset-0 flex items-center justify-center
+              opacity-0 transition-opacity duration-150 group-hover:opacity-100
+            "
+          >
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                onEdit?.()
+              }}
+              className={[
+                "pointer-events-auto",
+                "h-[30px] min-w-[150px] px-[40px] py-[10px] rounded-[100px]",
+                "flex items-center justify-center gap-[7px]",
+                "border border-[#262626] bg-[rgba(255,255,255,0.5)] backdrop-blur-[7.80516px]",
+                "text-[#262626] text-[14px] leading-[130%] font-normal",
+                "cursor-pointer",
+              ].join(" ")}
+              aria-label="Edit"
+            >
+              Edit
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="w-full h-[17px] flex items-center justify-between">

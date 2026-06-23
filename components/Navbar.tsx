@@ -76,6 +76,9 @@ function isVendorRole(roleRaw: string | null | undefined) {
   return normRole(roleRaw) === "vendor";
 }
 
+const supportEmail =
+  "mailto:konfolios@gmail.com?subject=Konfolio%20Support%20Request&body=Hi%20Konfolio%2C%0A%0AI%20need%20help%20with%3A%0A"
+
 export default function Navbar() {
   const pathnameRaw = usePathname() || "";
   const pathname = normalizePath(pathnameRaw);
@@ -92,8 +95,6 @@ export default function Navbar() {
 
   const isExploreActive =
     pathname === "/explore" || pathname.startsWith("/explore/");
-  const isSupportActive =
-    pathname === "/support" || pathname.startsWith("/support/");
 
   const isMyPortfoliosActive =
     pathname === "/my-portfolios" || pathname.startsWith("/my-portfolios/");
@@ -222,12 +223,27 @@ export default function Navbar() {
                   active={isExploreActive}
                   widthClass="w-[60px]"
                 />
-                <NavItem
-                  href="/support"
-                  label="Support"
-                  active={isSupportActive}
-                  widthClass="w-[65px]"
-                />
+                <a
+                  href={supportEmail}
+                  className="hidden lg:flex flex-col items-start pt-[6px] gap-[6px] w-[65px] h-[24px]"
+                >
+                  <span
+                    className="
+                      w-[65px]
+                      h-[12px]
+                      flex items-center justify-center
+                      text-[17px]
+                      leading-[21px]
+                      text-[#262626]
+                      whitespace-nowrap
+                      font-normal hover:font-semibold
+                    "
+                  >
+                    Support
+                  </span>
+
+                  <span className="w-[65px] h-0 border border-[#262626] self-stretch opacity-0" />
+                </a>
               </>
             ) : showSignedOutUI ? (
               <NavItem

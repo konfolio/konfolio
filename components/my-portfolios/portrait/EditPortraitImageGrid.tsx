@@ -376,7 +376,19 @@ export default function EditPortraitImageGrid({
   const prevVendTextClass = backgroundIsDark ? "text-white" : "text-[#262626]"
 
   return (
-    <section className="mx-0 flex w-full min-w-0 max-w-none flex-col items-center justify-center px-0 py-0 min-[851px]:max-w-[1182px] min-[851px]:min-w-[600px] min-[851px]:py-[30px]">
+    <section
+      className="
+        mx-auto
+        flex
+        w-full
+        flex-col
+        items-center
+        justify-center
+        px-0
+        py-0
+        min-[851px]:py-[30px]
+      "
+    >
       <div className="w-full min-w-[600px] max-w-[1182px] max-[850px]:min-w-0">
         <div className="grid w-full grid-cols-1 gap-0 overflow-visible min-[851px]:grid-cols-4 min-[851px]:gap-[15px]">
           {cells.map((cell, idx) => {
@@ -547,7 +559,7 @@ export default function EditPortraitImageGrid({
       </div>
 
       {showPrevVendsSection ? (
-        <div className="hidden w-full flex-col items-center gap-[6px] px-2 pt-[20px] pb-[30px] min-[851px]:flex">
+        <div className="hidden w-full flex-col items-center gap-[6px] px-2 pt-[20px] min-[851px]:flex">
           <p className="m-0 text-center font-inter text-[13px] font-normal leading-[16px] text-[#A5A5A5]">
             {previousVendsLabel}
           </p>
@@ -682,7 +694,7 @@ export default function EditPortraitImageGrid({
         </div>
       ) : null}
 
-      <div className="h-[18px]" />
+      
     </section>
   )
 }

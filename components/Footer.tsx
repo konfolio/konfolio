@@ -4,6 +4,12 @@ import { inknut } from "@/app/fonts";
 const footerLink =
   "relative text-[17px] leading-[140%] font-normal text-zinc-900 whitespace-nowrap transition-all duration-100 ease-out hover:font-semibold";
 
+  const supportEmail =
+  "mailto:konfolios@gmail.com?subject=Konfolio%20Support%20Request&body=Hi%20Konfolio%2C%0A%0AI%20need%20help%20with%3A%0A";
+
+const reportIssueEmail =
+  "mailto:konfolios@gmail.com?subject=Konfolio%20Bug%20Report&body=Issue%20Description%3A%0A%0ASteps%20to%20Reproduce%3A%0A%0AExpected%20Behavior%3A%0A%0AActual%20Behavior%3A";
+
 export default function Footer() {
   return (
     <footer className="w-full bg-white">
@@ -23,12 +29,15 @@ export default function Footer() {
             <a href="#" className={footerLink}>
               Explore
             </a>
-            <a href="#" className={footerLink}>
+
+            <a href={supportEmail} className={footerLink}>
               Support
             </a>
-            <a href="#" className={footerLink}>
+
+            <a href={reportIssueEmail} className={footerLink}>
               Report Issue
             </a>
+
             <Link href="/terms-of-service" className={footerLink}>
               Terms of Service
             </Link>
@@ -72,7 +81,7 @@ export default function Footer() {
                   Explore
                 </a>
                 <a
-                  href="#"
+                  href={supportEmail}
                   className={`${footerLink} no-shift`}
                   data-text="Support"
                 >
@@ -83,7 +92,7 @@ export default function Footer() {
               {/* Right */}
               <div className="flex items-center gap-[50px]">
                 <a
-                  href="#"
+                  href={reportIssueEmail}
                   className={`${footerLink} no-shift`}
                   data-text="Report Issue"
                 >

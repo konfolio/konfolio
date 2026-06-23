@@ -24,6 +24,13 @@ type Form = {
   cover_image_url: string | null;
   application_limit: number | null;
   fields: Field[];
+
+  is_recurring?: boolean | null;
+  recurrence_text?: string | null;
+
+  // Optional aliases in case the API returns camelCase instead.
+  isRecurring?: boolean | null;
+  recurrenceText?: string | null;
 };
 
 export default function ApplyFormPage() {
@@ -235,7 +242,6 @@ export default function ApplyFormPage() {
     );
   }
 
-  // Submitted state
   if (submitted) {
     return (
       <main className="min-h-screen bg-[#F7F7F7]">
@@ -252,6 +258,7 @@ export default function ApplyFormPage() {
                 <span className="text-[#262626] font-medium">{form.title}</span>
                 . The organizer will review it and get back to you.
               </p>
+
               {(organizerName || Object.keys(organizerLinks).length > 0) && (
                 <>
                   <p className="text-[13px] text-[#A5A5A5] mt-[8px]">
@@ -378,13 +385,11 @@ export default function ApplyFormPage() {
     );
   }
 
-  // Active form
   return (
     <main className="min-h-screen bg-[#F7F7F7]">
       <Navbar />
       <div className="w-full flex justify-center px-[16px] sm:px-[40px] py-[40px]">
         <div className="w-full max-w-[720px] flex flex-col gap-[32px]">
-          {/* Header row with Autofill button */}
           <div className="flex items-start justify-between gap-[16px]">
             <FormHeader form={form} />
             <button
@@ -413,7 +418,6 @@ export default function ApplyFormPage() {
             />
           )}
 
-          {/* Page indicator */}
           {totalPages > 1 && (
             <div className="flex items-center gap-[8px]">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
@@ -430,7 +434,6 @@ export default function ApplyFormPage() {
             </div>
           )}
 
-          {/* Fields for current page */}
           {currentFields.length > 0 ? (
             <div className="flex flex-col gap-[24px]">
               {currentFields.map((field: any) => (
@@ -450,7 +453,6 @@ export default function ApplyFormPage() {
             </p>
           )}
 
-          {/* Navigation */}
           <div className="flex items-center gap-[12px]">
             {currentPage > 1 && (
               <button
@@ -502,6 +504,12 @@ export default function ApplyFormPage() {
 }
 
 function FormHeader({ form }: { form: Form }) {
+  const isRecurring = Boolean(form.is_recurring ?? form.isRecurring);
+  const recurrenceText = form.recurrence_text ?? form.recurrenceText ?? "";
+
+  const shouldShowDateInfo =
+    (isRecurring && recurrenceText.trim()) || form.event_date_start;
+
   return (
     <div className="flex flex-col gap-[12px]">
       {form.cover_image_url && (
@@ -515,8 +523,10 @@ function FormHeader({ form }: { form: Form }) {
           />
         </div>
       )}
+
       <h1 className="text-[28px] font-medium text-[#262626]">{form.title}</h1>
-      {form.event_date_start && (
+
+      {shouldShowDateInfo && (
         <div className="flex items-center gap-[8px] text-[14px] text-[#A5A5A5]">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
             <rect
@@ -536,11 +546,13 @@ function FormHeader({ form }: { form: Form }) {
             />
           </svg>
           <span>
-            {form.event_date_start}
-            {form.event_date_end ? ` - ${form.event_date_end}` : ""}
+            {isRecurring
+              ? recurrenceText
+              : `${form.event_date_start}${form.event_date_end ? ` - ${form.event_date_end}` : ""}`}
           </span>
         </div>
       )}
+
       {form.event_address && (
         <div className="flex items-center gap-[8px] text-[14px] text-[#A5A5A5]">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
@@ -560,6 +572,7 @@ function FormHeader({ form }: { form: Form }) {
           <span>{form.event_address}</span>
         </div>
       )}
+
       {form.description && (
         <p className="text-[14px] text-[#262626] mt-[4px]">
           {form.description}
