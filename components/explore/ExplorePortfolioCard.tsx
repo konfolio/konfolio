@@ -10,6 +10,7 @@ import useClickOutside from "@/components/hooks/useClickOutside"
 type Props = {
   portfolioId: string
   businessName: string
+  businessSlug?: string | null
   portfolioName: string
   portfolioSlug?: string | null
   creatorName: string
@@ -78,6 +79,7 @@ const GRID_HOVER_SHADOW =
 export default function ExplorePortfolioCard({
   portfolioId,
   businessName,
+  businessSlug,
   portfolioName,
   portfolioSlug,
   creatorName,
@@ -90,9 +92,10 @@ export default function ExplorePortfolioCard({
   const [moreOpen, setMoreOpen] = useState(false)
   const moreRef = useRef<HTMLDivElement | null>(null)
 
-  const publicHref = `/${slugify(businessName)}/${
-    portfolioSlug || slugify(portfolioName)
-  }`
+  const safeBusinessSlug = businessSlug || slugify(businessName)
+const safePortfolioSlug = portfolioSlug || slugify(portfolioName)
+
+const publicHref = `/${safeBusinessSlug}/${safePortfolioSlug}`
 
   useClickOutside(moreRef, () => {
     setMoreOpen(false)

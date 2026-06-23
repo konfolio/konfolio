@@ -12,6 +12,7 @@ type ExploreItem = {
   updated_at: string | null;
   thumbnailUrl: string;
   businessName: string;
+  businessSlug: string | null;
   portfolioName: string;
   portfolioSlug: string | null;
   displayName: string;
@@ -57,6 +58,7 @@ export default async function ExplorePage({
     {
       display_name?: string | null;
       business_name?: string | null;
+      business_slug?: string | null;
       location?: string | null;
       profile_image_url?: string | null;
       collabs?: string[] | null;
@@ -67,7 +69,7 @@ export default async function ExplorePage({
     const { data: profiles, error: profilesError } = await supabase
       .from("profiles")
       .select(
-        "id, display_name, business_name, location, profile_image_url, collabs"
+        "id, display_name, business_name, business_slug, location, profile_image_url, collabs"
       )
       .in("id", userIds);
 
@@ -97,6 +99,7 @@ export default async function ExplorePage({
       updated_at: row.updated_at ?? null,
       thumbnailUrl,
       businessName: profile.business_name ?? "",
+      businessSlug: profile.business_slug ?? null,
       portfolioName: row.portfolio_name ?? "",
       portfolioSlug: row.portfolio_slug ?? null,
       displayName: profile.display_name ?? "",

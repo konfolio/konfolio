@@ -26,41 +26,72 @@ export default async function PublicKonfolioPage({
 
   const businessSlug = slugify(business)
   const portfolioSlug = slugify(portfolio)
-  if (!businessSlug || !portfolioSlug) return notFound()
+
+  console.log("Pretty URL route hit:", {
+    business,
+    portfolio,
+    businessSlug,
+    portfolioSlug,
+  })
+
+  if (!businessSlug || !portfolioSlug) {
+    return notFound()
+  }
 
   const supabaseAdmin = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
 
-  const { data: profiles, error: profErr } = await supabaseAdmin
+  const { data: owner, error: ownerErr } = await supabaseAdmin
     .from("profiles")
-    .select("id, business_name")
-    .not("business_name", "is", null)
+    .select("id, business_name, business_slug")
+    .eq("business_slug", businessSlug)
+    .maybeSingle()
 
-  if (profErr || !profiles?.length) return notFound()
+  if (ownerErr) {
+    console.error("Profile lookup error:", ownerErr)
+    return notFound()
+  }
 
-  const owner = profiles.find((p: any) => slugify(String(p.business_name ?? "")) === businessSlug)
-  if (!owner) return notFound()
+  if (!owner) {
+    console.warn("No profile found for business slug:", businessSlug)
+    return notFound()
+  }
 
   const { data: k, error: kErr } = await supabaseAdmin
     .from("konfolios")
-    .select("id, template, status, content, portfolio_name, portfolio_slug")
+    .select(
+      "id, user_id, template, status, content, portfolio_name, portfolio_slug, explore_enabled"
+    )
     .eq("user_id", owner.id)
     .eq("portfolio_slug", portfolioSlug)
     .eq("status", "published")
+    .eq("explore_enabled", true)
     .maybeSingle()
 
-  if (kErr || !k) return notFound()
+  if (kErr) {
+    console.error("Konfolio lookup error:", kErr)
+    return notFound()
+  }
 
-  const template: Template = (k.template as any) === "portrait" ? "portrait" : "square"
-  const content: any = k.content ?? {}
+  if (!k) {
+    console.warn("No public konfolio found:", {
+      ownerId: owner.id,
+      businessSlug,
+      portfolioSlug,
+    })
+    return notFound()
+  }
+
+  const template: Template =
+    (k.template as any) === "portrait" ? "portrait" : "square"
 
   return (
     <PublicKonfolioView
       konfolioId={k.id}
       template={template}
-      content={content}
+      content={k.content ?? {}}
       ownerBusinessName={String(owner.business_name ?? "")}
       portfolioName={String(k.portfolio_name ?? "")}
     />

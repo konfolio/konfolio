@@ -28,6 +28,7 @@ export default function AutofillDrawer({
   const [loading, setLoading] = useState(true);
   const [displayName, setDisplayName] = useState("Your Name");
   const [businessName, setBusinessName] = useState("");
+  const [businessSlug, setBusinessSlug] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -41,49 +42,78 @@ export default function AutofillDrawer({
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (!user) return;
+
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
       const [konfolioRes, profileRes] = await Promise.all([
         supabase
           .from("konfolios")
-          .select(
-            "id, portfolio_name, thumbnail_url, updated_at, portfolio_slug",
-          )
+          .select("id, portfolio_name, thumbnail_url, updated_at, portfolio_slug")
           .eq("user_id", user.id)
           .order("updated_at", { ascending: false }),
         supabase
           .from("profiles")
-          .select("first_name, last_name, display_name, business_name, avatar_url, profile_image_url")
+          .select(
+            "first_name, last_name, display_name, business_name, business_slug, avatar_url, profile_image_url"
+          )
           .eq("id", user.id)
           .single(),
       ]);
 
-      if (konfolioRes.data) setKonfolios(konfolioRes.data);
+      if (konfolioRes.data) {
+        setKonfolios(konfolioRes.data);
+      }
+
       if (profileRes.data) {
         const p = profileRes.data;
         const name =
           p.display_name ||
           [p.first_name, p.last_name].filter(Boolean).join(" ") ||
           "Your Name";
+
         setDisplayName(name);
         setBusinessName(p.business_name ?? "");
+        setBusinessSlug(p.business_slug ?? null);
         setAvatarUrl(p.avatar_url ?? p.profile_image_url ?? null);
       }
+
       setLoading(false);
     };
+
     load();
   }, []);
 
+  const getPublicKonfolioPath = (konfolio: Konfolio) => {
+    if (!businessSlug || !konfolio.portfolio_slug) return "";
+    return `/${businessSlug}/${konfolio.portfolio_slug}`;
+  };
+
+  const getPublicKonfolioUrl = (konfolio: Konfolio) => {
+    const path = getPublicKonfolioPath(konfolio);
+    if (!path) return "";
+
+    const origin =
+      typeof window !== "undefined" ? window.location.origin : "https://konfolio.com";
+
+    return `${origin}${path}`;
+  };
+
   const handleSelect = (konfolio: Konfolio) => {
-    // Start from the server-computed autofill (keyed by field id), then find
-    // any konfolio_link field and override it with the selected portfolio URL.
+    // Start from the server-computed autofill, then override the konfolio_link
+    // field with the selected pretty Konfolio URL.
     const merged: Record<string, any> = { ...autofillData };
 
     const konfolioLinkField = fields.find(
       (f: any) => f.field_key === "konfolio_link" || f.fieldKey === "konfolio_link"
     );
-    if (konfolioLinkField && konfolio.portfolio_slug) {
-      merged[konfolioLinkField.id] = `https://konfolio.com/${konfolio.portfolio_slug}`;
+
+    const publicKonfolioUrl = getPublicKonfolioUrl(konfolio);
+
+    if (konfolioLinkField && publicKonfolioUrl) {
+      merged[konfolioLinkField.id] = publicKonfolioUrl;
     }
 
     onAutofill(merged, konfolio.id);
@@ -123,6 +153,7 @@ export default function AutofillDrawer({
                 {displayName[0]?.toUpperCase()}
               </div>
             )}
+
             <div>
               <p className="text-[14px] text-white font-medium">
                 {businessName || "Business Name"}
@@ -130,6 +161,7 @@ export default function AutofillDrawer({
               <p className="text-[12px] text-white/40">{displayName}</p>
             </div>
           </div>
+
           <button onClick={onClose} className="text-white/30 hover:text-white">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path
@@ -153,79 +185,88 @@ export default function AutofillDrawer({
               Loading...
             </p>
           )}
+
           {!loading && konfolios.length === 0 && (
             <p className="text-[13px] text-white/30 text-center py-8">
               No portfolios found.
             </p>
           )}
-          {konfolios.map((k) => (
-            <div
-              key={k.id}
-              onClick={() => handleSelect(k)}
-              className="rounded-[12px] bg-white/5 border border-white/10 overflow-hidden cursor-pointer hover:border-white/30 transition-colors"
-            >
-              {/* Thumbnail */}
-              <div className="w-full h-[160px] bg-white/5">
-                {k.thumbnail_url ? (
-                  <Image
-                    src={k.thumbnail_url}
-                    alt={k.portfolio_name ?? "Portfolio"}
-                    width={348}
-                    height={160}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-white/5" />
-                )}
-              </div>
 
-              {/* Info */}
-              <div className="px-[14px] py-[12px] flex items-center justify-between">
-                <div>
-                  <p className="text-[14px] text-white">
-                    {k.portfolio_name ?? "Portfolio Name"}
-                  </p>
-                  <div className="flex items-center gap-[6px] mt-[4px]">
-                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-                      <path
-                        d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 3v4l2.5 2.5"
-                        stroke="white"
-                        strokeOpacity="0.4"
-                        strokeWidth="1.3"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                    <span className="text-[11px] text-white/40">
-                      {new Date(k.updated_at).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </span>
-                  </div>
+          {konfolios.map((k) => {
+            const publicKonfolioPath = getPublicKonfolioPath(k);
+
+            return (
+              <div
+                key={k.id}
+                onClick={() => handleSelect(k)}
+                className="rounded-[12px] bg-white/5 border border-white/10 overflow-hidden cursor-pointer hover:border-white/30 transition-colors"
+              >
+                {/* Thumbnail */}
+                <div className="w-full h-[160px] bg-white/5">
+                  {k.thumbnail_url ? (
+                    <Image
+                      src={k.thumbnail_url}
+                      alt={k.portfolio_name ?? "Portfolio"}
+                      width={348}
+                      height={160}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-white/5" />
+                  )}
                 </div>
-                {k.portfolio_slug && (
-                  <Link
-                    href={`/konfolios/${k.portfolio_slug}`}
-                    target="_blank"
-                    onClick={(e) => e.stopPropagation()}
-                    className="flex items-center gap-[6px] bg-[#262626] text-white text-[12px] px-[12px] py-[6px] rounded-full hover:bg-white/20 transition-colors"
-                  >
-                    View
-                    <svg width="10" height="10" viewBox="0 0 16 16" fill="none">
-                      <path
-                        d="M6 3H3.5A1.5 1.5 0 0 0 2 4.5v8A1.5 1.5 0 0 0 3.5 14h8A1.5 1.5 0 0 0 13 12.5V10M10 2h4m0 0v4m0-4L6.5 9.5"
-                        stroke="currentColor"
-                        strokeWidth="1.3"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </Link>
-                )}
+
+                {/* Info */}
+                <div className="px-[14px] py-[12px] flex items-center justify-between">
+                  <div>
+                    <p className="text-[14px] text-white">
+                      {k.portfolio_name ?? "Portfolio Name"}
+                    </p>
+
+                    <div className="flex items-center gap-[6px] mt-[4px]">
+                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                        <path
+                          d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 3v4l2.5 2.5"
+                          stroke="white"
+                          strokeOpacity="0.4"
+                          strokeWidth="1.3"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+
+                      <span className="text-[11px] text-white/40">
+                        {new Date(k.updated_at).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </span>
+                    </div>
+                  </div>
+
+                  {publicKonfolioPath && (
+                    <Link
+                      href={publicKonfolioPath}
+                      target="_blank"
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex items-center gap-[6px] bg-[#262626] text-white text-[12px] px-[12px] py-[6px] rounded-full hover:bg-white/20 transition-colors"
+                    >
+                      View
+                      <svg width="10" height="10" viewBox="0 0 16 16" fill="none">
+                        <path
+                          d="M6 3H3.5A1.5 1.5 0 0 0 2 4.5v8A1.5 1.5 0 0 0 3.5 14h8A1.5 1.5 0 0 0 13 12.5V10M10 2h4m0 0v4m0-4L6.5 9.5"
+                          stroke="currentColor"
+                          strokeWidth="1.3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </Link>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </>

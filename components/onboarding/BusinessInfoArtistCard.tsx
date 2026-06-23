@@ -14,6 +14,14 @@ type Props = {
   nextHref: string
 }
 
+type BusinessNameStatus =
+  | "idle"
+  | "checking"
+  | "available"
+  | "taken"
+  | "invalid"
+  | "error"
+
 export default function BusinessInfoArtistCard({
   displayName = "",
   backHref,
@@ -34,12 +42,87 @@ export default function BusinessInfoArtistCard({
   const setSalesPermit = useOnboardingDraft((s) => s.setSalesPermit)
   const setWillApply = useOnboardingDraft((s) => s.setWillApply)
 
+  const [businessNameStatus, setBusinessNameStatus] =
+    useState<BusinessNameStatus>("idle")
+  const [businessSlug, setBusinessSlug] = useState("")
+  const [businessNameError, setBusinessNameError] = useState("")
+
   const helloName = useMemo(() => {
     return (preferredName || firstName || displayName || "").trim()
   }, [preferredName, firstName, displayName])
 
+  // Check whether business name is unique
+  useEffect(() => {
+    const name = businessName.trim()
+
+    setBusinessNameError("")
+    setBusinessSlug("")
+
+    if (!name) {
+      setBusinessNameStatus("idle")
+      return
+    }
+
+    let cancelled = false
+
+    const timeout = window.setTimeout(async () => {
+      try {
+        setBusinessNameStatus("checking")
+
+        const res = await fetch(
+          `/api/business-name/check?name=${encodeURIComponent(name)}`,
+          {
+            method: "GET",
+            cache: "no-store",
+          }
+        )
+
+        const json = await res.json().catch(() => null)
+
+        if (cancelled) return
+
+        if (!res.ok) {
+          setBusinessNameStatus("error")
+          setBusinessNameError(
+            json?.error || "Could not check this business name."
+          )
+          return
+        }
+
+        setBusinessSlug(json?.slug || "")
+
+        if (!json?.slug) {
+          setBusinessNameStatus("invalid")
+          setBusinessNameError("Business name must include letters or numbers.")
+          return
+        }
+
+        if (json.available) {
+          setBusinessNameStatus("available")
+          setBusinessNameError("")
+        } else {
+          setBusinessNameStatus("taken")
+          setBusinessNameError(
+            "This business name is already taken. Try another name."
+          )
+        }
+      } catch {
+        if (cancelled) return
+
+        setBusinessNameStatus("error")
+        setBusinessNameError("Could not check this business name.")
+      }
+    }, 350)
+
+    return () => {
+      cancelled = true
+      window.clearTimeout(timeout)
+    }
+  }, [businessName])
+
   const canContinue =
     businessName.trim() !== "" &&
+    businessNameStatus === "available" &&
     location.trim() !== "" &&
     (salesPermit !== "" || willApply)
 
@@ -53,12 +136,14 @@ export default function BusinessInfoArtistCard({
       if (!wrapRef.current) return
       if (!wrapRef.current.contains(e.target as Node)) setOpen(false)
     }
+
     function onEsc(e: KeyboardEvent) {
       if (e.key === "Escape") setOpen(false)
     }
 
     document.addEventListener("mousedown", onDocDown)
     document.addEventListener("keydown", onEsc)
+
     return () => {
       document.removeEventListener("mousedown", onDocDown)
       document.removeEventListener("keydown", onEsc)
@@ -88,11 +173,31 @@ export default function BusinessInfoArtistCard({
 
       {/* Form */}
       <div className="w-[426px] flex flex-col gap-[30px]">
-        <OnboardingField
-          label="Business Name"
-          value={businessName}
-          onChange={setBusinessName}
-        />
+        <div className="w-[426px] flex flex-col">
+          <OnboardingField
+            label="Business Name"
+            value={businessName}
+            onChange={setBusinessName}
+          />
+
+          {businessNameStatus === "checking" && (
+            <p className="mt-[6px] font-inter text-[12px] leading-[140%] text-[#A5A5A5]">
+              Checking business name...
+            </p>
+          )}
+
+          {businessNameError && (
+            <p className="mt-[6px] font-inter text-[12px] leading-[140%] text-red-500">
+              {businessNameError}
+            </p>
+          )}
+
+          {businessNameStatus === "available" && businessSlug && (
+            <p className="mt-[6px] font-inter text-[12px] leading-[140%] text-[#4B8B4B]">
+              Your URL will be /explore/{businessSlug}
+            </p>
+          )}
+        </div>
 
         <OnboardingField
           label="Your Location"
@@ -131,12 +236,9 @@ export default function BusinessInfoArtistCard({
                 salesPermit ? "text-[#262626]" : "text-[#A5A5A5]"
               }`}
             >
-              {salesPermit === ""
-                ? "Select"
-                : salesPermit === "yes"
-                ? "Yes"
-                : "No"}
+              {salesPermit === "" ? "Select" : salesPermit === "yes" ? "Yes" : "No"}
             </span>
+
             <ArrowDown />
           </button>
 

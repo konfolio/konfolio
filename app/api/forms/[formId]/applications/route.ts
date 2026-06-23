@@ -8,7 +8,11 @@ export async function GET(
   const { formId } = await params;
   const supabase = await createSupabaseServerClient();
 
-  const { data: { user }, error: userErr } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: userErr,
+  } = await supabase.auth.getUser();
+
   if (userErr || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -26,9 +30,11 @@ export async function GET(
   const getAnswer = (answers: Record<string, any>, fieldKey: string) => {
     // Try direct key first (old format)
     if (answers[fieldKey] !== undefined) return answers[fieldKey];
+
     // Find field by field_key and use its id
     const field = formFields.find((f: any) => f.field_key === fieldKey);
     if (field && answers[field.id] !== undefined) return answers[field.id];
+
     return null;
   };
 
@@ -47,10 +53,10 @@ export async function GET(
       id, status, created_at, answers, applicant_id, konfolio_id,
       profiles:applicant_id (
         id, first_name, last_name, preferred_name,
-        business_name, location, profile_image_url
+        business_name, business_slug, location, profile_image_url
       ),
       konfolios:konfolio_id (
-        id, template, thumbnail_url
+        id, template, thumbnail_url, portfolio_name, portfolio_slug
       )
     `)
     .eq("form_id", formId)
@@ -63,6 +69,7 @@ export async function GET(
   // Build a map of field_id -> field_key for answer lookup
   const fieldIdToKey: Record<string, string> = {};
   const fieldKeyToId: Record<string, string> = {};
+
   for (const f of fields) {
     if (f.id && f.field_key) {
       fieldIdToKey[f.id] = f.field_key;
@@ -73,6 +80,7 @@ export async function GET(
   const applications = (data ?? []).map((row: any) => {
     // answers are keyed by field id — normalize to field_key too
     const answersByKey: Record<string, any> = {};
+
     for (const [fieldId, val] of Object.entries(row.answers ?? {})) {
       const key = fieldIdToKey[fieldId];
       if (key) answersByKey[key] = val;
@@ -87,10 +95,12 @@ export async function GET(
         id: row.profiles?.id ?? row.applicant_id ?? null,
         firstName:
           row.profiles?.first_name ??
-          getAnswer(row.answers ?? {}, "first_name") ?? null,
+          getAnswer(row.answers ?? {}, "first_name") ??
+          null,
         lastName:
           row.profiles?.last_name ??
-          getAnswer(row.answers ?? {}, "last_name") ?? null,
+          getAnswer(row.answers ?? {}, "last_name") ??
+          null,
         displayName:
           row.profiles?.preferred_name ||
           row.profiles?.business_name ||
@@ -99,18 +109,26 @@ export async function GET(
           "Unnamed",
         businessName:
           row.profiles?.business_name ??
-          getAnswer(row.answers ?? {}, "business_name") ?? null,
+          getAnswer(row.answers ?? {}, "business_name") ??
+          null,
+        businessSlug: row.profiles?.business_slug ?? null,
+        business_slug: row.profiles?.business_slug ?? null,
         location:
           row.profiles?.location ??
-          getAnswer(row.answers ?? {}, "location") ?? null,
+          getAnswer(row.answers ?? {}, "location") ??
+          null,
         avatarUrl: row.profiles?.profile_image_url ?? null,
-        email:
-          getAnswer(row.answers ?? {}, "email") ?? null,
+        email: getAnswer(row.answers ?? {}, "email") ?? null,
       },
       konfolio: {
         id: row.konfolios?.id ?? null,
         template: row.konfolios?.template ?? null,
         thumbnailUrl: row.konfolios?.thumbnail_url ?? null,
+        thumbnail_url: row.konfolios?.thumbnail_url ?? null,
+        portfolioName: row.konfolios?.portfolio_name ?? null,
+        portfolio_name: row.konfolios?.portfolio_name ?? null,
+        portfolioSlug: row.konfolios?.portfolio_slug ?? null,
+        portfolio_slug: row.konfolios?.portfolio_slug ?? null,
       },
     };
   });

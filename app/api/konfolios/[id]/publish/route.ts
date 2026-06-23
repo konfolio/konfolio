@@ -70,6 +70,7 @@ export async function POST(
 
   try {
     const { id: konfolioId } = await ctx.params
+
     console.log(
       "[THUMBNAIL] Starting publish thumbnail generation for konfolio:",
       konfolioId
@@ -95,7 +96,9 @@ export async function POST(
 
     const { data: k, error: kErr } = await supabaseAdmin
       .from("konfolios")
-      .select("id, user_id, template, content, status, explore_enabled, portfolio_slug")
+      .select(
+        "id, user_id, template, content, status, explore_enabled, portfolio_name, portfolio_slug"
+      )
       .eq("id", konfolioId)
       .maybeSingle()
 
@@ -114,21 +117,56 @@ export async function POST(
       status: k.status,
       template: k.template,
       explore_enabled: k.explore_enabled,
+      portfolio_name: k.portfolio_name,
       portfolio_slug: k.portfolio_slug,
     })
+
+    const { data: profile, error: profileErr } = await supabaseAdmin
+      .from("profiles")
+      .select("business_slug")
+      .eq("id", userId)
+      .maybeSingle()
+
+    if (profileErr) {
+      console.log("[THUMBNAIL] Profile fetch error:", profileErr.message)
+      return NextResponse.json({ error: profileErr.message }, { status: 500 })
+    }
+
+    const businessSlug = profile?.business_slug
+    const portfolioSlug = k.portfolio_slug
+
+    if (!businessSlug) {
+      return NextResponse.json(
+        {
+          error:
+            "Missing business slug. Please complete onboarding again or update your business name.",
+        },
+        { status: 400 }
+      )
+    }
+
+    if (!portfolioSlug) {
+      return NextResponse.json(
+        {
+          error:
+            "Missing portfolio slug. Please rename/save this Konfolio before publishing.",
+        },
+        { status: 400 }
+      )
+    }
 
     const publishedAt = new Date().toISOString()
 
     const { error: pubErr } = await supabaseAdmin
-  .from("konfolios")
-  .update({
-    status: "published",
-    explore_enabled: true,
-    published_at: publishedAt,
-    updated_at: publishedAt,
-  })
-  .eq("id", konfolioId)
-  .eq("user_id", userId)
+      .from("konfolios")
+      .update({
+        status: "published",
+        explore_enabled: true,
+        published_at: publishedAt,
+        updated_at: publishedAt,
+      })
+      .eq("id", konfolioId)
+      .eq("user_id", userId)
 
     if (pubErr) {
       console.log("[THUMBNAIL] Publish update error:", pubErr.message)
@@ -139,14 +177,19 @@ export async function POST(
 
     const baseUrl = getAppBaseUrl(req)
 
-    // IMPORTANT:
-    // Use the working UUID explore route, not the old slug route.
-    // The old slug route was causing thumbnails to screenshot the 404 page.
+    // This is the public URL users should see/copy/open.
+    const publicPath = `/${businessSlug}/${portfolioSlug}`
+    const prettyPublicUrl = `${baseUrl}${publicPath}`
+
+    // This URL is only for Puppeteer thumbnail generation.
+    // Keep using the working UUID explore route so thumbnails do not screenshot a 404.
     const screenshotUrl = `${baseUrl}/explore/${konfolioId}?thumbnail=1&t=${encodeURIComponent(
       publishedAt
     )}`
 
     console.log("[THUMBNAIL] baseUrl:", baseUrl)
+    console.log("[THUMBNAIL] publicPath:", publicPath)
+    console.log("[THUMBNAIL] prettyPublicUrl:", prettyPublicUrl)
     console.log("[THUMBNAIL] screenshotUrl:", screenshotUrl)
 
     const executablePath = await getExecutablePath()
@@ -285,12 +328,22 @@ export async function POST(
       ok: true,
       status: "published",
       publishedAt,
-      publicUrl: screenshotUrl,
+
+      businessSlug,
+      portfolioSlug,
+      publicPath,
+      publicUrl: prettyPublicUrl,
+      viewUrl: prettyPublicUrl,
+
+      screenshotUrl,
       thumbnailUrl,
-      thumbnailUrlWithBust: `${thumbnailUrl}?t=${encodeURIComponent(publishedAt)}`,
+      thumbnailUrlWithBust: `${thumbnailUrl}?t=${encodeURIComponent(
+        publishedAt
+      )}`,
     })
   } catch (e: any) {
     console.log("[THUMBNAIL] Fatal error:", e?.message ?? e)
+
     return NextResponse.json(
       { error: e?.message ?? "Unknown error" },
       { status: 500 }

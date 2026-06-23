@@ -27,6 +27,8 @@ export type AppRow = {
     lastName?: string | null;
     displayName?: string | null;
     businessName?: string | null;
+    businessSlug?: string | null;
+    business_slug?: string | null;
     location?: string | null;
     avatarUrl?: string | null;
     email?: string | null;
@@ -35,8 +37,12 @@ export type AppRow = {
     id: string;
     template: "square" | "portrait";
     thumbnailUrl: string | null;
-    // in case backend returns snake_case
     thumbnail_url?: string | null;
+  
+    portfolioName?: string | null;
+    portfolio_name?: string | null;
+    portfolioSlug?: string | null;
+    portfolio_slug?: string | null;
   };
 };
 
@@ -271,7 +277,7 @@ export default function ApplicationsTable({
                       : undefined) ??
                     "—";
 
-                  // ✅ do NOT name this `location` (avoids DOM Location confusion)
+                  
                   const appLocation =
                     a.applicant.location ??
                     (locationKey
@@ -283,6 +289,21 @@ export default function ApplicationsTable({
                     a.konfolio.thumbnailUrl ??
                     (a.konfolio as any).thumbnail_url ??
                     null;
+
+                    const applicantBusinessSlug =
+                    a.applicant.businessSlug ??
+                    a.applicant.business_slug ??
+                    null;
+                  
+                  const konfolioPortfolioSlug =
+                    a.konfolio.portfolioSlug ??
+                    a.konfolio.portfolio_slug ??
+                    null;
+                  
+                  const publicKonfolioHref =
+                    applicantBusinessSlug && konfolioPortfolioSlug
+                      ? `/${applicantBusinessSlug}/${konfolioPortfolioSlug}`
+                      : `${konfolioViewerBasePath}/${a.konfolio.id}`;
 
                   return (
                     <tr
@@ -341,10 +362,10 @@ export default function ApplicationsTable({
                         onClick={(e) => e.stopPropagation()}
                       >
                         <Link
-                          href={`${konfolioViewerBasePath}/${a.konfolio.id}`}
-                          className="inline-flex"
-                          aria-label="Open applicant konfolio"
-                        >
+  href={publicKonfolioHref}
+  className="inline-flex"
+  aria-label="Open applicant konfolio"
+>
                           <div className="h-12 w-12 rounded-lg bg-zinc-200 overflow-hidden shadow-sm">
                             {thumb ? (
                               // eslint-disable-next-line @next/next/no-img-element
