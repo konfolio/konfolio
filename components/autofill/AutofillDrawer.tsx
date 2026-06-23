@@ -13,30 +13,22 @@ type Konfolio = {
   portfolio_slug: string | null;
 };
 
-type Profile = {
-  firstName: string | null;
-  lastName: string | null;
-  displayName: string | null;
-  businessName: string | null;
-  avatarUrl: string | null;
-  email: string | null;
-  location: string | null;
-};
-
 export default function AutofillDrawer({
   autofillData,
   fields,
   onClose,
   onAutofill,
 }: {
-  autofillData: Record<string, string>;
+  autofillData: Record<string, any>;
   fields: any[];
   onClose: () => void;
-  onAutofill: (data: Record<string, string>, konfolioId: string) => void;
+  onAutofill: (data: Record<string, any>, konfolioId: string) => void;
 }) {
   const [konfolios, setKonfolios] = useState<Konfolio[]>([]);
-  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [displayName, setDisplayName] = useState("Your Name");
+  const [businessName, setBusinessName] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -59,21 +51,23 @@ export default function AutofillDrawer({
           )
           .eq("user_id", user.id)
           .order("updated_at", { ascending: false }),
-        supabase.from("profiles").select("*").eq("id", user.id).single(),
+        supabase
+          .from("profiles")
+          .select("first_name, last_name, display_name, business_name, avatar_url, profile_image_url")
+          .eq("id", user.id)
+          .single(),
       ]);
 
       if (konfolioRes.data) setKonfolios(konfolioRes.data);
       if (profileRes.data) {
         const p = profileRes.data;
-        setProfile({
-          firstName: p.first_name ?? null,
-          lastName: p.last_name ?? null,
-          displayName: p.display_name ?? null,
-          businessName: p.business_name ?? null,
-          avatarUrl: p.avatar_url ?? null,
-          email: user.email ?? null,
-          location: p.location ?? null,
-        });
+        const name =
+          p.display_name ||
+          [p.first_name, p.last_name].filter(Boolean).join(" ") ||
+          "Your Name";
+        setDisplayName(name);
+        setBusinessName(p.business_name ?? "");
+        setAvatarUrl(p.avatar_url ?? p.profile_image_url ?? null);
       }
       setLoading(false);
     };
@@ -81,29 +75,20 @@ export default function AutofillDrawer({
   }, []);
 
   const handleSelect = (konfolio: Konfolio) => {
-    if (!profile) return;
+    // Start from the server-computed autofill (keyed by field id), then find
+    // any konfolio_link field and override it with the selected portfolio URL.
+    const merged: Record<string, any> = { ...autofillData };
 
-    // This object will hold values keyed by the 'field_key'
-    const autofillDataMap: Record<string, string> = {
-      first_name: profile.firstName || "",
-      last_name: profile.lastName || "",
-      preferred_name: profile.displayName || "",
-      business_name: profile.businessName || "",
-      email: profile.email || "",
-      location: profile.location || "",
-      konfolio_link: konfolio.portfolio_slug
-        ? `https://konfolio.com/${konfolio.portfolio_slug}`
-        : "",
-    };
+    const konfolioLinkField = fields.find(
+      (f: any) => f.field_key === "konfolio_link" || f.fieldKey === "konfolio_link"
+    );
+    if (konfolioLinkField && konfolio.portfolio_slug) {
+      merged[konfolioLinkField.id] = `https://konfolio.com/${konfolio.portfolio_slug}`;
+    }
 
-    onAutofill(autofillDataMap, konfolio.id);
+    onAutofill(merged, konfolio.id);
     onClose();
   };
-
-  const preferredName =
-    profile?.displayName ||
-    [profile?.firstName, profile?.lastName].filter(Boolean).join(" ") ||
-    "Your Name";
 
   return (
     <>
@@ -125,9 +110,9 @@ export default function AutofillDrawer({
         {/* Profile row */}
         <div className="flex items-center justify-between px-[20px] py-[16px] border-b border-white/10">
           <div className="flex items-center gap-[12px]">
-            {profile?.avatarUrl ? (
+            {avatarUrl ? (
               <Image
-                src={profile.avatarUrl}
+                src={avatarUrl}
                 alt="Avatar"
                 width={36}
                 height={36}
@@ -135,14 +120,14 @@ export default function AutofillDrawer({
               />
             ) : (
               <div className="w-[36px] h-[36px] rounded-full bg-white/10 flex items-center justify-center text-[13px] text-white/50">
-                {preferredName[0]?.toUpperCase()}
+                {displayName[0]?.toUpperCase()}
               </div>
             )}
             <div>
               <p className="text-[14px] text-white font-medium">
-                {profile?.businessName || "Business Name"}
+                {businessName || "Business Name"}
               </p>
-              <p className="text-[12px] text-white/40">{preferredName}</p>
+              <p className="text-[12px] text-white/40">{displayName}</p>
             </div>
           </div>
           <button onClick={onClose} className="text-white/30 hover:text-white">

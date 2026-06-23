@@ -71,8 +71,9 @@ export default function ApplyFormPage() {
         const json = await res.json();
         setForm(json.form);
 
-        if (json.autofill) {
+        if (json.autofill && Object.keys(json.autofill).length > 0) {
           setAutofillData(json.autofill);
+          setResponses(json.autofill);
         }
 
         const submitCheck = await fetch(
@@ -165,15 +166,8 @@ export default function ApplyFormPage() {
     }
   };
 
-  const handleAutofill = (data: Record<string, string>) => {
-    if (!form) return;
-    const newResponses: Record<string, any> = { ...responses };
-    form.fields.forEach((field: any) => {
-      if (field.field_key && data[field.field_key] !== undefined) {
-        newResponses[field.id] = data[field.field_key];
-      }
-    });
-    setResponses(newResponses);
+  const handleAutofill = (data: Record<string, any>) => {
+    setResponses((prev) => ({ ...prev, ...data }));
   };
 
   if (loading) {
