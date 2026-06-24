@@ -67,7 +67,7 @@ export default async function ExplorePage({
 
   if (userIds.length > 0) {
     const { data: profiles, error: profilesError } = await supabase
-      .from("profiles")
+      .from("explore_profiles")
       .select(
         "id, display_name, business_name, business_slug, location, profile_image_url, collabs"
       )
