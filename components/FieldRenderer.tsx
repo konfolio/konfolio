@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export type Field = {
   id: string;
@@ -18,6 +19,18 @@ export default function FieldRenderer({
   value: any;
   onChange: (val: any) => void;
 }) {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!(value instanceof File)) {
+      setPreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(value);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [value]);
+
   const label = (
     <label className="text-[14px] text-[#262626]">
       {field.label}{" "}
@@ -66,7 +79,7 @@ export default function FieldRenderer({
     );
   }
 
-  if (field.type === "radio" || field.type === "single_choice") {
+  if (field.type === "radio" || field.type === "single_choice" || field.type === "multiple_choice") {
     return (
       <div className="flex flex-col gap-[12px]">
         {label}
@@ -232,9 +245,9 @@ export default function FieldRenderer({
             }}
           />
         </label>
-        {value && (
+        {previewUrl && (
           <Image
-            src={URL.createObjectURL(value as File)}
+            src={previewUrl}
             alt="Preview"
             className="h-[120px] w-full object-cover rounded-[10px]"
             width={720}

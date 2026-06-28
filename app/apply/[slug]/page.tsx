@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 import Image from "next/image";
 
+import { supabase } from "@/lib/supabaseClient";
 import AutofillDrawer from "@/components/autofill/AutofillDrawer";
 import StatusBanner from "@/components/StatusBanner";
 import FieldRenderer, { Field } from "@/components/FieldRenderer";
@@ -37,7 +38,8 @@ export default function ApplyFormPage() {
   const { slug } = useParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [form, setForm] = useState<Form | null>(null);
-  const [autofillData, setAutofillData] = useState<Record<string, string>>({});
+  const [autofillData, setAutofillData] = useState<Record<string, any>>({});
+  const [selectedKonfolioId, setSelectedKonfolioId] = useState<string | null>(null);
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -69,7 +71,12 @@ export default function ApplyFormPage() {
   useEffect(() => {
     const fetchForm = async () => {
       try {
-        const res = await fetch(`/api/public/forms/${slug}`);
+        const { data: { session } } = await supabase.auth.getSession();
+        const res = await fetch(`/api/public/forms/${slug}`, {
+          headers: session?.access_token
+            ? { Authorization: `Bearer ${session.access_token}` }
+            : {},
+        });
         if (!res.ok) {
           setNotFound(true);
           setLoading(false);
@@ -151,7 +158,11 @@ export default function ApplyFormPage() {
       const res = await fetch("/api/forms/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ formId: form.id, responses: uploadedResponses }),
+        body: JSON.stringify({
+          formId: form.id,
+          responses: uploadedResponses,
+          konfolioId: selectedKonfolioId,
+        }),
       });
       if (res.ok) {
         setSubmitted(true);
@@ -173,8 +184,9 @@ export default function ApplyFormPage() {
     }
   };
 
-  const handleAutofill = (data: Record<string, any>) => {
+  const handleAutofill = (data: Record<string, any>, konfolioId: string) => {
     setResponses((prev) => ({ ...prev, ...data }));
+    setSelectedKonfolioId(konfolioId);
   };
 
   if (loading) {

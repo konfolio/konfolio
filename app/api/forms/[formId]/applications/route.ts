@@ -1,38 +1,29 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+
+function createAdminClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  );
+}
 
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ formId: string }> }
 ) {
   const { formId } = await params;
-  const supabase = await createSupabaseServerClient();
+  const authSupabase = await createSupabaseServerClient();
 
-  const { data: { user }, error: userErr } = await supabase.auth.getUser();
+  const { data: { user }, error: userErr } = await authSupabase.auth.getUser();
   if (userErr || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Fetch the form fields too
-  const { data: formData } = await supabase
-    .from("alley_forms")
-    .select("fields")
-    .eq("id", formId)
-    .single();
+  const supabase = createAdminClient();
 
-  const formFields = formData?.fields ?? [];
-
-  // Helper to get answer by field_key
-  const getAnswer = (answers: Record<string, any>, fieldKey: string) => {
-    // Try direct key first (old format)
-    if (answers[fieldKey] !== undefined) return answers[fieldKey];
-    // Find field by field_key and use its id
-    const field = formFields.find((f: any) => f.field_key === fieldKey);
-    if (field && answers[field.id] !== undefined) return answers[field.id];
-    return null;
-  };
-
-  // Get fields from alley_forms.fields jsonb
+  // Fetch form fields once
   const { data: formRow } = await supabase
     .from("alley_forms")
     .select("fields")
@@ -40,6 +31,14 @@ export async function GET(
     .single();
 
   const fields: any[] = formRow?.fields ?? [];
+
+  // Helper to get answer by field_key from raw (field-id-keyed) answers
+  const getAnswer = (answers: Record<string, any>, fieldKey: string) => {
+    if (answers[fieldKey] !== undefined) return answers[fieldKey];
+    const field = fields.find((f: any) => f.field_key === fieldKey);
+    if (field && answers[field.id] !== undefined) return answers[field.id];
+    return null;
+  };
 
   const { data, error } = await supabase
     .from("alley_applications")

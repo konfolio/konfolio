@@ -1,5 +1,45 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+
+function createAdminClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  );
+}
+
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const organizerId = searchParams.get("organizerId");
+
+    if (!organizerId) {
+      return NextResponse.json({ error: "Missing organizerId" }, { status: 400 });
+    }
+
+    const supabase = createAdminClient();
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("business_name, organization, display_name, links")
+      .eq("id", organizerId)
+      .maybeSingle();
+
+    return NextResponse.json({
+      organizationName:
+        profile?.business_name ||
+        profile?.organization ||
+        profile?.display_name ||
+        null,
+      links: profile?.links ?? {},
+    });
+  } catch (err: any) {
+    return NextResponse.json(
+      { error: err?.message || "Internal server error" },
+      { status: 500 },
+    );
+  }
+}
 
 export async function PATCH(req: Request) {
   try {

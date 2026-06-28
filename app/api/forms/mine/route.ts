@@ -20,8 +20,8 @@ export async function GET(req: Request) {
       error: userErr,
     } = await supabase.auth.getUser();
 
-    if (userErr) {
-      console.error("userErr:", userErr);
+    if (userErr || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { data: forms, error: formsErr } = await supabase
