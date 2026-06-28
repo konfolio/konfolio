@@ -45,14 +45,22 @@ export default function ApplicationDrawer({
       .join(" ") ||
     app.applicant.displayName ||
     "Applicant";
+    const publicKonfolioHref =
+  app.applicant.businessSlug && app.konfolio.portfolioSlug
+    ? `/${app.applicant.businessSlug}/${app.konfolio.portfolioSlug}`
+    : `${konfolioViewerBasePath}/${app.konfolio.id}`;
 
   const handleStatusChange = async (newStatus: AppRow["status"]) => {
+    const previous = status;
     setStatus(newStatus);
-    await fetch(`/api/applications/${app.id}`, {
+    const res = await fetch(`/api/applications/${app.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: newStatus }),
     });
+    if (!res.ok) {
+      setStatus(previous);
+    }
   };
 
   const STATUS_STYLES: Record<string, string> = {
@@ -154,12 +162,12 @@ export default function ApplicationDrawer({
           {app.konfolio.id && (
             <div className="w-full rounded-[10px] overflow-hidden border border-[#E9E9E9]">
               <iframe
-                src={`${konfolioViewerBasePath}/${app.konfolio.id}`}
+                src={publicKonfolioHref}
                 className="w-full h-[480px] border-0"
                 title="Applicant Portfolio"
               />
               <Link
-                href={`${konfolioViewerBasePath}/${app.konfolio.id}`}
+                href={publicKonfolioHref}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-[6px] py-[10px] text-[12px] text-[#A5A5A5] hover:text-[#262626] border-t border-[#E9E9E9]"

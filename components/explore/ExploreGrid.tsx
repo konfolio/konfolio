@@ -8,6 +8,7 @@ import ThreeDotsIcon from "@/components/icons/ThreeDotsIcon"
 type Item = {
   id: string
   businessName: string
+  businessSlug?: string | null
   portfolioName: string
   portfolioSlug?: string | null
   creatorName: string
@@ -22,6 +23,7 @@ type ExploreItem = {
   updated_at: string | null
   thumbnailUrl: string
   businessName: string
+  businessSlug?: string | null
   portfolioName: string
   portfolioSlug?: string | null
   displayName: string
@@ -43,6 +45,7 @@ export default function ExploreGrid({ items }: Props) {
     return items.map((item) => ({
       id: item.id,
       businessName: item.businessName,
+      businessSlug: item.businessSlug,
       portfolioName: item.portfolioName,
       portfolioSlug: item.portfolioSlug,
       creatorName: item.displayName,
@@ -120,6 +123,7 @@ export default function ExploreGrid({ items }: Props) {
               key={item.id}
               portfolioId={item.id}
               businessName={item.businessName}
+              businessSlug={item.businessSlug}
               portfolioName={item.portfolioName}
               portfolioSlug={item.portfolioSlug}
               creatorName={item.creatorName}

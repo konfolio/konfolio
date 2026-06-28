@@ -122,12 +122,28 @@ export async function PATCH(
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 })
   }
 
+  // Since RLS is disabled, manually verify ownership before allowing updates.
+  const { data: existingKonfolio, error: existingErr } = await supabase
+    .from("konfolios")
+    .select("id, user_id")
+    .eq("id", id)
+    .maybeSingle()
+
+  if (existingErr) {
+    return NextResponse.json({ error: existingErr.message }, { status: 500 })
+  }
+
+  if (!existingKonfolio || existingKonfolio.user_id !== auth.user.id) {
+    return NextResponse.json({ error: "Konfolio not found" }, { status: 404 })
+  }
+
   const patch: Record<string, any> = {}
 
   if (body.template !== undefined) {
     if (!isTemplate(body.template)) {
       return NextResponse.json({ error: "Invalid template" }, { status: 400 })
     }
+
     patch.template = body.template
   }
 
@@ -135,6 +151,7 @@ export async function PATCH(
     if (!isStatus(body.status)) {
       return NextResponse.json({ error: "Invalid status" }, { status: 400 })
     }
+
     patch.status = body.status
   }
 
@@ -149,9 +166,11 @@ export async function PATCH(
         { status: 400 }
       )
     }
+
     patch.explore_enabled = body.explore_enabled
   }
 
+  // Main case: whenever portfolio_name changes, automatically generate portfolio_slug.
   if (body.portfolio_name !== undefined) {
     if (typeof body.portfolio_name !== "string") {
       return NextResponse.json(
@@ -161,6 +180,7 @@ export async function PATCH(
     }
 
     const trimmed = body.portfolio_name.trim()
+
     if (!trimmed) {
       return NextResponse.json(
         { error: "Portfolio name cannot be empty" },
@@ -168,20 +188,32 @@ export async function PATCH(
       )
     }
 
-    const { data: duplicateName, error: duplicateNameErr } = await supabase
+    const normalizedSlug = slugify(trimmed)
+
+    if (!normalizedSlug) {
+      return NextResponse.json(
+        { error: "Portfolio name must include letters or numbers" },
+        { status: 400 }
+      )
+    }
+
+    // Check duplicate URL slug only within this user/business.
+    // This blocks names like "Summer Collection" and "summer-collection"
+    // from producing the same URL.
+    const { data: duplicateSlug, error: duplicateSlugErr } = await supabase
       .from("konfolios")
       .select("id")
       .eq("user_id", auth.user.id)
-      .eq("portfolio_name", trimmed)
+      .eq("portfolio_slug", normalizedSlug)
       .neq("id", id)
       .limit(1)
       .maybeSingle()
 
-    if (duplicateNameErr) {
-      return NextResponse.json({ error: duplicateNameErr.message }, { status: 500 })
+    if (duplicateSlugErr) {
+      return NextResponse.json({ error: duplicateSlugErr.message }, { status: 500 })
     }
 
-    if (duplicateName) {
+    if (duplicateSlug) {
       return NextResponse.json(
         { error: "That Konfolio name is already in use" },
         { status: 409 }
@@ -189,9 +221,12 @@ export async function PATCH(
     }
 
     patch.portfolio_name = trimmed
+    patch.portfolio_slug = normalizedSlug
   }
 
-  if (body.portfolio_slug !== undefined) {
+  // Optional case: if some part of your frontend sends portfolio_slug directly.
+  // If portfolio_name was sent, we ignore this because the slug should come from the name.
+  if (body.portfolio_slug !== undefined && body.portfolio_name === undefined) {
     if (typeof body.portfolio_slug !== "string") {
       return NextResponse.json(
         { error: "portfolio_slug must be a string" },
@@ -200,6 +235,7 @@ export async function PATCH(
     }
 
     const normalized = slugify(body.portfolio_slug)
+
     if (!normalized) {
       return NextResponse.json(
         { error: "Portfolio slug cannot be empty" },
@@ -210,6 +246,7 @@ export async function PATCH(
     const { data: duplicate, error: duplicateErr } = await supabase
       .from("konfolios")
       .select("id")
+      .eq("user_id", auth.user.id)
       .eq("portfolio_slug", normalized)
       .neq("id", id)
       .limit(1)
@@ -241,6 +278,7 @@ export async function PATCH(
     .from("konfolios")
     .update(patch)
     .eq("id", id)
+    .eq("user_id", auth.user.id)
     .select(
       "id, template, status, updated_at, content, explore_enabled, portfolio_name, portfolio_slug"
     )
@@ -248,29 +286,20 @@ export async function PATCH(
 
   if (error) {
     if (error.code === "23505") {
-      const msg = error.message?.toLowerCase() ?? ""
-
-      if (msg.includes("portfolio_slug")) {
-        return NextResponse.json(
-          { error: "That URL slug is already in use" },
-          { status: 409 }
-        )
-      }
-
-      if (msg.includes("portfolio_name")) {
-        return NextResponse.json(
-          { error: "That Konfolio name is already in use" },
-          { status: 409 }
-        )
-      }
+      return NextResponse.json(
+        { error: "That Konfolio name is already in use" },
+        { status: 409 }
+      )
     }
 
     const status = error.code === "PGRST116" ? 404 : 500
+
     return NextResponse.json(
       { error: status === 404 ? "Not found" : error.message },
       { status }
     )
   }
+  
 
   return NextResponse.json({
     id: data.id,
@@ -283,7 +312,6 @@ export async function PATCH(
     content: data.content,
   })
 }
-
 async function deleteStoragePrefix(
   supabaseAdmin: SupabaseClient,
   bucket: string,
@@ -304,6 +332,7 @@ async function deleteStoragePrefix(
     for (const item of data) {
       const full = path ? `${path}/${item.name}` : item.name
 
+      // Files usually have an id. Folders usually do not.
       if ((item as any).id) {
         toDelete.push(full)
       } else {
@@ -314,9 +343,14 @@ async function deleteStoragePrefix(
 
   await walk(prefix)
 
-  if (toDelete.length === 0) return { deleted: 0 }
+  if (toDelete.length === 0) {
+    return { deleted: 0 }
+  }
 
-  const { error: removeErr } = await supabaseAdmin.storage.from(bucket).remove(toDelete)
+  const { error: removeErr } = await supabaseAdmin.storage
+    .from(bucket)
+    .remove(toDelete)
+
   if (removeErr) throw removeErr
 
   return { deleted: toDelete.length }
@@ -327,28 +361,42 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const token = getBearerToken(req)
-  if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
 
   const { id } = await params
-  if (!id) return NextResponse.json({ error: "Missing id param" }, { status: 400 })
+
+  if (!id) {
+    return NextResponse.json({ error: "Missing id param" }, { status: 400 })
+  }
 
   const supabaseAdmin = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
 
-  const { data: userRes, error: userErr } = await supabaseAdmin.auth.getUser(token)
-  const user = userRes?.user
-  if (userErr || !user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const { data: userRes, error: userErr } =
+    await supabaseAdmin.auth.getUser(token)
 
-  const { data: k, error: kErr } = await supabaseAdmin
+  const user = userRes?.user
+
+  if (userErr || !user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  const { data: konfolio, error: konfolioErr } = await supabaseAdmin
     .from("konfolios")
     .select("id, user_id, status")
     .eq("id", id)
     .maybeSingle()
 
-  if (kErr) return NextResponse.json({ error: kErr.message }, { status: 500 })
-  if (!k || k.user_id !== user.id) {
+  if (konfolioErr) {
+    return NextResponse.json({ error: konfolioErr.message }, { status: 500 })
+  }
+
+  if (!konfolio || konfolio.user_id !== user.id) {
     return NextResponse.json({ error: "Konfolio not found" }, { status: 404 })
   }
 
@@ -356,7 +404,12 @@ export async function DELETE(
   let deletedStorageObjects = 0
 
   try {
-    const res = await deleteStoragePrefix(supabaseAdmin, "konfolio-images", prefix)
+    const res = await deleteStoragePrefix(
+      supabaseAdmin,
+      "konfolio-images",
+      prefix
+    )
+
     deletedStorageObjects = res.deleted
   } catch (e: any) {
     console.warn("Storage cleanup failed:", e?.message ?? e)
@@ -369,7 +422,9 @@ export async function DELETE(
     .eq("user_id", user.id)
     .select("id")
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
 
   return NextResponse.json({
     ok: true,
