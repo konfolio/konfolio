@@ -11,9 +11,10 @@ import PublishPopover from "@/components/my-portfolios/editor/PublishPopover"
 import PublishMissingFieldsPopover from "@/components/my-portfolios/editor/PublishMissingFieldsPopover"
 
 import { supabase } from "@/lib/supabase/browser"
+import { exportFromImageUrl, type KonfolioExportType } from "@/lib/konfolio/exportFromImage"
 
 type Props = { draftId: string; readOnly?: boolean }
-type ExportType = "pdf" | "png" | "jpeg"
+type ExportType = KonfolioExportType
 
 async function getAccessToken(): Promise<string | null> {
   const { data } = await supabase.auth.getSession()
@@ -249,6 +250,7 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
   const [publishError, setPublishError] = useState("")
   const [publishedUrl, setPublishedUrl] = useState("")
   const [publishedPortfolioName, setPublishedPortfolioName] = useState("")
+  const [publishedThumbnailUrl, setPublishedThumbnailUrl] = useState<string | null>(null)
   const [allowExploreSearch, setAllowExploreSearch] = useState<boolean>(false)
   const [isTogglingExploreSearch, setIsTogglingExploreSearch] = useState(false)
   const [mobileProfileExpanded, setMobileProfileExpanded] = useState(false)
@@ -342,8 +344,33 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
     }
   }
 
-  function handleExport(type: ExportType) {
-    console.log("[EXPORT] Picked type:", type)
+  async function handleExport(type: ExportType) {
+    const imageUrl =
+      cleanString(publishedThumbnailUrl) ||
+      cleanString((draft as any)?.thumbnail_url) ||
+      cleanString((draft as any)?.thumbnailUrl)
+
+    if (!imageUrl) {
+      alert("No thumbnail available for export yet.")
+      return
+    }
+
+    const portfolioName =
+      publishedPortfolioName ||
+      cleanString((draft as any)?.portfolioName ?? (draft as any)?.portfolio_name) ||
+      cleanString(draft?.displayName) ||
+      "Portfolio"
+
+    try {
+      await exportFromImageUrl({
+        imageUrl,
+        format: type,
+        portfolioName,
+      })
+    } catch (error) {
+      console.error("Export failed:", error)
+      alert("Export failed. Please try again.")
+    }
   }
 
   async function handlePublish() {
@@ -353,6 +380,7 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
     setPublishStatus("publishing")
     setPublishError("")
     setPublishedUrl("")
+    setPublishedThumbnailUrl(null)
 
     const initialName =
       cleanString((draft as any).portfolioName ?? (draft as any).portfolio_name) ||
@@ -482,14 +510,18 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
             ? getJson.explore_enabled
             : true
 
+      const nextThumbnailUrl =
+        cleanString(pubJson?.thumbnailUrl) ||
+        cleanString(getJson?.thumbnailUrl) ||
+        cleanString(getJson?.thumbnail_url) ||
+        null
+
+      setPublishedThumbnailUrl(nextThumbnailUrl)
+
       patchDraft(draftId, {
         status: "published",
         explore_enabled: nextExploreEnabled,
-        thumbnail_url:
-          pubJson?.thumbnailUrl ??
-          getJson?.thumbnailUrl ??
-          getJson?.thumbnail_url ??
-          null,
+        thumbnail_url: nextThumbnailUrl,
       })
 
       setPublishStatus("success")
@@ -664,7 +696,7 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
             portfolioName={publishedPortfolioName || cleanString(draft.displayName) || "Portfolio"}
             liveUrl={liveUrl}
             onExport={handleExport}
-            thumbnailUrl={draft.thumbnail_url ?? null}
+            thumbnailUrl={publishedThumbnailUrl || cleanString((draft as any).thumbnail_url ?? (draft as any).thumbnailUrl) || null}
             allowExploreSearch={allowExploreSearch}
             onToggleExploreSearch={handleToggleExploreSearch}
             isTogglingExploreSearch={isTogglingExploreSearch}
