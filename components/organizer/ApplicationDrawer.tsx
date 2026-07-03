@@ -6,11 +6,9 @@ import { AppRow } from "./ApplicationsTable";
 
 export default function ApplicationDrawer({
   app,
-  konfolioViewerBasePath,
   onClose,
 }: {
   app: AppRow | null;
-  konfolioViewerBasePath: string;
   onClose: () => void;
 }) {
   const [status, setStatus] = useState(app?.status ?? "pending");
@@ -44,11 +42,15 @@ export default function ApplicationDrawer({
       .filter(Boolean)
       .join(" ") ||
     app.applicant.displayName ||
+    app.applicant.businessName ||
     "Applicant";
-    const publicKonfolioHref =
-  app.applicant.businessSlug && app.konfolio.portfolioSlug
-    ? `/${app.applicant.businessSlug}/${app.konfolio.portfolioSlug}`
-    : `${konfolioViewerBasePath}/${app.konfolio.id}`;
+
+  const businessSlug = app.applicant.businessSlug ?? app.applicant.business_slug ?? null;
+  const portfolioSlug = app.konfolio.portfolioSlug ?? app.konfolio.portfolio_slug ?? null;
+  const publicKonfolioHref =
+    businessSlug && portfolioSlug
+      ? `/${businessSlug}/${portfolioSlug}`
+      : null;
 
   const handleStatusChange = async (newStatus: AppRow["status"]) => {
     const previous = status;
@@ -159,7 +161,7 @@ export default function ApplicationDrawer({
           </div>
 
           {/* Konfolio thumbnail */}
-          {app.konfolio.id && (
+          {app.konfolio.id && publicKonfolioHref && (
             <div className="w-full rounded-[10px] overflow-hidden border border-[#E9E9E9]">
               <iframe
                 src={publicKonfolioHref}

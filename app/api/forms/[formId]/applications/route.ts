@@ -75,12 +75,17 @@ export async function GET(
   }
 
   const applications = (data ?? []).map((row: any) => {
-    // answers are keyed by field id — normalize to field_key too
+    // answers are keyed by field id — normalize to field_key too.
+    // Also handle legacy submissions where answers were keyed by field_key directly.
     const answersByKey: Record<string, any> = {};
 
-    for (const [fieldId, val] of Object.entries(row.answers ?? {})) {
-      const key = fieldIdToKey[fieldId];
-      if (key) answersByKey[key] = val;
+    for (const [fieldIdOrKey, val] of Object.entries(row.answers ?? {})) {
+      const key = fieldIdToKey[fieldIdOrKey];
+      if (key) {
+        answersByKey[key] = val;
+      } else if (fieldKeyToId[fieldIdOrKey] !== undefined) {
+        answersByKey[fieldIdOrKey] = val;
+      }
     }
 
     return {
@@ -100,10 +105,8 @@ export async function GET(
           null,
         displayName:
           row.profiles?.preferred_name ||
-          row.profiles?.business_name ||
           getAnswer(row.answers ?? {}, "preferred_name") ||
-          getAnswer(row.answers ?? {}, "first_name") ||
-          "Unnamed",
+          null,
         businessName:
           row.profiles?.business_name ??
           getAnswer(row.answers ?? {}, "business_name") ??

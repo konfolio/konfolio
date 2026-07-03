@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabaseClient";
 import Image from "next/image";
 import Link from "next/link";
 
+
 type Konfolio = {
   id: string;
   portfolio_name: string | null;
@@ -53,6 +54,7 @@ export default function AutofillDrawer({
           .from("konfolios")
           .select("id, portfolio_name, thumbnail_url, updated_at, portfolio_slug")
           .eq("user_id", user.id)
+          .eq("status", "published")
           .order("updated_at", { ascending: false }),
         supabase
           .from("profiles")

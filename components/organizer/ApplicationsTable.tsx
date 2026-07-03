@@ -260,7 +260,6 @@ export default function ApplicationsTable({
                       .filter(Boolean)
                       .join(" ")
                       .trim() ||
-                    a.applicant.businessName ||
                     "—";
 
                   const business = a.applicant.businessName ?? "—";
@@ -268,7 +267,7 @@ export default function ApplicationsTable({
                   const notes =
                     (a.answers?.notes as string | undefined) ??
                     (a.answers?.Notes as string | undefined) ??
-                    "Notes";
+                    "—";
 
                   const appEmail =
                     a.applicant.email ??
@@ -290,20 +289,14 @@ export default function ApplicationsTable({
                     (a.konfolio as any).thumbnail_url ??
                     null;
 
-                    const applicantBusinessSlug =
-                    a.applicant.businessSlug ??
-                    a.applicant.business_slug ??
-                    null;
-                  
+                  const applicantBusinessSlug =
+                    a.applicant.businessSlug ?? a.applicant.business_slug ?? null;
                   const konfolioPortfolioSlug =
-                    a.konfolio.portfolioSlug ??
-                    a.konfolio.portfolio_slug ??
-                    null;
-                  
+                    a.konfolio.portfolioSlug ?? a.konfolio.portfolio_slug ?? null;
                   const publicKonfolioHref =
                     applicantBusinessSlug && konfolioPortfolioSlug
                       ? `/${applicantBusinessSlug}/${konfolioPortfolioSlug}`
-                      : `${konfolioViewerBasePath}/${a.konfolio.id}`;
+                      : null;
 
                   return (
                     <tr
@@ -361,32 +354,37 @@ export default function ApplicationsTable({
                         className="px-4 py-5"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <Link
-  href={publicKonfolioHref}
-  className="inline-flex"
-  aria-label="Open applicant konfolio"
->
-                          <div className="h-12 w-12 rounded-lg bg-zinc-200 overflow-hidden shadow-sm">
-                            {thumb ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img
-                                src={thumb}
-                                alt=""
-                                className="h-full w-full object-cover"
-                                onError={(e) => {
-                                  // hide broken image and show placeholder bg
-                                  (
-                                    e.currentTarget as HTMLImageElement
-                                  ).style.display = "none";
-                                }}
-                              />
-                            ) : (
-                              <div className="h-full w-full grid place-items-center text-[11px] text-zinc-500">
-                                —
-                              </div>
-                            )}
+                        {publicKonfolioHref ? (
+                          <Link
+                            href={publicKonfolioHref}
+                            className="inline-flex"
+                            aria-label="Open applicant konfolio"
+                          >
+                            <div className="h-12 w-12 rounded-lg bg-zinc-200 overflow-hidden shadow-sm">
+                              {thumb ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                  src={thumb}
+                                  alt=""
+                                  className="h-full w-full object-cover"
+                                  onError={(e) => {
+                                    (
+                                      e.currentTarget as HTMLImageElement
+                                    ).style.display = "none";
+                                  }}
+                                />
+                              ) : (
+                                <div className="h-full w-full grid place-items-center text-[11px] text-zinc-500">
+                                  —
+                                </div>
+                              )}
+                            </div>
+                          </Link>
+                        ) : (
+                          <div className="h-12 w-12 rounded-lg bg-zinc-200 overflow-hidden shadow-sm grid place-items-center text-[11px] text-zinc-500">
+                            —
                           </div>
-                        </Link>
+                        )}
                       </td>
 
                       <td className="px-2 py-5 text-center text-zinc-300" />
@@ -435,7 +433,6 @@ export default function ApplicationsTable({
         <ApplicationDrawer
           key={selectedApp?.id}
           app={selectedApp}
-          konfolioViewerBasePath={konfolioViewerBasePath}
           onClose={() => setSelectedApp(null)}
         />
       )}

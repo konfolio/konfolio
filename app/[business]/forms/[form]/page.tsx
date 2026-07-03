@@ -15,7 +15,7 @@ type FormField = {
 };
 
 export default function PublicFormPage() {
-  const { organizerSlug, formSlug } = useParams();
+  const { business: organizerSlug, form: formSlug } = useParams();
 
   const [form, setForm] = useState<any>(null);
   const [answers, setAnswers] = useState<Record<string, any>>({});
@@ -48,6 +48,8 @@ export default function PublicFormPage() {
 
     if (organizerSlug && formSlug) {
       fetchForm();
+    } else {
+      setLoading(false);
     }
   }, [organizerSlug, formSlug]);
 
