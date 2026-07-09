@@ -33,6 +33,11 @@ type Props = {
 }
 
 const MAX_PUBLISHED_KONFOLIOS = 3
+const UNLIMITED_KONFOLIO_EMAIL = "konfolios@gmail.com"
+
+function hasUnlimitedKonfolios(email?: string | null) {
+  return email?.trim().toLowerCase() === UNLIMITED_KONFOLIO_EMAIL
+}
 
 function pad2(n: number) {
   const s = String(Math.max(0, Math.floor(n)))
@@ -60,6 +65,7 @@ export default function DashboardProfileHeader({
   const [signedIn, setSignedIn] = useState(false)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [publishedCount, setPublishedCount] = useState(0)
+  const [isUnlimitedAccount, setIsUnlimitedAccount] = useState(false)
 
   const [profilePopoverOpen, setProfilePopoverOpen] = useState(false)
   const [limitOpen, setLimitOpen] = useState(false)
@@ -77,10 +83,12 @@ export default function DashboardProfileHeader({
         setSignedIn(false)
         setProfile(null)
         setPublishedCount(0)
+        setIsUnlimitedAccount(false)
         return
       }
 
       setSignedIn(true)
+      setIsUnlimitedAccount(hasUnlimitedKonfolios(user.email))
 
       const profileRes = await supabase
         .from("profiles")
@@ -169,7 +177,9 @@ export default function DashboardProfileHeader({
   const resolvedCount = konfolioCountOverride ?? publishedCount
   const showChecker = !resolvedProfileImageUrl
 
-  const limitReached = resolvedCount >= MAX_PUBLISHED_KONFOLIOS
+  const limitReached =
+    !isUnlimitedAccount && resolvedCount >= MAX_PUBLISHED_KONFOLIOS
+
   const createBlocked = signedIn && limitReached
 
   const popoverData: ArtistProfilePopupData = useMemo(
