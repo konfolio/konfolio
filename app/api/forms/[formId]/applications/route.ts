@@ -63,7 +63,7 @@ export async function GET(
   const { data, error } = await supabase
     .from("alley_applications")
     .select(`
-      id, status, created_at, answers, applicant_id, konfolio_id,
+      id, status, created_at, answers, applicant_id, konfolio_id, organizer_notes,
       profiles:applicant_id (
         id, first_name, last_name, preferred_name,
         business_name, business_slug, location, profile_image_url,
@@ -81,6 +81,32 @@ export async function GET(
   }
 
   const rows = data ?? [];
+
+  // Applications submitted before the applicant had a konfolio (or where
+  // linking failed) have a null konfolio_id forever after — fall back to
+  // their most recently updated konfolio so reviewers still see it.
+  const applicantIdsMissingKonfolio = Array.from(
+    new Set(
+      rows
+        .filter((row: any) => !row.konfolio_id && row.applicant_id)
+        .map((row: any) => row.applicant_id as string),
+    ),
+  );
+
+  const fallbackKonfolioByApplicant: Record<string, any> = {};
+  if (applicantIdsMissingKonfolio.length > 0) {
+    const { data: fallbackKonfolios } = await supabase
+      .from("konfolios")
+      .select("id, user_id, template, thumbnail_url, portfolio_slug, content, updated_at")
+      .in("user_id", applicantIdsMissingKonfolio)
+      .order("updated_at", { ascending: false });
+
+    for (const k of fallbackKonfolios ?? []) {
+      if (!fallbackKonfolioByApplicant[k.user_id]) {
+        fallbackKonfolioByApplicant[k.user_id] = k;
+      }
+    }
+  }
 
   // Tag usage across this form's applicant pool, keyed by tag -> % of applications
   const tagCounts: Record<string, number> = {};
@@ -124,12 +150,15 @@ export async function GET(
     }
 
     const tags = normalizeStringArray(row.profiles?.merch_tags);
+    const konfolio =
+      row.konfolios ?? fallbackKonfolioByApplicant[row.applicant_id] ?? null;
 
     return {
       id: row.id,
       status: row.status,
       createdAt: row.created_at,
       answers: answersByKey,
+      organizerNotes: row.organizer_notes ?? "",
       tagUsage: tags.map((tag) => ({
         tag,
         percentage: tagPercentages[tag] ?? 0,
@@ -164,13 +193,13 @@ export async function GET(
         tags,
       },
       konfolio: {
-        id: row.konfolios?.id ?? null,
-        template: row.konfolios?.template ?? null,
-        thumbnailUrl: row.konfolios?.thumbnail_url ?? null,
-        thumbnail_url: row.konfolios?.thumbnail_url ?? null,
-        portfolioSlug: row.konfolios?.portfolio_slug ?? null,
-        portfolio_slug: row.konfolios?.portfolio_slug ?? null,
-        content: row.konfolios?.content ?? null,
+        id: konfolio?.id ?? null,
+        template: konfolio?.template ?? null,
+        thumbnailUrl: konfolio?.thumbnail_url ?? null,
+        thumbnail_url: konfolio?.thumbnail_url ?? null,
+        portfolioSlug: konfolio?.portfolio_slug ?? null,
+        portfolio_slug: konfolio?.portfolio_slug ?? null,
+        content: konfolio?.content ?? null,
       },
     };
   });

@@ -49,14 +49,16 @@ type OtherApplication = {
 export default function ApplicationDrawer({
   app,
   position,
+  onUpdate,
   onClose,
 }: {
   app: AppRow | null;
   position?: { index: number; total: number };
+  onUpdate?: (updates: Partial<AppRow>) => void;
   onClose: () => void;
 }) {
   const [status, setStatus] = useState(app?.status ?? "pending");
-  const [notes, setNotes] = useState("");
+  const [notes, setNotes] = useState(app?.organizerNotes ?? "");
   const [otherApplications, setOtherApplications] = useState<
     OtherApplication[]
   >([]);
@@ -113,6 +115,20 @@ export default function ApplicationDrawer({
     });
     if (!res.ok) {
       setStatus(previous);
+    } else {
+      onUpdate?.({ status: newStatus });
+    }
+  };
+
+  const handleNotesBlur = async () => {
+    if (notes === (app.organizerNotes ?? "")) return;
+    const res = await fetch(`/api/applications/${app.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ notes }),
+    });
+    if (res.ok) {
+      onUpdate?.({ organizerNotes: notes });
     }
   };
 
@@ -248,6 +264,7 @@ export default function ApplicationDrawer({
               type="text"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
+              onBlur={handleNotesBlur}
               placeholder="Add a note..."
               className="w-full rounded-[10px] border border-[#E9E9E9] bg-[#FAFAFA] px-[12px] py-[8px] text-[13px] text-[#262626] placeholder:text-[#C0BDB4] outline-none focus:border-[#C0BDB4]"
             />

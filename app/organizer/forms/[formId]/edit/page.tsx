@@ -375,6 +375,10 @@ export default function EditOrganizerFormPage() {
   const [tags, setTags] = useState<string[]>([]);
   const [description, setDescription] = useState("");
   const [editingDescription, setEditingDescription] = useState(false);
+  const [eventDateStart, setEventDateStart] = useState("");
+  const [editingEventDate, setEditingEventDate] = useState(false);
+  const [eventAddress, setEventAddress] = useState("");
+  const [editingEventAddress, setEditingEventAddress] = useState(false);
   const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
 
@@ -392,6 +396,8 @@ export default function EditOrganizerFormPage() {
       setFormData(formJson.form);
       setTags(formJson.form.tags ?? []);
       setDescription(formJson.form.description ?? "");
+      setEventDateStart(formJson.form.event_date_start ?? "");
+      setEventAddress(formJson.form.event_address ?? "");
       setCoverImageUrl(formJson.form.cover_image_url ?? null);
 
       if (!formRes.ok) return;
@@ -815,7 +821,29 @@ export default function EditOrganizerFormPage() {
                       strokeLinecap="round"
                     />
                   </svg>
-                  <span>{formData?.event_date_start ?? "Event Date"}</span>
+                  {editingEventDate ? (
+                    <input
+                      type="date"
+                      autoFocus
+                      value={eventDateStart}
+                      onChange={(e) => setEventDateStart(e.target.value)}
+                      onBlur={() => {
+                        setEditingEventDate(false);
+                        saveFormMeta({ event_date_start: eventDateStart });
+                        setFormData((prev: any) =>
+                          prev ? { ...prev, event_date_start: eventDateStart } : prev,
+                        );
+                      }}
+                      className="text-[14px] text-[#262626] border border-[#E9E9E9] rounded-[8px] px-[8px] py-[2px] bg-white outline-none focus:border-[#C0BDB4]"
+                    />
+                  ) : (
+                    <button
+                      onClick={() => setEditingEventDate(true)}
+                      className="text-left hover:text-[#A5A5A5]"
+                    >
+                      {formData?.event_date_start || "Event Date"}
+                    </button>
+                  )}
                 </div>
                 <div className="flex items-center gap-[8px] text-[14px] text-[#262626]">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -832,7 +860,30 @@ export default function EditOrganizerFormPage() {
                       strokeWidth="1.2"
                     />
                   </svg>
-                  <span>{formData?.event_address ?? "Event Address"}</span>
+                  {editingEventAddress ? (
+                    <input
+                      type="text"
+                      autoFocus
+                      value={eventAddress}
+                      onChange={(e) => setEventAddress(e.target.value)}
+                      onBlur={() => {
+                        setEditingEventAddress(false);
+                        saveFormMeta({ event_address: eventAddress });
+                        setFormData((prev: any) =>
+                          prev ? { ...prev, event_address: eventAddress } : prev,
+                        );
+                      }}
+                      placeholder="Event Address"
+                      className="text-[14px] text-[#262626] border border-[#E9E9E9] rounded-[8px] px-[8px] py-[2px] bg-white outline-none focus:border-[#C0BDB4]"
+                    />
+                  ) : (
+                    <button
+                      onClick={() => setEditingEventAddress(true)}
+                      className="text-left hover:text-[#A5A5A5]"
+                    >
+                      {formData?.event_address || "Event Address"}
+                    </button>
+                  )}
                 </div>
 
                 {/* Tags */}

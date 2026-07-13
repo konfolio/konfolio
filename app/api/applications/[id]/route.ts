@@ -20,10 +20,17 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await req.json().catch(() => null);
+    const hasStatus = body?.status !== undefined;
+    const hasNotes = body?.notes !== undefined;
     const status = body?.status as string;
+    const notes = body?.notes as string | null;
 
-    if (!["accepted", "rejected", "pending"].includes(status)) {
+    if (hasStatus && !["accepted", "rejected", "pending"].includes(status)) {
       return NextResponse.json({ error: "Invalid status" }, { status: 400 });
+    }
+
+    if (!hasStatus && !hasNotes) {
+      return NextResponse.json({ error: "Nothing to update" }, { status: 400 });
     }
 
     const authSupabase = await createSupabaseServerClient();
@@ -50,11 +57,15 @@ export async function PATCH(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    const updates: { status?: string; organizer_notes?: string | null } = {};
+    if (hasStatus) updates.status = status;
+    if (hasNotes) updates.organizer_notes = notes;
+
     const { data, error } = await supabase
       .from("alley_applications")
-      .update({ status })
+      .update(updates)
       .eq("id", id)
-      .select("id, status")
+      .select("id, status, organizer_notes")
       .single();
 
     if (error) {

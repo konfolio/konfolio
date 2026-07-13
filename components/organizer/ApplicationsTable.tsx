@@ -19,6 +19,7 @@ export type AppRow = {
   status: "pending" | "accepted" | "rejected";
   createdAt: string;
   answers: Record<string, any>;
+  organizerNotes?: string;
   tagUsage?: { tag: string; percentage: number }[];
 
   applicant: {
@@ -133,6 +134,16 @@ export default function ApplicationsTable({ formId }: { formId: string }) {
     }
 
     setApps((prev) => prev.map((a) => (a.id === id ? { ...a, status } : a)));
+    if (selectedApp?.id === id) {
+      setSelectedApp((prev) => (prev ? { ...prev, status } : prev));
+    }
+  }
+
+  function handleDrawerUpdate(id: string, updates: Partial<AppRow>) {
+    setApps((prev) => prev.map((a) => (a.id === id ? { ...a, ...updates } : a)));
+    setSelectedApp((prev) =>
+      prev && prev.id === id ? { ...prev, ...updates } : prev,
+    );
   }
 
   const filteredApps = useMemo(() => {
@@ -420,6 +431,7 @@ export default function ApplicationsTable({ formId }: { formId: string }) {
             index: filteredApps.findIndex((a) => a.id === selectedApp.id),
             total: filteredApps.length,
           }}
+          onUpdate={(updates) => handleDrawerUpdate(selectedApp.id, updates)}
           onClose={() => setSelectedApp(null)}
         />
       )}
