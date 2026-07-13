@@ -17,10 +17,13 @@ type FormField = {
   id?: string;
   type?: string;
   label?: string;
+  field_key?: string;
   required?: boolean;
   placeholder?: string;
   options?: string[];
   sortOrder?: number;
+  page?: number;
+  conditional?: { fieldKey: string; value: string } | null;
 };
 
 function normalizeFields(fields: FormField[]) {
@@ -28,6 +31,7 @@ function normalizeFields(fields: FormField[]) {
     id: String(field.id || crypto.randomUUID()),
     type: field.type || "short_text",
     label: String(field.label || "Untitled Question"),
+    field_key: field.field_key || undefined,
     required: Boolean(field.required),
     placeholder: field.placeholder || "",
     options: Array.isArray(field.options) ? field.options : [],
@@ -35,6 +39,8 @@ function normalizeFields(fields: FormField[]) {
       field.sortOrder !== undefined && field.sortOrder !== null
         ? Number(field.sortOrder)
         : index,
+    page: field.page ?? 1,
+    conditional: field.conditional ?? null,
   }));
 }
 
