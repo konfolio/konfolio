@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
 import Image from "next/image";
 import Link from "next/link";
 
+import { supabase } from "@/lib/supabaseClient";
 
 type Konfolio = {
   id: string;
@@ -13,6 +13,226 @@ type Konfolio = {
   updated_at: string;
   portfolio_slug: string | null;
 };
+
+function cleanValue(value: any) {
+  if (value === undefined || value === null) {
+    return undefined;
+  }
+
+  if (typeof value === "string" && value.trim() === "") {
+    return undefined;
+  }
+
+  if (Array.isArray(value) && value.length === 0) {
+    return undefined;
+  }
+
+  return value;
+}
+
+function getLinkValue(profile: any, key: string) {
+  const links = profile?.links;
+
+  if (!links) {
+    return undefined;
+  }
+
+  if (links.linksByKey?.[key]?.url) {
+    return links.linksByKey[key].url;
+  }
+
+  if (links.linksByKey?.[key]) {
+    return links.linksByKey[key];
+  }
+
+  if (links[key]?.url) {
+    return links[key].url;
+  }
+
+  if (links[key]) {
+    return links[key];
+  }
+
+  return undefined;
+}
+
+function inferFieldKey(field: any): string | undefined {
+  if (field.field_key) {
+    return field.field_key;
+  }
+
+  if (field.fieldKey) {
+    return field.fieldKey;
+  }
+
+  const normalizedLabel = String(field.label ?? "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ");
+
+  const labelMap: Record<string, string> = {
+    "first name": "first_name",
+    "last name": "last_name",
+    "preferred name": "preferred_name",
+    "display name": "display_name",
+    "your name": "display_name",
+    "full name": "display_name",
+
+    "business name": "business_name",
+    "brand name": "business_name",
+
+    email: "email",
+    "email address": "email",
+    "business email": "email",
+
+    location: "location",
+    "business location": "location",
+    "where are you located": "location",
+
+    instagram: "instagram",
+    "instagram link": "instagram",
+    "instagram url": "instagram",
+    "instagram handle": "instagram",
+
+    tiktok: "tiktok",
+    "tiktok link": "tiktok",
+    "tiktok url": "tiktok",
+    "tiktok handle": "tiktok",
+
+    website: "website",
+    "website link": "website",
+    "website url": "website",
+
+    portfolio: "portfolio",
+    "portfolio website": "portfolio",
+
+    "konfolio link": "konfolio_link",
+    "konfolio url": "konfolio_link",
+    "portfolio link": "konfolio_link",
+    "public portfolio link": "konfolio_link",
+
+    "portfolio name": "portfolio_name",
+    "konfolio name": "portfolio_name",
+
+    "sales permit": "sales_permit",
+    "seller permit": "sales_permit",
+    "do you have a sales permit": "sales_permit",
+
+    "will apply": "will_apply",
+    "will you apply": "will_apply",
+
+    collaborations: "collabs",
+    collabs: "collabs",
+
+    "first vend": "first_vend",
+    "first vending event": "first_vend",
+
+    "previous vending": "previous_vending",
+    "previous vending experience": "previous_vending",
+    "vending experience": "previous_vending",
+  };
+
+  return labelMap[normalizedLabel];
+}
+
+function getProfileValue({
+  fieldKey,
+  profile,
+  userEmail,
+  konfolio,
+  publicKonfolioUrl,
+}: {
+  fieldKey: string | undefined;
+  profile: any;
+  userEmail: string | null;
+  konfolio: Konfolio;
+  publicKonfolioUrl: string;
+}) {
+  if (!fieldKey) {
+    return undefined;
+  }
+
+  const values: Record<string, any> = {
+    first_name: profile?.first_name,
+    last_name: profile?.last_name,
+    preferred_name: profile?.preferred_name,
+    display_name: profile?.display_name,
+    business_name: profile?.business_name,
+    email: userEmail,
+
+    location: profile?.location,
+    sales_permit: profile?.sales_permit,
+    will_apply: profile?.will_apply,
+    collabs: profile?.collabs,
+    first_vend: profile?.first_vend,
+
+    previous_vending: profile?.prev_vends,
+    prev_vends: profile?.prev_vends,
+
+    vend_experience_1: profile?.prev_vends?.[0],
+    vend_experience_2: profile?.prev_vends?.[1],
+    vend_experience_3: profile?.prev_vends?.[2],
+    vend_experience_4: profile?.prev_vends?.[3],
+
+    instagram: getLinkValue(profile, "instagram"),
+    tiktok: getLinkValue(profile, "tiktok"),
+    website: getLinkValue(profile, "website"),
+    portfolio: getLinkValue(profile, "portfolio"),
+
+    konfolio_link: publicKonfolioUrl,
+    portfolio_name: konfolio.portfolio_name,
+    konfolio_name: konfolio.portfolio_name,
+  };
+
+  return cleanValue(values[fieldKey]);
+}
+
+function formatValueForField(value: any, field: any) {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  const fieldType = field.type ?? "short_text";
+
+  if (typeof value === "boolean") {
+    if (
+      fieldType === "multiple_choice" &&
+      Array.isArray(field.options)
+    ) {
+      const yesOption = field.options.find(
+        (option: string) => option.toLowerCase() === "yes",
+      );
+
+      const noOption = field.options.find(
+        (option: string) => option.toLowerCase() === "no",
+      );
+
+      if (value && yesOption) {
+        return yesOption;
+      }
+
+      if (!value && noOption) {
+        return noOption;
+      }
+    }
+
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    if (
+      fieldType === "checkbox" ||
+      fieldType === "checkboxes"
+    ) {
+      return value;
+    }
+
+    return value.join(", ");
+  }
+
+  return value;
+}
 
 export default function AutofillDrawer({
   autofillData,
@@ -23,100 +243,223 @@ export default function AutofillDrawer({
   autofillData: Record<string, any>;
   fields: any[];
   onClose: () => void;
-  onAutofill: (data: Record<string, any>, konfolioId: string) => void;
+  onAutofill: (
+    data: Record<string, any>,
+    konfolioId: string,
+  ) => void;
 }) {
   const [konfolios, setKonfolios] = useState<Konfolio[]>([]);
   const [loading, setLoading] = useState(true);
+
   const [displayName, setDisplayName] = useState("Your Name");
   const [businessName, setBusinessName] = useState("");
-  const [businessSlug, setBusinessSlug] = useState<string | null>(null);
+  const [businessSlug, setBusinessSlug] = useState<string | null>(
+    null,
+  );
+
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
+  const [profileData, setProfileData] = useState<
+    Record<string, any> | null
+  >(null);
+
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    const handler = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
     window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+
+    return () => {
+      window.removeEventListener("keydown", handler);
+    };
   }, [onClose]);
 
   useEffect(() => {
     const load = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      try {
+        setLoading(true);
 
-      if (!user) {
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+
+        if (userError) {
+          console.error(
+            "Failed to load the current user for autofill:",
+            userError,
+          );
+        }
+
+        if (!user) {
+          return;
+        }
+
+        setUserEmail(user.email ?? null);
+
+        const [konfolioRes, profileRes] = await Promise.all([
+          supabase
+            .from("konfolios")
+            .select(`
+              id,
+              portfolio_name,
+              thumbnail_url,
+              updated_at,
+              portfolio_slug
+            `)
+            .eq("user_id", user.id)
+            .eq("status", "published")
+            .order("updated_at", {
+              ascending: false,
+            }),
+
+          supabase
+            .from("profiles")
+            .select(`
+              first_name,
+              last_name,
+              preferred_name,
+              display_name,
+              business_name,
+              business_slug,
+              location,
+              sales_permit,
+              will_apply,
+              collabs,
+              first_vend,
+              prev_vends,
+              links,
+              avatar_url,
+              profile_image_url
+            `)
+            .eq("id", user.id)
+            .single(),
+        ]);
+
+        if (konfolioRes.error) {
+          console.error(
+            "Failed to load published Konfolios:",
+            konfolioRes.error,
+          );
+        }
+
+        if (konfolioRes.data) {
+          setKonfolios(konfolioRes.data);
+        }
+
+        if (profileRes.error) {
+          console.error(
+            "Failed to load applicant profile:",
+            profileRes.error,
+          );
+        }
+
+        if (profileRes.data) {
+          const profile = profileRes.data;
+
+          setProfileData(profile);
+
+          const name =
+            profile.display_name ||
+            [profile.first_name, profile.last_name]
+              .filter(Boolean)
+              .join(" ") ||
+            "Your Name";
+
+          setDisplayName(name);
+          setBusinessName(profile.business_name ?? "");
+          setBusinessSlug(profile.business_slug ?? null);
+
+          setAvatarUrl(
+            profile.avatar_url ??
+              profile.profile_image_url ??
+              null,
+          );
+        }
+      } catch (error) {
+        console.error("Failed to load autofill drawer:", error);
+      } finally {
         setLoading(false);
-        return;
       }
-
-      const [konfolioRes, profileRes] = await Promise.all([
-        supabase
-          .from("konfolios")
-          .select("id, portfolio_name, thumbnail_url, updated_at, portfolio_slug")
-          .eq("user_id", user.id)
-          .eq("status", "published")
-          .order("updated_at", { ascending: false }),
-        supabase
-          .from("profiles")
-          .select(
-            "first_name, last_name, display_name, business_name, business_slug, avatar_url, profile_image_url"
-          )
-          .eq("id", user.id)
-          .single(),
-      ]);
-
-      if (konfolioRes.data) {
-        setKonfolios(konfolioRes.data);
-      }
-
-      if (profileRes.data) {
-        const p = profileRes.data;
-        const name =
-          p.display_name ||
-          [p.first_name, p.last_name].filter(Boolean).join(" ") ||
-          "Your Name";
-
-        setDisplayName(name);
-        setBusinessName(p.business_name ?? "");
-        setBusinessSlug(p.business_slug ?? null);
-        setAvatarUrl(p.avatar_url ?? p.profile_image_url ?? null);
-      }
-
-      setLoading(false);
     };
 
     load();
   }, []);
 
   const getPublicKonfolioPath = (konfolio: Konfolio) => {
-    if (!businessSlug || !konfolio.portfolio_slug) return "";
+    if (!businessSlug || !konfolio.portfolio_slug) {
+      return "";
+    }
+
     return `/${businessSlug}/${konfolio.portfolio_slug}`;
   };
 
   const getPublicKonfolioUrl = (konfolio: Konfolio) => {
     const path = getPublicKonfolioPath(konfolio);
-    if (!path) return "";
+
+    if (!path) {
+      return "";
+    }
 
     const origin =
-      typeof window !== "undefined" ? window.location.origin : "https://konfolio.com";
+      typeof window !== "undefined"
+        ? window.location.origin
+        : "https://konfolio.com";
 
     return `${origin}${path}`;
   };
 
   const handleSelect = (konfolio: Konfolio) => {
-    // Start from the server-computed autofill, then override the konfolio_link
-    // field with the selected pretty Konfolio URL.
-    const merged: Record<string, any> = { ...autofillData };
+    const publicKonfolioUrl =
+      getPublicKonfolioUrl(konfolio);
 
-    const konfolioLinkField = fields.find(
-      (f: any) => f.field_key === "konfolio_link" || f.fieldKey === "konfolio_link"
+    const locallyBuiltAutofill: Record<string, any> = {};
+
+    for (const field of fields ?? []) {
+      const fieldKey = inferFieldKey(field);
+
+      const rawValue = getProfileValue({
+        fieldKey,
+        profile: profileData,
+        userEmail,
+        konfolio,
+        publicKonfolioUrl,
+      });
+
+      const formattedValue = formatValueForField(
+        rawValue,
+        field,
+      );
+
+      if (formattedValue !== undefined) {
+        locallyBuiltAutofill[field.id] = formattedValue;
+      }
+    }
+
+    /*
+     * The drawer builds autofill locally from the applicant's
+     * profile as a fallback.
+     *
+     * Values returned by the public form API override the local
+     * values when the server was able to compute them.
+     */
+    const merged: Record<string, any> = {
+      ...locallyBuiltAutofill,
+      ...autofillData,
+    };
+
+    console.log(
+      "LOCAL PROFILE AUTOFILL:",
+      locallyBuiltAutofill,
     );
 
-    const publicKonfolioUrl = getPublicKonfolioUrl(konfolio);
-
-    if (konfolioLinkField && publicKonfolioUrl) {
-      merged[konfolioLinkField.id] = publicKonfolioUrl;
-    }
+    console.log("SERVER AUTOFILL:", autofillData);
+    console.log("FINAL AUTOFILL SENT TO FORM:", merged);
 
     onAutofill(merged, konfolio.id);
     onClose();
@@ -125,7 +468,10 @@ export default function AutofillDrawer({
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 z-40 bg-black/30" onClick={onClose} />
+      <div
+        className="fixed inset-0 z-40 bg-black/30"
+        onClick={onClose}
+      />
 
       {/* Drawer */}
       <div className="fixed right-0 top-0 z-50 h-full w-[380px] bg-[#1C1C1C] flex flex-col overflow-hidden">
@@ -134,7 +480,11 @@ export default function AutofillDrawer({
           <span className="text-[13px] text-white/50 font-medium tracking-wide uppercase">
             Select Autofill
           </span>
-          <button className="text-white/30 hover:text-white text-[11px] font-mono">
+
+          <button
+            type="button"
+            className="text-white/30 hover:text-white text-[11px] font-mono"
+          >
             {"</>"}
           </button>
         </div>
@@ -160,12 +510,24 @@ export default function AutofillDrawer({
               <p className="text-[14px] text-white font-medium">
                 {businessName || "Business Name"}
               </p>
-              <p className="text-[12px] text-white/40">{displayName}</p>
+
+              <p className="text-[12px] text-white/40">
+                {displayName}
+              </p>
             </div>
           </div>
 
-          <button onClick={onClose} className="text-white/30 hover:text-white">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-white/30 hover:text-white"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+            >
               <path
                 d="M3 3l10 10M13 3L3 13"
                 stroke="currentColor"
@@ -194,21 +556,25 @@ export default function AutofillDrawer({
             </p>
           )}
 
-          {konfolios.map((k) => {
-            const publicKonfolioPath = getPublicKonfolioPath(k);
+          {konfolios.map((konfolio) => {
+            const publicKonfolioPath =
+              getPublicKonfolioPath(konfolio);
 
             return (
               <div
-                key={k.id}
-                onClick={() => handleSelect(k)}
+                key={konfolio.id}
+                onClick={() => handleSelect(konfolio)}
                 className="rounded-[12px] bg-white/5 border border-white/10 overflow-hidden cursor-pointer hover:border-white/30 transition-colors"
               >
                 {/* Thumbnail */}
                 <div className="w-full h-[160px] bg-white/5">
-                  {k.thumbnail_url ? (
+                  {konfolio.thumbnail_url ? (
                     <Image
-                      src={k.thumbnail_url}
-                      alt={k.portfolio_name ?? "Portfolio"}
+                      src={konfolio.thumbnail_url}
+                      alt={
+                        konfolio.portfolio_name ??
+                        "Portfolio"
+                      }
                       width={348}
                       height={160}
                       className="w-full h-full object-cover"
@@ -222,11 +588,17 @@ export default function AutofillDrawer({
                 <div className="px-[14px] py-[12px] flex items-center justify-between">
                   <div>
                     <p className="text-[14px] text-white">
-                      {k.portfolio_name ?? "Portfolio Name"}
+                      {konfolio.portfolio_name ??
+                        "Portfolio Name"}
                     </p>
 
                     <div className="flex items-center gap-[6px] mt-[4px]">
-                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                      >
                         <path
                           d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 3v4l2.5 2.5"
                           stroke="white"
@@ -237,7 +609,9 @@ export default function AutofillDrawer({
                       </svg>
 
                       <span className="text-[11px] text-white/40">
-                        {new Date(k.updated_at).toLocaleDateString("en-US", {
+                        {new Date(
+                          konfolio.updated_at,
+                        ).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
                           year: "numeric",
@@ -250,11 +624,19 @@ export default function AutofillDrawer({
                     <Link
                       href={publicKonfolioPath}
                       target="_blank"
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={(event) =>
+                        event.stopPropagation()
+                      }
                       className="flex items-center gap-[6px] bg-[#262626] text-white text-[12px] px-[12px] py-[6px] rounded-full hover:bg-white/20 transition-colors"
                     >
                       View
-                      <svg width="10" height="10" viewBox="0 0 16 16" fill="none">
+
+                      <svg
+                        width="10"
+                        height="10"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                      >
                         <path
                           d="M6 3H3.5A1.5 1.5 0 0 0 2 4.5v8A1.5 1.5 0 0 0 3.5 14h8A1.5 1.5 0 0 0 13 12.5V10M10 2h4m0 0v4m0-4L6.5 9.5"
                           stroke="currentColor"

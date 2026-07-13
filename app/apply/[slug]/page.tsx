@@ -86,9 +86,13 @@ export default function ApplyFormPage() {
         setForm(json.form);
 
         if (json.autofill && Object.keys(json.autofill).length > 0) {
-          setAutofillData(json.autofill);
-          setResponses(json.autofill);
-        }
+  setAutofillData(json.autofill);
+
+  setResponses((previousResponses) => ({
+    ...json.autofill,
+    ...previousResponses,
+  }));
+}
 
         const submitCheck = await fetch(
           `/api/forms/apply/check?formId=${json.form.id}`,
@@ -184,10 +188,52 @@ export default function ApplyFormPage() {
     }
   };
 
-  const handleAutofill = (data: Record<string, any>, konfolioId: string) => {
-    setResponses((prev) => ({ ...prev, ...data }));
-    setSelectedKonfolioId(konfolioId);
-  };
+  const handleAutofill = (
+  data: Record<string, any>,
+  konfolioId: string,
+) => {
+  if (!form) return;
+
+  console.log("AUTOFILL DATA RECEIVED:", data);
+  console.log("SELECTED KONFOLIO:", konfolioId);
+
+  const sourceData =
+    data?.responses ??
+    data?.autofill ??
+    data;
+
+  const mappedResponses: Record<string, any> = {};
+
+  for (const field of form.fields ?? []) {
+    const fieldKey =
+      (field as any).field_key ??
+      (field as any).fieldKey;
+
+    let value = sourceData?.[field.id];
+
+    if (value === undefined && fieldKey) {
+      value = sourceData?.[fieldKey];
+    }
+
+    if (
+      value !== undefined &&
+      value !== null &&
+      value !== ""
+    ) {
+      mappedResponses[field.id] = value;
+    }
+  }
+
+  console.log("MAPPED AUTOFILL RESPONSES:", mappedResponses);
+
+  setResponses((previousResponses) => ({
+    ...previousResponses,
+    ...mappedResponses,
+  }));
+
+  setSelectedKonfolioId(konfolioId);
+  setAutofillOpen(false);
+};
 
   if (loading) {
     return (
