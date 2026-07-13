@@ -17,10 +17,7 @@ export default async function OrganizerFormPage({
         <OrganizerFormHeader formId={formId} />
 
         <div className="pb-10 pt-6">
-          <ApplicationsTable
-            formId={formId}
-            konfolioViewerBasePath="/konfolios"
-          />
+          <ApplicationsTable formId={formId} />
         </div>
       </div>
     </div>

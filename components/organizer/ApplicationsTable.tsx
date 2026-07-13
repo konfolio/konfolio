@@ -19,6 +19,7 @@ export type AppRow = {
   status: "pending" | "accepted" | "rejected";
   createdAt: string;
   answers: Record<string, any>;
+  tagUsage?: { tag: string; percentage: number }[];
 
   applicant: {
     id: string;
@@ -32,28 +33,19 @@ export type AppRow = {
     location?: string | null;
     avatarUrl?: string | null;
     email?: string | null;
+    links?: Record<string, string> | null;
+    tags?: string[] | null;
   };
   konfolio: {
     id: string;
     template: "square" | "portrait";
     thumbnailUrl: string | null;
     thumbnail_url?: string | null;
-  
-    portfolioName?: string | null;
-    portfolio_name?: string | null;
     portfolioSlug?: string | null;
     portfolio_slug?: string | null;
+    content?: any;
   };
 };
-
-function formatAnswer(v: any): string {
-  if (v === null || v === undefined) return "—";
-  if (typeof v === "boolean") return v ? "Yes" : "No";
-  if (Array.isArray(v)) return v.length ? v.join(", ") : "—";
-  if (typeof v === "object") return JSON.stringify(v);
-  const s = String(v);
-  return s.length ? s : "—";
-}
 
 function formatTimeSubmitted(iso: string) {
   const d = new Date(iso);
@@ -83,13 +75,7 @@ function pickFieldKey(
   return null;
 }
 
-export default function ApplicationsTable({
-  formId,
-  konfolioViewerBasePath,
-}: {
-  formId: string;
-  konfolioViewerBasePath: string;
-}) {
+export default function ApplicationsTable({ formId }: { formId: string }) {
   const [selectedApp, setSelectedApp] = useState<AppRow | null>(null);
   const [fields, setFields] = useState<Field[]>([]);
   const [apps, setApps] = useState<AppRow[]>([]);
@@ -109,9 +95,6 @@ export default function ApplicationsTable({
       cache: "no-store",
     });
     const json = await res.json().catch(() => ({}));
-
-    console.log("applications response", json);
-    console.log("applications count", json?.applications?.length);
 
     if (!res.ok) {
       setFields([]);
@@ -433,6 +416,10 @@ export default function ApplicationsTable({
         <ApplicationDrawer
           key={selectedApp?.id}
           app={selectedApp}
+          position={{
+            index: filteredApps.findIndex((a) => a.id === selectedApp.id),
+            total: filteredApps.length,
+          }}
           onClose={() => setSelectedApp(null)}
         />
       )}

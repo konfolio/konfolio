@@ -47,8 +47,8 @@ export default function MyFormsPage() {
       {/* Host Profile Header */}
       <DashboardProfileHeader formCount={forms.length} />
 
-      <section className="w-full flex justify-center px-[150px] py-[40px]">
-        <div className="w-full max-w-[1212px] grid grid-cols-2 gap-[12px]">
+      <section className="w-full flex justify-center px-4 sm:px-8 lg:px-[150px] py-[40px]">
+        <div className="w-full max-w-[1212px] grid grid-cols-1 md:grid-cols-2 gap-[12px]">
           {loading ? (
             <p>Loading...</p>
           ) : (

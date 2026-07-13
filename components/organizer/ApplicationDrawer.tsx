@@ -1,19 +1,65 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { AppRow } from "./ApplicationsTable";
+import PublicKonfolioView from "@/components/public/PublicKonfolioView";
+import type { SocialKey } from "@/lib/socialKeys";
+
+import HomeIcon from "@/components/icons/HomeIcon";
+import ShopIcon from "@/components/icons/ShopIcon";
+import InstagramIcon from "@/components/icons/InstagramIcon";
+import XIcon from "@/components/icons/XIcon";
+import FacebookIcon from "@/components/icons/FacebookIcon";
+import TumblrIcon from "@/components/icons/TumblrIcon";
+import PixivIcon from "@/components/icons/PixivIcon";
+import BlueskyIcon from "@/components/icons/BlueskyIcon";
+
+const SOCIAL_ICONS: {
+  key: SocialKey;
+  Icon: React.ComponentType<{ className?: string }>;
+}[] = [
+  { key: "website", Icon: HomeIcon },
+  { key: "instagram", Icon: InstagramIcon },
+  { key: "x", Icon: XIcon },
+  { key: "bluesky", Icon: BlueskyIcon },
+  { key: "tumblr", Icon: TumblrIcon },
+  { key: "facebook", Icon: FacebookIcon },
+  { key: "pixiv", Icon: PixivIcon },
+  { key: "shop", Icon: ShopIcon },
+];
+
+const OTHER_STATUS_LABELS: Record<AppRow["status"], string> = {
+  accepted: "Accept",
+  rejected: "Reject",
+  pending: "Pending",
+};
+
+const STATUS_TEXT_STYLES: Record<AppRow["status"], string> = {
+  pending: "text-[#262626]",
+  accepted: "text-[#3B6D11]",
+  rejected: "text-[#A32D2D]",
+};
+
+type OtherApplication = {
+  id: string;
+  status: AppRow["status"];
+  formTitle: string | null;
+};
 
 export default function ApplicationDrawer({
   app,
+  position,
   onClose,
 }: {
   app: AppRow | null;
+  position?: { index: number; total: number };
   onClose: () => void;
 }) {
   const [status, setStatus] = useState(app?.status ?? "pending");
   const [notes, setNotes] = useState("");
-  const [otherApplications, setOtherApplications] = useState<any[]>([]);
+  const [otherApplications, setOtherApplications] = useState<
+    OtherApplication[]
+  >([]);
 
   useEffect(() => {
     if (!app?.applicant?.id) return;
@@ -23,11 +69,12 @@ export default function ApplicationDrawer({
       );
       if (res.ok) {
         const json = await res.json();
-        setOtherApplications(json.applications ?? []);
+        const applications: OtherApplication[] = json.applications ?? [];
+        setOtherApplications(applications.filter((a) => a.id !== app.id));
       }
     };
     load();
-  }, [app?.applicant?.id]);
+  }, [app?.applicant?.id, app?.id]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -37,20 +84,24 @@ export default function ApplicationDrawer({
 
   if (!app) return null;
 
-  const fullName =
-    [app.applicant.firstName, app.applicant.lastName]
-      .filter(Boolean)
-      .join(" ") ||
-    app.applicant.displayName ||
-    app.applicant.businessName ||
-    "Applicant";
+  const legalName = [app.applicant.firstName, app.applicant.lastName]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+  const displayName = (app.applicant.displayName || "").trim();
+  const personalLine =
+    displayName && displayName !== legalName
+      ? `${legalName || displayName} (${displayName})`
+      : legalName || displayName;
 
-  const businessSlug = app.applicant.businessSlug ?? app.applicant.business_slug ?? null;
-  const portfolioSlug = app.konfolio.portfolioSlug ?? app.konfolio.portfolio_slug ?? null;
-  const publicKonfolioHref =
-    businessSlug && portfolioSlug
-      ? `/${businessSlug}/${portfolioSlug}`
-      : null;
+  const primaryName =
+    app.applicant.businessName || legalName || displayName || "Applicant";
+
+  const socialLinks = SOCIAL_ICONS.filter(
+    ({ key }) => app.applicant.links?.[key],
+  );
+
+  const hasPortfolio = Boolean(app.konfolio.id && app.konfolio.content);
 
   const handleStatusChange = async (newStatus: AppRow["status"]) => {
     const previous = status;
@@ -65,19 +116,27 @@ export default function ApplicationDrawer({
     }
   };
 
-  const STATUS_STYLES: Record<string, string> = {
-    pending: "bg-[#F7F7F7] text-[#A5A5A5]",
-    accepted: "bg-[#EAF3DE] text-[#3B6D11]",
-    rejected: "bg-[#FCEBEB] text-[#A32D2D]",
-  };
-
   return (
-    <>
-      {/* Backdrop */}
-      <div className="fixed inset-0 z-40 bg-black/10" onClick={onClose} />
+    <div className="fixed inset-0 z-50 flex bg-white">
+      {/* Portfolio */}
+      <div className="flex-1 min-w-0 h-full overflow-y-auto bg-[#F7F7F7]">
+        {hasPortfolio ? (
+          <PublicKonfolioView
+            konfolioId={app.konfolio.id}
+            template={app.konfolio.template}
+            content={app.konfolio.content}
+            ownerBusinessName={app.applicant.businessName ?? ""}
+            trackAnalytics={false}
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-[13px] text-[#A5A5A5]">
+            No portfolio submitted
+          </div>
+        )}
+      </div>
 
-      {/* Drawer */}
-      <div className="fixed right-0 top-0 z-50 h-full w-[420px] bg-white shadow-2xl overflow-y-auto flex flex-col">
+      {/* Meta panel */}
+      <div className="w-[420px] shrink-0 h-full bg-white shadow-2xl overflow-y-auto flex flex-col border-l border-[#E9E9E9]">
         {/* Header */}
         <div className="flex items-center justify-between px-[20px] py-[16px] border-b border-[#E9E9E9]">
           <span className="text-[13px] text-[#A5A5A5]">
@@ -91,31 +150,36 @@ export default function ApplicationDrawer({
                 })
               : ""}
           </span>
-          <button
-            onClick={onClose}
-            className="text-[#A5A5A5] hover:text-[#262626]"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path
-                d="M3 3l10 10M13 3L3 13"
-                stroke="currentColor"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-              />
-            </svg>
-          </button>
+          <div className="flex items-center gap-[16px]">
+            {position && position.total > 0 && (
+              <span className="text-[13px] text-[#A5A5A5]">
+                {position.index + 1}
+              </span>
+            )}
+            <button
+              onClick={onClose}
+              className="text-[#A5A5A5] hover:text-[#262626]"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M3 3l10 10M13 3L3 13"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-col gap-[20px] px-[20px] py-[20px]">
           {/* Applicant info */}
           <div className="flex flex-col gap-[4px]">
             <h2 className="text-[18px] font-medium text-[#262626]">
-              {fullName}
+              {primaryName}
             </h2>
-            {app.applicant.businessName && (
-              <p className="text-[13px] text-[#A5A5A5]">
-                {app.applicant.businessName}
-              </p>
+            {personalLine && (
+              <p className="text-[13px] text-[#A5A5A5]">{personalLine}</p>
             )}
             {app.applicant.location && (
               <div className="flex items-center gap-[4px] text-[13px] text-[#A5A5A5]">
@@ -160,43 +224,32 @@ export default function ApplicationDrawer({
             )}
           </div>
 
-          {/* Konfolio thumbnail */}
-          {app.konfolio.id && publicKonfolioHref && (
-            <div className="w-full rounded-[10px] overflow-hidden border border-[#E9E9E9]">
-              <iframe
-                src={publicKonfolioHref}
-                className="w-full h-[480px] border-0"
-                title="Applicant Portfolio"
-              />
-              <Link
-                href={publicKonfolioHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-[6px] py-[10px] text-[12px] text-[#A5A5A5] hover:text-[#262626] border-t border-[#E9E9E9]"
-              >
-                Open full portfolio
-                <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
-                  <path
-                    d="M4 2H2.5A1.5 1.5 0 0 0 1 3.5v6A1.5 1.5 0 0 0 2.5 11h6A1.5 1.5 0 0 0 10 9.5V8M7 1h4m0 0v4m0-4L4.5 7.5"
-                    stroke="currentColor"
-                    strokeWidth="1.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </Link>
+          {/* Social links */}
+          {socialLinks.length > 0 && (
+            <div className="flex items-center gap-[16px]">
+              {socialLinks.map(({ key, Icon }) => (
+                <a
+                  key={key}
+                  href={app.applicant.links![key]}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#262626] hover:opacity-70"
+                >
+                  <Icon className="w-[18px] h-[18px]" />
+                </a>
+              ))}
             </div>
           )}
 
           {/* Notes */}
           <div className="flex flex-col gap-[8px]">
             <label className="text-[13px] text-[#A5A5A5]">Notes</label>
-            <textarea
+            <input
+              type="text"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              rows={3}
               placeholder="Add a note..."
-              className="w-full rounded-[10px] border border-[#E9E9E9] bg-white px-[12px] py-[10px] text-[13px] text-[#262626] placeholder:text-[#C0BDB4] outline-none focus:border-[#C0BDB4] resize-none"
+              className="w-full rounded-[10px] border border-[#E9E9E9] bg-[#FAFAFA] px-[12px] py-[8px] text-[13px] text-[#262626] placeholder:text-[#C0BDB4] outline-none focus:border-[#C0BDB4]"
             />
           </div>
 
@@ -209,7 +262,7 @@ export default function ApplicationDrawer({
                 onChange={(e) =>
                   handleStatusChange(e.target.value as AppRow["status"])
                 }
-                className={`text-[13px] px-[12px] py-[6px] pr-[28px] rounded-full appearance-none cursor-pointer outline-none ${STATUS_STYLES[status] ?? STATUS_STYLES.pending}`}
+                className={`text-[13px] px-[12px] py-[8px] pr-[28px] rounded-[10px] border border-[#E9E9E9] bg-white appearance-none cursor-pointer outline-none focus:border-[#C0BDB4] ${STATUS_TEXT_STYLES[status] ?? STATUS_TEXT_STYLES.pending}`}
               >
                 <option value="pending">Pending</option>
                 <option value="accepted">Accepted</option>
@@ -233,6 +286,26 @@ export default function ApplicationDrawer({
             </div>
           </div>
 
+          {/* Tag usage in form */}
+          {app.tagUsage && app.tagUsage.length > 0 && (
+            <div className="flex flex-col gap-[8px]">
+              <p className="text-[13px] text-[#A5A5A5]">Tag usage in form</p>
+              <div className="flex flex-col gap-[8px]">
+                {app.tagUsage.map(({ tag, percentage }) => (
+                  <div
+                    key={tag}
+                    className="flex items-center justify-between rounded-[10px] border border-[#E9E9E9] px-[12px] py-[8px]"
+                  >
+                    <span className="text-[13px] text-[#262626]">{tag}</span>
+                    <span className="text-[13px] text-[#A5A5A5]">
+                      {percentage}%
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Found in other forms */}
           {otherApplications.length > 0 && (
             <div className="flex flex-col gap-[8px]">
@@ -244,7 +317,7 @@ export default function ApplicationDrawer({
                       {a.formTitle ?? "Untitled Form"}
                     </span>
                     <span
-                      className={`text-[11px] px-[8px] py-[2px] rounded-full capitalize ${
+                      className={`text-[11px] px-[8px] py-[2px] rounded-full ${
                         a.status === "accepted"
                           ? "bg-[#EAF3DE] text-[#3B6D11]"
                           : a.status === "rejected"
@@ -252,7 +325,7 @@ export default function ApplicationDrawer({
                             : "bg-[#F7F7F7] text-[#A5A5A5]"
                       }`}
                     >
-                      {a.status}
+                      {OTHER_STATUS_LABELS[a.status] ?? a.status}
                     </span>
                   </div>
                 ))}
@@ -266,17 +339,17 @@ export default function ApplicationDrawer({
               <p className="text-[13px] text-[#A5A5A5]">Form answers</p>
               <div className="flex flex-col gap-[10px]">
                 {Object.entries(app.answers).map(([key, val]) => (
-                  <div key={key} className="flex flex-col gap-[2px]">
-                    <span className="text-[12px] text-[#A5A5A5] capitalize">
+                  <div key={key} className="flex flex-col gap-[6px]">
+                    <span className="text-[13px] text-[#A5A5A5] capitalize">
                       {key.replace(/_/g, " ")}
                     </span>
-                    <span className="text-[13px] text-[#262626]">
+                    <div className="rounded-[10px] border border-[#E9E9E9] bg-[#FAFAFA] px-[12px] py-[8px] text-[13px] text-[#262626]">
                       {Array.isArray(val)
                         ? val.join(", ")
                         : val === null || val === undefined || val === ""
                           ? "—"
                           : String(val)}
-                    </span>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -284,6 +357,6 @@ export default function ApplicationDrawer({
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

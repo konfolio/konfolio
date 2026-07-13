@@ -61,7 +61,6 @@ export default async function PortfolioPage({
       template={portfolio.template === "portrait" ? "portrait" : "square"}
       content={portfolio.content ?? {}}
       ownerBusinessName={profile?.business_name ?? ""}
-      portfolioName={portfolio.portfolio_name ?? ""}
     />
   )
 }

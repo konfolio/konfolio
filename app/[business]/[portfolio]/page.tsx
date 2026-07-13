@@ -93,7 +93,6 @@ export default async function PublicKonfolioPage({
       template={template}
       content={k.content ?? {}}
       ownerBusinessName={String(owner.business_name ?? "")}
-      portfolioName={String(k.portfolio_name ?? "")}
     />
   )
 }

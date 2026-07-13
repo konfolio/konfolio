@@ -83,17 +83,19 @@ export default function PublicKonfolioView({
   template,
   content,
   ownerBusinessName,
-  portfolioName,
+  trackAnalytics = true,
 }: {
   konfolioId: string
   template: Template
   content: any
   ownerBusinessName: string
-  portfolioName: string
+  trackAnalytics?: boolean
 }) {
   const [mobileProfileOpen, setMobileProfileOpen] = React.useState(false)
 
   React.useEffect(() => {
+    if (!trackAnalytics) return
+
     const isThumbnailMode =
       new URLSearchParams(window.location.search).get("thumbnail") === "1"
 
@@ -117,7 +119,7 @@ export default function PublicKonfolioView({
         referrer: document.referrer || null,
       }),
     }).catch(console.error)
-  }, [konfolioId])
+  }, [konfolioId, trackAnalytics])
 
   function getVisitorId() {
     const key = "konfolio_visitor_id"
@@ -140,6 +142,7 @@ export default function PublicKonfolioView({
       url?: string
     }) => {
       if (!link.url) return
+      if (!trackAnalytics) return
 
       const isThumbnailMode =
         new URLSearchParams(window.location.search).get("thumbnail") === "1"
@@ -159,7 +162,7 @@ export default function PublicKonfolioView({
         }),
       }).catch(console.error)
     },
-    [konfolioId],
+    [konfolioId, trackAnalytics],
   )
 
   const bannerColor =

@@ -1,7 +1,6 @@
 // components/my-forms/dashboard/DashboardProfileHeader.tsx
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import SecondaryButton from "@/components/buttons/SecondaryButton";
@@ -28,15 +27,8 @@ type Props = {
   locationLine?: string;
   formCount?: number;
 
-  editHref?: string;
-  createHref?: string;
   className?: string;
 };
-
-function pad2(n: number) {
-  const s = String(Math.max(0, Math.floor(n)));
-  return s.length >= 2 ? s : `0${s}`;
-}
 
 function fullNameFromProfile(p: Profile | null) {
   const first = (p?.first_name || "").trim();
@@ -50,8 +42,6 @@ export default function DashboardProfileHeader({
   locationLine: locationLineOverride,
   formCount: formCountOverride,
 
-  editHref = "/profile",
-  createHref = "/create",
   className = "",
 }: Props) {
   const [signedIn, setSignedIn] = useState(false);
@@ -118,14 +108,12 @@ export default function DashboardProfileHeader({
 
   const resolvedOrganizationName =
     organizationNameOverride?.trim() ||
-    "" ||
     (profile?.organization || "").trim() ||
     fullName ||
     "Organization Name";
 
   const resolvedLocationLine =
     locationLineOverride?.trim() ||
-    "" ||
     (profile?.event_location || "").trim() ||
     "City, Country";
 
@@ -153,12 +141,12 @@ export default function DashboardProfileHeader({
           className,
         ].join(" ")}
       >
-        <div className="w-full flex items-center justify-center px-[150px] pt-[15px]">
-          <div className="w-full max-w-[1212px] h-[80px] flex items-end justify-between gap-[15px]">
+        <div className="w-full flex items-center justify-center px-4 sm:px-8 lg:px-[150px] pt-[15px]">
+          <div className="w-full max-w-[1212px] flex flex-col sm:flex-row sm:items-end justify-between gap-[24px] sm:gap-[15px]">
             {/* Profile */}
-            <div className="flex items-center gap-[19px] h-[80px] flex-1 min-w-0">
+            <div className="flex items-center gap-[16px] sm:gap-[19px] min-h-[80px] flex-1 min-w-0">
               {/* Avatar */}
-              <div className="relative w-[80px] h-[80px] rounded-[71.4286px] overflow-hidden bg-[#F7F7F7] shrink-0">
+              <div className="relative w-[64px] h-[64px] sm:w-[80px] sm:h-[80px] rounded-full overflow-hidden bg-[#F7F7F7] shrink-0">
                 {!showChecker ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -180,9 +168,9 @@ export default function DashboardProfileHeader({
               </div>
 
               {/* Info */}
-              <div className="flex flex-col items-start py-[5px] h-[80px] flex-1 min-w-0">
+              <div className="flex flex-col items-start py-[5px] flex-1 min-w-0">
                 <div className="flex flex-col items-start gap-[4px] w-full">
-                  <div className="text-[20px] leading-[28px] font-normal text-[#262626] truncate">
+                  <div className="text-[18px] sm:text-[20px] leading-[140%] font-normal text-[#262626] truncate">
                     {resolvedOrganizationName}
                   </div>
 
@@ -203,18 +191,13 @@ export default function DashboardProfileHeader({
                     Edit Profile
                   </span>
                 </button>
-
-                {/* keep route if you still need it */}
-                <Link href={editHref} className="hidden">
-                  Edit Profile
-                </Link>
               </div>
             </div>
 
             {/* Create Field */}
-            <div className="flex flex-col items-end gap-[14px] w-[150px] h-[54px] shrink-0">
-              <div className="text-right text-[14px] leading-[130%] font-normal text-[#A5A5A5] w-full">
-                {pad2(resolvedCount)} forms
+            <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-[14px] w-full sm:w-[150px] shrink-0">
+              <div className="text-left sm:text-right text-[14px] leading-[130%] font-normal text-[#A5A5A5]">
+                {resolvedCount} forms
               </div>
 
               <SecondaryButton
@@ -231,11 +214,6 @@ export default function DashboardProfileHeader({
                   <span>Create</span>
                 </span>
               </SecondaryButton>
-
-              {/* fallback route (hidden) */}
-              <Link href={createHref} className="hidden">
-                Create
-              </Link>
             </div>
           </div>
         </div>

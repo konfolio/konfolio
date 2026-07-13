@@ -1,6 +1,22 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { SOCIAL_KEYS } from "@/lib/socialKeys";
+
+function normalizeStringArray(v: any): string[] {
+  if (!Array.isArray(v)) return [];
+  return v.map((x) => (typeof x === "string" ? x.trim() : "")).filter(Boolean);
+}
+
+function normalizeLinksMap(v: any): Record<string, string> {
+  if (!v || typeof v !== "object" || Array.isArray(v)) return {};
+  const out: Record<string, string> = {};
+  for (const key of SOCIAL_KEYS) {
+    const raw = (v as any)[key];
+    if (typeof raw === "string" && raw.trim()) out[key] = raw.trim();
+  }
+  return out;
+}
 
 function createAdminClient() {
   return createClient(
@@ -50,10 +66,11 @@ export async function GET(
       id, status, created_at, answers, applicant_id, konfolio_id,
       profiles:applicant_id (
         id, first_name, last_name, preferred_name,
-        business_name, business_slug, location, profile_image_url
+        business_name, business_slug, location, profile_image_url,
+        links, merch_tags
       ),
       konfolios:konfolio_id (
-        id, template, thumbnail_url, portfolio_name, portfolio_slug
+        id, template, thumbnail_url, portfolio_slug, content
       )
     `)
     .eq("form_id", formId)
@@ -61,6 +78,24 @@ export async function GET(
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+
+  const rows = data ?? [];
+
+  // Tag usage across this form's applicant pool, keyed by tag -> % of applications
+  const tagCounts: Record<string, number> = {};
+  for (const row of rows as any[]) {
+    const tags = normalizeStringArray(row.profiles?.merch_tags);
+    for (const tag of new Set(tags)) {
+      tagCounts[tag] = (tagCounts[tag] ?? 0) + 1;
+    }
+  }
+  const totalApplications = rows.length;
+  const tagPercentages: Record<string, number> = {};
+  for (const [tag, count] of Object.entries(tagCounts)) {
+    tagPercentages[tag] = totalApplications
+      ? Math.round((count / totalApplications) * 1000) / 10
+      : 0;
   }
 
   // Build a map of field_id -> field_key for answer lookup
@@ -74,7 +109,7 @@ export async function GET(
     }
   }
 
-  const applications = (data ?? []).map((row: any) => {
+  const applications = (rows as any[]).map((row: any) => {
     // answers are keyed by field id — normalize to field_key too.
     // Also handle legacy submissions where answers were keyed by field_key directly.
     const answersByKey: Record<string, any> = {};
@@ -88,11 +123,17 @@ export async function GET(
       }
     }
 
+    const tags = normalizeStringArray(row.profiles?.merch_tags);
+
     return {
       id: row.id,
       status: row.status,
       createdAt: row.created_at,
       answers: answersByKey,
+      tagUsage: tags.map((tag) => ({
+        tag,
+        percentage: tagPercentages[tag] ?? 0,
+      })),
       applicant: {
         id: row.profiles?.id ?? row.applicant_id ?? null,
         firstName:
@@ -119,16 +160,17 @@ export async function GET(
           null,
         avatarUrl: row.profiles?.profile_image_url ?? null,
         email: getAnswer(row.answers ?? {}, "email") ?? null,
+        links: normalizeLinksMap(row.profiles?.links),
+        tags,
       },
       konfolio: {
         id: row.konfolios?.id ?? null,
         template: row.konfolios?.template ?? null,
         thumbnailUrl: row.konfolios?.thumbnail_url ?? null,
         thumbnail_url: row.konfolios?.thumbnail_url ?? null,
-        portfolioName: row.konfolios?.portfolio_name ?? null,
-        portfolio_name: row.konfolios?.portfolio_name ?? null,
         portfolioSlug: row.konfolios?.portfolio_slug ?? null,
         portfolio_slug: row.konfolios?.portfolio_slug ?? null,
+        content: row.konfolios?.content ?? null,
       },
     };
   });
