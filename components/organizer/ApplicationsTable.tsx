@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import ApplicationDrawer from "./ApplicationDrawer";
 
-type Field = {
+export type Field = {
   id: string;
   label: string;
   field_key: string;
@@ -13,6 +13,9 @@ type Field = {
   options: any;
   sort_order: number;
 };
+
+export type StatusFilter = "pending" | "accepted" | "rejected" | "all";
+export type Order = "time_submitted" | "alphabetical";
 
 export type AppRow = {
   id: string;
@@ -76,80 +79,43 @@ function pickFieldKey(
   return null;
 }
 
-export default function ApplicationsTable({ formId }: { formId: string }) {
+export default function ApplicationsTable({
+  apps,
+  totalCount,
+  fields,
+  loading,
+  errorMsg,
+  updatingId,
+  onStatusChange,
+  onDrawerUpdate,
+  onReload,
+}: {
+  apps: AppRow[];
+  totalCount: number;
+  fields: Field[];
+  loading: boolean;
+  errorMsg: string | null;
+  updatingId: string | null;
+  onStatusChange: (id: string, status: AppRow["status"]) => void;
+  onDrawerUpdate: (id: string, updates: Partial<AppRow>) => void;
+  onReload: () => void;
+}) {
   const [selectedApp, setSelectedApp] = useState<AppRow | null>(null);
-  const [fields, setFields] = useState<Field[]>([]);
-  const [apps, setApps] = useState<AppRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [updatingId, setUpdatingId] = useState<string | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const [statusFilter, setStatusFilter] = useState<
-    "pending" | "accepted" | "rejected" | "all"
-  >("all");
-
-  async function load() {
-    setLoading(true);
-    setErrorMsg(null);
-
-    const res = await fetch(`/api/forms/${formId}/applications`, {
-      cache: "no-store",
-    });
-    const json = await res.json().catch(() => ({}));
-
-    if (!res.ok) {
-      setFields([]);
-      setApps([]);
-      setErrorMsg(json?.error ?? `Request failed (${res.status})`);
-      setLoading(false);
-      return;
-    }
-
-    setFields(json.fields ?? []);
-    setApps(json.applications ?? []);
-    setLoading(false);
-  }
-
-  useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formId]);
-
-  async function updateStatus(id: string, status: AppRow["status"]) {
-    setUpdatingId(id);
-    setErrorMsg(null);
-
-    const res = await fetch(`/api/applications/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-
-    const json = await res.json().catch(() => ({}));
-    setUpdatingId(null);
-
-    if (!res.ok) {
-      setErrorMsg(json?.error ?? "Failed to update status");
-      return;
-    }
-
-    setApps((prev) => prev.map((a) => (a.id === id ? { ...a, status } : a)));
+  function handleStatusChange(id: string, status: AppRow["status"]) {
+    onStatusChange(id, status);
     if (selectedApp?.id === id) {
       setSelectedApp((prev) => (prev ? { ...prev, status } : prev));
     }
   }
 
   function handleDrawerUpdate(id: string, updates: Partial<AppRow>) {
-    setApps((prev) => prev.map((a) => (a.id === id ? { ...a, ...updates } : a)));
+    onDrawerUpdate(id, updates);
     setSelectedApp((prev) =>
       prev && prev.id === id ? { ...prev, ...updates } : prev,
     );
   }
 
-  const filteredApps = useMemo(() => {
-    if (statusFilter === "all") return apps;
-    return apps.filter((a) => a.status === statusFilter);
-  }, [apps, statusFilter]);
 
   // ✅ Find the real answer keys for email/location based on your form definition
   const emailKey = useMemo(
@@ -236,7 +202,7 @@ export default function ApplicationsTable({ formId }: { formId: string }) {
                   </tr>
                 )}
 
-                {!loading && filteredApps.length === 0 && (
+                {!loading && apps.length === 0 && (
                   <tr>
                     <td colSpan={13} className="px-4 py-10 text-zinc-500">
                       No applications yet.
@@ -244,7 +210,7 @@ export default function ApplicationsTable({ formId }: { formId: string }) {
                   </tr>
                 )}
 
-                {filteredApps.map((a, idx) => {
+                {apps.map((a, idx) => {
                   const first = a.applicant.firstName ?? "—";
                   const last = a.applicant.lastName ?? "—";
 
@@ -258,10 +224,7 @@ export default function ApplicationsTable({ formId }: { formId: string }) {
 
                   const business = a.applicant.businessName ?? "—";
 
-                  const notes =
-                    (a.answers?.notes as string | undefined) ??
-                    (a.answers?.Notes as string | undefined) ??
-                    "—";
+                  const notes = a.organizerNotes || "—";
 
                   const appEmail =
                     a.applicant.email ??
@@ -319,7 +282,7 @@ export default function ApplicationsTable({ formId }: { formId: string }) {
                             value={a.status}
                             disabled={updatingId === a.id}
                             onChange={(e) =>
-                              updateStatus(a.id, e.target.value as any)
+                              handleStatusChange(a.id, e.target.value as any)
                             }
                             className="appearance-none bg-transparent pr-6 text-sm text-zinc-800 outline-none"
                             aria-label={`Status for row ${idx + 1}`}
@@ -406,17 +369,17 @@ export default function ApplicationsTable({ formId }: { formId: string }) {
             <div>
               Showing{" "}
               <span className="text-zinc-700">
-                {filteredApps.length.toLocaleString()}
+                {apps.length.toLocaleString()}
               </span>{" "}
               of{" "}
               <span className="text-zinc-700">
-                {apps.length.toLocaleString()}
+                {totalCount.toLocaleString()}
               </span>
             </div>
             <button
               type="button"
               className="rounded-full border border-zinc-200 bg-white px-4 py-1.5 text-zinc-700 hover:bg-zinc-50"
-              onClick={load}
+              onClick={onReload}
             >
               Refresh
             </button>
@@ -428,8 +391,8 @@ export default function ApplicationsTable({ formId }: { formId: string }) {
           key={selectedApp?.id}
           app={selectedApp}
           position={{
-            index: filteredApps.findIndex((a) => a.id === selectedApp.id),
-            total: filteredApps.length,
+            index: apps.findIndex((a) => a.id === selectedApp.id),
+            total: apps.length,
           }}
           onUpdate={(updates) => handleDrawerUpdate(selectedApp.id, updates)}
           onClose={() => setSelectedApp(null)}

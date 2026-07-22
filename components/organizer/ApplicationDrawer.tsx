@@ -133,26 +133,33 @@ export default function ApplicationDrawer({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex bg-white">
-      {/* Portfolio */}
-      <div className="flex-1 min-w-0 h-full overflow-y-auto bg-[#F7F7F7]">
-        {hasPortfolio ? (
-          <PublicKonfolioView
-            konfolioId={app.konfolio.id}
-            template={app.konfolio.template}
-            content={app.konfolio.content}
-            ownerBusinessName={app.applicant.businessName ?? ""}
-            trackAnalytics={false}
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center text-[13px] text-[#A5A5A5]">
-            No portfolio submitted
-          </div>
-        )}
-      </div>
+    <div
+      className="absolute inset-0 z-50 flex items-stretch justify-center bg-black/40 p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="flex w-full overflow-hidden rounded-2xl bg-white shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Portfolio */}
+        <div className="flex-1 min-w-0 h-full overflow-y-auto bg-[#F7F7F7]">
+          {hasPortfolio ? (
+            <PublicKonfolioView
+              konfolioId={app.konfolio.id}
+              template={app.konfolio.template}
+              content={app.konfolio.content}
+              ownerBusinessName={app.applicant.businessName ?? ""}
+              trackAnalytics={false}
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-[13px] text-[#A5A5A5]">
+              No portfolio submitted
+            </div>
+          )}
+        </div>
 
-      {/* Meta panel */}
-      <div className="w-[420px] shrink-0 h-full bg-white shadow-2xl overflow-y-auto flex flex-col border-l border-[#E9E9E9]">
+        {/* Meta panel */}
+        <div className="w-[420px] shrink-0 h-full bg-white shadow-2xl overflow-y-auto flex flex-col border-l border-[#E9E9E9]">
         {/* Header */}
         <div className="flex items-center justify-between px-[20px] py-[16px] border-b border-[#E9E9E9]">
           <span className="text-[13px] text-[#A5A5A5]">
@@ -373,6 +380,7 @@ export default function ApplicationDrawer({
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

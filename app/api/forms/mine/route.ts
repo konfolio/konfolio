@@ -24,6 +24,10 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (organizerId !== user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const { data: forms, error: formsErr } = await supabase
       .from("alley_forms")
       .select(`
