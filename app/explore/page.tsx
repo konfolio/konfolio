@@ -6,6 +6,13 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+const PINNED_KONFOLIO_IDS = [
+  "2da90313-b0e2-47ec-a8d4-d992fb8ffbf9",
+  "2468123a-5832-4399-8851-ebe19fab6055",
+  "a112bff3-7c11-4455-989c-9881e039a7eb",
+  "be7e057a-5eb4-498e-839a-2872dc3e03c4",
+] as const;
+
 type ExploreItem = {
   id: string;
   template: "square" | "portrait";
@@ -149,6 +156,27 @@ export default async function ExplorePage({
       return templateMatch && collabMatch;
     });
   }
+
+    const pinnedOrder = new Map<string, number>(
+    PINNED_KONFOLIO_IDS.map((id, index) => [id, index])
+  );
+
+  items.sort((a, b) => {
+    const aPinnedPosition = pinnedOrder.get(a.id);
+    const bPinnedPosition = pinnedOrder.get(b.id);
+
+    const aIsPinned = aPinnedPosition !== undefined;
+    const bIsPinned = bPinnedPosition !== undefined;
+
+    if (aIsPinned && bIsPinned) {
+      return aPinnedPosition - bPinnedPosition;
+    }
+
+    if (aIsPinned) return -1;
+    if (bIsPinned) return 1;
+
+    return 0;
+  });
 
   return (
     <div className="flex min-h-screen flex-col bg-[#F7F7F7]">
