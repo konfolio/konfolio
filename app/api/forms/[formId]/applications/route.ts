@@ -135,16 +135,41 @@ export async function GET(
     }
   }
 
+  // Fields sorted into question order, used to emit answers in that same order.
+  const fieldsInOrder = [...fields].sort(
+    (a: any, b: any) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0),
+  );
+
   const applications = (rows as any[]).map((row: any) => {
     // answers are keyed by field id — normalize to field_key too.
     // Also handle legacy submissions where answers were keyed by field_key directly.
+    const rawAnswers = row.answers ?? {};
     const answersByKey: Record<string, any> = {};
 
-    for (const [fieldIdOrKey, val] of Object.entries(row.answers ?? {})) {
+    // Walk fields in question order first so the emitted object preserves it.
+    for (const f of fieldsInOrder) {
+      if (!f.field_key) continue;
+      const val =
+        rawAnswers[f.field_key] !== undefined
+          ? rawAnswers[f.field_key]
+          : f.id !== undefined
+            ? rawAnswers[f.id]
+            : undefined;
+      if (val !== undefined) {
+        answersByKey[f.field_key] = val;
+      }
+    }
+
+    // Catch any answers that didn't match a field in fieldsInOrder above
+    // (e.g. legacy field_key-keyed submissions), preserving remaining insertion order.
+    for (const [fieldIdOrKey, val] of Object.entries(rawAnswers)) {
       const key = fieldIdToKey[fieldIdOrKey];
       if (key) {
-        answersByKey[key] = val;
-      } else if (fieldKeyToId[fieldIdOrKey] !== undefined) {
+        if (answersByKey[key] === undefined) answersByKey[key] = val;
+      } else if (
+        fieldKeyToId[fieldIdOrKey] !== undefined &&
+        answersByKey[fieldIdOrKey] === undefined
+      ) {
         answersByKey[fieldIdOrKey] = val;
       }
     }
