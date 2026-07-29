@@ -562,6 +562,37 @@ export default function ApplyFormPage() {
   );
 }
 
+function formatEventDate(dateStr: string) {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  if (!y || !m || !d) return dateStr;
+  return new Date(y, m - 1, d).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function formatEventDateRange(start: string, end?: string | null) {
+  if (!end || end === start) return formatEventDate(start);
+
+  const [sy, sm, sd] = start.split("-").map(Number);
+  const [ey, em, ed] = end.split("-").map(Number);
+  if (!sy || !sm || !sd || !ey || !em || !ed) {
+    return `${start} - ${end}`;
+  }
+
+  const startMonth = new Date(sy, sm - 1, sd).toLocaleDateString("en-US", {
+    month: "long",
+  });
+  const endMonth = new Date(ey, em - 1, ed).toLocaleDateString("en-US", {
+    month: "long",
+  });
+
+  if (sy === ey && sm === em) return `${startMonth} ${sd} - ${ed} ${ey}`;
+  if (sy === ey) return `${startMonth} ${sd} - ${endMonth} ${ed} ${ey}`;
+  return `${startMonth} ${sd} ${sy} - ${endMonth} ${ed} ${ey}`;
+}
+
 function FormHeader({ form }: { form: Form }) {
   const isRecurring = Boolean(form.is_recurring ?? form.isRecurring);
   const recurrenceText = form.recurrence_text ?? form.recurrenceText ?? "";
@@ -607,7 +638,8 @@ function FormHeader({ form }: { form: Form }) {
           <span>
             {isRecurring
               ? recurrenceText
-              : `${form.event_date_start}${form.event_date_end ? ` - ${form.event_date_end}` : ""}`}
+              : form.event_date_start &&
+                formatEventDateRange(form.event_date_start, form.event_date_end)}
           </span>
         </div>
       )}
@@ -633,11 +665,11 @@ function FormHeader({ form }: { form: Form }) {
       )}
 
       {Array.isArray(form.tags) && form.tags.length > 0 && (
-        <div className="flex flex-wrap gap-[6px]">
+        <div className="flex flex-wrap gap-[8px]">
           {form.tags.map((tag) => (
             <span
               key={tag}
-              className="inline-flex items-center h-[26px] px-[10px] rounded-full bg-[#F1EFE8] text-[12px] text-[#5F5E5A]"
+              className="inline-flex items-center h-[24px] px-[12px] rounded-full border border-[#E9E9E9] text-[13px] text-[#262626]"
             >
               {tag}
             </span>

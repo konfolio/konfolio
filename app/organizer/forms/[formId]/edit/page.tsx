@@ -354,6 +354,16 @@ const DEFAULT_FIELDS = [
   },
 ];
 
+function formatEventDate(dateStr: string) {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  if (!y || !m || !d) return dateStr;
+  return new Date(y, m - 1, d).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 export default function EditOrganizerFormPage() {
   const params = useParams();
   const formId = params.formId as string;
@@ -841,7 +851,9 @@ export default function EditOrganizerFormPage() {
                       onClick={() => setEditingEventDate(true)}
                       className="text-left hover:text-[#A5A5A5]"
                     >
-                      {formData?.event_date_start || "Event Date"}
+                      {formData?.event_date_start
+                        ? formatEventDate(formData.event_date_start)
+                        : "Event Date"}
                     </button>
                   )}
                 </div>
