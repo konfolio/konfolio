@@ -636,7 +636,7 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
             />
           </div>
 
-          <div className="w-full flex-row items-start justify-start gap-[20px] max-[700px]:hidden min-[701px]:flex">
+          <div className="w-full flex-row items-start justify-center gap-[20px] max-[700px]:hidden min-[701px]:flex">
             {renderProfileSidebar()}
 
             <EditSquareImageGrid

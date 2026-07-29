@@ -83,6 +83,7 @@ export async function GET(
         cover_image_url,
         application_limit,
         fields,
+        tags,
         published_at,
         created_at,
         updated_at,
@@ -257,6 +258,17 @@ export async function PATCH(
       updates.fields = normalizeFields(body.fields);
     }
 
+    if ("tags" in body) {
+      if (!Array.isArray(body.tags)) {
+        return NextResponse.json(
+          { error: "tags must be an array" },
+          { status: 400 }
+        );
+      }
+
+      updates.tags = body.tags;
+    }
+
     if ("status" in body) {
       if (!isValidStatus(body.status)) {
         return NextResponse.json({ error: "Invalid status" }, { status: 400 });
@@ -287,6 +299,7 @@ export async function PATCH(
         cover_image_url,
         application_limit,
         fields,
+        tags,
         published_at,
         created_at,
         updated_at,

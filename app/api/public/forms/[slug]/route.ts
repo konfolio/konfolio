@@ -175,6 +175,7 @@ export async function GET(
         cover_image_url,
         application_limit,
         fields,
+        tags,
         published_at,
         created_at,
         updated_at,

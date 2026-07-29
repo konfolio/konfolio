@@ -25,6 +25,7 @@ type Form = {
   cover_image_url: string | null;
   application_limit: number | null;
   fields: Field[];
+  tags?: string[] | null;
 
   is_recurring?: boolean | null;
   recurrence_text?: string | null;
@@ -628,6 +629,19 @@ function FormHeader({ form }: { form: Form }) {
             />
           </svg>
           <span>{form.event_address}</span>
+        </div>
+      )}
+
+      {Array.isArray(form.tags) && form.tags.length > 0 && (
+        <div className="flex flex-wrap gap-[6px]">
+          {form.tags.map((tag) => (
+            <span
+              key={tag}
+              className="inline-flex items-center h-[26px] px-[10px] rounded-full bg-[#F1EFE8] text-[12px] text-[#5F5E5A]"
+            >
+              {tag}
+            </span>
+          ))}
         </div>
       )}
 
