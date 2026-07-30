@@ -17,6 +17,7 @@ export default function OrganizerFormPage() {
 
   const [fields, setFields] = useState<Field[]>([]);
   const [apps, setApps] = useState<AppRow[]>([]);
+  const [formTitle, setFormTitle] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -55,6 +56,15 @@ export default function OrganizerFormPage() {
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formId]);
+
+  useEffect(() => {
+    fetch(`/api/forms/${formId}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json?.form?.title) setFormTitle(json.form.title);
+      })
+      .catch(() => {});
   }, [formId]);
 
   async function updateStatus(id: string, status: AppRow["status"]) {
@@ -224,6 +234,7 @@ export default function OrganizerFormPage() {
             apps={filteredApps}
             totalCount={apps.length}
             fields={fields}
+            formTitle={formTitle}
             loading={loading}
             errorMsg={errorMsg}
             updatingId={updatingId}

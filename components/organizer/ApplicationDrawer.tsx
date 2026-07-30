@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AppRow } from "./ApplicationsTable";
+import ApplicantsExpand from "./ApplicantsExpand";
 import PublicKonfolioView from "@/components/public/PublicKonfolioView";
 import type { SocialKey } from "@/lib/socialKeys";
 
@@ -49,11 +50,17 @@ type OtherApplication = {
 export default function ApplicationDrawer({
   app,
   position,
+  formTitle,
+  allApplicants,
+  onSelectApplicant,
   onUpdate,
   onClose,
 }: {
   app: AppRow | null;
   position?: { index: number; total: number };
+  formTitle?: string;
+  allApplicants?: AppRow[];
+  onSelectApplicant?: (app: AppRow) => void;
   onUpdate?: (updates: Partial<AppRow>) => void;
   onClose: () => void;
 }) {
@@ -62,6 +69,7 @@ export default function ApplicationDrawer({
   const [otherApplications, setOtherApplications] = useState<
     OtherApplication[]
   >([]);
+  const [expandOpen, setExpandOpen] = useState(false);
 
   useEffect(() => {
     if (!app?.applicant?.id) return;
@@ -138,9 +146,97 @@ export default function ApplicationDrawer({
       onClick={onClose}
     >
       <div
-        className="flex w-full overflow-hidden rounded-2xl bg-white shadow-2xl"
+        className="flex w-full flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Breadcrumb */}
+        <div className="relative flex shrink-0 items-center gap-[10px] border-b border-[#E9E9E9] px-[20px] py-[14px]">
+          <button
+            onClick={onClose}
+            aria-label="Back"
+            className="text-[#A5A5A5] hover:text-[#262626]"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M2 12H22"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M10 20L2 12L10 4"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+
+          <span className="text-[14px] text-[#A5A5A5]">
+            {formTitle || "Untitled Form"}
+          </span>
+          <span className="text-[14px] text-[#C0BDB4]">/</span>
+
+          <div className="h-[22px] w-[22px] shrink-0 overflow-hidden rounded-full bg-[#E9E9E9]">
+            {app.applicant.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={app.applicant.avatarUrl}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-[10px] text-[#A5A5A5]">
+                {primaryName.charAt(0).toUpperCase()}
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={() => setExpandOpen((v) => !v)}
+            className="flex items-center gap-[4px] text-[14px] font-medium text-[#262626] hover:opacity-70"
+          >
+            {primaryName}
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 16 16"
+              fill="none"
+              className={`transition-transform ${expandOpen ? "rotate-180" : ""}`}
+            >
+              <path
+                d="M4 6l4 4 4-4"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+
+          {expandOpen && allApplicants && (
+            <>
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setExpandOpen(false)}
+              />
+              <div className="absolute left-[130px] top-[calc(100%+8px)] z-50">
+                <ApplicantsExpand
+                  applicants={allApplicants}
+                  currentAppId={app.id}
+                  onSelect={(a) => {
+                    setExpandOpen(false);
+                    onSelectApplicant?.(a);
+                  }}
+                />
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="flex min-h-0 flex-1">
         {/* Portfolio */}
         <div className="flex-1 min-w-0 h-full overflow-y-auto bg-[#F7F7F7]">
           {hasPortfolio ? (
@@ -267,13 +363,13 @@ export default function ApplicationDrawer({
           {/* Notes */}
           <div className="flex flex-col gap-[8px]">
             <label className="text-[13px] text-[#A5A5A5]">Notes</label>
-            <input
-              type="text"
+            <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               onBlur={handleNotesBlur}
               placeholder="Add a note..."
-              className="w-full rounded-[10px] border border-[#E9E9E9] bg-[#FAFAFA] px-[12px] py-[8px] text-[13px] text-[#262626] placeholder:text-[#C0BDB4] outline-none focus:border-[#C0BDB4]"
+              rows={3}
+              className="w-full resize-none rounded-[10px] border border-[#E9E9E9] bg-[#FAFAFA] px-[12px] py-[8px] text-[13px] text-[#262626] placeholder:text-[#C0BDB4] outline-none focus:border-[#C0BDB4]"
             />
           </div>
 
@@ -380,6 +476,7 @@ export default function ApplicationDrawer({
             </div>
           )}
         </div>
+      </div>
       </div>
       </div>
     </div>

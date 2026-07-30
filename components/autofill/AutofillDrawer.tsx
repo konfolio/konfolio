@@ -809,6 +809,7 @@ export default function AutofillDrawer({
   onAutofill: (
     data: Record<string, any>,
     konfolioId: string,
+    merchTags: string[],
   ) => void;
 }) {
   const [konfolios, setKonfolios] = useState<Konfolio[]>([]);
@@ -1040,7 +1041,15 @@ export default function AutofillDrawer({
     console.log("SERVER AUTOFILL:", autofillData);
     console.log("FINAL AUTOFILL SENT TO FORM:", merged);
 
-    onAutofill(merged, konfolio.id);
+    const selectedMerchTags = Array.isArray(
+      getKonfolioContent(konfolio).merchTags,
+    )
+      ? getKonfolioContent(konfolio).merchTags!.filter(
+          (t): t is string => typeof t === "string" && t.trim() !== "",
+        )
+      : [];
+
+    onAutofill(merged, konfolio.id, selectedMerchTags);
     onClose();
   };
 
@@ -1139,6 +1148,14 @@ export default function AutofillDrawer({
             const publicKonfolioPath =
               getPublicKonfolioPath(konfolio);
 
+            const cardMerchTags = Array.isArray(
+              getKonfolioContent(konfolio).merchTags,
+            )
+              ? getKonfolioContent(konfolio).merchTags!.filter(
+                  (t): t is string => typeof t === "string" && t.trim() !== "",
+                )
+              : [];
+
             return (
               <div
                 key={konfolio.id}
@@ -1197,6 +1214,19 @@ export default function AutofillDrawer({
                         })}
                       </span>
                     </div>
+
+                    {cardMerchTags.length > 0 && (
+                      <div className="flex flex-wrap gap-[4px] mt-[8px]">
+                        {cardMerchTags.slice(0, 6).map((tag) => (
+                          <span
+                            key={tag}
+                            className="inline-flex items-center h-[20px] px-[8px] rounded-full border border-white/15 text-[10px] text-white/60"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {publicKonfolioPath && (

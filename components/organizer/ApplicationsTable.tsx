@@ -83,6 +83,7 @@ export default function ApplicationsTable({
   apps,
   totalCount,
   fields,
+  formTitle,
   loading,
   errorMsg,
   updatingId,
@@ -93,6 +94,7 @@ export default function ApplicationsTable({
   apps: AppRow[];
   totalCount: number;
   fields: Field[];
+  formTitle?: string;
   loading: boolean;
   errorMsg: string | null;
   updatingId: string | null;
@@ -394,6 +396,9 @@ export default function ApplicationsTable({
             index: apps.findIndex((a) => a.id === selectedApp.id),
             total: apps.length,
           }}
+          formTitle={formTitle}
+          allApplicants={apps}
+          onSelectApplicant={(a) => setSelectedApp(a)}
           onUpdate={(updates) => handleDrawerUpdate(selectedApp.id, updates)}
           onClose={() => setSelectedApp(null)}
         />
