@@ -1,37 +1,46 @@
-"use client"
+"use client";
 
-import { useCallback, useEffect, useMemo, useState, type ComponentProps } from "react"
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ComponentProps,
+} from "react";
 
-import { useKonfolioDraftStore } from "@/stores/konfolioDraftStore"
-import KonfolioExitGuard from "@/components/my-portfolios/KonfolioExitGuard"
-import EditSquareProfileSidebar from "@/components/my-portfolios/square/EditSquareProfileSidebar"
-import EditSquareImageGrid from "@/components/my-portfolios/square/EditSquareImageGrid"
-import PublishPopover from "@/components/my-portfolios/editor/PublishPopover"
-import PublishMissingFieldsPopover from "@/components/my-portfolios/editor/PublishMissingFieldsPopover"
+import { useKonfolioDraftStore } from "@/stores/konfolioDraftStore";
+import KonfolioExitGuard from "@/components/my-portfolios/KonfolioExitGuard";
+import EditSquareProfileSidebar from "@/components/my-portfolios/square/EditSquareProfileSidebar";
+import EditSquareImageGrid from "@/components/my-portfolios/square/EditSquareImageGrid";
+import PublishPopover from "@/components/my-portfolios/editor/PublishPopover";
+import PublishMissingFieldsPopover from "@/components/my-portfolios/editor/PublishMissingFieldsPopover";
 
-import { supabase } from "@/lib/supabase/browser"
-import { exportFromImageUrl, type KonfolioExportType } from "@/lib/konfolio/exportFromImage"
+import { supabase } from "@/lib/supabase/browser";
+import {
+  exportFromImageUrl,
+  type KonfolioExportType,
+} from "@/lib/konfolio/exportFromImage";
 
-type Props = { draftId: string; readOnly?: boolean }
-type ExportType = KonfolioExportType
+type Props = { draftId: string; readOnly?: boolean };
+type ExportType = KonfolioExportType;
 
 async function getAccessToken(): Promise<string | null> {
-  const { data } = await supabase.auth.getSession()
-  return data.session?.access_token ?? null
+  const { data } = await supabase.auth.getSession();
+  return data.session?.access_token ?? null;
 }
 
 async function uploadBlobSrcToStorage(opts: {
-  blobSrc: string
-  konfolioId: string
-  token: string
+  blobSrc: string;
+  konfolioId: string;
+  token: string;
 }): Promise<string> {
-  const { blobSrc, konfolioId, token } = opts
+  const { blobSrc, konfolioId, token } = opts;
 
-  const blobRes = await fetch(blobSrc)
-  if (!blobRes.ok) throw new Error("Failed to read local image blob")
-  const blob = await blobRes.blob()
+  const blobRes = await fetch(blobSrc);
+  if (!blobRes.ok) throw new Error("Failed to read local image blob");
+  const blob = await blobRes.blob();
 
-  const mime = blob.type || "application/octet-stream"
+  const mime = blob.type || "application/octet-stream";
   const ext =
     mime === "image/png"
       ? "png"
@@ -39,32 +48,34 @@ async function uploadBlobSrcToStorage(opts: {
         ? "jpg"
         : mime === "image/webp"
           ? "webp"
-          : "png"
+          : "png";
 
-  const file = new File([blob], `upload.${ext}`, { type: mime })
-  const form = new FormData()
-  form.append("file", file)
+  const file = new File([blob], `upload.${ext}`, { type: mime });
+  const form = new FormData();
+  form.append("file", file);
 
   const upRes = await fetch(`/api/konfolios/${konfolioId}/images/upload`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
     body: form,
-  })
+  });
 
-  const upJson = await upRes.json().catch(() => ({}))
-  if (!upRes.ok) throw new Error(upJson?.error ?? "Image upload failed")
+  const upJson = await upRes.json().catch(() => ({}));
+  if (!upRes.ok) throw new Error(upJson?.error ?? "Image upload failed");
 
-  const imageUrl = String(upJson?.imageUrl ?? "").trim()
-  if (!imageUrl) throw new Error("Upload succeeded but no imageUrl returned")
+  const imageUrl = String(upJson?.imageUrl ?? "").trim();
+  if (!imageUrl) throw new Error("Upload succeeded but no imageUrl returned");
 
-  return imageUrl
+  return imageUrl;
 }
 
 function snapshotForDirtyCheck(draft: any) {
-  const bannerSwatches = Array.isArray(draft?.bannerSwatches) ? draft.bannerSwatches : []
+  const bannerSwatches = Array.isArray(draft?.bannerSwatches)
+    ? draft.bannerSwatches
+    : [];
   const backgroundSwatches = Array.isArray(draft?.backgroundSwatches)
     ? draft.backgroundSwatches
-    : []
+    : [];
 
   return {
     template: draft?.template ?? "square",
@@ -83,18 +94,18 @@ function snapshotForDirtyCheck(draft: any) {
     images: Array.isArray(draft?.images) ? draft.images : [],
     explore_enabled: !!draft?.explore_enabled,
     thumbnail_url: draft?.thumbnail_url ?? null,
-  }
+  };
 }
 
 function cleanString(x: any): string {
-  return String(x ?? "").trim()
+  return String(x ?? "").trim();
 }
 
 function isMeaningfulText(x: any): boolean {
-  const v = cleanString(x)
-  if (!v) return false
+  const v = cleanString(x);
+  if (!v) return false;
 
-  const lower = v.toLowerCase()
+  const lower = v.toLowerCase();
 
   const bannedExact = new Set([
     "your name",
@@ -112,118 +123,130 @@ function isMeaningfulText(x: any): boolean {
     "http://",
     "https://",
     "www.",
-  ])
+  ]);
 
-  if (bannedExact.has(lower)) return false
-  if (lower.startsWith("https://") && lower.length <= "https://".length + 2) return false
-  if (lower.startsWith("http://") && lower.length <= "http://".length + 2) return false
+  if (bannedExact.has(lower)) return false;
+  if (lower.startsWith("https://") && lower.length <= "https://".length + 2)
+    return false;
+  if (lower.startsWith("http://") && lower.length <= "http://".length + 2)
+    return false;
 
-  return true
+  return true;
 }
 
 function looksLikeRealUrl(x: any): boolean {
-  const v = cleanString(x)
-  if (!v) return false
+  const v = cleanString(x);
+  if (!v) return false;
 
-  const lower = v.toLowerCase()
-  if (lower === "https://" || lower === "http://" || lower === "www.") return false
+  const lower = v.toLowerCase();
+  if (lower === "https://" || lower === "http://" || lower === "www.")
+    return false;
 
-  const hasDot = v.includes(".")
-  const hasAlphaNum = /[a-z0-9]/i.test(v)
-  if (!hasDot || !hasAlphaNum) return false
+  const hasDot = v.includes(".");
+  const hasAlphaNum = /[a-z0-9]/i.test(v);
+  if (!hasDot || !hasAlphaNum) return false;
 
-  if (lower.endsWith("instagram.com") || lower.endsWith("instagram.com/")) return false
-  if (lower.endsWith("tiktok.com") || lower.endsWith("tiktok.com/")) return false
+  if (lower.endsWith("instagram.com") || lower.endsWith("instagram.com/"))
+    return false;
+  if (lower.endsWith("tiktok.com") || lower.endsWith("tiktok.com/"))
+    return false;
 
-  return true
+  return true;
 }
 
 function looksLikeRealEmail(x: any): boolean {
-  const v = cleanString(x)
-  if (!v) return false
-  if (v.toLowerCase() === "myemailaddress@konfolio.com") return false
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+  const v = cleanString(x);
+  if (!v) return false;
+  if (v.toLowerCase() === "myemailaddress@konfolio.com") return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 }
 
 function isRealImageSrc(src: any): boolean {
-  const v = cleanString(src)
-  if (!v) return false
+  const v = cleanString(src);
+  if (!v) return false;
 
-  const lower = v.toLowerCase()
-  if (lower.includes("placeholder")) return false
-  if (lower === "about:blank") return false
+  const lower = v.toLowerCase();
+  if (lower.includes("placeholder")) return false;
+  if (lower === "about:blank") return false;
 
-  return true
+  return true;
 }
 
 function hasAnyBusinessLink(links: any): boolean {
-  if (!links) return false
+  if (!links) return false;
 
-  const activeKeys = Array.isArray(links?.activeKeys) ? links.activeKeys : []
+  const activeKeys = Array.isArray(links?.activeKeys) ? links.activeKeys : [];
   const linksByKey =
-    links?.linksByKey && typeof links.linksByKey === "object" ? links.linksByKey : null
+    links?.linksByKey && typeof links.linksByKey === "object"
+      ? links.linksByKey
+      : null;
 
   if (activeKeys.length > 0 && linksByKey) {
     for (const k of activeKeys) {
-      const url = (linksByKey as any)[k]
-      if (looksLikeRealUrl(url)) return true
+      const url = (linksByKey as any)[k];
+      if (looksLikeRealUrl(url)) return true;
     }
-    return false
+    return false;
   }
 
   if (Array.isArray(links)) {
-    return links.some((l) => looksLikeRealUrl((l as any)?.url) || looksLikeRealUrl(l))
+    return links.some(
+      (l) => looksLikeRealUrl((l as any)?.url) || looksLikeRealUrl(l),
+    );
   }
 
   if (typeof links === "object") {
     for (const v of Object.values(links)) {
-      if (looksLikeRealUrl(v)) return true
-      if (v && typeof v === "object" && looksLikeRealUrl((v as any).url)) return true
+      if (looksLikeRealUrl(v)) return true;
+      if (v && typeof v === "object" && looksLikeRealUrl((v as any).url))
+        return true;
     }
   }
 
-  return false
+  return false;
 }
 
 function isGridFilled(images: any, requiredSlots: number): boolean {
-  const arr = Array.isArray(images) ? images : []
-  const n = Math.max(0, Math.floor(requiredSlots))
-  if (arr.length < n) return false
+  const arr = Array.isArray(images) ? images : [];
+  const n = Math.max(0, Math.floor(requiredSlots));
+  if (arr.length < n) return false;
 
   for (let i = 0; i < n; i++) {
-    if (!isRealImageSrc(arr[i]?.src)) return false
+    if (!isRealImageSrc(arr[i]?.src)) return false;
   }
 
-  return true
+  return true;
 }
 
 function computeMissingLabelsSquare(draft: any) {
-  const required: string[] = []
-  const optional: string[] = []
+  const required: string[] = [];
+  const optional: string[] = [];
 
-  if (!isRealImageSrc(draft?.profileImageUrl)) required.push("Profile Image")
-  if (!isMeaningfulText(draft?.businessName)) required.push("Business Name")
-  if (!isMeaningfulText(draft?.displayName)) required.push("Your Name")
-  if (!hasAnyBusinessLink(draft?.links)) required.push("Business Link")
+  if (!isRealImageSrc(draft?.profileImageUrl)) required.push("Profile Image");
+  if (!isMeaningfulText(draft?.businessName)) required.push("Business Name");
+  if (!isMeaningfulText(draft?.displayName)) required.push("Your Name");
+  if (!hasAnyBusinessLink(draft?.links)) required.push("Business Link");
 
   const merch = Array.isArray(draft?.merchTags)
     ? draft.merchTags.map((t: any) => cleanString(t)).filter(Boolean)
-    : []
-  if (merch.length === 0) required.push("Merchandise")
+    : [];
+  if (merch.length === 0) required.push("Merchandise");
 
-  if (!isGridFilled(draft?.images, 9)) required.push("Featured Image")
+  if (!isGridFilled(draft?.images, 9)) required.push("Image");
 
-  const prev = Array.isArray(draft?.previousVends) ? draft.previousVends : []
-  if (prev.length === 0) optional.push("Previous Vends")
+  const prev = Array.isArray(draft?.previousVends) ? draft.previousVends : [];
+  if (prev.length === 0) optional.push("Previous Vends");
 
-  if (!isMeaningfulText(draft?.locationText)) optional.push("Your Location")
-  if (!looksLikeRealEmail(draft?.email)) optional.push("Email Address")
+  if (!isMeaningfulText(draft?.locationText)) optional.push("Your Location");
+  if (!looksLikeRealEmail(draft?.email)) optional.push("Email Address");
 
-  return { required, optional }
+  return { required, optional };
 }
 
 function isDarkHexColor(hex: string) {
-  const clean = String(hex || "").replace("#", "").trim()
+  const clean = String(hex || "")
+    .replace("#", "")
+    .trim();
 
   const full =
     clean.length === 3
@@ -231,85 +254,100 @@ function isDarkHexColor(hex: string) {
           .split("")
           .map((c) => c + c)
           .join("")
-      : clean
+      : clean;
 
-  if (full.length !== 6) return false
+  if (full.length !== 6) return false;
 
-  const r = parseInt(full.slice(0, 2), 16)
-  const g = parseInt(full.slice(2, 4), 16)
-  const b = parseInt(full.slice(4, 6), 16)
+  const r = parseInt(full.slice(0, 2), 16);
+  const g = parseInt(full.slice(2, 4), 16);
+  const b = parseInt(full.slice(4, 6), 16);
 
-  if ([r, g, b].some((n) => Number.isNaN(n))) return false
+  if ([r, g, b].some((n) => Number.isNaN(n))) return false;
 
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
-  return luminance < 0.5
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance < 0.5;
 }
 
 export default function SquareEditor({ draftId, readOnly = false }: Props) {
-  const draft = useKonfolioDraftStore((s) => s.draftsById[draftId])
-  const patchDraft = useKonfolioDraftStore((s) => s.patchDraft)
+  const draft = useKonfolioDraftStore((s) => s.draftsById[draftId]);
+  const patchDraft = useKonfolioDraftStore((s) => s.patchDraft);
 
-  const [publishOpen, setPublishOpen] = useState(false)
-  const [publishStatus, setPublishStatus] = useState<"idle" | "publishing" | "success" | "error">(
-    "idle"
-  )
-  const [publishError, setPublishError] = useState("")
-  const [publishedUrl, setPublishedUrl] = useState("")
-  const [publishedPortfolioName, setPublishedPortfolioName] = useState("")
-  const [publishedThumbnailUrl, setPublishedThumbnailUrl] = useState<string | null>(null)
-  const [allowExploreSearch, setAllowExploreSearch] = useState<boolean>(!!draft?.explore_enabled)
-  const [isTogglingExploreSearch, setIsTogglingExploreSearch] = useState(false)
+  const [publishOpen, setPublishOpen] = useState(false);
+  const [publishStatus, setPublishStatus] = useState<
+    "idle" | "publishing" | "success" | "error"
+  >("idle");
+  const [publishError, setPublishError] = useState("");
+  const [publishedUrl, setPublishedUrl] = useState("");
+  const [publishedPortfolioName, setPublishedPortfolioName] = useState("");
+  const [publishedThumbnailUrl, setPublishedThumbnailUrl] = useState<
+    string | null
+  >(null);
+  const [allowExploreSearch, setAllowExploreSearch] = useState<boolean>(
+    !!draft?.explore_enabled,
+  );
+  const [isTogglingExploreSearch, setIsTogglingExploreSearch] = useState(false);
 
-  const [savedSnapshot, setSavedSnapshot] = useState("")
-  const [missingOpen, setMissingOpen] = useState(false)
-  const [missingRequired, setMissingRequired] = useState<string[]>([])
-  const [missingOptional, setMissingOptional] = useState<string[]>([])
-  const [mobileProfileOpen, setMobileProfileOpen] = useState(false)
+  const [savedSnapshot, setSavedSnapshot] = useState("");
+  const [missingOpen, setMissingOpen] = useState(false);
+  const [missingRequired, setMissingRequired] = useState<string[]>([]);
+  const [missingOptional, setMissingOptional] = useState<string[]>([]);
+  const [mobileProfileOpen, setMobileProfileOpen] = useState(false);
 
-  if (!draft || draft.template !== "square") return null
+  if (!draft || draft.template !== "square") return null;
 
   useEffect(() => {
-    setAllowExploreSearch(!!draft.explore_enabled)
-  }, [draft.explore_enabled])
+    setAllowExploreSearch(!!draft.explore_enabled);
+  }, [draft.explore_enabled]);
 
   useEffect(() => {
-    if (!draft) return
-    if (savedSnapshot) return
-    setSavedSnapshot(JSON.stringify(snapshotForDirtyCheck(draft)))
+    if (!draft) return;
+    if (savedSnapshot) return;
+    setSavedSnapshot(JSON.stringify(snapshotForDirtyCheck(draft)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [draftId, !!draft])
+  }, [draftId, !!draft]);
 
-  const currentSnapshot = useMemo(() => JSON.stringify(snapshotForDirtyCheck(draft)), [draft])
-  const hasUnsavedChanges = Boolean(savedSnapshot) && currentSnapshot !== savedSnapshot
+  const currentSnapshot = useMemo(
+    () => JSON.stringify(snapshotForDirtyCheck(draft)),
+    [draft],
+  );
+  const hasUnsavedChanges =
+    Boolean(savedSnapshot) && currentSnapshot !== savedSnapshot;
 
-  const bannerSwatches = Array.isArray(draft.bannerSwatches) ? draft.bannerSwatches : []
-  const backgroundSwatches = Array.isArray(draft.backgroundSwatches) ? draft.backgroundSwatches : []
+  const bannerSwatches = Array.isArray(draft.bannerSwatches)
+    ? draft.bannerSwatches
+    : [];
+  const backgroundSwatches = Array.isArray(draft.backgroundSwatches)
+    ? draft.backgroundSwatches
+    : [];
 
   const backgroundIsDark = useMemo(
     () => isDarkHexColor(draft.backgroundColor),
-    [draft.backgroundColor]
-  )
+    [draft.backgroundColor],
+  );
 
   const liveUrl = useMemo(() => {
-    if (publishedUrl) return publishedUrl
-    if (typeof window === "undefined") return `/my-portfolios/${draftId}/preview`
-    return `${window.location.origin}/my-portfolios/${draftId}/preview`
-  }, [publishedUrl, draftId])
+    if (publishedUrl) return publishedUrl;
+    if (typeof window === "undefined")
+      return `/my-portfolios/${draftId}/preview`;
+    return `${window.location.origin}/my-portfolios/${draftId}/preview`;
+  }, [publishedUrl, draftId]);
 
-  const exitGuardEnabled = !readOnly && (draft.status === "draft" || hasUnsavedChanges)
+  const exitGuardEnabled =
+    !readOnly && (draft.status === "draft" || hasUnsavedChanges);
 
   async function handleToggleExploreSearch(next: boolean) {
-    if (isTogglingExploreSearch || readOnly) return
+    if (isTogglingExploreSearch || readOnly) return;
 
-    const prev = allowExploreSearch
+    const prev = allowExploreSearch;
 
-    setAllowExploreSearch(next)
-    patchDraft(draftId, { explore_enabled: next })
-    setIsTogglingExploreSearch(true)
+    setAllowExploreSearch(next);
+    patchDraft(draftId, { explore_enabled: next });
+    setIsTogglingExploreSearch(true);
 
     try {
-      const token = await getAccessToken()
-      if (!token) throw new Error("You must be signed in to update this setting.")
+      const token = await getAccessToken();
+      if (!token)
+        throw new Error("You must be signed in to update this setting.");
 
       const res = await fetch(`/api/konfolios/${draftId}`, {
         method: "PATCH",
@@ -318,16 +356,17 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ explore_enabled: next }),
-      })
+      });
 
-      const json = await res.json().catch(() => ({}))
-      if (!res.ok) throw new Error(json?.error ?? "Failed to update explore setting.")
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok)
+        throw new Error(json?.error ?? "Failed to update explore setting.");
     } catch (e) {
-      console.error("[EXPLORE TOGGLE] Failed:", e)
-      setAllowExploreSearch(prev)
-      patchDraft(draftId, { explore_enabled: prev })
+      console.error("[EXPLORE TOGGLE] Failed:", e);
+      setAllowExploreSearch(prev);
+      patchDraft(draftId, { explore_enabled: prev });
     } finally {
-      setIsTogglingExploreSearch(false)
+      setIsTogglingExploreSearch(false);
     }
   }
 
@@ -335,77 +374,85 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
     const imageUrl =
       cleanString(publishedThumbnailUrl) ||
       cleanString((draft as any)?.thumbnail_url) ||
-      cleanString((draft as any)?.thumbnailUrl)
+      cleanString((draft as any)?.thumbnailUrl);
 
     if (!imageUrl) {
-      alert("No thumbnail available for export yet.")
-      return
+      alert("No thumbnail available for export yet.");
+      return;
     }
 
     const portfolioName =
       publishedPortfolioName ||
-      cleanString((draft as any)?.portfolioName ?? (draft as any)?.portfolio_name) ||
+      cleanString(
+        (draft as any)?.portfolioName ?? (draft as any)?.portfolio_name,
+      ) ||
       cleanString(draft?.displayName) ||
-      "Portfolio"
+      "Portfolio";
 
     try {
       await exportFromImageUrl({
         imageUrl,
         format: type,
         portfolioName,
-      })
+      });
     } catch (error) {
-      console.error("Export failed:", error)
-      alert("Export failed. Please try again.")
+      console.error("Export failed:", error);
+      alert("Export failed. Please try again.");
     }
   }
 
   async function handlePublish() {
-    if (readOnly) return
+    if (readOnly) return;
 
-    setPublishOpen(true)
-    setPublishStatus("publishing")
-    setPublishError("")
-    setPublishedUrl("")
-    setPublishedThumbnailUrl(null)
+    setPublishOpen(true);
+    setPublishStatus("publishing");
+    setPublishError("");
+    setPublishedUrl("");
+    setPublishedThumbnailUrl(null);
 
     const initialName =
-      cleanString((draft as any).portfolioName ?? (draft as any).portfolio_name) ||
+      cleanString(
+        (draft as any).portfolioName ?? (draft as any).portfolio_name,
+      ) ||
       cleanString(draft.displayName) ||
-      "Portfolio"
-    setPublishedPortfolioName(initialName)
+      "Portfolio";
+    setPublishedPortfolioName(initialName);
 
     try {
-      const token = await getAccessToken()
+      const token = await getAccessToken();
       if (!token) {
-        setPublishStatus("error")
-        setPublishError("You must be signed in to publish.")
-        return
+        setPublishStatus("error");
+        setPublishError("You must be signed in to publish.");
+        return;
       }
 
-      const images = Array.isArray(draft.images) ? [...draft.images] : []
+      const images = Array.isArray(draft.images) ? [...draft.images] : [];
       for (let i = 0; i < images.length; i++) {
-        const src = cleanString(images[i]?.src)
+        const src = cleanString(images[i]?.src);
         if (src.startsWith("blob:")) {
-          const imageUrl = await uploadBlobSrcToStorage({ blobSrc: src, konfolioId: draftId, token })
-          images[i] = { ...images[i], src: imageUrl }
+          const imageUrl = await uploadBlobSrcToStorage({
+            blobSrc: src,
+            konfolioId: draftId,
+            token,
+          });
+          images[i] = { ...images[i], src: imageUrl };
         }
       }
 
-      let profileImageUrl = cleanString(draft.profileImageUrl)
+      let profileImageUrl = cleanString(draft.profileImageUrl);
       if (profileImageUrl.startsWith("blob:")) {
         profileImageUrl = await uploadBlobSrcToStorage({
           blobSrc: profileImageUrl,
           konfolioId: draftId,
           token,
-        })
+        });
       }
 
       patchDraft(draftId, {
         images,
         profileImageUrl,
         explore_enabled: allowExploreSearch,
-      })
+      });
 
       const content = {
         bannerColor: draft.bannerColor,
@@ -421,23 +468,26 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
         merchTags: draft.merchTags,
         previousVends: draft.previousVends,
         images,
-      }
+      };
 
       const saveRes = await fetch(`/api/konfolios/${draftId}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           template: draft.template,
           content,
           explore_enabled: allowExploreSearch,
         }),
-      })
+      });
 
-      const saveJson = await saveRes.json().catch(() => ({}))
+      const saveJson = await saveRes.json().catch(() => ({}));
       if (!saveRes.ok) {
-        setPublishStatus("error")
-        setPublishError(saveJson?.error ?? "Save failed.")
-        return
+        setPublishStatus("error");
+        setPublishError(saveJson?.error ?? "Save failed.");
+        return;
       }
 
       setSavedSnapshot(
@@ -448,156 +498,196 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
             images,
             profileImageUrl,
             explore_enabled: allowExploreSearch,
-          })
-        )
-      )
+          }),
+        ),
+      );
 
       const pubRes = await fetch(`/api/konfolios/${draftId}/publish`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
-      })
+      });
 
-      const pubJson = await pubRes.json().catch(() => ({}))
+      const pubJson = await pubRes.json().catch(() => ({}));
       if (!pubRes.ok) {
-        setPublishStatus("error")
-        setPublishError(pubJson?.error ?? "Publish failed.")
-        return
+        setPublishStatus("error");
+        setPublishError(pubJson?.error ?? "Publish failed.");
+        return;
       }
 
       const getRes = await fetch(`/api/konfolios/${draftId}`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
-      })
-      const getJson = await getRes.json().catch(() => ({}))
+      });
+      const getJson = await getRes.json().catch(() => ({}));
 
-      const portfolioNameFromDb = cleanString(getJson?.portfolioName ?? getJson?.portfolio_name)
-      setPublishedPortfolioName(portfolioNameFromDb || initialName)
+      const portfolioNameFromDb = cleanString(
+        getJson?.portfolioName ?? getJson?.portfolio_name,
+      );
+      setPublishedPortfolioName(portfolioNameFromDb || initialName);
 
-      const origin = typeof window === "undefined" ? "" : window.location.origin
+      const origin =
+        typeof window === "undefined" ? "" : window.location.origin;
 
-      const backendViewUrl = cleanString(pubJson?.viewUrl)
-      const fallbackViewUrl = `${origin}/explore/${draftId}`
+      const backendViewUrl = cleanString(pubJson?.viewUrl);
+      const fallbackViewUrl = `${origin}/explore/${draftId}`;
 
-      setPublishedUrl(backendViewUrl || fallbackViewUrl)
+      setPublishedUrl(backendViewUrl || fallbackViewUrl);
 
       const nextExploreEnabled =
         typeof getJson?.exploreEnabled === "boolean"
           ? getJson.exploreEnabled
           : typeof getJson?.explore_enabled === "boolean"
             ? getJson.explore_enabled
-            : true
+            : true;
 
       const nextThumbnailUrl =
         cleanString(pubJson?.thumbnailUrl) ||
         cleanString(getJson?.thumbnailUrl) ||
         cleanString(getJson?.thumbnail_url) ||
-        null
+        null;
 
-      setPublishedThumbnailUrl(nextThumbnailUrl)
+      setPublishedThumbnailUrl(nextThumbnailUrl);
 
       patchDraft(draftId, {
         status: "published",
         explore_enabled: nextExploreEnabled,
         thumbnail_url: nextThumbnailUrl,
-      })
+      });
 
-      setPublishStatus("success")
-      console.log("[PUBLISH] Success:", pubJson)
+      setPublishStatus("success");
+      console.log("[PUBLISH] Success:", pubJson);
     } catch (e: any) {
-      setPublishStatus("error")
-      setPublishError(e?.message ?? "Publish failed.")
+      setPublishStatus("error");
+      setPublishError(e?.message ?? "Publish failed.");
     }
   }
 
   const onPressPublishWithValidation = useCallback(() => {
-    if (readOnly) return
+    if (readOnly) return;
 
-    const missing = computeMissingLabelsSquare(draft)
-    const hasRequired = missing.required.length > 0
-    const hasOptional = missing.optional.length > 0
+    const missing = computeMissingLabelsSquare(draft);
+    const hasRequired = missing.required.length > 0;
+    const hasOptional = missing.optional.length > 0;
 
     if (hasRequired || hasOptional) {
-      setMissingRequired(missing.required)
-      setMissingOptional(missing.optional)
-      setMissingOpen(true)
-      return
+      setMissingRequired(missing.required);
+      setMissingOptional(missing.optional);
+      setMissingOpen(true);
+      return;
     }
 
-    void handlePublish()
-  }, [draft, readOnly, allowExploreSearch])
+    void handlePublish();
+  }, [draft, readOnly, allowExploreSearch]);
 
   useEffect(() => {
-    if (readOnly) return
-
-    ;(window as any).__konfolio_attempt_publish = () => {
-      onPressPublishWithValidation()
-    }
+    if (readOnly) return;
+    (window as any).__konfolio_attempt_publish = () => {
+      onPressPublishWithValidation();
+    };
 
     return () => {
       try {
-        delete (window as any).__konfolio_attempt_publish
+        delete (window as any).__konfolio_attempt_publish;
       } catch {}
-    }
-  }, [onPressPublishWithValidation, readOnly])
+    };
+  }, [onPressPublishWithValidation, readOnly]);
 
   const isOptionalOnlyMode =
-    !readOnly && missingOpen && missingRequired.length === 0 && missingOptional.length > 0
+    !readOnly &&
+    missingOpen &&
+    missingRequired.length === 0 &&
+    missingOptional.length > 0;
 
   const renderProfileSidebar = (
-    extraProps: Partial<ComponentProps<typeof EditSquareProfileSidebar>> = {}
+    extraProps: Partial<ComponentProps<typeof EditSquareProfileSidebar>> = {},
   ) => (
     <EditSquareProfileSidebar
       editable={!readOnly}
       backHref="/my-portfolios"
       onBack={() => {
         if (readOnly) {
-          const editHref = `/my-portfolios/${draftId}/edit`
-          if (typeof window === "undefined") return
-          if (window.history.length > 1) window.history.back()
-          else window.location.href = editHref
-          return
+          const editHref = `/my-portfolios/${draftId}/edit`;
+          if (typeof window === "undefined") return;
+          if (window.history.length > 1) window.history.back();
+          else window.location.href = editHref;
+          return;
         }
 
-        const attemptExit = (window as any).__konfolio_attempt_exit
-        if (typeof attemptExit === "function") attemptExit("/my-portfolios")
-        else window.location.href = "/my-portfolios"
+        const attemptExit = (window as any).__konfolio_attempt_exit;
+        if (typeof attemptExit === "function") attemptExit("/my-portfolios");
+        else window.location.href = "/my-portfolios";
       }}
       bannerColor={draft.bannerColor}
       backgroundColor={draft.backgroundColor}
-      onChangeBannerColor={readOnly ? undefined : (hex) => patchDraft(draftId, { bannerColor: hex })}
+      onChangeBannerColor={
+        readOnly
+          ? undefined
+          : (hex) => patchDraft(draftId, { bannerColor: hex })
+      }
       onChangeBackgroundColor={
-        readOnly ? undefined : (hex) => patchDraft(draftId, { backgroundColor: hex })
+        readOnly
+          ? undefined
+          : (hex) => patchDraft(draftId, { backgroundColor: hex })
       }
       bannerSwatches={bannerSwatches}
       backgroundSwatches={backgroundSwatches}
       onChangeBannerSwatches={
-        readOnly ? undefined : (next) => patchDraft(draftId, { bannerSwatches: next })
+        readOnly
+          ? undefined
+          : (next) => patchDraft(draftId, { bannerSwatches: next })
       }
       onChangeBackgroundSwatches={
-        readOnly ? undefined : (next) => patchDraft(draftId, { backgroundSwatches: next })
+        readOnly
+          ? undefined
+          : (next) => patchDraft(draftId, { backgroundSwatches: next })
       }
       profileImageUrl={draft.profileImageUrl}
       onChangeProfileImage={
-        readOnly ? undefined : (_file, objectUrl) => patchDraft(draftId, { profileImageUrl: objectUrl })
+        readOnly
+          ? undefined
+          : (_file, objectUrl) =>
+              patchDraft(draftId, { profileImageUrl: objectUrl })
       }
       businessName={draft.businessName}
       displayName={draft.displayName}
-      onChangeBusinessName={readOnly ? undefined : (val) => patchDraft(draftId, { businessName: val })}
-      onChangeDisplayName={readOnly ? undefined : (val) => patchDraft(draftId, { displayName: val })}
+      onChangeBusinessName={
+        readOnly
+          ? undefined
+          : (val) => patchDraft(draftId, { businessName: val })
+      }
+      onChangeDisplayName={
+        readOnly
+          ? undefined
+          : (val) => patchDraft(draftId, { displayName: val })
+      }
       showAddLink={!readOnly}
       linksValue={draft.links}
-      onChangeLinks={readOnly ? undefined : (next) => patchDraft(draftId, { links: next })}
+      onChangeLinks={
+        readOnly ? undefined : (next) => patchDraft(draftId, { links: next })
+      }
       showMerchTag={!readOnly}
       merchTags={draft.merchTags}
-      onChangeMerchTags={readOnly ? undefined : (next) => patchDraft(draftId, { merchTags: next })}
+      onChangeMerchTags={
+        readOnly
+          ? undefined
+          : (next) => patchDraft(draftId, { merchTags: next })
+      }
       previousVends={draft.previousVends}
       onChangePreviousVends={
-        readOnly ? undefined : (vals) => patchDraft(draftId, { previousVends: vals })
+        readOnly
+          ? undefined
+          : (vals) => patchDraft(draftId, { previousVends: vals })
       }
       locationText={draft.locationText}
       email={draft.email}
-      onChangeLocationText={readOnly ? undefined : (val) => patchDraft(draftId, { locationText: val })}
-      onChangeEmail={readOnly ? undefined : (val) => patchDraft(draftId, { email: val })}
+      onChangeLocationText={
+        readOnly
+          ? undefined
+          : (val) => patchDraft(draftId, { locationText: val })
+      }
+      onChangeEmail={
+        readOnly ? undefined : (val) => patchDraft(draftId, { email: val })
+      }
       publishLabel={readOnly ? "" : "Publish"}
       onPublish={readOnly ? undefined : () => onPressPublishWithValidation()}
       onOpenPreview={
@@ -607,12 +697,12 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
               window.open(
                 `/my-portfolios/${draftId}/preview`,
                 "_blank",
-                "noopener,noreferrer"
+                "noopener,noreferrer",
               )
       }
       {...extraProps}
     />
-  )
+  );
 
   const content = (
     <main
@@ -631,7 +721,11 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
             <EditSquareImageGrid
               editable={!readOnly}
               images={draft.images}
-              onChangeImages={readOnly ? undefined : (images) => patchDraft(draftId, { images })}
+              onChangeImages={
+                readOnly
+                  ? undefined
+                  : (images) => patchDraft(draftId, { images })
+              }
               backgroundIsDark={backgroundIsDark}
             />
           </div>
@@ -642,7 +736,11 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
             <EditSquareImageGrid
               editable={!readOnly}
               images={draft.images}
-              onChangeImages={readOnly ? undefined : (images) => patchDraft(draftId, { images })}
+              onChangeImages={
+                readOnly
+                  ? undefined
+                  : (images) => patchDraft(draftId, { images })
+              }
               backgroundIsDark={backgroundIsDark}
             />
           </div>
@@ -660,8 +758,8 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
             onPublishAnyway={
               isOptionalOnlyMode
                 ? () => {
-                    setMissingOpen(false)
-                    void handlePublish()
+                    setMissingOpen(false);
+                    void handlePublish();
                   }
                 : undefined
             }
@@ -670,14 +768,24 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
           <PublishPopover
             open={publishOpen}
             onClose={() => {
-              setPublishOpen(false)
-              setPublishStatus("idle")
-              setPublishError("")
+              setPublishOpen(false);
+              setPublishStatus("idle");
+              setPublishError("");
             }}
-            portfolioName={publishedPortfolioName || cleanString(draft.displayName) || "Portfolio"}
+            portfolioName={
+              publishedPortfolioName ||
+              cleanString(draft.displayName) ||
+              "Portfolio"
+            }
             liveUrl={liveUrl}
             onExport={handleExport}
-            thumbnailUrl={publishedThumbnailUrl || cleanString((draft as any).thumbnail_url ?? (draft as any).thumbnailUrl) || null}
+            thumbnailUrl={
+              publishedThumbnailUrl ||
+              cleanString(
+                (draft as any).thumbnail_url ?? (draft as any).thumbnailUrl,
+              ) ||
+              null
+            }
             allowExploreSearch={allowExploreSearch}
             onToggleExploreSearch={handleToggleExploreSearch}
             isTogglingExploreSearch={isTogglingExploreSearch}
@@ -688,13 +796,17 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
         </>
       )}
     </main>
-  )
+  );
 
-  if (readOnly) return content
+  if (readOnly) return content;
 
   return (
-    <KonfolioExitGuard enabled={exitGuardEnabled} draftId={draftId} backHref="/my-portfolios">
+    <KonfolioExitGuard
+      enabled={exitGuardEnabled}
+      draftId={draftId}
+      backHref="/my-portfolios"
+    >
       {content}
     </KonfolioExitGuard>
-  )
+  );
 }

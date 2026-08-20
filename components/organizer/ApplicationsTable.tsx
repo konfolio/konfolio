@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import ApplicationDrawer from "./ApplicationDrawer";
+import useClickOutside from "@/components/hooks/useClickOutside";
 
 export type Field = {
   id: string;
@@ -90,6 +91,7 @@ export default function ApplicationsTable({
   onStatusChange,
   onDrawerUpdate,
   onReload,
+  onDelete,
 }: {
   apps: AppRow[];
   totalCount: number;
@@ -101,8 +103,47 @@ export default function ApplicationsTable({
   onStatusChange: (id: string, status: AppRow["status"]) => void;
   onDrawerUpdate: (id: string, updates: Partial<AppRow>) => void;
   onReload: () => void;
+  onDelete: (id: string) => void;
 }) {
   const [selectedApp, setSelectedApp] = useState<AppRow | null>(null);
+
+  const [extraFieldKeys, setExtraFieldKeys] = useState<string[]>([]);
+  const [columnPickerOpen, setColumnPickerOpen] = useState(false);
+  const columnPickerRef = useRef<HTMLDivElement | null>(null);
+  useClickOutside(columnPickerRef, () => setColumnPickerOpen(false), {
+    enabled: columnPickerOpen,
+    closeOnEsc: true,
+  });
+
+  const [rowMenuOpenId, setRowMenuOpenId] = useState<string | null>(null);
+  const rowMenuRef = useRef<HTMLDivElement | null>(null);
+  useClickOutside(rowMenuRef, () => setRowMenuOpenId(null), {
+    enabled: rowMenuOpenId !== null,
+    closeOnEsc: true,
+  });
+
+  function toggleExtraField(fieldKey: string) {
+    setExtraFieldKeys((prev) =>
+      prev.includes(fieldKey)
+        ? prev.filter((k) => k !== fieldKey)
+        : [...prev, fieldKey],
+    );
+  }
+
+  function handleDelete(id: string) {
+    setRowMenuOpenId(null);
+    if (!window.confirm("Delete this application? This can't be undone.")) {
+      return;
+    }
+    onDelete(id);
+    if (selectedApp?.id === id) setSelectedApp(null);
+  }
+
+  function formatAnswer(val: unknown) {
+    if (Array.isArray(val)) return val.length > 0 ? val.join(", ") : "—";
+    if (val === null || val === undefined || val === "") return "—";
+    return String(val);
+  }
 
   function handleStatusChange(id: string, status: AppRow["status"]) {
     onStatusChange(id, status);
@@ -135,6 +176,41 @@ export default function ApplicationsTable({
     [fields],
   );
 
+  // Fields already surfaced as their own fixed column — excluded from the
+  // "add column" picker so a question can't be shown twice.
+  const fixedFieldKeys = useMemo(
+    () =>
+      new Set(
+        [
+          "first_name",
+          "last_name",
+          "preferred_name",
+          "business_name",
+          emailKey,
+          locationKey,
+        ].filter(Boolean) as string[],
+      ),
+    [emailKey, locationKey],
+  );
+
+  const pickableFields = useMemo(
+    () =>
+      [...fields]
+        .filter((f) => f.field_key && !fixedFieldKeys.has(f.field_key))
+        .sort((a, b) => a.sort_order - b.sort_order),
+    [fields, fixedFieldKeys],
+  );
+
+  const extraFields = useMemo(
+    () =>
+      extraFieldKeys
+        .map((key) => fields.find((f) => f.field_key === key))
+        .filter((f): f is Field => Boolean(f)),
+    [extraFieldKeys, fields],
+  );
+
+  const totalColumnCount = 11 + extraFields.length + 2;
+
   return (
     <>
       <div className="w-full">
@@ -160,45 +236,101 @@ export default function ApplicationsTable({
                 <col style={{ width: "260px" }} />
                 <col style={{ width: "200px" }} />
                 <col style={{ width: "140px" }} />
+                {extraFields.map((f) => (
+                  <col key={f.id} style={{ width: "200px" }} />
+                ))}
                 <col style={{ width: "44px" }} />
                 <col style={{ width: "44px" }} />
               </colgroup>
 
               <thead className="sticky top-0 z-20">
                 <tr className="bg-zinc-50 text-zinc-600 border-b border-zinc-200">
-                  <th className="sticky left-0 z-30 bg-zinc-50 px-4 py-4 font-medium text-left">
+                  <th className="sticky left-0 z-30 bg-zinc-50 px-4 py-2.5 font-medium text-left">
                     #
                   </th>
-                  <th className="px-4 py-4 font-medium text-left">
+                  <th className="px-4 py-2.5 font-medium text-left">
                     Time Submitted
                   </th>
-                  <th className="px-4 py-4 font-medium text-left">Notes</th>
-                  <th className="px-4 py-4 font-medium text-left">Staus</th>
-                  <th className="px-4 py-4 font-medium text-left">First</th>
-                  <th className="px-4 py-4 font-medium text-left">Last</th>
-                  <th className="px-4 py-4 font-medium text-left">Preferred</th>
-                  <th className="px-4 py-4 font-medium text-left">Business</th>
-                  <th className="px-4 py-4 font-medium text-left">Email</th>
-                  <th className="px-4 py-4 font-medium text-left">Location</th>
-                  <th className="px-4 py-4 font-medium text-left">Konfolio</th>
+                  <th className="px-4 py-2.5 font-medium text-left">Notes</th>
+                  <th className="px-4 py-2.5 font-medium text-left">Status</th>
+                  <th className="px-4 py-2.5 font-medium text-left">First</th>
+                  <th className="px-4 py-2.5 font-medium text-left">Last</th>
+                  <th className="px-4 py-2.5 font-medium text-left">Preferred</th>
+                  <th className="px-4 py-2.5 font-medium text-left">Business</th>
+                  <th className="px-4 py-2.5 font-medium text-left">Email</th>
+                  <th className="px-4 py-2.5 font-medium text-left">Location</th>
+                  <th className="px-4 py-2.5 font-medium text-left">Konfolio</th>
 
-                  <th className="px-2 py-4 text-center">
+                  {extraFields.map((f) => (
+                    <th
+                      key={f.id}
+                      className="px-4 py-2.5 font-medium text-left"
+                    >
+                      <div className="flex items-center justify-between gap-[8px]">
+                        <span className="truncate">{f.label}</span>
+                        <button
+                          type="button"
+                          aria-label={`Remove ${f.label} column`}
+                          onClick={() => toggleExtraField(f.field_key)}
+                          className="shrink-0 text-zinc-400 hover:text-zinc-700"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    </th>
+                  ))}
+
+                  <th className="relative px-2 py-2.5 text-center">
                     <button
                       className="h-8 w-8 rounded-full hover:bg-zinc-100 text-zinc-600"
                       aria-label="Add column"
-                      onClick={() => {}}
+                      onClick={() => setColumnPickerOpen((v) => !v)}
                     >
                       +
                     </button>
+
+                    {columnPickerOpen && (
+                      <div
+                        ref={columnPickerRef}
+                        className="absolute right-0 top-[44px] z-40 w-[240px] rounded-xl border border-zinc-200 bg-white p-2 text-left font-normal shadow-lg"
+                      >
+                        <p className="px-2 py-1.5 text-xs text-zinc-400">
+                          Show question as column
+                        </p>
+                        <div className="max-h-[260px] overflow-y-auto">
+                          {pickableFields.length === 0 && (
+                            <p className="px-2 py-2 text-xs text-zinc-400">
+                              No other questions on this form.
+                            </p>
+                          )}
+                          {pickableFields.map((f) => (
+                            <label
+                              key={f.id}
+                              className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-zinc-700 hover:bg-zinc-50 cursor-pointer"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={extraFieldKeys.includes(f.field_key)}
+                                onChange={() => toggleExtraField(f.field_key)}
+                              />
+                              <span className="truncate">{f.label}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </th>
-                  <th className="px-2 py-4" />
+                  <th className="px-2 py-2.5" />
                 </tr>
               </thead>
 
               <tbody className="text-zinc-700">
                 {loading && (
                   <tr>
-                    <td colSpan={13} className="px-4 py-10 text-zinc-500">
+                    <td
+                      colSpan={totalColumnCount}
+                      className="px-4 py-10 text-zinc-500"
+                    >
                       Loading…
                     </td>
                   </tr>
@@ -206,7 +338,10 @@ export default function ApplicationsTable({
 
                 {!loading && apps.length === 0 && (
                   <tr>
-                    <td colSpan={13} className="px-4 py-10 text-zinc-500">
+                    <td
+                      colSpan={totalColumnCount}
+                      className="px-4 py-10 text-zinc-500"
+                    >
                       No applications yet.
                     </td>
                   </tr>
@@ -263,20 +398,20 @@ export default function ApplicationsTable({
                       onClick={() => setSelectedApp(a)}
                       className="border-b border-zinc-100 hover:bg-zinc-50/60"
                     >
-                      <td className="sticky left-0 z-10 bg-white px-4 py-5 text-zinc-500">
+                      <td className="sticky left-0 z-10 bg-white px-4 py-2.5 text-zinc-500">
                         {idx + 1}
                       </td>
 
-                      <td className="px-4 py-5 text-zinc-500 whitespace-nowrap">
+                      <td className="px-4 py-2.5 text-zinc-500 whitespace-nowrap">
                         {formatTimeSubmitted(a.createdAt)}
                       </td>
 
-                      <td className="px-4 py-5 text-zinc-400 truncate">
+                      <td className="px-4 py-2.5 text-zinc-400 truncate">
                         {notes}
                       </td>
 
                       <td
-                        className="px-4 py-5"
+                        className="px-4 py-2.5"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <div className="inline-flex items-center rounded-full bg-zinc-100 px-3 py-1.5">
@@ -299,18 +434,18 @@ export default function ApplicationsTable({
                         </div>
                       </td>
 
-                      <td className="px-4 py-5">{first}</td>
-                      <td className="px-4 py-5">{last}</td>
-                      <td className="px-4 py-5">{preferred}</td>
-                      <td className="px-4 py-5">{business}</td>
+                      <td className="px-4 py-2.5">{first}</td>
+                      <td className="px-4 py-2.5">{last}</td>
+                      <td className="px-4 py-2.5">{preferred}</td>
+                      <td className="px-4 py-2.5">{business}</td>
 
-                      <td className="px-4 py-5 truncate">{String(appEmail)}</td>
-                      <td className="px-4 py-5 truncate">
+                      <td className="px-4 py-2.5 truncate">{String(appEmail)}</td>
+                      <td className="px-4 py-2.5 truncate">
                         {String(appLocation)}
                       </td>
 
                       <td
-                        className="px-4 py-5"
+                        className="px-4 py-2.5"
                         onClick={(e) => e.stopPropagation()}
                       >
                         {publicKonfolioHref ? (
@@ -346,19 +481,58 @@ export default function ApplicationsTable({
                         )}
                       </td>
 
-                      <td className="px-2 py-5 text-center text-zinc-300" />
+                      {extraFields.map((f) => (
+                        <td key={f.id} className="px-4 py-2.5 truncate">
+                          {formatAnswer(a.answers?.[f.field_key])}
+                        </td>
+                      ))}
+
+                      <td className="px-2 py-2.5 text-center text-zinc-300" />
 
                       <td
-                        className="px-2 py-5 text-right"
+                        className="relative px-2 py-2.5 text-right"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <button
                           className="h-8 w-8 rounded-full hover:bg-zinc-100 text-zinc-500"
                           aria-label="More actions"
-                          onClick={() => {}}
+                          onClick={() =>
+                            setRowMenuOpenId((prev) =>
+                              prev === a.id ? null : a.id,
+                            )
+                          }
                         >
                           ⋮
                         </button>
+
+                        {rowMenuOpenId === a.id && (
+                          <div
+                            ref={rowMenuRef}
+                            className="absolute right-2 top-[44px] z-40 w-[200px] rounded-xl border border-zinc-200 bg-white p-1 text-left shadow-lg"
+                          >
+                            {publicKonfolioHref ? (
+                              <Link
+                                href={publicKonfolioHref}
+                                target="_blank"
+                                onClick={() => setRowMenuOpenId(null)}
+                                className="block rounded-lg px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50"
+                              >
+                                Open portfolio
+                              </Link>
+                            ) : (
+                              <span className="block px-3 py-2 text-sm text-zinc-300">
+                                Open portfolio
+                              </span>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(a.id)}
+                              className="block w-full rounded-lg px-3 py-2 text-left text-sm text-rose-600 hover:bg-rose-50"
+                            >
+                              Delete application
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   );
@@ -397,6 +571,7 @@ export default function ApplicationsTable({
             total: apps.length,
           }}
           formTitle={formTitle}
+          fields={fields}
           allApplicants={apps}
           onSelectApplicant={(a) => setSelectedApp(a)}
           onUpdate={(updates) => handleDrawerUpdate(selectedApp.id, updates)}

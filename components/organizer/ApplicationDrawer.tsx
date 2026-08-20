@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AppRow } from "./ApplicationsTable";
+import { AppRow, Field } from "./ApplicationsTable";
 import ApplicantsExpand from "./ApplicantsExpand";
 import PublicKonfolioView from "@/components/public/PublicKonfolioView";
 import type { SocialKey } from "@/lib/socialKeys";
@@ -51,6 +51,7 @@ export default function ApplicationDrawer({
   app,
   position,
   formTitle,
+  fields,
   allApplicants,
   onSelectApplicant,
   onUpdate,
@@ -59,6 +60,7 @@ export default function ApplicationDrawer({
   app: AppRow | null;
   position?: { index: number; total: number };
   formTitle?: string;
+  fields?: Field[];
   allApplicants?: AppRow[];
   onSelectApplicant?: (app: AppRow) => void;
   onUpdate?: (updates: Partial<AppRow>) => void;
@@ -454,27 +456,45 @@ export default function ApplicationDrawer({
           )}
 
           {/* Form answers */}
-          {Object.keys(app.answers ?? {}).length > 0 && (
-            <div className="flex flex-col gap-[12px]">
-              <p className="text-[13px] text-[#A5A5A5]">Form answers</p>
-              <div className="flex flex-col gap-[10px]">
-                {Object.entries(app.answers).map(([key, val]) => (
-                  <div key={key} className="flex flex-col gap-[6px]">
-                    <span className="text-[13px] text-[#A5A5A5] capitalize">
-                      {key.replace(/_/g, " ")}
-                    </span>
-                    <div className="rounded-[10px] border border-[#E9E9E9] bg-[#FAFAFA] px-[12px] py-[8px] text-[13px] text-[#262626]">
-                      {Array.isArray(val)
-                        ? val.join(", ")
-                        : val === null || val === undefined || val === ""
-                          ? "—"
-                          : String(val)}
-                    </div>
-                  </div>
-                ))}
+          {(() => {
+            const answers = app.answers ?? {};
+            const questionFields = fields
+              ? [...fields].sort((a, b) => a.sort_order - b.sort_order)
+              : Object.keys(answers).map((key) => ({
+                  id: key,
+                  field_key: key,
+                  label: key.replace(/_/g, " "),
+                }));
+
+            if (questionFields.length === 0) return null;
+
+            return (
+              <div className="flex flex-col gap-[12px]">
+                <p className="text-[13px] text-[#A5A5A5]">Form answers</p>
+                <div className="flex flex-col gap-[10px]">
+                  {questionFields.map((f) => {
+                    const val = answers[f.field_key];
+                    return (
+                      <div key={f.id} className="flex flex-col gap-[6px]">
+                        <span className="text-[13px] text-[#A5A5A5]">
+                          {f.label}
+                        </span>
+                        <div className="rounded-[10px] border border-[#E9E9E9] bg-[#FAFAFA] px-[12px] py-[8px] text-[13px] text-[#262626]">
+                          {Array.isArray(val)
+                            ? val.length > 0
+                              ? val.join(", ")
+                              : "—"
+                            : val === null || val === undefined || val === ""
+                              ? "—"
+                              : String(val)}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
         </div>
       </div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import EditableField, { Field } from "@/components/EditableField";
+import { MERCH_COMMON_DEFAULTS } from "@/lib/merchCategories";
 import Navbar from "@/components/Navbar";
 import TagPicker from "@/components/TagPicker";
 import AddFieldButton from "@/components/buttons/AddFieldButton";
@@ -232,7 +233,7 @@ const DEFAULT_FIELDS = [
     field_key: "merchandise",
     required: true,
     placeholder: "",
-    options: [],
+    options: [...MERCH_COMMON_DEFAULTS],
     sortOrder: 18,
     page: 1,
   },

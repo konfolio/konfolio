@@ -9,6 +9,7 @@ import Image from "next/image";
 
 import { supabase } from "@/lib/supabaseClient";
 import AutofillDrawer from "@/components/autofill/AutofillDrawer";
+import AutofillPromptCard from "@/components/autofill/AutofillPromptCard";
 import StatusBanner from "@/components/StatusBanner";
 import FieldRenderer, { Field } from "@/components/FieldRenderer";
 
@@ -456,7 +457,7 @@ export default function ApplyFormPage() {
             <FormHeader form={form} />
             <button
               onClick={() => setAutofillOpen(true)}
-              className="flex items-center gap-[6px] h-[34px] px-[16px] rounded-full bg-[#262626] text-[13px] text-white hover:opacity-80 shrink-0 mt-[6px]"
+              className="md:hidden flex items-center gap-[6px] h-[34px] px-[16px] rounded-full bg-[#262626] text-[13px] text-white hover:opacity-80 shrink-0 mt-[6px]"
             >
               <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
                 <path
@@ -470,6 +471,8 @@ export default function ApplyFormPage() {
               Autofill
             </button>
           </div>
+
+          <AutofillPromptCard onClick={() => setAutofillOpen(true)} />
 
           {selectedKonfolioId && selectedMerchTags.length > 0 && (
             <div className="flex flex-col gap-[8px]">

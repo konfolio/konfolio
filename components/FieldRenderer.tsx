@@ -1,14 +1,21 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import MerchTagsField from "@/components/fields/MerchTagsField";
 
 export type Field = {
   id: string;
   type: string;
   label: string;
+  field_key?: string;
   required: boolean;
   placeholder?: string;
   options?: string[];
 };
+
+function isMerchandiseField(field: Field) {
+  if (field.field_key === "merchandise") return true;
+  return field.label.trim().toLowerCase() === "your merchandise";
+}
 
 export default function FieldRenderer({
   field,
@@ -148,6 +155,17 @@ export default function FieldRenderer({
           );
         })}
       </div>
+    );
+  }
+
+  if ((field.type === "dropdown" || field.type === "select") && isMerchandiseField(field)) {
+    return (
+      <MerchTagsField
+        label={label}
+        options={field.options}
+        value={value}
+        onChange={onChange}
+      />
     );
   }
 

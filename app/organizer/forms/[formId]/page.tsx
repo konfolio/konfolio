@@ -94,6 +94,19 @@ export default function OrganizerFormPage() {
     );
   }
 
+  async function deleteApplication(id: string) {
+    const previousApps = apps;
+    setApps((prev) => prev.filter((a) => a.id !== id));
+
+    const res = await fetch(`/api/applications/${id}`, { method: "DELETE" });
+
+    if (!res.ok) {
+      const json = await res.json().catch(() => ({}));
+      setApps(previousApps);
+      setErrorMsg(json?.error ?? "Failed to delete application");
+    }
+  }
+
   // "Earliest Notice Date" filter only makes sense on forms that actually
   // asked a date question — prefer the canonical field_key, fall back to
   // any date-type field so custom-labeled versions still work.
@@ -241,6 +254,7 @@ export default function OrganizerFormPage() {
             onStatusChange={updateStatus}
             onDrawerUpdate={handleDrawerUpdate}
             onReload={load}
+            onDelete={deleteApplication}
           />
         </div>
       </div>

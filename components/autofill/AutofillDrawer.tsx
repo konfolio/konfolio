@@ -707,18 +707,24 @@ function formatValueForField(value: any, field: any) {
     field.type ?? "short_text",
   );
 
+  const isMerchandiseField =
+    normalizeFieldKey(field.field_key ?? field.fieldKey ?? "") ===
+    "merchandise";
+
   const isCheckboxField =
     fieldType === "checkbox" ||
     fieldType === "checkboxes" ||
     fieldType === "multi_select" ||
     fieldType === "multiselect" ||
-    fieldType === "multiple_select";
+    fieldType === "multiple_select" ||
+    isMerchandiseField;
 
   const isSingleOptionField =
-    fieldType === "dropdown" ||
-    fieldType === "select" ||
-    fieldType === "radio" ||
-    fieldType === "multiple_choice";
+    !isMerchandiseField &&
+    (fieldType === "dropdown" ||
+      fieldType === "select" ||
+      fieldType === "radio" ||
+      fieldType === "multiple_choice");
 
   if (typeof value === "boolean") {
     const desiredLabel = value ? "yes" : "no";
@@ -780,7 +786,6 @@ function formatValueForField(value: any, field: any) {
         }
       }
 
-      // A dropdown can only hold one merchandise value.
       return cleanedValues[0];
     }
 
