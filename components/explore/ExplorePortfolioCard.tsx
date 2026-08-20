@@ -121,13 +121,13 @@ const publicHref = `/${safeBusinessSlug}/${safePortfolioSlug}`
       <div
         role="link"
         tabIndex={0}
-        onClick={() => router.push(publicHref)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault()
-            router.push(publicHref)
-          }
-        }}
+        onClick={() => window.open(publicHref, "_blank", "noopener,noreferrer")}
+onKeyDown={(e) => {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault()
+    window.open(publicHref, "_blank", "noopener,noreferrer")
+  }
+}}
         className="
           relative w-[390px] h-[260px]
           rounded-[15px] overflow-visible

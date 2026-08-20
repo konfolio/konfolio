@@ -36,35 +36,60 @@ async function uploadBlobSrcToStorage(opts: {
 }): Promise<string> {
   const { blobSrc, konfolioId, token } = opts;
 
+  // Read the local object URL selected in the editor.
   const blobRes = await fetch(blobSrc);
   if (!blobRes.ok) throw new Error("Failed to read local image blob");
   const blob = await blobRes.blob();
 
-  const mime = blob.type || "application/octet-stream";
-  const ext =
-    mime === "image/png"
-      ? "png"
-      : mime === "image/jpeg"
-        ? "jpg"
-        : mime === "image/webp"
-          ? "webp"
-          : "png";
+  let contentType = blob.type;
 
-  const file = new File([blob], `upload.${ext}`, { type: mime });
-  const form = new FormData();
-  form.append("file", file);
+  // Keep this list in sync with the signed-upload API route.
+  if (
+    contentType !== "image/jpeg" &&
+    contentType !== "image/png" &&
+    contentType !== "image/webp" &&
+    contentType !== "image/gif"
+  ) {
+    contentType = "image/png";
+  }
 
-  const upRes = await fetch(`/api/konfolios/${konfolioId}/images/upload`, {
+  // Ask the backend for a short-lived signed Supabase upload token.
+  // Only lightweight JSON goes through the Next.js/Vercel API route.
+  const signedRes = await fetch(`/api/konfolios/${konfolioId}/images/upload`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    body: form,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ contentType }),
   });
 
-  const upJson = await upRes.json().catch(() => ({}));
-  if (!upRes.ok) throw new Error(upJson?.error ?? "Image upload failed");
+  const signedJson = await signedRes.json().catch(() => ({}));
+  if (!signedRes.ok) {
+    throw new Error(signedJson?.error ?? "Could not prepare image upload");
+  }
 
-  const imageUrl = String(upJson?.imageUrl ?? "").trim();
-  if (!imageUrl) throw new Error("Upload succeeded but no imageUrl returned");
+  const path = String(signedJson?.path ?? "").trim();
+  const uploadToken = String(signedJson?.token ?? "").trim();
+  const imageUrl = String(signedJson?.imageUrl ?? "").trim();
+
+  if (!path || !uploadToken || !imageUrl) {
+    throw new Error(
+      "Upload preparation succeeded but required upload information was missing",
+    );
+  }
+
+  // Upload the image directly from the browser to Supabase Storage.
+  const { error: uploadError } = await supabase.storage
+    .from("konfolio-images")
+    .uploadToSignedUrl(path, uploadToken, blob, {
+      contentType,
+      cacheControl: "3600",
+    });
+
+  if (uploadError) {
+    throw new Error(uploadError.message || "Image upload failed");
+  }
 
   return imageUrl;
 }

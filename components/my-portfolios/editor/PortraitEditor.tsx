@@ -220,35 +220,55 @@ async function uploadBlobSrcToStorage(opts: {
 }): Promise<string> {
   const { blobSrc, konfolioId, token } = opts;
 
+  // Read the local object URL into a Blob.
   const blobRes = await fetch(blobSrc);
   if (!blobRes.ok) throw new Error("Failed to read local image blob");
+
   const blob = await blobRes.blob();
+  const contentType = blob.type === "image/jpg" ? "image/jpeg" : blob.type;
 
-  const mime = blob.type || "application/octet-stream";
-  const ext =
-    mime === "image/png"
-      ? "png"
-      : mime === "image/jpeg"
-        ? "jpg"
-        : mime === "image/webp"
-          ? "webp"
-          : "png";
+  if (!contentType || !contentType.startsWith("image/")) {
+    throw new Error("The selected file is not a supported image.");
+  }
 
-  const file = new File([blob], `upload.${ext}`, { type: mime });
-  const form = new FormData();
-  form.append("file", file);
-
-  const upRes = await fetch(`/api/konfolios/${konfolioId}/images/upload`, {
+  // Ask the authenticated Konfolio API for a short-lived signed upload token.
+  // Only lightweight JSON goes through Vercel; the image itself does not.
+  const signedRes = await fetch(`/api/konfolios/${konfolioId}/images/upload`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    body: form,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ contentType }),
   });
 
-  const upJson = await upRes.json().catch(() => ({}));
-  if (!upRes.ok) throw new Error(upJson?.error ?? "Image upload failed");
+  const signedJson = await signedRes.json().catch(() => ({}));
+  if (!signedRes.ok) {
+    throw new Error(signedJson?.error ?? "Could not prepare image upload");
+  }
 
-  const imageUrl = String(upJson?.imageUrl ?? "").trim();
-  if (!imageUrl) throw new Error("Upload succeeded but no imageUrl returned");
+  const path = cleanString(signedJson?.path);
+  const uploadToken = cleanString(signedJson?.token);
+  const imageUrl = cleanString(signedJson?.imageUrl);
+
+  if (!path || !uploadToken || !imageUrl) {
+    throw new Error(
+      "Upload preparation succeeded but returned incomplete data",
+    );
+  }
+
+  // Upload directly from the browser to Supabase Storage.
+  // This bypasses Vercel's request-body size limit.
+  const { error: uploadError } = await supabase.storage
+    .from("konfolio-images")
+    .uploadToSignedUrl(path, uploadToken, blob, {
+      contentType,
+      cacheControl: "3600",
+    });
+
+  if (uploadError) {
+    throw new Error(uploadError.message || "Image upload failed");
+  }
 
   return imageUrl;
 }
