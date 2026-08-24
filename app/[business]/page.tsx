@@ -1,6 +1,8 @@
-// app/[business]/[portfolio]/page.tsx
-import { notFound, redirect } from "next/navigation"
+// app/[business]/page.tsx
+
+import { notFound } from "next/navigation"
 import { createClient } from "@supabase/supabase-js"
+
 import PublicKonfolioView from "@/components/public/PublicKonfolioView"
 
 type Template = "square" | "portrait"
@@ -17,28 +19,16 @@ function slugify(input: string): string {
 
 export const runtime = "nodejs"
 
-export default async function PublicKonfolioPage({
+export default async function PublicBusinessKonfolioPage({
   params,
 }: {
-  params: Promise<{ business: string; portfolio: string }>
+  params: Promise<{ business: string }>
 }) {
-  const { business, portfolio } = await params
+  const { business } = await params
 
   const businessSlug = slugify(business)
-  const portfolioSlug = slugify(portfolio)
 
-  if (businessSlug && portfolioSlug && businessSlug === portfolioSlug) {
-    redirect(`/${businessSlug}`)
-  }
-
-  console.log("Pretty URL route hit:", {
-    business,
-    portfolio,
-    businessSlug,
-    portfolioSlug,
-  })
-
-  if (!businessSlug || !portfolioSlug) {
+  if (!businessSlug) {
     return notFound()
   }
 
@@ -47,6 +37,7 @@ export default async function PublicKonfolioPage({
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
 
+  // Find the business owner
   const { data: owner, error: ownerErr } = await supabaseAdmin
     .from("profiles")
     .select("id, business_name, business_slug")
@@ -63,13 +54,14 @@ export default async function PublicKonfolioPage({
     return notFound()
   }
 
+  // The primary portfolio has the same slug as the business.
   const { data: k, error: kErr } = await supabaseAdmin
     .from("konfolios")
     .select(
       "id, user_id, template, status, content, portfolio_name, portfolio_slug, explore_enabled"
     )
     .eq("user_id", owner.id)
-    .eq("portfolio_slug", portfolioSlug)
+    .eq("portfolio_slug", businessSlug)
     .eq("status", "published")
     .eq("explore_enabled", true)
     .maybeSingle()
@@ -80,11 +72,11 @@ export default async function PublicKonfolioPage({
   }
 
   if (!k) {
-    console.warn("No public konfolio found:", {
+    console.warn("No primary public konfolio found:", {
       ownerId: owner.id,
       businessSlug,
-      portfolioSlug,
     })
+
     return notFound()
   }
 

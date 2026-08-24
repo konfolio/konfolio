@@ -178,7 +178,11 @@ export async function POST(
     const baseUrl = getAppBaseUrl(req)
 
     // This is the public URL users should see/copy/open.
-    const publicPath = `/${businessSlug}/${portfolioSlug}`
+    const publicPath =
+      portfolioSlug === businessSlug
+        ? `/${businessSlug}`
+        : `/${businessSlug}/${portfolioSlug}`
+
     const prettyPublicUrl = `${baseUrl}${publicPath}`
 
     // This URL is only for Puppeteer thumbnail generation.
