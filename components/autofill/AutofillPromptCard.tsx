@@ -8,7 +8,8 @@ export default function AutofillPromptCard({
 }: {
   onClick: () => void;
 }) {
-  const { displayName, avatarUrl } = useAutofillProfile();
+  const { displayName, businessName, avatarUrl } = useAutofillProfile();
+  const name = businessName || displayName;
 
   return (
     <div className="hidden md:flex items-center justify-between gap-[16px] bg-white rounded-[14px] px-[20px] py-[14px]">
@@ -25,7 +26,7 @@ export default function AutofillPromptCard({
           <div className="w-[36px] h-[36px] rounded-full bg-[#E9E9E9] shrink-0" />
         )}
         <span className="text-[14px] text-[#262626] truncate">
-          {displayName}
+          {name}
         </span>
       </div>
 

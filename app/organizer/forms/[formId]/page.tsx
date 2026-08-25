@@ -244,6 +244,7 @@ export default function OrganizerFormPage() {
 
         <div className="relative pb-10 pt-6">
           <ApplicationsTable
+            formId={formId}
             apps={filteredApps}
             totalCount={apps.length}
             fields={fields}
