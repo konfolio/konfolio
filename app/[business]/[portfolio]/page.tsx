@@ -1,6 +1,8 @@
 // app/[business]/[portfolio]/page.tsx
+
 import { notFound, redirect } from "next/navigation"
 import { createClient } from "@supabase/supabase-js"
+
 import PublicKonfolioView from "@/components/public/PublicKonfolioView"
 
 type Template = "square" | "portrait"
@@ -27,7 +29,13 @@ export default async function PublicKonfolioPage({
   const businessSlug = slugify(business)
   const portfolioSlug = slugify(portfolio)
 
-  if (businessSlug && portfolioSlug && businessSlug === portfolioSlug) {
+  if (!businessSlug || !portfolioSlug) {
+    return notFound()
+  }
+
+  // If the portfolio slug matches the business slug,
+  // use the shorter canonical URL.
+  if (businessSlug === portfolioSlug) {
     redirect(`/${businessSlug}`)
   }
 
@@ -37,10 +45,6 @@ export default async function PublicKonfolioPage({
     businessSlug,
     portfolioSlug,
   })
-
-  if (!businessSlug || !portfolioSlug) {
-    return notFound()
-  }
 
   const supabaseAdmin = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -63,6 +67,10 @@ export default async function PublicKonfolioPage({
     return notFound()
   }
 
+  // IMPORTANT:
+  // Only require status = published.
+  // Link Access Only Konfolios will have explore_enabled = false,
+  // but should still be accessible by their direct URL.
   const { data: k, error: kErr } = await supabaseAdmin
     .from("konfolios")
     .select(
@@ -71,7 +79,6 @@ export default async function PublicKonfolioPage({
     .eq("user_id", owner.id)
     .eq("portfolio_slug", portfolioSlug)
     .eq("status", "published")
-    .eq("explore_enabled", true)
     .maybeSingle()
 
   if (kErr) {
@@ -80,11 +87,12 @@ export default async function PublicKonfolioPage({
   }
 
   if (!k) {
-    console.warn("No public konfolio found:", {
+    console.warn("No published konfolio found:", {
       ownerId: owner.id,
       businessSlug,
       portfolioSlug,
     })
+
     return notFound()
   }
 

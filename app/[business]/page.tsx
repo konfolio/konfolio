@@ -55,6 +55,9 @@ export default async function PublicBusinessKonfolioPage({
   }
 
   // The primary portfolio has the same slug as the business.
+  // IMPORTANT:
+  // We only require the Konfolio to be published.
+  // explore_enabled controls Explore visibility, not direct-link access.
   const { data: k, error: kErr } = await supabaseAdmin
     .from("konfolios")
     .select(
@@ -63,7 +66,6 @@ export default async function PublicBusinessKonfolioPage({
     .eq("user_id", owner.id)
     .eq("portfolio_slug", businessSlug)
     .eq("status", "published")
-    .eq("explore_enabled", true)
     .maybeSingle()
 
   if (kErr) {
@@ -72,7 +74,7 @@ export default async function PublicBusinessKonfolioPage({
   }
 
   if (!k) {
-    console.warn("No primary public konfolio found:", {
+    console.warn("No published primary konfolio found:", {
       ownerId: owner.id,
       businessSlug,
     })
