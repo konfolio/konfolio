@@ -278,9 +278,21 @@ export async function POST(req: Request) {
     // ignore profile hydration errors
   }
 
-  const portfolioName: string = isNonEmptyString(body?.portfolioName)
-    ? body.portfolioName.trim()
-    : "Untitled Portfolio"
+  const businessNameForPortfolio =
+  isNonEmptyString(content?.businessName) &&
+  content.businessName !== "Business Name"
+    ? content.businessName.trim()
+    : ""
+
+const requestedPortfolioName = isNonEmptyString(body?.portfolioName)
+  ? body.portfolioName.trim()
+  : ""
+
+const portfolioName: string =
+  requestedPortfolioName &&
+  requestedPortfolioName !== "Untitled Portfolio"
+    ? requestedPortfolioName
+    : businessNameForPortfolio || "Untitled Portfolio"
 
   const portfolioSlug: string =
     slugify(portfolioName) || `portfolio-${Date.now()}`
