@@ -1,7 +1,6 @@
 "use client"
 
 import { useRef, useState } from "react"
-import { useRouter } from "next/navigation"
 import Image from "next/image"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
 import ThreeDotsIcon from "@/components/icons/ThreeDotsIcon"
@@ -88,14 +87,18 @@ export default function ExplorePortfolioCard({
   labels = [],
   className = "",
 }: Props) {
-  const router = useRouter()
   const [moreOpen, setMoreOpen] = useState(false)
   const moreRef = useRef<HTMLDivElement | null>(null)
 
   const safeBusinessSlug = businessSlug || slugify(businessName)
-const safePortfolioSlug = portfolioSlug || slugify(portfolioName)
+  const safePortfolioSlug = portfolioSlug || slugify(portfolioName)
 
-const publicHref = `/${safeBusinessSlug}/${safePortfolioSlug}`
+  // If the portfolio slug is the same as the business slug,
+  // use /business-name instead of /business-name/business-name
+  const publicHref =
+    safeBusinessSlug === safePortfolioSlug
+      ? `/${safeBusinessSlug}`
+      : `/${safeBusinessSlug}/${safePortfolioSlug}`
 
   useClickOutside(moreRef, () => {
     setMoreOpen(false)
@@ -121,13 +124,15 @@ const publicHref = `/${safeBusinessSlug}/${safePortfolioSlug}`
       <div
         role="link"
         tabIndex={0}
-        onClick={() => window.open(publicHref, "_blank", "noopener,noreferrer")}
-onKeyDown={(e) => {
-  if (e.key === "Enter" || e.key === " ") {
-    e.preventDefault()
-    window.open(publicHref, "_blank", "noopener,noreferrer")
-  }
-}}
+        onClick={() =>
+          window.open(publicHref, "_blank", "noopener,noreferrer")
+        }
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            window.open(publicHref, "_blank", "noopener,noreferrer")
+          }
+        }}
         className="
           relative w-[390px] h-[260px]
           rounded-[15px] overflow-visible
@@ -177,7 +182,6 @@ onKeyDown={(e) => {
               transition-opacity duration-150
               group-hover:opacity-100
             "
-          
           >
             <div className="pointer-events-auto">
               <PrimaryButton
