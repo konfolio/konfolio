@@ -70,17 +70,34 @@ type Props = {
 function formatCompact(n: number) {
   if (!Number.isFinite(n)) return "0"
   const abs = Math.abs(n)
-  if (abs >= 1_000_000)
+
+  if (abs >= 1_000_000) {
     return `${(n / 1_000_000).toFixed(abs >= 10_000_000 ? 0 : 1)}M`
-  if (abs >= 1_000) return `${(n / 1_000).toFixed(abs >= 10_000 ? 0 : 1)}K`
+  }
+
+  if (abs >= 1_000) {
+    return `${(n / 1_000).toFixed(abs >= 10_000 ? 0 : 1)}K`
+  }
+
   return String(Math.round(n))
 }
 
 function normalizePublicUrl(url: string) {
   const trimmed = String(url ?? "").trim()
+
   if (!trimmed) return ""
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed
-  if (trimmed.startsWith("/")) return trimmed
+
+  if (
+    trimmed.startsWith("http://") ||
+    trimmed.startsWith("https://")
+  ) {
+    return trimmed
+  }
+
+  if (trimmed.startsWith("/")) {
+    return trimmed
+  }
+
   return `/${trimmed}`
 }
 
@@ -94,21 +111,156 @@ function normalizeSlugInput(value: string) {
     .replace(/^-|-$/g, "")
 }
 
-function getLockedUrlPrefix(publicUrl: string, portfolioSlug: string) {
+/**
+ * Cleans duplicate public URLs.
+ *
+ * Example:
+ * /califlair/califlair
+ * becomes:
+ * /califlair
+ *
+ * Other URLs remain unchanged:
+ * /califlair/summer-collection
+ */
+function collapseDuplicatePublicUrl(url: string) {
+  const normalized = normalizePublicUrl(url)
+
+  if (!normalized) return ""
+
+  const isAbsolute =
+    normalized.startsWith("http://") ||
+    normalized.startsWith("https://")
+
+  try {
+    const parsed = new URL(
+      normalized,
+      "http://konfolio.local"
+    )
+
+    const segments = parsed.pathname
+      .split("/")
+      .filter(Boolean)
+
+    if (
+      segments.length >= 2 &&
+      segments[segments.length - 1] ===
+        segments[segments.length - 2]
+    ) {
+      segments.pop()
+    }
+
+    parsed.pathname = `/${segments.join("/")}`
+
+    if (isAbsolute) {
+      return `${parsed.origin}${parsed.pathname}${parsed.search}${parsed.hash}`
+    }
+
+    return `${parsed.pathname}${parsed.search}${parsed.hash}`
+  } catch {
+    return normalized
+  }
+}
+
+/**
+ * Figures out the part of the URL that should stay locked
+ * while editing the portfolio slug.
+ *
+ * Examples:
+ *
+ * /califlair/summer
+ * portfolioSlug = summer
+ * -> /califlair/
+ *
+ * /califlair/califlair
+ * portfolioSlug = califlair
+ * -> /califlair/
+ *
+ * /califlair
+ * portfolioSlug = califlair
+ * -> /califlair/
+ */
+function getLockedUrlPrefix(
+  publicUrl: string,
+  portfolioSlug: string
+) {
   const normalizedUrl = normalizePublicUrl(publicUrl)
-  const normalizedSlug = String(portfolioSlug ?? "").trim()
+  const normalizedSlug = normalizeSlugInput(portfolioSlug)
 
   if (!normalizedUrl) return ""
   if (!normalizedSlug) return normalizedUrl
 
-  const suffix = `/${normalizedSlug}`
-  if (normalizedUrl.endsWith(suffix)) {
-    return normalizedUrl.slice(0, -normalizedSlug.length)
-  }
+  const isAbsolute =
+    normalizedUrl.startsWith("http://") ||
+    normalizedUrl.startsWith("https://")
 
-  const lastSlash = normalizedUrl.lastIndexOf("/")
-  if (lastSlash === -1) return ""
-  return normalizedUrl.slice(0, lastSlash + 1)
+  try {
+    const parsed = new URL(
+      normalizedUrl,
+      "http://konfolio.local"
+    )
+
+    const segments = parsed.pathname
+      .split("/")
+      .filter(Boolean)
+
+    if (segments.length === 0) {
+      return isAbsolute
+        ? `${parsed.origin}/`
+        : "/"
+    }
+
+    const lastSegment = segments[segments.length - 1]
+
+    let prefixPath = "/"
+
+    // Special case:
+    // public URL is already shortened to /business-name
+    // and the portfolio slug is also business-name.
+    if (
+      segments.length === 1 &&
+      lastSegment === normalizedSlug
+    ) {
+      prefixPath = `/${lastSegment}/`
+    } else if (lastSegment === normalizedSlug) {
+      // Normal /business-name/portfolio-name structure.
+      segments.pop()
+
+      prefixPath =
+        segments.length > 0
+          ? `/${segments.join("/")}/`
+          : "/"
+    } else {
+      // Fallback: treat everything before the final segment
+      // as the locked prefix.
+      segments.pop()
+
+      prefixPath =
+        segments.length > 0
+          ? `/${segments.join("/")}/`
+          : "/"
+    }
+
+    if (isAbsolute) {
+      return `${parsed.origin}${prefixPath}`
+    }
+
+    return prefixPath
+  } catch {
+    const suffix = `/${normalizedSlug}`
+
+    if (normalizedUrl.endsWith(suffix)) {
+      return normalizedUrl.slice(
+        0,
+        -normalizedSlug.length
+      )
+    }
+
+    const lastSlash = normalizedUrl.lastIndexOf("/")
+
+    if (lastSlash === -1) return ""
+
+    return normalizedUrl.slice(0, lastSlash + 1)
+  }
 }
 
 export default function DashPortfolio({
@@ -138,42 +290,87 @@ export default function DashPortfolio({
 
   onDelete,
 }: Props) {
-  const [menuOpen, setMenuOpen] = React.useState(false)
-  const [deleteOpen, setDeleteOpen] = React.useState(false)
-  const [isDeleting, setIsDeleting] = React.useState(false)
-  const [exportOpen, setExportOpen] = React.useState(false)
-  const [copied, setCopied] = React.useState(false)
+  const [menuOpen, setMenuOpen] =
+    React.useState(false)
 
-  const [isEditingName, setIsEditingName] = React.useState(false)
-  const [draftName, setDraftName] = React.useState(portfolioName)
-  const [isSavingName, setIsSavingName] = React.useState(false)
+  const [deleteOpen, setDeleteOpen] =
+    React.useState(false)
 
-  const [isEditingUrl, setIsEditingUrl] = React.useState(false)
-  const [draftSlug, setDraftSlug] = React.useState(portfolioSlug)
-  const [isSavingUrl, setIsSavingUrl] = React.useState(false)
+  const [isDeleting, setIsDeleting] =
+    React.useState(false)
 
-  const [urlPopupOpen, setUrlPopupOpen] = React.useState(false)
-  const [urlPopupTitle, setUrlPopupTitle] = React.useState("URL already in use")
-  const [urlPopupMessage, setUrlPopupMessage] = React.useState(
-    "This portfolio URL is already taken. Please choose a different URL."
+  const [exportOpen, setExportOpen] =
+    React.useState(false)
+
+  const [copied, setCopied] =
+    React.useState(false)
+
+  const [isEditingName, setIsEditingName] =
+    React.useState(false)
+
+  const [draftName, setDraftName] =
+    React.useState(portfolioName)
+
+  const [isSavingName, setIsSavingName] =
+    React.useState(false)
+
+  const [isEditingUrl, setIsEditingUrl] =
+    React.useState(false)
+
+  const [draftSlug, setDraftSlug] =
+    React.useState(portfolioSlug)
+
+  const [isSavingUrl, setIsSavingUrl] =
+    React.useState(false)
+
+  const [urlPopupOpen, setUrlPopupOpen] =
+    React.useState(false)
+
+  const [urlPopupTitle, setUrlPopupTitle] =
+    React.useState("URL already in use")
+
+  const [urlPopupMessage, setUrlPopupMessage] =
+    React.useState(
+      "This portfolio URL is already taken. Please choose a different URL."
+    )
+
+  const [attemptedSlug, setAttemptedSlug] =
+    React.useState("")
+
+  const [namePopupOpen, setNamePopupOpen] =
+    React.useState(false)
+
+  const [namePopupTitle, setNamePopupTitle] =
+    React.useState(
+      "Konfolio name already in use"
+    )
+
+  const [namePopupMessage, setNamePopupMessage] =
+    React.useState(
+      "You already have a Konfolio with this name. Please choose a different name."
+    )
+
+  const [attemptedName, setAttemptedName] =
+    React.useState("")
+
+  const copyTimeoutRef =
+    React.useRef<number | null>(null)
+
+  const nameInputRef =
+    React.useRef<HTMLInputElement | null>(null)
+
+  const slugInputRef =
+    React.useRef<HTMLInputElement | null>(null)
+
+  const closeDelete = React.useCallback(
+    () => setDeleteOpen(false),
+    []
   )
-  const [attemptedSlug, setAttemptedSlug] = React.useState("")
 
-  const [namePopupOpen, setNamePopupOpen] = React.useState(false)
-  const [namePopupTitle, setNamePopupTitle] = React.useState(
-    "Konfolio name already in use"
+  const closeExport = React.useCallback(
+    () => setExportOpen(false),
+    []
   )
-  const [namePopupMessage, setNamePopupMessage] = React.useState(
-    "You already have a Konfolio with this name. Please choose a different name."
-  )
-  const [attemptedName, setAttemptedName] = React.useState("")
-
-  const copyTimeoutRef = React.useRef<number | null>(null)
-  const nameInputRef = React.useRef<HTMLInputElement | null>(null)
-  const slugInputRef = React.useRef<HTMLInputElement | null>(null)
-
-  const closeDelete = React.useCallback(() => setDeleteOpen(false), [])
-  const closeExport = React.useCallback(() => setExportOpen(false), [])
 
   React.useEffect(() => {
     setDraftName(portfolioName)
@@ -185,39 +382,73 @@ export default function DashPortfolio({
 
   React.useEffect(() => {
     if (!isEditingName) return
+
     const id = window.setTimeout(() => {
       nameInputRef.current?.focus()
       nameInputRef.current?.select()
     }, 0)
+
     return () => window.clearTimeout(id)
   }, [isEditingName])
 
   React.useEffect(() => {
     if (!isEditingUrl) return
+
     const id = window.setTimeout(() => {
       slugInputRef.current?.focus()
       slugInputRef.current?.select()
     }, 0)
+
     return () => window.clearTimeout(id)
   }, [isEditingUrl])
 
   React.useEffect(() => {
     return () => {
       if (copyTimeoutRef.current) {
-        window.clearTimeout(copyTimeoutRef.current)
+        window.clearTimeout(
+          copyTimeoutRef.current
+        )
       }
     }
   }, [])
 
-  const resolvedPublicUrl = React.useMemo(() => normalizePublicUrl(publicUrl), [publicUrl])
+  /**
+   * Keep the original normalized URL around for editing.
+   *
+   * Example:
+   * /califlair/califlair
+   */
+  const normalizedPublicUrl = React.useMemo(
+    () => normalizePublicUrl(publicUrl),
+    [publicUrl]
+  )
+
+  /**
+   * This is the URL users should actually see/open/copy.
+   *
+   * Example:
+   * /califlair/califlair -> /califlair
+   */
+  const resolvedPublicUrl = React.useMemo(
+    () => collapseDuplicatePublicUrl(publicUrl),
+    [publicUrl]
+  )
 
   const lockedUrlPrefix = React.useMemo(
-    () => getLockedUrlPrefix(resolvedPublicUrl, portfolioSlug),
-    [resolvedPublicUrl, portfolioSlug]
+    () =>
+      getLockedUrlPrefix(
+        normalizedPublicUrl,
+        portfolioSlug
+      ),
+    [normalizedPublicUrl, portfolioSlug]
   )
 
   const openUrlPopup = React.useCallback(
-    (title: string, message: string, slug?: string) => {
+    (
+      title: string,
+      message: string,
+      slug?: string
+    ) => {
       setUrlPopupTitle(title)
       setUrlPopupMessage(message)
       setAttemptedSlug(slug ?? "")
@@ -227,7 +458,11 @@ export default function DashPortfolio({
   )
 
   const openNamePopup = React.useCallback(
-    (title: string, message: string, name?: string) => {
+    (
+      title: string,
+      message: string,
+      name?: string
+    ) => {
       setNamePopupTitle(title)
       setNamePopupMessage(message)
       setAttemptedName(name ?? "")
@@ -236,217 +471,301 @@ export default function DashPortfolio({
     []
   )
 
-  const handleOpenPublished = React.useCallback(() => {
-    if (!resolvedPublicUrl) return
-    window.open(resolvedPublicUrl, "_blank", "noopener,noreferrer")
-  }, [resolvedPublicUrl])
+  const handleOpenPublished =
+    React.useCallback(() => {
+      if (!resolvedPublicUrl) return
 
-  const handleCopyLink = React.useCallback(async () => {
-    const url = resolvedPublicUrl
-    if (!url) return
+      window.open(
+        resolvedPublicUrl,
+        "_blank",
+        "noopener,noreferrer"
+      )
+    }, [resolvedPublicUrl])
 
-    const fullUrl =
-      typeof window !== "undefined" && url.startsWith("/")
-        ? `${window.location.origin}${url}`
-        : url
+  const handleCopyLink =
+    React.useCallback(async () => {
+      const url = resolvedPublicUrl
 
-    try {
-      await navigator.clipboard.writeText(fullUrl)
-    } catch {
-      const textarea = document.createElement("textarea")
-      textarea.value = fullUrl
-      textarea.setAttribute("readonly", "")
-      textarea.style.position = "absolute"
-      textarea.style.left = "-9999px"
-      document.body.appendChild(textarea)
-      textarea.select()
-      document.execCommand("copy")
-      document.body.removeChild(textarea)
-    }
+      if (!url) return
 
-    onCopyUrl?.()
+      const fullUrl =
+        typeof window !== "undefined" &&
+        url.startsWith("/")
+          ? `${window.location.origin}${url}`
+          : url
 
-    setCopied(true)
-    if (copyTimeoutRef.current) {
-      window.clearTimeout(copyTimeoutRef.current)
-    }
-    copyTimeoutRef.current = window.setTimeout(() => {
-      setCopied(false)
-    }, 1500)
-  }, [resolvedPublicUrl, onCopyUrl])
+      try {
+        await navigator.clipboard.writeText(
+          fullUrl
+        )
+      } catch {
+        const textarea =
+          document.createElement("textarea")
 
-  const startEditingName = React.useCallback(() => {
-    if (isSavingName || isSavingUrl) return
-    setDraftName(portfolioName)
-    setIsEditingUrl(false)
-    setIsEditingName(true)
-    setMenuOpen(false)
-  }, [isSavingName, isSavingUrl, portfolioName])
+        textarea.value = fullUrl
+        textarea.setAttribute(
+          "readonly",
+          ""
+        )
 
-  const cancelEditingName = React.useCallback(() => {
-    setDraftName(portfolioName)
-    setIsEditingName(false)
-  }, [portfolioName])
+        textarea.style.position = "absolute"
+        textarea.style.left = "-9999px"
 
-  const saveName = React.useCallback(async () => {
-    const trimmed = draftName.trim()
+        document.body.appendChild(textarea)
 
-    if (!trimmed) {
+        textarea.select()
+
+        document.execCommand("copy")
+
+        document.body.removeChild(textarea)
+      }
+
+      onCopyUrl?.()
+
+      setCopied(true)
+
+      if (copyTimeoutRef.current) {
+        window.clearTimeout(
+          copyTimeoutRef.current
+        )
+      }
+
+      copyTimeoutRef.current =
+        window.setTimeout(() => {
+          setCopied(false)
+        }, 1500)
+    }, [resolvedPublicUrl, onCopyUrl])
+
+  const startEditingName =
+    React.useCallback(() => {
+      if (isSavingName || isSavingUrl) return
+
+      setDraftName(portfolioName)
+      setIsEditingUrl(false)
+      setIsEditingName(true)
+      setMenuOpen(false)
+    }, [
+      isSavingName,
+      isSavingUrl,
+      portfolioName,
+    ])
+
+  const cancelEditingName =
+    React.useCallback(() => {
       setDraftName(portfolioName)
       setIsEditingName(false)
-      return
-    }
+    }, [portfolioName])
 
-    if (trimmed === portfolioName.trim()) {
-      setIsEditingName(false)
-      return
-    }
+  const saveName =
+    React.useCallback(async () => {
+      const trimmed = draftName.trim()
 
-    if (!onEditName) {
-      setIsEditingName(false)
-      return
-    }
-
-    try {
-      setIsSavingName(true)
-
-      const result = await onEditName(trimmed)
-
-      if (!result.ok) {
+      if (!trimmed) {
         setDraftName(portfolioName)
         setIsEditingName(false)
+        return
+      }
 
-        if (result.reason === "duplicate") {
+      if (
+        trimmed === portfolioName.trim()
+      ) {
+        setIsEditingName(false)
+        return
+      }
+
+      if (!onEditName) {
+        setIsEditingName(false)
+        return
+      }
+
+      try {
+        setIsSavingName(true)
+
+        const result =
+          await onEditName(trimmed)
+
+        if (!result.ok) {
+          setDraftName(portfolioName)
+          setIsEditingName(false)
+
+          if (
+            result.reason === "duplicate"
+          ) {
+            openNamePopup(
+              "Konfolio name already in use",
+              "You already have a Konfolio with this name. Please choose a different name.",
+              trimmed
+            )
+
+            return
+          }
+
           openNamePopup(
-            "Konfolio name already in use",
-            "You already have a Konfolio with this name. Please choose a different name.",
+            "Unable to update name",
+            result.message ||
+              "Something went wrong while updating the Konfolio name.",
             trimmed
           )
+
           return
         }
 
-        openNamePopup(
-          "Unable to update name",
-          result.message || "Something went wrong while updating the Konfolio name.",
-          trimmed
-        )
-        return
+        setIsEditingName(false)
+      } finally {
+        setIsSavingName(false)
       }
+    }, [
+      draftName,
+      onEditName,
+      openNamePopup,
+      portfolioName,
+    ])
 
+  const startEditingUrl =
+    React.useCallback(() => {
+      if (isSavingName || isSavingUrl) return
+
+      setDraftSlug(portfolioSlug)
       setIsEditingName(false)
-    } finally {
-      setIsSavingName(false)
-    }
-  }, [draftName, onEditName, openNamePopup, portfolioName])
+      setIsEditingUrl(true)
+      setMenuOpen(false)
+    }, [
+      isSavingName,
+      isSavingUrl,
+      portfolioSlug,
+    ])
 
-  const startEditingUrl = React.useCallback(() => {
-    if (isSavingName || isSavingUrl) return
-    setDraftSlug(portfolioSlug)
-    setIsEditingName(false)
-    setIsEditingUrl(true)
-    setMenuOpen(false)
-  }, [isSavingName, isSavingUrl, portfolioSlug])
-
-  const cancelEditingUrl = React.useCallback(() => {
-    setDraftSlug(portfolioSlug)
-    setIsEditingUrl(false)
-  }, [portfolioSlug])
-
-  const saveUrl = React.useCallback(async () => {
-    const normalized = normalizeSlugInput(draftSlug)
-
-    if (!normalized) {
+  const cancelEditingUrl =
+    React.useCallback(() => {
       setDraftSlug(portfolioSlug)
       setIsEditingUrl(false)
-      return
-    }
+    }, [portfolioSlug])
 
-    if (normalized === portfolioSlug.trim()) {
-      setIsEditingUrl(false)
-      return
-    }
+  const saveUrl =
+    React.useCallback(async () => {
+      const normalized =
+        normalizeSlugInput(draftSlug)
 
-    if (!onEditUrl) {
-      setIsEditingUrl(false)
-      return
-    }
-
-    try {
-      setIsSavingUrl(true)
-
-      const result = await onEditUrl(normalized)
-
-      if (!result.ok) {
+      if (!normalized) {
         setDraftSlug(portfolioSlug)
         setIsEditingUrl(false)
-
-        if (result.reason === "duplicate") {
-          openUrlPopup(
-            "URL already in use",
-            "This portfolio URL is already taken. Please choose a different URL.",
-            normalized
-          )
-          return
-        }
-
-        openUrlPopup(
-          "Unable to update URL",
-          result.message || "Something went wrong while updating the portfolio URL.",
-          normalized
-        )
         return
       }
 
-      setIsEditingUrl(false)
-    } finally {
-      setIsSavingUrl(false)
-    }
-  }, [draftSlug, onEditUrl, openUrlPopup, portfolioSlug])
-
-  const handleMenuAction = React.useCallback(
-    (action: PortfolioMoreAction) => {
-      setMenuOpen(false)
-
-      switch (action) {
-        case "editName":
-          startEditingName()
-          return
-        case "linkAccessOnly":
-          onLinkAccessOnly?.()
-          return
-        case "duplicate":
-          onDuplicate?.()
-          return
-        case "editUrl":
-          startEditingUrl()
-          return
-        case "export":
-          setExportOpen(true)
-          return
-        case "delete":
-          setDeleteOpen(true)
-          return
-        default:
-          return
+      if (
+        normalized ===
+        portfolioSlug.trim()
+      ) {
+        setIsEditingUrl(false)
+        return
       }
-    },
-    [onDuplicate, onLinkAccessOnly, startEditingName, startEditingUrl]
-  )
 
-  const handleConfirmDelete = React.useCallback(async () => {
-    if (!onDelete) {
-      setDeleteOpen(false)
-      return
-    }
+      if (!onEditUrl) {
+        setIsEditingUrl(false)
+        return
+      }
 
-    setIsDeleting(true)
-    try {
-      await onDelete(id)
-      setDeleteOpen(false)
-    } finally {
-      setIsDeleting(false)
-    }
-  }, [onDelete, id])
+      try {
+        setIsSavingUrl(true)
+
+        const result =
+          await onEditUrl(normalized)
+
+        if (!result.ok) {
+          setDraftSlug(portfolioSlug)
+          setIsEditingUrl(false)
+
+          if (
+            result.reason === "duplicate"
+          ) {
+            openUrlPopup(
+              "URL already in use",
+              "This portfolio URL is already taken. Please choose a different URL.",
+              normalized
+            )
+
+            return
+          }
+
+          openUrlPopup(
+            "Unable to update URL",
+            result.message ||
+              "Something went wrong while updating the portfolio URL.",
+            normalized
+          )
+
+          return
+        }
+
+        setIsEditingUrl(false)
+      } finally {
+        setIsSavingUrl(false)
+      }
+    }, [
+      draftSlug,
+      onEditUrl,
+      openUrlPopup,
+      portfolioSlug,
+    ])
+
+  const handleMenuAction =
+    React.useCallback(
+      (action: PortfolioMoreAction) => {
+        setMenuOpen(false)
+
+        switch (action) {
+          case "editName":
+            startEditingName()
+            return
+
+          case "linkAccessOnly":
+            onLinkAccessOnly?.()
+            return
+
+          case "duplicate":
+            onDuplicate?.()
+            return
+
+          case "editUrl":
+            startEditingUrl()
+            return
+
+          case "export":
+            setExportOpen(true)
+            return
+
+          case "delete":
+            setDeleteOpen(true)
+            return
+
+          default:
+            return
+        }
+      },
+      [
+        onDuplicate,
+        onLinkAccessOnly,
+        startEditingName,
+        startEditingUrl,
+      ]
+    )
+
+  const handleConfirmDelete =
+    React.useCallback(async () => {
+      if (!onDelete) {
+        setDeleteOpen(false)
+        return
+      }
+
+      setIsDeleting(true)
+
+      try {
+        await onDelete(id)
+        setDeleteOpen(false)
+      } finally {
+        setIsDeleting(false)
+      }
+    }, [onDelete, id])
 
   return (
     <div
@@ -462,7 +781,10 @@ export default function DashPortfolio({
         tabIndex={0}
         onClick={onEdit}
         onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
+          if (
+            e.key === "Enter" ||
+            e.key === " "
+          ) {
             e.preventDefault()
             onEdit?.()
           }
@@ -493,7 +815,9 @@ export default function DashPortfolio({
               src={thumbnailUrl}
               alt=""
               className="absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-200 group-hover:opacity-90"
-              style={{ objectPosition: "center 0px" }}
+              style={{
+                objectPosition: "center 0px",
+              }}
             />
           ) : (
             <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(165,165,165,0.18)_25%,transparent_25%,transparent_50%,rgba(165,165,165,0.18)_50%,rgba(165,165,165,0.18)_75%,transparent_75%,transparent)] bg-[length:18px_18px]" />
@@ -531,9 +855,11 @@ export default function DashPortfolio({
         <div className="flex items-center gap-[25px]">
           <div className="relative group/views flex items-center gap-[5px]">
             <EyeIcon className="text-[#262626]" />
+
             <span className="text-[#262626] text-[14px] leading-[130%] font-normal">
               {formatCompact(views)}
             </span>
+
             <div className="absolute left-1/2 -translate-x-1/2 top-[-31px] opacity-0 pointer-events-none group-hover/views:opacity-100 transition-opacity duration-150 z-20">
               <HoverTag label="Views" />
             </div>
@@ -541,9 +867,11 @@ export default function DashPortfolio({
 
           <div className="relative group/visitors flex items-center gap-[5px]">
             <UserIcon className="text-[#262626]" />
+
             <span className="text-[#262626] text-[14px] leading-[130%] font-normal">
               {formatCompact(viewers)}
             </span>
+
             <div className="absolute left-1/2 -translate-x-1/2 top-[-31px] opacity-0 pointer-events-none group-hover/visitors:opacity-100 transition-opacity duration-150 z-20">
               <HoverTag label="Visitors" />
             </div>
@@ -551,9 +879,11 @@ export default function DashPortfolio({
 
           <div className="relative group/clicks flex items-center gap-[5px]">
             <HandPointingIcon className="text-[#262626]" />
+
             <span className="text-[#262626] text-[14px] leading-[130%] font-normal">
               {formatCompact(linkClicks)}
             </span>
+
             <div className="absolute left-1/2 -translate-x-1/2 top-[-31px] opacity-0 pointer-events-none group-hover/clicks:opacity-100 transition-opacity duration-150 z-20">
               <HoverTag label="Link clicks" />
             </div>
@@ -561,9 +891,14 @@ export default function DashPortfolio({
         </div>
 
         <div className="flex items-center gap-[5px]">
-        {exploreEnabled && <CheckIcon className="text-[#262626]" />}
+          {exploreEnabled && (
+            <CheckIcon className="text-[#262626]" />
+          )}
+
           <span className="text-[#262626] text-[14px] leading-[130%] font-normal">
-            {exploreEnabled ? "Explore" : "Link Access Only"}
+            {exploreEnabled
+              ? "Public"
+              : "Link Access Only"}
           </span>
         </div>
       </div>
@@ -574,13 +909,18 @@ export default function DashPortfolio({
             <input
               ref={nameInputRef}
               value={draftName}
-              onChange={(e) => setDraftName(e.target.value)}
-              onBlur={() => void saveName()}
+              onChange={(e) =>
+                setDraftName(e.target.value)
+              }
+              onBlur={() =>
+                void saveName()
+              }
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault()
                   void saveName()
                 }
+
                 if (e.key === "Escape") {
                   e.preventDefault()
                   cancelEditingName()
@@ -623,14 +963,23 @@ export default function DashPortfolio({
               <input
                 ref={slugInputRef}
                 value={draftSlug}
-                onChange={(e) => setDraftSlug(e.target.value)}
-                onBlur={() => void saveUrl()}
+                onChange={(e) =>
+                  setDraftSlug(
+                    e.target.value
+                  )
+                }
+                onBlur={() =>
+                  void saveUrl()
+                }
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault()
                     void saveUrl()
                   }
-                  if (e.key === "Escape") {
+
+                  if (
+                    e.key === "Escape"
+                  ) {
                     e.preventDefault()
                     cancelEditingUrl()
                   }
@@ -655,7 +1004,7 @@ export default function DashPortfolio({
               title="Copy published link"
             >
               <span className="min-w-0 truncate text-[#A5A5A5] text-[14px] leading-[130%] font-normal">
-                {publicUrl}
+                {resolvedPublicUrl}
               </span>
 
               <span className="relative flex items-center flex-shrink-0">
@@ -665,7 +1014,9 @@ export default function DashPortfolio({
                   className={[
                     "absolute left-1/2 -translate-x-1/2 top-[-38px] z-30",
                     "transition-opacity duration-200",
-                    copied ? "opacity-100" : "opacity-0 pointer-events-none",
+                    copied
+                      ? "opacity-100"
+                      : "opacity-0 pointer-events-none",
                   ].join(" ")}
                 >
                   <HoverTag label="Copied link" />
@@ -679,6 +1030,7 @@ export default function DashPortfolio({
       <div className="w-full h-[22px] flex items-center justify-between">
         <div className="flex items-center justify-end gap-[5px]">
           <TimeIcon className="text-[#A5A5A5]" />
+
           <span className="text-[#A5A5A5] text-[14px] leading-[130%] font-normal">
             {lastUpdatedLabel}
           </span>
@@ -696,7 +1048,10 @@ export default function DashPortfolio({
             ].join(" ")}
             aria-label="View"
           >
-            <span className="text-[12px] leading-[130%] font-normal">View</span>
+            <span className="text-[12px] leading-[130%] font-normal">
+              View
+            </span>
+
             <OpenTabIcon className="text-white w-[12px] h-[12px]" />
           </button>
 
@@ -704,7 +1059,9 @@ export default function DashPortfolio({
             <button
               type="button"
               onClick={() => {
-                setMenuOpen((v) => !v)
+                setMenuOpen(
+                  (v) => !v
+                )
                 onMore?.()
               }}
               className="w-[22px] h-[22px] inline-flex items-center justify-center cursor-pointer"
@@ -717,18 +1074,28 @@ export default function DashPortfolio({
 
             <PortfolioMoreMenu
               open={menuOpen}
-              onClose={() => setMenuOpen(false)}
-              onAction={handleMenuAction}
-              exploreEnabled={exploreEnabled} 
+              onClose={() =>
+                setMenuOpen(false)
+              }
+              onAction={
+                handleMenuAction
+              }
+              exploreEnabled={
+                exploreEnabled
+              }
               icons={{
                 editName: PencilIcon,
-                linkAccessOnly: LinkIcon,
+                linkAccessOnly:
+                  LinkIcon,
                 duplicate: CopyIcon,
                 editUrl: PencilIcon,
                 export: ExportIcon,
                 delete: TrashIcon,
               }}
-              figmaOffset={{ rightPx: 325, topPx: 97 }}
+              figmaOffset={{
+                rightPx: 325,
+                topPx: 97,
+              }}
             />
           </div>
         </div>
@@ -738,11 +1105,17 @@ export default function DashPortfolio({
         open={deleteOpen}
         onClose={closeDelete}
         onCancel={closeDelete}
-        onConfirmDelete={handleConfirmDelete}
+        onConfirmDelete={
+          handleConfirmDelete
+        }
         isDeleting={isDeleting}
         title="Are you sure to delete?"
         subtitle="This portfolio cannot be recovered after deletion."
-        confirmLabel={isDeleting ? "Deleting..." : "Delete"}
+        confirmLabel={
+          isDeleting
+            ? "Deleting..."
+            : "Delete"
+        }
         cancelLabel="Cancel"
       />
 
@@ -750,7 +1123,9 @@ export default function DashPortfolio({
         open={exportOpen}
         onClose={closeExport}
         portfolioName={portfolioName}
-        thumbnailUrl={thumbnailUrl ?? null}
+        thumbnailUrl={
+          thumbnailUrl ?? null
+        }
         onPick={(type) => {
           closeExport()
           onExportPick?.(type)
@@ -759,7 +1134,9 @@ export default function DashPortfolio({
 
       <PortfolioSlugDuplicatePopup
         open={urlPopupOpen}
-        onClose={() => setUrlPopupOpen(false)}
+        onClose={() =>
+          setUrlPopupOpen(false)
+        }
         title={urlPopupTitle}
         message={urlPopupMessage}
         attemptedSlug={attemptedSlug}
@@ -767,7 +1144,9 @@ export default function DashPortfolio({
 
       <PortfolioNameDuplicatePopup
         open={namePopupOpen}
-        onClose={() => setNamePopupOpen(false)}
+        onClose={() =>
+          setNamePopupOpen(false)
+        }
         title={namePopupTitle}
         message={namePopupMessage}
         attemptedName={attemptedName}
