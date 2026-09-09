@@ -161,7 +161,7 @@ export async function POST(
       .from("konfolios")
       .update({
         status: "published",
-        explore_enabled: true,
+        //explore_enabled: true,
         published_at: publishedAt,
         updated_at: publishedAt,
       })
