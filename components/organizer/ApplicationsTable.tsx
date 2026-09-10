@@ -571,7 +571,7 @@ export default function ApplicationsTable({
               </colgroup>
 
               <thead className="sticky top-0 z-20">
-                <tr className="bg-zinc-50 text-zinc-600 border-b border-zinc-200">
+                <tr className="bg-zinc-50 text-black/40 dark:text-white/40 border-b border-zinc-200">
                   <th className="sticky left-0 z-30 bg-zinc-50 px-4 py-2.5 font-medium text-left">
                     #
                   </th>
@@ -620,7 +620,7 @@ export default function ApplicationsTable({
                                   prev === c.id ? null : c.id,
                                 )
                               }
-                              className="shrink-0 text-zinc-400 hover:text-zinc-700"
+                              className="shrink-0 text-black/40 dark:text-white/40 hover:text-zinc-700"
                             >
                               ⋮
                             </button>
@@ -724,7 +724,7 @@ export default function ApplicationsTable({
 
                   <th className="relative px-2 py-2.5 text-center">
                     <button
-                      className="h-8 w-8 rounded-full hover:bg-zinc-100 text-zinc-600"
+                      className="h-8 w-8 rounded-full hover:bg-zinc-100 text-black/40 dark:text-white/40"
                       aria-label="Add column"
                       onClick={() => setColumnPickerOpen((v) => !v)}
                     >
@@ -736,12 +736,12 @@ export default function ApplicationsTable({
                         ref={columnPickerRef}
                         className="absolute right-0 top-[44px] z-40 w-[240px] rounded-xl border border-zinc-200 bg-white p-2 text-left font-normal shadow-lg"
                       >
-                        <p className="px-2 py-1.5 text-xs text-zinc-400">
+                        <p className="px-2 py-1.5 text-xs text-black/40 dark:text-white/40">
                           Show question as column
                         </p>
                         <div className="max-h-[200px] overflow-y-auto">
                           {addableFields.length === 0 && (
-                            <p className="px-2 py-2 text-xs text-zinc-400">
+                            <p className="px-2 py-2 text-xs text-black/40 dark:text-white/40">
                               All questions are already columns.
                             </p>
                           )}
@@ -758,7 +758,7 @@ export default function ApplicationsTable({
                         </div>
 
                         <div className="my-2 border-t border-zinc-100" />
-                        <p className="px-2 py-1.5 text-xs text-zinc-400">
+                        <p className="px-2 py-1.5 text-xs text-black/40 dark:text-white/40">
                           New column
                         </p>
                         <button
@@ -786,14 +786,14 @@ export default function ApplicationsTable({
                         {hiddenColumns.length > 0 && (
                           <>
                             <div className="my-2 border-t border-zinc-100" />
-                            <p className="px-2 py-1.5 text-xs text-zinc-400">
+                            <p className="px-2 py-1.5 text-xs text-black/40 dark:text-white/40">
                               Hidden columns
                             </p>
                             <div className="max-h-[160px] overflow-y-auto">
                               {hiddenColumns.map((c) => (
                                 <div
                                   key={c.id}
-                                  className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-sm text-zinc-500"
+                                  className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-sm text-black/40 dark:text-white/40"
                                 >
                                   <span className="truncate">
                                     {c.label || "Divider"}
@@ -801,7 +801,7 @@ export default function ApplicationsTable({
                                   <button
                                     type="button"
                                     onClick={() => toggleColumnHidden(c.id)}
-                                    className="shrink-0 text-xs text-zinc-500 underline hover:text-zinc-800"
+                                    className="shrink-0 text-xs text-black/40 dark:text-white/40 underline hover:text-zinc-800"
                                   >
                                     Show
                                   </button>
@@ -822,7 +822,7 @@ export default function ApplicationsTable({
                   <tr>
                     <td
                       colSpan={totalColumnCount}
-                      className="px-4 py-10 text-zinc-500"
+                      className="px-4 py-10 text-black/40 dark:text-white/40"
                     >
                       Loading…
                     </td>
@@ -833,7 +833,7 @@ export default function ApplicationsTable({
                   <tr>
                     <td
                       colSpan={totalColumnCount}
-                      className="px-4 py-10 text-zinc-500"
+                      className="px-4 py-10 text-black/40 dark:text-white/40"
                     >
                       No applications yet.
                     </td>
@@ -903,15 +903,15 @@ export default function ApplicationsTable({
                         isHidden ? "opacity-50" : ""
                       }`}
                     >
-                      <td className="sticky left-0 z-10 bg-white px-4 py-2.5 text-zinc-500">
+                      <td className="sticky left-0 z-10 bg-white px-4 py-2.5 text-black/40 dark:text-white/40">
                         {idx + 1}
                       </td>
 
-                      <td className="px-4 py-2.5 text-zinc-500 whitespace-nowrap">
+                      <td className="px-4 py-2.5 text-black/40 dark:text-white/40 whitespace-nowrap">
                         {formatTimeSubmitted(a.createdAt)}
                       </td>
 
-                      <td className="px-4 py-2.5 text-zinc-400 truncate">
+                      <td className="px-4 py-2.5 text-black/40 dark:text-white/40 truncate">
                         {notes}
                       </td>
 
@@ -933,7 +933,7 @@ export default function ApplicationsTable({
                             <option value="accepted">Accepted</option>
                             <option value="rejected">Rejected</option>
                           </select>
-                          <span className="ml-[-18px] pointer-events-none text-zinc-400">
+                          <span className="ml-[-18px] pointer-events-none text-black/40 dark:text-white/40">
                             ▾
                           </span>
                         </div>
@@ -973,14 +973,14 @@ export default function ApplicationsTable({
                                   }}
                                 />
                               ) : (
-                                <div className="h-full w-full grid place-items-center text-[11px] text-zinc-500">
+                                <div className="h-full w-full grid place-items-center text-[11px] text-black/40 dark:text-white/40">
                                   —
                                 </div>
                               )}
                             </div>
                           </Link>
                         ) : (
-                          <div className="h-12 w-12 rounded-lg bg-zinc-200 overflow-hidden shadow-sm grid place-items-center text-[11px] text-zinc-500">
+                          <div className="h-12 w-12 rounded-lg bg-zinc-200 overflow-hidden shadow-sm grid place-items-center text-[11px] text-black/40 dark:text-white/40">
                             —
                           </div>
                         )}
@@ -1036,14 +1036,14 @@ export default function ApplicationsTable({
                         </td>
                       ))}
 
-                      <td className="px-2 py-2.5 text-center text-zinc-300" />
+                      <td className="px-2 py-2.5 text-center text-black/40 dark:text-white/40" />
 
                       <td
                         className="relative px-2 py-2.5 text-right"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <button
-                          className="h-8 w-8 rounded-full hover:bg-zinc-100 text-zinc-500"
+                          className="h-8 w-8 rounded-full hover:bg-zinc-100 text-black/40 dark:text-white/40"
                           aria-label="More actions"
                           onClick={() => {
                             setHighlightSubmenuOpen(false);
@@ -1070,7 +1070,7 @@ export default function ApplicationsTable({
                                 Open portfolio
                               </Link>
                             ) : (
-                              <span className="block px-3 py-2 text-sm text-zinc-300">
+                              <span className="block px-3 py-2 text-sm text-black/40 dark:text-white/40">
                                 Open portfolio
                               </span>
                             )}
@@ -1083,7 +1083,7 @@ export default function ApplicationsTable({
                               className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50"
                             >
                               Highlight
-                              <span className="text-zinc-400">
+                              <span className="text-black/40 dark:text-white/40">
                                 {highlightSubmenuOpen ? "︿" : "﹀"}
                               </span>
                             </button>
@@ -1150,7 +1150,7 @@ export default function ApplicationsTable({
             </table>
           </div>
 
-          <div className="flex items-center justify-between border-t border-zinc-100 px-4 py-3 text-sm text-zinc-500">
+          <div className="flex items-center justify-between border-t border-zinc-100 px-4 py-3 text-sm text-black/40 dark:text-white/40">
             <div className="flex items-center gap-3">
               <span>
                 Showing{" "}
@@ -1166,7 +1166,7 @@ export default function ApplicationsTable({
                 <button
                   type="button"
                   onClick={() => setShowHiddenRows((v) => !v)}
-                  className="text-zinc-500 underline hover:text-zinc-800"
+                  className="text-black/40 dark:text-white/40 underline hover:text-zinc-800"
                 >
                   {showHiddenRows
                     ? "Hide hidden rows"
@@ -1186,7 +1186,6 @@ export default function ApplicationsTable({
       </div>
       {selectedApp && (
         <ApplicationDrawer
-          key={selectedApp?.id}
           app={selectedApp}
           position={{
             index: apps.findIndex((a) => a.id === selectedApp.id),

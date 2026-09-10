@@ -71,7 +71,9 @@ export default function MerchTagsField({
           <span
             className={`text-[14px] truncate ${selected.length > 0 ? "text-[#262626]" : "text-[#A5A5A5]"}`}
           >
-            {selected.length > 0 ? selected.join(", ") : "Select"}
+            {selected.length > 0
+              ? `${selected.length} selected`
+              : "Select"}
           </span>
           <svg
             className="shrink-0"
@@ -125,25 +127,26 @@ export default function MerchTagsField({
         )}
       </div>
 
-      {pool.length > 0 && (
+      {selected.length > 0 && (
         <div className="flex flex-wrap gap-[10px] pt-[2px]">
-          {pool.map((tag) => {
-            const isSelected = selectedSet.has(keyifyMerchLabel(tag));
-            return (
-              <button
-                key={tag}
-                type="button"
-                onClick={() => toggleTag(tag)}
-                className={`h-[40px] px-[18px] rounded-full border text-[14px] transition-colors ${
-                  isSelected
-                    ? "border-[#262626] bg-[#262626] text-white"
-                    : "border-[#E9E9E9] bg-white text-[#262626] hover:border-[#C0BDB4]"
-                }`}
-              >
-                {tag}
-              </button>
-            );
-          })}
+          {selected.map((tag) => (
+            <button
+              key={tag}
+              type="button"
+              onClick={() => toggleTag(tag)}
+              className="h-[40px] pl-[18px] pr-[14px] rounded-full border border-[#262626] bg-[#262626] text-white text-[14px] flex items-center gap-[8px] transition-colors"
+            >
+              {tag}
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path
+                  d="M3 3l6 6M9 3l-6 6"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          ))}
         </div>
       )}
     </div>
