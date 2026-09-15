@@ -187,7 +187,7 @@ export async function POST(
 
     // This URL is only for Puppeteer thumbnail generation.
     // Keep using the working UUID explore route so thumbnails do not screenshot a 404.
-    const screenshotUrl = `${baseUrl}/explore/${konfolioId}?thumbnail=1&t=${encodeURIComponent(
+    const screenshotUrl = `${prettyPublicUrl}?thumbnail=1&t=${encodeURIComponent(
       publishedAt
     )}`
 
