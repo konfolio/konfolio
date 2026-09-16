@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { keyifyMerchLabel, normalizeMerchLabel } from "@/lib/merchCategories";
+import DeleteIcon from "@/components/icons/DeleteIcon";
 
 export default function MerchTagsField({
   label,
@@ -62,18 +63,21 @@ export default function MerchTagsField({
     <div className="flex flex-col gap-[8px]">
       {label}
 
+      {/* Trigger + browse/search dropdown. Colors, radius, and type match
+          the merch tag design system (components/onboarding/Tag.tsx,
+          components/my-portfolios/MerchTagPicker.tsx) — this field just
+          needs its own full-width trigger since an organizer's option
+          list can run longer than that widget's small anchored popover. */}
       <div className="relative" ref={wrapRef}>
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="w-full h-[48px] rounded-[10px] border border-[#E9E9E9] bg-white px-[14px] flex items-center justify-between text-left outline-none focus:border-[#C0BDB4]"
+          className="w-full h-[48px] rounded-[10px] border border-[#A5A5A5]/50 bg-white px-[14px] flex items-center justify-between text-left outline-none"
         >
           <span
-            className={`text-[14px] truncate ${selected.length > 0 ? "text-[#262626]" : "text-[#A5A5A5]"}`}
+            className={`font-inter font-normal text-[14px] leading-[140%] truncate ${selected.length > 0 ? "text-[#262626]" : "text-[#A5A5A5]"}`}
           >
-            {selected.length > 0
-              ? `${selected.length} selected`
-              : "Select"}
+            {selected.length > 0 ? `${selected.length} selected` : "Select"}
           </span>
           <svg
             className="shrink-0"
@@ -84,7 +88,7 @@ export default function MerchTagsField({
           >
             <path
               d="M4 6l4 4 4-4"
-              stroke="#C0BDB4"
+              stroke="#A5A5A5"
               strokeWidth="1.3"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -93,12 +97,12 @@ export default function MerchTagsField({
         </button>
 
         {open && (
-          <div className="absolute left-0 top-[52px] w-full max-w-[397px] bg-white border border-[#E9E9E9] rounded-[10px] shadow-[5px_5px_25px_rgba(0,0,0,0.08)] p-[10px] z-50">
+          <div className="absolute left-0 top-[52px] w-full max-w-[397px] bg-white rounded-[15px] shadow-[5px_5px_25px_rgba(0,0,0,0.05)] p-[10px] z-50">
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search"
-              className="w-full h-[40px] rounded-[8px] border border-[#E9E9E9] bg-white px-[10px] text-[14px] text-[#262626] outline-none focus:border-[#C0BDB4]"
+              className="w-full h-[40px] rounded-[10px] border border-[#A5A5A5]/50 bg-white px-[10px] font-inter font-normal text-[14px] leading-[140%] text-[#262626] outline-none placeholder:text-[#A5A5A5]"
             />
             <div className="max-h-[230px] overflow-y-auto pr-[4px] pt-[8px]">
               {visibleOptions.length === 0 ? (
@@ -115,7 +119,7 @@ export default function MerchTagsField({
                       key={opt}
                       type="button"
                       onClick={() => toggleTag(opt)}
-                      className={`w-full text-left px-[8px] py-[8px] rounded-[6px] hover:bg-[#F7F7F7] text-[14px] text-[#262626] ${isSelected ? "bg-[#F7F7F7]" : ""}`}
+                      className={`w-full text-left px-[8px] py-[8px] rounded-[8px] hover:bg-[#F7F7F7] font-inter text-[14px] leading-[140%] text-[#262626] ${isSelected ? "bg-[#F7F7F7]" : ""}`}
                     >
                       {opt}
                     </button>
@@ -128,24 +132,21 @@ export default function MerchTagsField({
       </div>
 
       {selected.length > 0 && (
-        <div className="flex flex-wrap gap-[10px] pt-[2px]">
+        <div className="flex flex-wrap items-center gap-[10px] pt-[2px]">
           {selected.map((tag) => (
-            <button
-              key={tag}
-              type="button"
-              onClick={() => toggleTag(tag)}
-              className="h-[40px] pl-[18px] pr-[14px] rounded-full border border-[#262626] bg-[#262626] text-white text-[14px] flex items-center gap-[8px] transition-colors"
-            >
-              {tag}
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                <path
-                  d="M3 3l6 6M9 3l-6 6"
-                  stroke="currentColor"
-                  strokeWidth="1.4"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
+            <div key={tag} className="relative group">
+              <div className="inline-flex h-[24px] items-center justify-center gap-[7px] whitespace-nowrap rounded-full border border-[#A5A5A5]/50 px-[22px] py-[7px] font-inter font-normal text-[14px] leading-[140%] text-[#262626]">
+                {tag}
+              </div>
+              <button
+                type="button"
+                aria-label={`Remove ${tag}`}
+                onClick={() => toggleTag(tag)}
+                className="absolute right-[-5.25px] top-1/2 z-10 flex h-[17.25px] w-[17.25px] -translate-y-1/2 items-center justify-center rounded-full bg-[#A5A5A5] text-white opacity-0 transition-opacity group-hover:opacity-100"
+              >
+                <DeleteIcon className="h-[13.42px] w-[13.42px] cursor-pointer" />
+              </button>
+            </div>
           ))}
         </div>
       )}

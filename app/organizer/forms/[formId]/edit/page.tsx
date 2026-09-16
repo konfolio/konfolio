@@ -430,10 +430,26 @@ export default function EditOrganizerFormPage() {
           body: JSON.stringify({ fields: DEFAULT_FIELDS }),
         });
       } else {
-        const withPage = formJson.form.fields.map((f: any) => ({
-          ...f,
-          page: f.page ?? 1,
-        }));
+        // Forms saved before merch fields got real default options were
+        // persisted with an empty `options: []` on "Your Merchandise" and
+        // never get touched by the zero-fields seed above again. Backfill
+        // the defaults here so existing forms pick them up too, but only
+        // when the organizer hasn't already set their own options.
+        const withPage = formJson.form.fields.map((f: any) => {
+          const withPageField = { ...f, page: f.page ?? 1 };
+          const isMerchField =
+            withPageField.field_key === "merchandise" ||
+            (typeof withPageField.label === "string" &&
+              withPageField.label.trim().toLowerCase() === "your merchandise");
+          if (
+            isMerchField &&
+            (!Array.isArray(withPageField.options) ||
+              withPageField.options.length === 0)
+          ) {
+            return { ...withPageField, options: [...MERCH_COMMON_DEFAULTS] };
+          }
+          return withPageField;
+        });
         setFields(withPage);
         await fetch(`/api/forms/${formId}`, {
           method: "PATCH",
