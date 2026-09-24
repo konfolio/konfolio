@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import GooglePlacesAutocomplete from "@/components/GooglePlacesAutocomplete";
 
 type Props = {
   open: boolean;
@@ -324,21 +325,10 @@ export default function CreateFormWizard({ open, onClose }: Props) {
 
           {step === 3 && (
             <div className="flex flex-1 flex-col items-center justify-center">
-              <input
-                value={data.location}
-                onChange={(e) => update("location", e.target.value)}
-                placeholder="Event Address"
-                className="bg-transparent text-center text-black outline-none"
-                style={{
-                  width: "395px",
-                  border: "none",
-                  borderBottom: "1px solid #b8b8b8",
-                  paddingBottom: "12px",
-                  fontSize: "24px",
-                  fontWeight: 400,
-                  color: "#111111",
-                }}
-              />
+              <GooglePlacesAutocomplete
+  value={data.location}
+  onChange={(address) => update("location", address)}
+/>
 
               <button
                 type="button"
