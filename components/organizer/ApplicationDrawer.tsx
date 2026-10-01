@@ -192,7 +192,7 @@ export default function ApplicationDrawer({
           <button
             onClick={onClose}
             aria-label="Back"
-            className="text-black/40 dark:text-white/40 hover:text-[#262626]"
+            className="text-black/40 hover:text-[#262626]"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path
@@ -212,7 +212,7 @@ export default function ApplicationDrawer({
             </svg>
           </button>
 
-          <span className="text-[14px] text-black/40 dark:text-white/40">
+          <span className="text-[14px] text-black/40">
             {formTitle || "Untitled Form"}
           </span>
           <span className="text-[14px] text-[#C0BDB4]">/</span>
@@ -226,7 +226,7 @@ export default function ApplicationDrawer({
                 className="h-full w-full object-cover"
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-[10px] text-black/40 dark:text-white/40">
+              <div className="flex h-full w-full items-center justify-center text-[10px] text-black/40">
                 {activeName.charAt(0).toUpperCase()}
               </div>
             )}
@@ -254,7 +254,7 @@ export default function ApplicationDrawer({
             </svg>
           </button>
 
-          <span className="ml-auto text-[13px] text-black/40 dark:text-white/40">
+          <span className="ml-auto text-[13px] text-black/40">
             {activeIndex + 1} / {feed.length}
           </span>
 
@@ -311,7 +311,7 @@ export default function ApplicationDrawer({
                       }}
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-[13px] text-black/40 dark:text-white/40">
+                    <div className="flex h-full w-full items-center justify-center text-[13px] text-black/40">
                       {nameLines(a).primaryName}
                     </div>
                   )}
@@ -411,7 +411,7 @@ function ApplicationFeedItem({
             trackAnalytics={false}
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-[13px] text-black/40 dark:text-white/40">
+          <div className="flex h-full w-full items-center justify-center text-[13px] text-black/40">
             No portfolio submitted
           </div>
         )}
@@ -420,7 +420,7 @@ function ApplicationFeedItem({
       {/* Meta panel */}
       <div className="flex w-[420px] shrink-0 flex-col overflow-y-auto border-l border-[#E9E9E9] bg-white">
         <div className="flex items-center justify-between border-b border-[#E9E9E9] px-[20px] py-[16px]">
-          <span className="text-[13px] text-black/40 dark:text-white/40">
+          <span className="text-[13px] text-black/40">
             {app.createdAt
               ? `Submitted on ${new Date(app.createdAt).toLocaleString(
                   undefined,
@@ -434,7 +434,7 @@ function ApplicationFeedItem({
                 )}`
               : ""}
           </span>
-          <span className="text-[13px] text-black/40 dark:text-white/40">{number}</span>
+          <span className="text-[13px] text-black/40">{number}</span>
         </div>
 
         <div className="flex flex-col gap-[20px] px-[20px] py-[20px]">
@@ -444,10 +444,10 @@ function ApplicationFeedItem({
               {primaryName}
             </h2>
             {personalLine && (
-              <p className="text-[13px] text-black/40 dark:text-white/40">{personalLine}</p>
+              <p className="text-[13px] text-black/40">{personalLine}</p>
             )}
             {app.applicant.location && (
-              <div className="flex items-center gap-[4px] text-[13px] text-black/40 dark:text-white/40">
+              <div className="flex items-center gap-[4px] text-[13px] text-black/40">
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
                   <path
                     d="M8 1.5a5 5 0 0 1 5 5c0 3.5-5 8.5-5 8.5S3 10 3 6.5a5 5 0 0 1 5-5Z"
@@ -466,7 +466,7 @@ function ApplicationFeedItem({
               </div>
             )}
             {app.applicant.email && (
-              <div className="flex items-center gap-[4px] text-[13px] text-black/40 dark:text-white/40">
+              <div className="flex items-center gap-[4px] text-[13px] text-black/40">
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
                   <rect
                     x="2"
@@ -508,7 +508,7 @@ function ApplicationFeedItem({
 
           {/* Notes */}
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[13px] text-black/40 dark:text-white/40">Notes</label>
+            <label className="text-[13px] text-black/40">Notes</label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
@@ -521,7 +521,7 @@ function ApplicationFeedItem({
 
           {/* Status */}
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[13px] text-black/40 dark:text-white/40">Status</label>
+            <label className="text-[13px] text-black/40">Status</label>
             <div className="relative w-fit">
               <select
                 value={status}
@@ -555,7 +555,7 @@ function ApplicationFeedItem({
           {/* Tag usage in form */}
           {app.tagUsage && app.tagUsage.length > 0 && (
             <div className="flex flex-col gap-[8px]">
-              <p className="text-[13px] text-black/40 dark:text-white/40">Tag usage in form</p>
+              <p className="text-[13px] text-black/40">Tag usage in form</p>
               <div className="flex flex-col gap-[8px]">
                 {app.tagUsage.map(({ tag, percentage }) => (
                   <div
@@ -563,7 +563,7 @@ function ApplicationFeedItem({
                     className="flex items-center justify-between rounded-[10px] border border-[#E9E9E9] px-[12px] py-[8px]"
                   >
                     <span className="text-[13px] text-[#262626]">{tag}</span>
-                    <span className="text-[13px] text-black/40 dark:text-white/40">
+                    <span className="text-[13px] text-black/40">
                       {percentage}%
                     </span>
                   </div>
@@ -575,7 +575,7 @@ function ApplicationFeedItem({
           {/* Found in other forms */}
           {otherApplications.length > 0 && (
             <div className="flex flex-col gap-[8px]">
-              <p className="text-[13px] text-black/40 dark:text-white/40">Found in other forms</p>
+              <p className="text-[13px] text-black/40">Found in other forms</p>
               <div className="flex flex-col gap-[6px]">
                 {otherApplications.map((a) => (
                   <div key={a.id} className="flex items-center justify-between">
@@ -588,7 +588,7 @@ function ApplicationFeedItem({
                           ? "bg-[#EAF3DE] text-[#3B6D11]"
                           : a.status === "rejected"
                             ? "bg-[#FCEBEB] text-[#A32D2D]"
-                            : "bg-[#F7F7F7] text-black/40 dark:text-white/40"
+                            : "bg-[#F7F7F7] text-black/40"
                       }`}
                     >
                       {OTHER_STATUS_LABELS[a.status] ?? a.status}
@@ -614,13 +614,13 @@ function ApplicationFeedItem({
 
             return (
               <div className="flex flex-col gap-[12px]">
-                <p className="text-[13px] text-black/40 dark:text-white/40">Form answers</p>
+                <p className="text-[13px] text-black/40">Form answers</p>
                 <div className="flex flex-col gap-[10px]">
                   {questionFields.map((f) => {
                     const val = answers[f.field_key];
                     return (
                       <div key={f.id} className="flex flex-col gap-[6px]">
-                        <span className="text-[13px] text-black/40 dark:text-white/40">
+                        <span className="text-[13px] text-black/40">
                           {f.label}
                         </span>
                         <div className="rounded-[10px] border border-[#E9E9E9] bg-[#FAFAFA] px-[12px] py-[8px] text-[13px] text-[#262626]">
