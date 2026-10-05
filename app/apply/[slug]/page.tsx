@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -38,10 +38,13 @@ type Form = {
 
 export default function ApplyFormPage() {
   const { slug } = useParams();
+
   const [currentPage, setCurrentPage] = useState(1);
   const [form, setForm] = useState<Form | null>(null);
   const [autofillData, setAutofillData] = useState<Record<string, any>>({});
-  const [selectedKonfolioId, setSelectedKonfolioId] = useState<string | null>(null);
+  const [selectedKonfolioId, setSelectedKonfolioId] = useState<string | null>(
+    null,
+  );
   const [selectedMerchTags, setSelectedMerchTags] = useState<string[]>([]);
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -55,15 +58,24 @@ export default function ApplyFormPage() {
     {},
   );
 
+  // Synchronous lock that prevents two submit requests from starting before
+  // React has time to re-render and disable the submit button.
+  const submitInFlightRef = useRef(false);
+
   const totalPages = form
     ? Math.max(...(form.fields ?? []).map((f: any) => f.page ?? 1), 1)
     : 1;
 
   const isFieldVisible = (field: any): boolean => {
     if (!field.conditional) return true;
+
     const { fieldKey, value } = field.conditional;
-    const dependsOn = form?.fields.find((f: any) => f.field_key === fieldKey);
+    const dependsOn = form?.fields.find(
+      (f: any) => f.field_key === fieldKey,
+    );
+
     if (!dependsOn) return true;
+
     return responses[dependsOn.id] === value;
   };
 
@@ -74,56 +86,80 @@ export default function ApplyFormPage() {
   useEffect(() => {
     const fetchForm = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
         const res = await fetch(`/api/public/forms/${slug}`, {
           headers: session?.access_token
             ? { Authorization: `Bearer ${session.access_token}` }
             : {},
         });
+
         if (!res.ok) {
           setNotFound(true);
           setLoading(false);
           return;
         }
+
         const json = await res.json();
+
         setForm(json.form);
 
         if (json.autofill && Object.keys(json.autofill).length > 0) {
-  setAutofillData(json.autofill);
+          setAutofillData(json.autofill);
 
-  setResponses((previousResponses) => ({
-    ...json.autofill,
-    ...previousResponses,
-  }));
-}
+          setResponses((previousResponses) => ({
+            ...json.autofill,
+            ...previousResponses,
+          }));
+        }
 
         const submitCheck = await fetch(
           `/api/forms/apply/check?formId=${json.form.id}`,
         );
+
         if (submitCheck.ok) {
           const { submitted } = await submitCheck.json();
-          if (submitted) setAlreadySubmitted(true);
+
+          if (submitted) {
+            setAlreadySubmitted(true);
+          }
         }
 
         const profileRes = await fetch(
           `/api/organizer/profile?organizerId=${json.form.organizer_id}`,
         );
+
         if (profileRes.ok) {
           const profileJson = await profileRes.json();
+
           setOrganizerLinks(profileJson.links ?? {});
           setOrganizerName(profileJson.organizationName ?? "");
         }
       } catch (err) {
+        console.error("Error loading application form:", err);
         setNotFound(true);
       } finally {
         setLoading(false);
       }
     };
+
     fetchForm();
   }, [slug]);
 
   const handleSubmit = async () => {
-    if (!form) return;
+    // Prevent duplicate requests, including clicks that happen before React
+    // has re-rendered after setSubmitting(true).
+    if (
+      !form ||
+      submitting ||
+      submitted ||
+      alreadySubmitted ||
+      submitInFlightRef.current
+    ) {
+      return;
+    }
 
     const missing = currentFields.filter(
       (f: any) =>
@@ -131,119 +167,212 @@ export default function ApplyFormPage() {
         (responses[f.id] === undefined ||
           responses[f.id] === "" ||
           responses[f.id] === null ||
-          (Array.isArray(responses[f.id]) && responses[f.id].length === 0)),
+          (Array.isArray(responses[f.id]) &&
+            responses[f.id].length === 0)),
     );
 
     if (missing.length > 0) {
       alert(
-        `Please fill in all required fields: ${missing.map((f: any) => f.label).join(", ")}`,
+        `Please fill in all required fields: ${missing
+          .map((f: any) => f.label)
+          .join(", ")}`,
       );
+
       return;
     }
 
+    // Lock immediately. Unlike React state, refs update synchronously.
+    submitInFlightRef.current = true;
     setSubmitting(true);
+
     try {
-      const { supabase } = await import("@/lib/supabaseClient");
       const uploadedResponses = { ...responses };
 
+      // Upload file responses before creating the application.
       for (const [fieldId, val] of Object.entries(responses)) {
-        if (val instanceof File) {
-          const ext = val.name.split(".").pop();
-          const path = `form-images/${form.id}/${fieldId}-${Date.now()}.${ext}`;
-          const { error } = await supabase.storage
-            .from("konfolio-images")
-            .upload(path, val, { upsert: true });
-          if (!error) {
-            const { data } = supabase.storage
-              .from("konfolio-images")
-              .getPublicUrl(path);
-            uploadedResponses[fieldId] = data.publicUrl;
-          }
+        if (!(val instanceof File)) {
+          continue;
         }
+
+        const rawExtension = val.name.includes(".")
+          ? val.name.split(".").pop()?.toLowerCase()
+          : undefined;
+
+        // Keep the storage filename safe.
+        const extension =
+          rawExtension?.replace(/[^a-z0-9]/g, "") || "bin";
+
+        // randomUUID prevents two applicants uploading to the same field at
+        // the same moment from accidentally receiving the same storage path.
+        const uniqueId = crypto.randomUUID();
+
+        const path =
+          `form-images/${form.id}/${fieldId}-${uniqueId}.${extension}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("konfolio-images")
+          .upload(path, val, {
+            upsert: false,
+          });
+
+        // Do NOT submit the application if a required file could not actually
+        // be stored. Otherwise the application could contain a missing File
+        // object or an incomplete answer.
+        if (uploadError) {
+          console.error(
+            `Failed to upload file for field ${fieldId}:`,
+            uploadError,
+          );
+
+          throw new Error(
+            `File upload failed: ${uploadError.message}`,
+          );
+        }
+
+        const { data } = supabase.storage
+          .from("konfolio-images")
+          .getPublicUrl(path);
+
+        if (!data?.publicUrl) {
+          throw new Error(
+            `Could not create URL for uploaded file: ${val.name}`,
+          );
+        }
+
+        uploadedResponses[fieldId] = data.publicUrl;
       }
 
+      // The backend performs the authoritative duplicate/capacity checks.
       const res = await fetch("/api/forms/apply", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           formId: form.id,
           responses: uploadedResponses,
           konfolioId: selectedKonfolioId,
         }),
       });
+
+      let json: any = null;
+
+      try {
+        json = await res.json();
+      } catch {
+        // The server may occasionally return a response without JSON.
+        // We still handle that cleanly below based on the HTTP status.
+      }
+
       if (res.ok) {
         setSubmitted(true);
-      } else {
-        const json = await res.json();
-        if (res.status === 409 || json.error === "already_submitted") {
-          setAlreadySubmitted(true);
-        } else if (res.status === 403) {
-          alert(json.error);
-        } else {
-          alert("Something went wrong. Please try again.");
-        }
+        return;
       }
+
+      if (
+        res.status === 409 ||
+        json?.error === "already_submitted"
+      ) {
+        setAlreadySubmitted(true);
+        return;
+      }
+
+      if (res.status === 403) {
+        alert(
+          json?.error ||
+            "This form is no longer accepting applications.",
+        );
+        return;
+      }
+
+      console.error("Application submission failed:", {
+        status: res.status,
+        response: json,
+      });
+
+      alert(
+        json?.error ||
+          "Something went wrong while submitting. Please try again.",
+      );
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Something went wrong. Please try again.");
+
+      const message =
+        err instanceof Error ? err.message : "";
+
+      if (message.startsWith("File upload failed:")) {
+        alert(
+          "One of your files could not be uploaded. Your application was not submitted. Please try again.",
+        );
+      } else {
+        alert(
+          "Something went wrong while submitting. Your application was not submitted. Please try again.",
+        );
+      }
     } finally {
+      submitInFlightRef.current = false;
       setSubmitting(false);
     }
   };
 
   const handleAutofill = (
-  data: Record<string, any>,
-  konfolioId: string,
-  merchTags: string[],
-) => {
-  if (!form) return;
+    data: Record<string, any>,
+    konfolioId: string,
+    merchTags: string[],
+  ) => {
+    if (!form) return;
 
-  console.log("AUTOFILL DATA RECEIVED:", data);
-  console.log("SELECTED KONFOLIO:", konfolioId);
+    console.log("AUTOFILL DATA RECEIVED:", data);
+    console.log("SELECTED KONFOLIO:", konfolioId);
 
-  const sourceData =
-    data?.responses ??
-    data?.autofill ??
-    data;
+    const sourceData =
+      data?.responses ??
+      data?.autofill ??
+      data;
 
-  const mappedResponses: Record<string, any> = {};
+    const mappedResponses: Record<string, any> = {};
 
-  for (const field of form.fields ?? []) {
-    const fieldKey =
-      (field as any).field_key ??
-      (field as any).fieldKey;
+    for (const field of form.fields ?? []) {
+      const fieldKey =
+        (field as any).field_key ??
+        (field as any).fieldKey;
 
-    let value = sourceData?.[field.id];
+      let value = sourceData?.[field.id];
 
-    if (value === undefined && fieldKey) {
-      value = sourceData?.[fieldKey];
+      if (value === undefined && fieldKey) {
+        value = sourceData?.[fieldKey];
+      }
+
+      if (
+        value !== undefined &&
+        value !== null &&
+        value !== ""
+      ) {
+        mappedResponses[field.id] = value;
+      }
     }
 
-    if (
-      value !== undefined &&
-      value !== null &&
-      value !== ""
-    ) {
-      mappedResponses[field.id] = value;
-    }
-  }
+    console.log(
+      "MAPPED AUTOFILL RESPONSES:",
+      mappedResponses,
+    );
 
-  console.log("MAPPED AUTOFILL RESPONSES:", mappedResponses);
+    setResponses((previousResponses) => ({
+      ...previousResponses,
+      ...mappedResponses,
+    }));
 
-  setResponses((previousResponses) => ({
-    ...previousResponses,
-    ...mappedResponses,
-  }));
-
-  setSelectedKonfolioId(konfolioId);
-  setSelectedMerchTags(merchTags ?? []);
-  setAutofillOpen(false);
-};
+    setSelectedKonfolioId(konfolioId);
+    setSelectedMerchTags(merchTags ?? []);
+    setAutofillOpen(false);
+  };
 
   if (loading) {
     return (
       <main className="min-h-screen bg-[#F7F7F7] flex items-center justify-center">
-        <p className="text-[14px] text-[#A5A5A5]">Loading...</p>
+        <p className="text-[14px] text-[#A5A5A5]">
+          Loading...
+        </p>
       </main>
     );
   }
@@ -251,7 +380,9 @@ export default function ApplyFormPage() {
   if (notFound) {
     return (
       <main className="min-h-screen bg-[#F7F7F7] flex items-center justify-center">
-        <p className="text-[14px] text-[#A5A5A5]">Form not found.</p>
+        <p className="text-[14px] text-[#A5A5A5]">
+          Form not found.
+        </p>
       </main>
     );
   }
@@ -262,6 +393,7 @@ export default function ApplyFormPage() {
     return (
       <main className="min-h-screen bg-[#F7F7F7]">
         <Navbar />
+
         <div className="w-full flex justify-center px-[16px] sm:px-[40px] py-[40px]">
           <div className="w-full max-w-[720px] flex flex-col gap-[24px]">
             <FormHeader form={form} />
@@ -270,16 +402,19 @@ export default function ApplyFormPage() {
               <p className="text-[12px] text-[#A5A5A5] self-start">
                 Already Submitted
               </p>
+
               <h2 className="text-[18px] font-medium text-[#262626] text-center mt-[8px]">
                 You already submitted to this form.
               </h2>
+
               <p className="text-[13px] text-[#A5A5A5] text-center">
-                If this is incorrect, check with event organizer or contact
-                Konfolio team.
+                If this is incorrect, check with event organizer or
+                contact Konfolio team.
               </p>
             </div>
           </div>
         </div>
+
         <Footer />
       </main>
     );
@@ -289,9 +424,11 @@ export default function ApplyFormPage() {
     return (
       <main className="min-h-screen bg-[#F7F7F7]">
         <Navbar />
+
         <div className="w-full flex justify-center px-[16px] sm:px-[40px] py-[40px]">
           <div className="w-full max-w-[720px]">
             <FormHeader form={form} />
+
             <StatusBanner
               formTitle={form.title}
               organizerName={organizerName}
@@ -300,6 +437,7 @@ export default function ApplyFormPage() {
             />
           </div>
         </div>
+
         <Footer />
       </main>
     );
@@ -309,24 +447,32 @@ export default function ApplyFormPage() {
     return (
       <main className="min-h-screen bg-[#F7F7F7]">
         <Navbar />
+
         <div className="w-full flex justify-center px-[16px] sm:px-[40px] py-[40px]">
           <div className="w-full max-w-[720px] flex flex-col gap-[24px]">
             <FormHeader form={form} />
+
             <div className="w-full bg-white rounded-[16px] border-[0.5px] border-[#E9E9E9] px-[32px] py-[32px] flex flex-col gap-[8px]">
               <p className="text-[16px] font-medium text-[#262626]">
                 Application Submitted!
               </p>
+
               <p className="text-[14px] text-[#A5A5A5]">
                 Your application has been successfully submitted to{" "}
-                <span className="text-[#262626] font-medium">{form.title}</span>
+                <span className="text-[#262626] font-medium">
+                  {form.title}
+                </span>
                 . The organizer will review it and get back to you.
               </p>
 
-              {(organizerName || Object.keys(organizerLinks).length > 0) && (
+              {(organizerName ||
+                Object.keys(organizerLinks).length > 0) && (
                 <>
                   <p className="text-[13px] text-[#A5A5A5] mt-[8px]">
-                    Stay updated with {organizerName || "the organizer"} here:
+                    Stay updated with{" "}
+                    {organizerName || "the organizer"} here:
                   </p>
+
                   <div className="flex items-center gap-[14px] mt-[4px]">
                     {organizerLinks.website && (
                       <Link
@@ -350,6 +496,7 @@ export default function ApplyFormPage() {
                             stroke="currentColor"
                             strokeWidth="1.3"
                           />
+
                           <path
                             d="M1.5 9h15M9 1.5C9 1.5 6.5 4.5 6.5 9s2.5 7.5 2.5 7.5M9 1.5C9 1.5 11.5 4.5 11.5 9S9 16.5 9 16.5"
                             stroke="currentColor"
@@ -359,6 +506,7 @@ export default function ApplyFormPage() {
                         </svg>
                       </Link>
                     )}
+
                     {organizerLinks.instagram && (
                       <Link
                         href={organizerLinks.instagram}
@@ -381,6 +529,7 @@ export default function ApplyFormPage() {
                             stroke="currentColor"
                             strokeWidth="1.3"
                           />
+
                           <circle
                             cx="9"
                             cy="9"
@@ -388,10 +537,17 @@ export default function ApplyFormPage() {
                             stroke="currentColor"
                             strokeWidth="1.3"
                           />
-                          <circle cx="13" cy="5" r="0.75" fill="currentColor" />
+
+                          <circle
+                            cx="13"
+                            cy="5"
+                            r="0.75"
+                            fill="currentColor"
+                          />
                         </svg>
                       </Link>
                     )}
+
                     {organizerLinks.x && (
                       <Link
                         href={organizerLinks.x}
@@ -414,6 +570,7 @@ export default function ApplyFormPage() {
                         </svg>
                       </Link>
                     )}
+
                     {organizerLinks.facebook && (
                       <Link
                         href={organizerLinks.facebook}
@@ -443,6 +600,7 @@ export default function ApplyFormPage() {
             </div>
           </div>
         </div>
+
         <Footer />
       </main>
     );
@@ -451,15 +609,22 @@ export default function ApplyFormPage() {
   return (
     <main className="min-h-screen bg-[#F7F7F7]">
       <Navbar />
+
       <div className="w-full flex justify-center px-[16px] sm:px-[40px] py-[40px]">
         <div className="w-full max-w-[720px] flex flex-col gap-[32px]">
           <div className="flex items-start justify-between gap-[16px]">
             <FormHeader form={form} />
+
             <button
               onClick={() => setAutofillOpen(true)}
               className="md:hidden flex items-center gap-[6px] h-[34px] px-[16px] rounded-full bg-[#262626] text-[13px] text-white hover:opacity-80 shrink-0 mt-[6px]"
             >
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 16 16"
+                fill="none"
+              >
                 <path
                   d="M3 8h10M8 3l5 5-5 5"
                   stroke="currentColor"
@@ -468,27 +633,34 @@ export default function ApplyFormPage() {
                   strokeLinejoin="round"
                 />
               </svg>
+
               Autofill
             </button>
           </div>
 
-          <AutofillPromptCard onClick={() => setAutofillOpen(true)} />
+          <AutofillPromptCard
+            onClick={() => setAutofillOpen(true)}
+          />
 
-          {selectedKonfolioId && selectedMerchTags.length > 0 && (
-            <div className="flex flex-col gap-[8px]">
-              <p className="text-[13px] text-[#A5A5A5]">What you sell</p>
-              <div className="flex flex-wrap gap-[8px]">
-                {selectedMerchTags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="inline-flex items-center h-[24px] px-[12px] rounded-full border border-[#E9E9E9] text-[13px] text-[#262626]"
-                  >
-                    {tag}
-                  </span>
-                ))}
+          {selectedKonfolioId &&
+            selectedMerchTags.length > 0 && (
+              <div className="flex flex-col gap-[8px]">
+                <p className="text-[13px] text-[#A5A5A5]">
+                  What you sell
+                </p>
+
+                <div className="flex flex-wrap gap-[8px]">
+                  {selectedMerchTags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="inline-flex items-center h-[24px] px-[12px] rounded-full border border-[#E9E9E9] text-[13px] text-[#262626]"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {autofillOpen && (
             <AutofillDrawer
@@ -501,14 +673,20 @@ export default function ApplyFormPage() {
 
           {totalPages > 1 && (
             <div className="flex items-center gap-[8px]">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              {Array.from(
+                { length: totalPages },
+                (_, i) => i + 1,
+              ).map((p) => (
                 <div
                   key={p}
                   className={`w-[8px] h-[8px] rounded-full ${
-                    p === currentPage ? "bg-[#262626]" : "bg-[#E9E9E9]"
+                    p === currentPage
+                      ? "bg-[#262626]"
+                      : "bg-[#E9E9E9]"
                   }`}
                 />
               ))}
+
               <span className="text-[12px] text-[#A5A5A5] ml-[4px]">
                 Page {currentPage} of {totalPages}
               </span>
@@ -523,7 +701,10 @@ export default function ApplyFormPage() {
                   field={field}
                   value={responses[field.id]}
                   onChange={(val) =>
-                    setResponses((prev) => ({ ...prev, [field.id]: val }))
+                    setResponses((prev) => ({
+                      ...prev,
+                      [field.id]: val,
+                    }))
                   }
                 />
               ))}
@@ -537,12 +718,16 @@ export default function ApplyFormPage() {
           <div className="flex items-center gap-[12px]">
             {currentPage > 1 && (
               <button
-                onClick={() => setCurrentPage((p) => p - 1)}
-                className="h-[44px] px-[24px] rounded-full border border-[#E9E9E9] text-[14px] text-[#262626] hover:opacity-70"
+                onClick={() =>
+                  setCurrentPage((p) => p - 1)
+                }
+                disabled={submitting}
+                className="h-[44px] px-[24px] rounded-full border border-[#E9E9E9] text-[14px] text-[#262626] hover:opacity-70 disabled:opacity-50"
               >
                 ← Back
               </button>
             )}
+
             {currentPage < totalPages ? (
               <button
                 onClick={() => {
@@ -555,30 +740,46 @@ export default function ApplyFormPage() {
                         (Array.isArray(responses[f.id]) &&
                           responses[f.id].length === 0)),
                   );
+
                   if (missing.length > 0) {
                     alert(
-                      `Please fill in: ${missing.map((f: any) => f.label).join(", ")}`,
+                      `Please fill in: ${missing
+                        .map((f: any) => f.label)
+                        .join(", ")}`,
                     );
+
                     return;
                   }
+
                   setCurrentPage((p) => p + 1);
                 }}
-                className="h-[44px] px-[32px] rounded-full bg-[#262626] text-[14px] text-white hover:opacity-80"
+                disabled={submitting}
+                className="h-[44px] px-[32px] rounded-full bg-[#262626] text-[14px] text-white hover:opacity-80 disabled:opacity-50"
               >
                 Next →
               </button>
             ) : (
               <button
                 onClick={handleSubmit}
-                disabled={submitting}
-                className="h-[44px] px-[32px] rounded-full bg-[#262626] text-[14px] text-white hover:opacity-80 disabled:opacity-50"
+                disabled={
+                  submitting ||
+                  submitted ||
+                  alreadySubmitted
+                }
+                aria-busy={submitting}
+                className="h-[44px] px-[32px] rounded-full bg-[#262626] text-[14px] text-white hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {submitting ? "Submitting..." : "Submit Application"}
+                {submitting
+                  ? "Submitting..."
+                  : submitted
+                    ? "Application Submitted"
+                    : "Submit Application"}
               </button>
             )}
           </div>
         </div>
       </div>
+
       <Footer />
     </main>
   );
@@ -586,41 +787,76 @@ export default function ApplyFormPage() {
 
 function formatEventDate(dateStr: string) {
   const [y, m, d] = dateStr.split("-").map(Number);
-  if (!y || !m || !d) return dateStr;
-  return new Date(y, m - 1, d).toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+
+  if (!y || !m || !d) {
+    return dateStr;
+  }
+
+  return new Date(y, m - 1, d).toLocaleDateString(
+    "en-US",
+    {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    },
+  );
 }
 
-function formatEventDateRange(start: string, end?: string | null) {
-  if (!end || end === start) return formatEventDate(start);
+function formatEventDateRange(
+  start: string,
+  end?: string | null,
+) {
+  if (!end || end === start) {
+    return formatEventDate(start);
+  }
 
   const [sy, sm, sd] = start.split("-").map(Number);
   const [ey, em, ed] = end.split("-").map(Number);
+
   if (!sy || !sm || !sd || !ey || !em || !ed) {
     return `${start} - ${end}`;
   }
 
-  const startMonth = new Date(sy, sm - 1, sd).toLocaleDateString("en-US", {
-    month: "long",
-  });
-  const endMonth = new Date(ey, em - 1, ed).toLocaleDateString("en-US", {
+  const startMonth = new Date(
+    sy,
+    sm - 1,
+    sd,
+  ).toLocaleDateString("en-US", {
     month: "long",
   });
 
-  if (sy === ey && sm === em) return `${startMonth} ${sd} - ${ed} ${ey}`;
-  if (sy === ey) return `${startMonth} ${sd} - ${endMonth} ${ed} ${ey}`;
+  const endMonth = new Date(
+    ey,
+    em - 1,
+    ed,
+  ).toLocaleDateString("en-US", {
+    month: "long",
+  });
+
+  if (sy === ey && sm === em) {
+    return `${startMonth} ${sd} - ${ed} ${ey}`;
+  }
+
+  if (sy === ey) {
+    return `${startMonth} ${sd} - ${endMonth} ${ed} ${ey}`;
+  }
+
   return `${startMonth} ${sd} ${sy} - ${endMonth} ${ed} ${ey}`;
 }
 
 function FormHeader({ form }: { form: Form }) {
-  const isRecurring = Boolean(form.is_recurring ?? form.isRecurring);
-  const recurrenceText = form.recurrence_text ?? form.recurrenceText ?? "";
+  const isRecurring = Boolean(
+    form.is_recurring ?? form.isRecurring,
+  );
+
+  const recurrenceText =
+    form.recurrence_text ??
+    form.recurrenceText ??
+    "";
 
   const shouldShowDateInfo =
-    (isRecurring && recurrenceText.trim()) || form.event_date_start;
+    (isRecurring && recurrenceText.trim()) ||
+    form.event_date_start;
 
   return (
     <div className="flex flex-col gap-[12px]">
@@ -636,11 +872,18 @@ function FormHeader({ form }: { form: Form }) {
         </div>
       )}
 
-      <h1 className="text-[28px] font-medium text-[#262626]">{form.title}</h1>
+      <h1 className="text-[28px] font-medium text-[#262626]">
+        {form.title}
+      </h1>
 
       {shouldShowDateInfo && (
         <div className="flex items-center gap-[8px] text-[14px] text-[#A5A5A5]">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 16 16"
+            fill="none"
+          >
             <rect
               x="2"
               y="3"
@@ -650,6 +893,7 @@ function FormHeader({ form }: { form: Form }) {
               stroke="currentColor"
               strokeWidth="1.2"
             />
+
             <path
               d="M5 2v2M11 2v2M2 7h12"
               stroke="currentColor"
@@ -657,23 +901,33 @@ function FormHeader({ form }: { form: Form }) {
               strokeLinecap="round"
             />
           </svg>
+
           <span>
             {isRecurring
               ? recurrenceText
               : form.event_date_start &&
-                formatEventDateRange(form.event_date_start, form.event_date_end)}
+                formatEventDateRange(
+                  form.event_date_start,
+                  form.event_date_end,
+                )}
           </span>
         </div>
       )}
 
       {form.event_address && (
         <div className="flex items-center gap-[8px] text-[14px] text-[#A5A5A5]">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 16 16"
+            fill="none"
+          >
             <path
               d="M8 1.5a5 5 0 0 1 5 5c0 3.5-5 8.5-5 8.5S3 10 3 6.5a5 5 0 0 1 5-5Z"
               stroke="currentColor"
               strokeWidth="1.2"
             />
+
             <circle
               cx="8"
               cy="6.5"
@@ -682,22 +936,24 @@ function FormHeader({ form }: { form: Form }) {
               strokeWidth="1.2"
             />
           </svg>
+
           <span>{form.event_address}</span>
         </div>
       )}
 
-      {Array.isArray(form.tags) && form.tags.length > 0 && (
-        <div className="flex flex-wrap gap-[8px]">
-          {form.tags.map((tag) => (
-            <span
-              key={tag}
-              className="inline-flex items-center h-[24px] px-[12px] rounded-full border border-[#E9E9E9] text-[13px] text-[#262626]"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
+      {Array.isArray(form.tags) &&
+        form.tags.length > 0 && (
+          <div className="flex flex-wrap gap-[8px]">
+            {form.tags.map((tag) => (
+              <span
+                key={tag}
+                className="inline-flex items-center h-[24px] px-[12px] rounded-full border border-[#E9E9E9] text-[13px] text-[#262626]"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
 
       {form.description && (
         <p className="text-[14px] text-[#262626] mt-[4px]">

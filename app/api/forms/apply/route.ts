@@ -3,122 +3,183 @@ import { createClient } from "@supabase/supabase-js";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 function createAdminClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !serviceRoleKey) {
+    throw new Error(
+      "Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY"
+    );
+  }
+
+  return createClient(url, serviceRoleKey);
 }
+
+type SubmissionResult = {
+  ok: boolean;
+  code:
+    | "submitted"
+    | "already_submitted"
+    | "form_not_found"
+    | "form_closed"
+    | "form_full"
+    | "konfolio_required";
+  applicationId?: string;
+};
 
 export async function POST(req: Request) {
   try {
+    // --------------------------------------------------------
+    // Parse request
+    // --------------------------------------------------------
 
-    const { formId, responses, konfolioId: providedKonfolioId } = await req.json();
-    if (!formId) return NextResponse.json({ error: "Missing formId" }, { status: 400 });
+    const body = await req.json().catch(() => null);
+
+    if (!body || typeof body !== "object") {
+      return NextResponse.json(
+        { error: "Invalid request body" },
+        { status: 400 }
+      );
+    }
+
+    const {
+      formId,
+      responses,
+      konfolioId: providedKonfolioId,
+    } = body;
+
+    if (!formId) {
+      return NextResponse.json(
+        { error: "Missing formId" },
+        { status: 400 }
+      );
+    }
+
+    // --------------------------------------------------------
+    // Authenticate applicant
+    // --------------------------------------------------------
 
     const authSupabase = await createSupabaseServerClient();
-    const { data: { user } } = await authSupabase.auth.getUser();
 
-    if (!user) {
-      return NextResponse.json({ error: "You must be logged in to apply." }, { status: 401 });
+    const {
+      data: { user },
+      error: authError,
+    } = await authSupabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: "You must be logged in to apply." },
+        { status: 401 }
+      );
     }
+
+    // --------------------------------------------------------
+    // Use server-only service-role client
+    // --------------------------------------------------------
 
     const supabase = createAdminClient();
 
-    const { data: form, error: formErr } = await supabase
-    .from("alley_forms")
-    .select("organizer_id, application_limit, is_open, status")
-    .eq("id", formId)
-    .single();
+    // --------------------------------------------------------
+    // IMPORTANT:
+    //
+    // Capacity check, duplicate protection, form locking,
+    // Konfolio lookup, and INSERT now happen inside one
+    // database transaction.
+    // --------------------------------------------------------
 
-    if (formErr || !form) {
-      return NextResponse.json({ error: "Form not found" }, { status: 404 });
-    }
+    const { data, error } = await supabase.rpc(
+      "submit_alley_application",
+      {
+        p_form_id: formId,
+        p_applicant_id: user.id,
+        p_provided_konfolio_id: providedKonfolioId ?? null,
+        p_answers:
+          responses && typeof responses === "object"
+            ? responses
+            : {},
+      }
+    );
 
-    if (form.status === "closed" || form.is_open === false) {
+    if (error) {
+      console.error("Application submission RPC failed:", error);
+
       return NextResponse.json(
-        { error: "This form is no longer accepting applications." },
-        { status: 403 },
+        { error: "Unable to submit application. Please try again." },
+        { status: 500 }
       );
     }
 
-    const { count } = await supabase
-      .from("alley_applications")
-      .select("*", { count: "exact", head: true })
-      .eq("form_id", formId);
+    const result = data as SubmissionResult;
 
-    if (form.application_limit && count != null && count >= form.application_limit) {
-      await supabase
-        .from("alley_forms")
-        .update({ is_open: false, status: "closed" })
-        .eq("id", formId);
+    // --------------------------------------------------------
+    // Translate database results into API responses
+    // --------------------------------------------------------
+
+    switch (result.code) {
+      case "submitted":
+        return NextResponse.json({
+          success: true,
+          applicationId: result.applicationId,
+        });
+
+      case "already_submitted":
+        return NextResponse.json(
+          { error: "already_submitted" },
+          { status: 409 }
+        );
+
+      case "form_not_found":
+        return NextResponse.json(
+          { error: "Form not found" },
+          { status: 404 }
+        );
+
+      case "form_closed":
+        return NextResponse.json(
+          {
+            error: "This form is no longer accepting applications.",
+          },
+          { status: 403 }
+        );
+
+      case "form_full":
+        return NextResponse.json(
+          {
+            error: "This form has reached its application limit.",
+          },
+          { status: 403 }
+        );
+
+      case "konfolio_required":
+        return NextResponse.json(
+          {
+            error: "You need a published konfolio to apply.",
+          },
+          { status: 403 }
+        );
+
+      default:
+        console.error(
+          "Unexpected submit_alley_application response:",
+          result
+        );
+
+        return NextResponse.json(
+          { error: "Unable to submit application." },
+          { status: 500 }
+        );
     }
-
-    // Check duplicate submission
-    const { data: existing } = await supabase
-      .from("alley_applications")
-      .select("id")
-      .eq("form_id", formId)
-      .eq("applicant_id", user.id)
-      .maybeSingle();
-
-    if (existing) {
-      return NextResponse.json({ error: "already_submitted" }, { status: 409 });
-    }
-
-    // Get user role
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-
-    const role = profile?.role;
-
-    // Use the konfolio the user selected during autofill, or fall back to most recent
-    let konfolio: { id: string } | null = null;
-    if (providedKonfolioId) {
-      const { data } = await supabase
-        .from("konfolios")
-        .select("id")
-        .eq("id", providedKonfolioId)
-        .eq("user_id", user.id)
-        .maybeSingle();
-      konfolio = data;
-    }
-    if (!konfolio) {
-      const { data } = await supabase
-        .from("konfolios")
-        .select("id")
-        .eq("user_id", user.id)
-        .order("updated_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      konfolio = data;
-    }
-
-    // Artists must have a konfolio
-    if (role === "artist" && !konfolio) {
-      return NextResponse.json(
-        { error: "You need a published konfolio to apply." },
-        { status: 403 }
-      );
-    }
-
-    const { error } = await supabase
-      .from("alley_applications")
-      .insert({
-        form_id: formId,
-        organizer_id: form.organizer_id,
-        applicant_id: user.id,
-        konfolio_id: konfolio?.id ?? null,
-        answers: responses,
-        status: "pending",
-      });
-
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
-    return NextResponse.json({ success: true });
   } catch (err: unknown) {
-    return NextResponse.json({ error: (err as Error)?.message || "Server error" }, { status: 500 });
+    console.error("Application submission failed:", err);
+
+    return NextResponse.json(
+      {
+        error:
+          err instanceof Error
+            ? err.message
+            : "Server error",
+      },
+      { status: 500 }
+    );
   }
 }
