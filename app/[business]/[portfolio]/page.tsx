@@ -1,110 +1,126 @@
-// app/[business]/[portfolio]/page.tsx
+import { notFound, redirect } from "next/navigation";
 
-import { notFound, redirect } from "next/navigation"
-import { createClient } from "@supabase/supabase-js"
+import PublicKonfolioView from "@/components/public/PublicKonfolioView";
+import ApplyFormClient from "@/components/forms/ApplyFormClient";
 
-import PublicKonfolioView from "@/components/public/PublicKonfolioView"
+import {
+  createPublicFormsAdminClient,
+  findOrganizer,
+} from "@/lib/publicFormLookup";
 
-type Template = "square" | "portrait"
+import { publicFormUrl } from "@/lib/publicFormUrls";
 
-function slugify(input: string): string {
-  return (input || "")
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+function slugify(input: string) {
+  return input
     .toLowerCase()
     .trim()
     .replace(/['"]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "")
+    .replace(/^-|-$/g, "");
 }
-
-export const runtime = "nodejs"
 
 export default async function PublicKonfolioPage({
   params,
 }: {
-  params: Promise<{ business: string; portfolio: string }>
+  params: Promise<{
+    business: string;
+    portfolio: string;
+  }>;
 }) {
-  const { business, portfolio } = await params
+  const { business, portfolio } = await params;
 
-  const businessSlug = slugify(business)
-  const portfolioSlug = slugify(portfolio)
+  const businessSlug = slugify(business);
+  const itemSlug = slugify(portfolio);
 
-  if (!businessSlug || !portfolioSlug) {
-    return notFound()
+  if (!businessSlug || !itemSlug) {
+    notFound();
   }
 
-  // If the portfolio slug matches the business slug,
-  // use the shorter canonical URL.
-  if (businessSlug === portfolioSlug) {
-    redirect(`/${businessSlug}`)
-  }
+  const db = createPublicFormsAdminClient();
 
-  console.log("Pretty URL route hit:", {
-    business,
-    portfolio,
+  const owner = await findOrganizer(
+    db,
     businessSlug,
-    portfolioSlug,
-  })
-
-  const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
-
-  const { data: owner, error: ownerErr } = await supabaseAdmin
-    .from("profiles")
-    .select("id, business_name, business_slug")
-    .eq("business_slug", businessSlug)
-    .maybeSingle()
-
-  if (ownerErr) {
-    console.error("Profile lookup error:", ownerErr)
-    return notFound()
-  }
+  );
 
   if (!owner) {
-    console.warn("No profile found for business slug:", businessSlug)
-    return notFound()
+    notFound();
   }
 
-  // IMPORTANT:
-  // Only require status = published.
-  // Link Access Only Konfolios will have explore_enabled = false,
-  // but should still be accessible by their direct URL.
-  const { data: k, error: kErr } = await supabaseAdmin
-    .from("konfolios")
-    .select(
-      "id, user_id, template, status, content, portfolio_name, portfolio_slug, explore_enabled"
-    )
-    .eq("user_id", owner.id)
-    .eq("portfolio_slug", portfolioSlug)
-    .eq("status", "published")
-    .maybeSingle()
+  const [
+    { data: form, error: formError },
+    { data: k, error: portfolioError },
+  ] = await Promise.all([
+    db
+      .from("alley_forms")
+      .select("id, slug")
+      .eq("organizer_id", owner.id)
+      .eq("slug", itemSlug)
+      .in("status", ["receiving", "closed"])
+      .maybeSingle(),
 
-  if (kErr) {
-    console.error("Konfolio lookup error:", kErr)
-    return notFound()
+    db
+      .from("konfolios")
+      .select("id, template, content")
+      .eq("user_id", owner.id)
+      .eq("portfolio_slug", itemSlug)
+      .eq("status", "published")
+      .maybeSingle(),
+  ]);
+
+  if (formError) throw formError;
+  if (portfolioError) throw portfolioError;
+
+  if (form && k) {
+    throw new Error(
+      "Conflicting public URL: apply the form URL migration",
+    );
+  }
+
+  if (form) {
+    if (
+      business !== businessSlug ||
+      portfolio !== itemSlug
+    ) {
+      redirect(
+        publicFormUrl(businessSlug, itemSlug),
+      );
+    }
+
+    return (
+      <ApplyFormClient
+        key={form.id}
+        organizerSlug={businessSlug}
+        formSlug={itemSlug}
+      />
+    );
   }
 
   if (!k) {
-    console.warn("No published konfolio found:", {
-      ownerId: owner.id,
-      businessSlug,
-      portfolioSlug,
-    })
-
-    return notFound()
+    notFound();
   }
 
-  const template: Template =
-    (k.template as any) === "portrait" ? "portrait" : "square"
+  if (businessSlug === itemSlug) {
+    redirect(`/${businessSlug}`);
+  }
 
+  // Published Link Access Only portfolios remain accessible.
   return (
     <PublicKonfolioView
       konfolioId={k.id}
-      template={template}
+      template={
+        k.template === "portrait"
+          ? "portrait"
+          : "square"
+      }
       content={k.content ?? {}}
-      ownerBusinessName={String(owner.business_name ?? "")}
+      ownerBusinessName={String(
+        owner.business_name ?? "",
+      )}
     />
-  )
+  );
 }
