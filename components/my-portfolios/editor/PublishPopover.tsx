@@ -358,7 +358,7 @@ export default function PublishPopover({
                   </span>
 
                   <span className="text-[12px] leading-[130%] text-[#262626]">
-                    {isTogglingExploreSearch ? "Saving..." : "Allow Explore Search"}
+                    {isTogglingExploreSearch ? "Saving..." : "Allow Public View"}
                   </span>
                 </button>
               </div>

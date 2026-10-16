@@ -65,7 +65,7 @@ export default function PortfolioMoreMenu({
 
   if (!open) return null
 
-  const linkAccessLabel = exploreEnabled ? "Link Access Only" : "Show in Explore"
+  const linkAccessLabel = exploreEnabled ? "Link Access Only" : "Public View"
 
   return (
     <div ref={rootRef} className="absolute right-0 top-[calc(100%+8px)] z-50">

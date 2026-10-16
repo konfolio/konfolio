@@ -94,7 +94,7 @@ export default function CreateFormWizard({ open, onClose }: Props) {
       }
 
       onClose();
-      router.push(`/organizer/forms/${json.formId}`);
+      router.push(`/organizer/forms/${json.formId}/edit`);
     } catch {
       alert("Something went wrong creating the form");
     } finally {
@@ -326,9 +326,9 @@ export default function CreateFormWizard({ open, onClose }: Props) {
           {step === 3 && (
             <div className="flex flex-1 flex-col items-center justify-center">
               <GooglePlacesAutocomplete
-  value={data.location}
-  onChange={(address) => update("location", address)}
-/>
+                value={data.location}
+                onChange={(address) => update("location", address)}
+              />
 
               <button
                 type="button"

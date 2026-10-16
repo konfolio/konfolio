@@ -228,7 +228,7 @@ export default function MyPortfoliosPage() {
           {loading ? null : hasPublished ? (
             <DashPortfolioGrid
               items={items}
-              urlBase=""
+              urlBase="https://konfolio.com"
               onPublishedCountChange={setPublishedCount}
               onEdit={(id) => {
                 window.location.href = `/my-portfolios/${id}/edit`
