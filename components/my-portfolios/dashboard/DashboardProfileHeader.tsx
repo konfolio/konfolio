@@ -39,11 +39,6 @@ function hasUnlimitedKonfolios(email?: string | null) {
   return email?.trim().toLowerCase() === UNLIMITED_KONFOLIO_EMAIL
 }
 
-function pad2(n: number) {
-  const s = String(Math.max(0, Math.floor(n)))
-  return s.length >= 2 ? s : `0${s}`
-}
-
 function fullNameFromProfile(p: Profile | null) {
   const first = (p?.first_name || "").trim()
   const last = (p?.last_name || "").trim()
@@ -274,10 +269,6 @@ export default function DashboardProfileHeader({
             </div>
 
             <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-[14px] w-full sm:w-[150px] shrink-0">
-              <div className="text-left sm:text-right text-[14px] leading-[130%] font-normal text-[#A5A5A5]">
-                {pad2(resolvedCount)} konfolios
-              </div>
-
               <SecondaryButton
                 onClick={() => {
                   if (!signedIn) return

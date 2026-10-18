@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 
 import Navbar from "@/components/Navbar"
-import Footer from "@/components/Footer"
 import DashboardProfileHeader from "@/components/my-portfolios/dashboard/DashboardProfileHeader"
 import DashPortfolioEmpty from "@/components/my-portfolios/dashboard/DashPortfolioEmpty"
 import DashPortfolioGrid, {
@@ -280,7 +279,6 @@ export default function MyPortfoliosPage() {
           setCreatePopoverOpen(false)
         }}
       />
-      <Footer />
     </main>
   )
 }

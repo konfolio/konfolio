@@ -65,15 +65,15 @@ const SOCIAL_ROWS: {
   label: string;
   Icon: React.ComponentType<any>;
 }[] = [
-  { key: "website", label: "Main Website", Icon: HomeIcon },
-  { key: "instagram", label: "Instagram", Icon: InstagramIcon },
-  { key: "x", label: "X", Icon: XIcon },
-  { key: "bluesky", label: "Bluesky", Icon: BlueskyIcon },
-  { key: "shop", label: "Main Shop", Icon: ShopIcon },
-  { key: "facebook", label: "Facebook", Icon: FacebookIcon },
-  { key: "tumblr", label: "Tumblr", Icon: TumblrIcon },
-  { key: "pixiv", label: "Pixiv", Icon: PixivIcon },
-];
+    { key: "website", label: "Main Website", Icon: HomeIcon },
+    { key: "instagram", label: "Instagram", Icon: InstagramIcon },
+    { key: "x", label: "X", Icon: XIcon },
+    { key: "bluesky", label: "Bluesky", Icon: BlueskyIcon },
+    { key: "shop", label: "Main Shop", Icon: ShopIcon },
+    { key: "facebook", label: "Facebook", Icon: FacebookIcon },
+    { key: "tumblr", label: "Tumblr", Icon: TumblrIcon },
+    { key: "pixiv", label: "Pixiv", Icon: PixivIcon },
+  ];
 
 function formatMemberSince(createdAt?: string | null) {
   if (!createdAt) return "Member since —";
@@ -614,13 +614,9 @@ export default function OrganizerProfileEditPopover({
               {/* Email */}
               <div className="flex flex-col gap-[10px] w-full">
                 <div className="w-full">
-                  <EditableInline
-                    value={emailText}
-                    placeholder="myemailaddress@konfolio.com"
-                    textClassName="text-[15px] leading-[150%] text-[#262626] font-normal"
-                    onChange={setEmailText}
-                    onTrash={() => setEmailText("")}
-                  />
+                  <p className="w-full truncate text-[15px] leading-[150%] text-black/40 font-normal">
+                    {emailText || "myemailaddress@konfolio.com"}
+                  </p>
                 </div>
               </div>
 

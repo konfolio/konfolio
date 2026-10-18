@@ -49,7 +49,11 @@ export default function PrimaryButton({
 
       {icon !== "none" && (
         <span className="flex items-center justify-center">
-          {icon === "open" ? <OpenTabIcon /> : <ArrowRight />}
+          {icon === "open" ? (
+            <OpenTabIcon className="w-[13px] h-[13px] shrink-0" />
+          ) : (
+            <ArrowRight />
+          )}
         </span>
       )}
     </Link>

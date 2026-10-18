@@ -94,15 +94,15 @@ const SOCIAL_ROWS: {
   label: string;
   Icon: React.ComponentType<any>;
 }[] = [
-  { key: "website", label: "Main Website", Icon: HomeIcon },
-  { key: "instagram", label: "Instagram", Icon: InstagramIcon },
-  { key: "x", label: "X", Icon: XIcon },
-  { key: "bluesky", label: "Bluesky", Icon: BlueskyIcon },
-  { key: "shop", label: "Main Shop", Icon: ShopIcon },
-  { key: "facebook", label: "Facebook", Icon: FacebookIcon },
-  { key: "tumblr", label: "Tumblr", Icon: TumblrIcon },
-  { key: "pixiv", label: "Pixiv", Icon: PixivIcon },
-];
+    { key: "website", label: "Main Website", Icon: HomeIcon },
+    { key: "instagram", label: "Instagram", Icon: InstagramIcon },
+    { key: "x", label: "X", Icon: XIcon },
+    { key: "bluesky", label: "Bluesky", Icon: BlueskyIcon },
+    { key: "shop", label: "Main Shop", Icon: ShopIcon },
+    { key: "facebook", label: "Facebook", Icon: FacebookIcon },
+    { key: "tumblr", label: "Tumblr", Icon: TumblrIcon },
+    { key: "pixiv", label: "Pixiv", Icon: PixivIcon },
+  ];
 
 async function getAccessToken(): Promise<string | null> {
   const { data } = await supabase.auth.getSession();
@@ -947,10 +947,9 @@ export default function ArtistProfileEditPopover({
                 </p>
 
                 <div className="mt-[40px] w-full md:mt-[50px]">
-                  <HoverOnlyInline
-                    value={emailText || "myemailaddress@konfolio.com"}
-                    textClassName="text-[#262626]"
-                  />
+                  <p className="w-full truncate text-[15px] font-normal leading-[150%] text-black/40">
+                    {emailText || "myemailaddress@konfolio.com"}
+                  </p>
                 </div>
               </div>
 
