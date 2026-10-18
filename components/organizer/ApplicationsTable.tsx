@@ -196,6 +196,15 @@ export default function ApplicationsTable({
     closeOnEsc: true,
   });
 
+  const [copyToast, setCopyToast] = useState<string | null>(null);
+  const copyToastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (copyToastTimer.current) clearTimeout(copyToastTimer.current);
+    },
+    [],
+  );
+
   const [editingColumnId, setEditingColumnId] = useState<string | null>(null);
   const [editingLabel, setEditingLabel] = useState("");
 
@@ -310,6 +319,13 @@ export default function ApplicationsTable({
       ),
     [fields],
   );
+
+  function getAppEmail(a: AppRow) {
+    return (
+      a.applicant.email ??
+      (emailKey ? (a.answers?.[emailKey] as string | undefined) : undefined)
+    );
+  }
 
   // Fields already surfaced as their own fixed column — excluded from the
   // "add column" picker so a question can't be shown twice.
@@ -535,6 +551,51 @@ export default function ApplicationsTable({
   );
   const hiddenRowCount = apps.filter((a) => hiddenRowIds[a.id]).length;
 
+  function showCopyToast(message: string) {
+    setCopyToast(message);
+    if (copyToastTimer.current) clearTimeout(copyToastTimer.current);
+    copyToastTimer.current = setTimeout(() => setCopyToast(null), 2500);
+  }
+
+  // Copies a column's values for the currently visible rows to the clipboard,
+  // comma-separated so they can be pasted straight into an email's To/BCC.
+  async function copyValuesToClipboard(
+    label: string,
+    values: (string | undefined)[],
+  ) {
+    const unique = Array.from(
+      new Set(
+        values
+          .map((v) => v?.trim())
+          .filter((v): v is string => !!v && v !== "—"),
+      ),
+    );
+    if (unique.length === 0) {
+      showCopyToast(`No ${label} values to copy`);
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(unique.join(", "));
+      showCopyToast(`Copied ${unique.length} ${label} value${unique.length === 1 ? "" : "s"}`);
+    } catch {
+      showCopyToast("Couldn't copy to clipboard");
+    }
+  }
+
+  function copyColumnValues(c: ColumnConfig) {
+    setColumnMenuOpenId(null);
+    const values = visibleApps.map((a) =>
+      c.kind === "field"
+        ? formatAnswer(a.answers?.[c.fieldKey as string])
+        : customValues[c.id]?.[a.id],
+    );
+    void copyValuesToClipboard(c.label, values);
+  }
+
+  function copyEmails() {
+    void copyValuesToClipboard("email", visibleApps.map(getAppEmail));
+  }
+
   return (
     <>
       <div className="w-full">
@@ -584,7 +645,19 @@ export default function ApplicationsTable({
                   <th className="px-4 py-2.5 font-medium text-left">Last</th>
                   <th className="px-4 py-2.5 font-medium text-left">Preferred</th>
                   <th className="px-4 py-2.5 font-medium text-left">Business</th>
-                  <th className="px-4 py-2.5 font-medium text-left">Email</th>
+                  <th className="px-4 py-2.5 font-medium text-left">
+                    <div className="flex items-center justify-between gap-[8px]">
+                      <span>Email</span>
+                      <button
+                        type="button"
+                        onClick={copyEmails}
+                        title="Copy emails of visible rows"
+                        className="shrink-0 rounded-md px-1.5 text-[12px] text-black/40 hover:bg-zinc-100 hover:text-zinc-700"
+                      >
+                        Copy
+                      </button>
+                    </div>
+                  </th>
                   <th className="px-4 py-2.5 font-medium text-left">Location</th>
                   <th className="px-4 py-2.5 font-medium text-left">Konfolio</th>
 
@@ -660,11 +733,18 @@ export default function ApplicationsTable({
                             </button>
                             <button
                               type="button"
+                              onClick={() => copyColumnValues(c)}
+                              className="block w-full rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50"
+                            >
+                              Copy Fields
+                            </button>
+                            <button
+                              type="button"
                               disabled={c.locked}
                               onClick={() => copyColumn(c.id)}
                               className="block w-full rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50 disabled:opacity-40"
                             >
-                              Copy Fields
+                              Duplicate Column
                             </button>
 
                             <div className="my-1 border-t border-zinc-100" />
@@ -856,12 +936,7 @@ export default function ApplicationsTable({
 
                   const notes = a.organizerNotes || "—";
 
-                  const appEmail =
-                    a.applicant.email ??
-                    (emailKey
-                      ? (a.answers?.[emailKey] as string | undefined)
-                      : undefined) ??
-                    "—";
+                  const appEmail = getAppEmail(a) ?? "—";
 
                   const appLocation =
                     a.applicant.location ??
@@ -1198,6 +1273,15 @@ export default function ApplicationsTable({
           onUpdate={(updates) => handleDrawerUpdate(selectedApp.id, updates)}
           onClose={() => setSelectedApp(null)}
         />
+      )}
+
+      {copyToast && (
+        <div
+          role="status"
+          className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm text-white shadow-lg"
+        >
+          {copyToast}
+        </div>
       )}
     </>
   );

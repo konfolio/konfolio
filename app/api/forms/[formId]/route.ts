@@ -1,16 +1,34 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { publicFormUrl } from "@/lib/publicFormUrls";
 
 function createAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url || !serviceRoleKey) {
-    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
+    throw new Error(
+      "Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY",
+    );
   }
 
   return createClient(url, serviceRoleKey);
+}
+
+async function getOrganizerSlug(
+  supabase: ReturnType<typeof createAdminClient>,
+  organizerId: string,
+): Promise<string | null> {
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("business_slug")
+    .eq("id", organizerId)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  return profile?.business_slug || null;
 }
 
 type FormField = {
@@ -23,7 +41,10 @@ type FormField = {
   options?: string[];
   sortOrder?: number;
   page?: number;
-  conditional?: { fieldKey: string; value: string } | null;
+  conditional?: {
+    fieldKey: string;
+    value: string;
+  } | null;
 };
 
 function normalizeFields(fields: FormField[]) {
@@ -50,7 +71,7 @@ function isValidStatus(status: string) {
 
 export async function GET(
   _req: Request,
-  { params }: { params: Promise<{ formId: string }> }
+  { params }: { params: Promise<{ formId: string }> },
 ) {
   try {
     const { formId } = await params;
@@ -63,7 +84,10 @@ export async function GET(
     } = await authSupabase.auth.getUser();
 
     if (userErr || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 },
+      );
     }
 
     const supabase = createAdminClient();
@@ -98,19 +122,41 @@ export async function GET(
       .single();
 
     if (error || !form) {
-      return NextResponse.json({ error: "Form not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Form not found" },
+        { status: 404 },
+      );
     }
 
     if (form.organizer_id !== user.id) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      return NextResponse.json(
+        { error: "Forbidden" },
+        { status: 403 },
+      );
     }
+
+    const organizerSlug = await getOrganizerSlug(
+      supabase,
+      form.organizer_id,
+    );
+
+    const publicUrl =
+      organizerSlug && form.slug
+        ? publicFormUrl(organizerSlug, form.slug)
+        : null;
 
     return NextResponse.json({
       form: {
         ...form,
-        event_date_start: form.event_date_start || form.start_date || null,
-        event_date_end: form.event_date_end || form.end_date || null,
-        event_address: form.event_address || form.location || "",
+        organizer_slug: organizerSlug,
+
+        event_date_start:
+          form.event_date_start || form.start_date || null,
+        event_date_end:
+          form.event_date_end || form.end_date || null,
+        event_address:
+          form.event_address || form.location || "",
+
         is_recurring: Boolean(form.is_recurring),
         recurrence_text: form.recurrence_text || null,
 
@@ -119,21 +165,22 @@ export async function GET(
         recurrenceText: form.recurrence_text || "",
 
         fields: form.fields || [],
-        public_url: form.slug ? `/apply/${form.slug}` : null,
+        public_url: publicUrl,
       },
     });
   } catch (err: any) {
     console.error("GET /api/forms/[formId] failed:", err);
+
     return NextResponse.json(
       { error: err?.message || "Unknown server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PATCH(
   req: Request,
-  { params }: { params: Promise<{ formId: string }> }
+  { params }: { params: Promise<{ formId: string }> },
 ) {
   try {
     const { formId } = await params;
@@ -146,29 +193,44 @@ export async function PATCH(
     } = await authSupabase.auth.getUser();
 
     if (userErr || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 },
+      );
     }
 
     const body = await req.json().catch(() => null);
 
     if (!body) {
-      return NextResponse.json({ error: "Missing request body" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing request body" },
+        { status: 400 },
+      );
     }
 
     const supabase = createAdminClient();
 
-    const { data: existingForm, error: existingErr } = await supabase
+    const {
+      data: existingForm,
+      error: existingErr,
+    } = await supabase
       .from("alley_forms")
       .select("id, organizer_id")
       .eq("id", formId)
       .single();
 
     if (existingErr || !existingForm) {
-      return NextResponse.json({ error: "Form not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Form not found" },
+        { status: 404 },
+      );
     }
 
     if (existingForm.organizer_id !== user.id) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      return NextResponse.json(
+        { error: "Forbidden" },
+        { status: 403 },
+      );
     }
 
     const updates: Record<string, any> = {};
@@ -179,7 +241,7 @@ export async function PATCH(
       if (!title) {
         return NextResponse.json(
           { error: "Title is required" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -191,7 +253,9 @@ export async function PATCH(
     }
 
     if ("is_recurring" in body || "isRecurring" in body) {
-      const isRecurring = Boolean(body.is_recurring ?? body.isRecurring);
+      const isRecurring = Boolean(
+        body.is_recurring ?? body.isRecurring,
+      );
 
       updates.is_recurring = isRecurring;
 
@@ -206,28 +270,55 @@ export async function PATCH(
     }
 
     if ("recurrence_text" in body || "recurrenceText" in body) {
-      const recurrenceText = body.recurrence_text ?? body.recurrenceText;
-      updates.recurrence_text = recurrenceText?.trim?.() || null;
+      const recurrenceText =
+        body.recurrence_text ?? body.recurrenceText;
+
+      updates.recurrence_text =
+        recurrenceText?.trim?.() || null;
     }
 
-    if ("event_date_start" in body || "startDate" in body || "start_date" in body) {
-      const startDate = body.event_date_start ?? body.startDate ?? body.start_date;
+    if (
+      "event_date_start" in body ||
+      "startDate" in body ||
+      "start_date" in body
+    ) {
+      const startDate =
+        body.event_date_start ??
+        body.startDate ??
+        body.start_date;
+
       updates.event_date_start = startDate || null;
 
       // Keeps old code compatible.
       updates.start_date = startDate || null;
     }
 
-    if ("event_date_end" in body || "endDate" in body || "end_date" in body) {
-      const endDate = body.event_date_end ?? body.endDate ?? body.end_date;
+    if (
+      "event_date_end" in body ||
+      "endDate" in body ||
+      "end_date" in body
+    ) {
+      const endDate =
+        body.event_date_end ??
+        body.endDate ??
+        body.end_date;
+
       updates.event_date_end = endDate || null;
 
       // Keeps old code compatible.
       updates.end_date = endDate || null;
     }
 
-    if ("event_address" in body || "location" in body || "eventAddress" in body) {
-      const address = body.event_address ?? body.location ?? body.eventAddress;
+    if (
+      "event_address" in body ||
+      "location" in body ||
+      "eventAddress" in body
+    ) {
+      const address =
+        body.event_address ??
+        body.location ??
+        body.eventAddress;
+
       updates.event_address = address?.trim?.() || null;
 
       // Keeps old code compatible.
@@ -251,7 +342,7 @@ export async function PATCH(
       if (!Array.isArray(body.fields)) {
         return NextResponse.json(
           { error: "fields must be an array" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -262,7 +353,7 @@ export async function PATCH(
       if (!Array.isArray(body.tags)) {
         return NextResponse.json(
           { error: "tags must be an array" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -271,7 +362,10 @@ export async function PATCH(
 
     if ("status" in body) {
       if (!isValidStatus(body.status)) {
-        return NextResponse.json({ error: "Invalid status" }, { status: 400 });
+        return NextResponse.json(
+          { error: "Invalid status" },
+          { status: 400 },
+        );
       }
 
       updates.status = body.status;
@@ -280,12 +374,23 @@ export async function PATCH(
       updates.is_open = body.status === "receiving";
     }
 
+    // Resolve the organizer before saving so a failed profile lookup
+    // does not report an error after a successful form update.
+    const organizerSlug = await getOrganizerSlug(
+      supabase,
+      existingForm.organizer_id,
+    );
+
     updates.updated_at = new Date().toISOString();
 
-    const { data: updatedForm, error: updateErr } = await supabase
+    const {
+      data: updatedForm,
+      error: updateErr,
+    } = await supabase
       .from("alley_forms")
       .update(updates)
       .eq("id", formId)
+      .eq("organizer_id", user.id)
       .select(`
         id,
         organizer_id,
@@ -314,15 +419,38 @@ export async function PATCH(
 
     if (updateErr) {
       console.error("Update form error:", updateErr);
-      return NextResponse.json({ error: updateErr.message }, { status: 500 });
+
+      return NextResponse.json(
+        { error: updateErr.message },
+        { status: 500 },
+      );
     }
+
+    const publicUrl =
+      organizerSlug && updatedForm.slug
+        ? publicFormUrl(organizerSlug, updatedForm.slug)
+        : null;
 
     return NextResponse.json({
       form: {
         ...updatedForm,
-        event_date_start: updatedForm.event_date_start || updatedForm.start_date || null,
-        event_date_end: updatedForm.event_date_end || updatedForm.end_date || null,
-        event_address: updatedForm.event_address || updatedForm.location || "",
+        organizer_slug: organizerSlug,
+
+        event_date_start:
+          updatedForm.event_date_start ||
+          updatedForm.start_date ||
+          null,
+
+        event_date_end:
+          updatedForm.event_date_end ||
+          updatedForm.end_date ||
+          null,
+
+        event_address:
+          updatedForm.event_address ||
+          updatedForm.location ||
+          "",
+
         is_recurring: Boolean(updatedForm.is_recurring),
         recurrence_text: updatedForm.recurrence_text || null,
 
@@ -330,14 +458,15 @@ export async function PATCH(
         isRecurring: Boolean(updatedForm.is_recurring),
         recurrenceText: updatedForm.recurrence_text || "",
 
-        public_url: updatedForm.slug ? `/apply/${updatedForm.slug}` : null,
+        public_url: publicUrl,
       },
     });
   } catch (err: any) {
     console.error("PATCH /api/forms/[formId] failed:", err);
+
     return NextResponse.json(
       { error: err?.message || "Unknown server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

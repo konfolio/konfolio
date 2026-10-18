@@ -1,17 +1,15 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-function createAdminClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+import {
+  createSupabaseServerClient,
+} from "@/lib/supabase/server";
 
-  if (!url || !serviceRoleKey) {
-    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
-  }
+import {
+  createPublicFormsAdminClient,
+  findOrganizer,
+} from "@/lib/publicFormLookup";
 
-  return createClient(url, serviceRoleKey);
-}
+import { publicFormUrl } from "@/lib/publicFormUrls";
 
 function slugify(value: string) {
   return value
@@ -21,118 +19,226 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-async function makeUniqueSlug(
-  supabase: ReturnType<typeof createAdminClient>,
-  title: string,
-  formId: string
-) {
-  const cleanTitle = slugify(title);
-  const baseSlug = cleanTitle || `form-${formId.slice(0, 8)}`;
-
-  let slug = baseSlug;
-  let count = 2;
-
-  while (true) {
-    const { data, error } = await supabase
-      .from("alley_forms")
-      .select("id")
-      .eq("slug", slug)
-      .maybeSingle();
-
-    if (error) {
-      throw error;
-    }
-
-    // No form has this slug, so it is safe.
-    if (!data) {
-      return slug;
-    }
-
-    // This same form already has this slug, so it is safe.
-    if (data.id === formId) {
-      return slug;
-    }
-
-    slug = `${baseSlug}-${count}`;
-    count += 1;
-  }
-}
-
 export async function POST(
-  req: Request,
-  { params }: { params: Promise<{ formId: string }> }
+  _req: Request,
+  {
+    params,
+  }: {
+    params: Promise<{ formId: string }>;
+  },
 ) {
   try {
     const { formId } = await params;
 
-    const authSupabase = await createSupabaseServerClient();
+    const auth = await createSupabaseServerClient();
 
     const {
       data: { user },
-      error: userErr,
-    } = await authSupabase.auth.getUser();
+      error: authError,
+    } = await auth.auth.getUser();
 
-    if (userErr || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 },
+      );
     }
 
-    const supabase = createAdminClient();
+    const db = createPublicFormsAdminClient();
 
-    const { data: form, error: formErr } = await supabase
+    const { data: form, error: formError } = await db
       .from("alley_forms")
-      .select("id, organizer_id, title, slug, status")
+      .select(
+        "id, organizer_id, title, slug, status, published_at",
+      )
       .eq("id", formId)
-      .single();
+      .maybeSingle();
 
-    if (formErr || !form) {
-      return NextResponse.json({ error: "Form not found" }, { status: 404 });
+    if (formError) throw formError;
+
+    if (!form) {
+      return NextResponse.json(
+        { error: "Form not found" },
+        { status: 404 },
+      );
     }
 
     if (form.organizer_id !== user.id) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      return NextResponse.json(
+        { error: "Forbidden" },
+        { status: 403 },
+      );
     }
 
-    const finalSlug =
-      form.slug || (await makeUniqueSlug(supabase, form.title || "form", form.id));
+    const {
+      data: profile,
+      error: profileError,
+    } = await db
+      .from("profiles")
+      .select("business_slug")
+      .eq("id", user.id)
+      .maybeSingle();
 
-    const { data: updatedForm, error: updateErr } = await supabase
-      .from("alley_forms")
-      .update({
-        slug: finalSlug,
-        status: "receiving",
-        published_at: new Date().toISOString(),
+    if (profileError) throw profileError;
 
-        // Keep this for old dashboard/application code that still uses is_open.
-        is_open: true,
-      })
-      .eq("id", formId)
-      .select(
-        `
-        id,
-        organizer_id,
-        title,
-        slug,
-        status,
-        published_at,
-        updated_at
-      `
-      )
-      .single();
+    const organizerSlug = profile?.business_slug;
 
-    if (updateErr) {
-      console.error("Publish form updateErr:", updateErr);
-      return NextResponse.json({ error: updateErr.message }, { status: 500 });
+    if (
+      !organizerSlug ||
+      !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(organizerSlug)
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "Set a valid business URL in your organizer profile before publishing.",
+        },
+        { status: 400 },
+      );
     }
 
-    return NextResponse.json({
-      form: updatedForm,
-      publicUrl: `/apply/${finalSlug}`,
-    });
-  } catch (err: any) {
-    console.error("POST /api/forms/[formId]/publish failed:", err);
+    const owner = await findOrganizer(
+      db,
+      organizerSlug,
+    );
+
+    if (!owner || owner.id !== user.id) {
+      return NextResponse.json(
+        { error: "Organizer URL is not unique" },
+        { status: 409 },
+      );
+    }
+
+    // Preserve the existing URL when republishing.
+    const baseSlug =
+      form.slug ||
+      slugify(form.title || "") ||
+      `form-${form.id.slice(0, 8)}`;
+
+    let candidate = baseSlug;
+
+    for (let attempt = 0; attempt < 100; attempt += 1) {
+      const {
+        data: claim,
+        error: claimError,
+      } = await db
+        .from("public_url_claims")
+        .select("resource_kind, resource_id")
+        .eq("owner_id", user.id)
+        .eq("slug", candidate)
+        .maybeSingle();
+
+      if (claimError) throw claimError;
+
+      const conflict =
+        claim &&
+        !(
+          claim.resource_kind === "form" &&
+          claim.resource_id === form.id
+        );
+
+      if (conflict) {
+        if (form.slug) {
+          return NextResponse.json(
+            {
+              error:
+                "This form URL is already reserved. Refresh and try again.",
+            },
+            { status: 409 },
+          );
+        }
+
+        candidate = `${baseSlug}-${attempt + 2}`;
+        continue;
+      }
+
+      let update = db
+        .from("alley_forms")
+        .update({
+          slug: candidate,
+          status: "receiving",
+          published_at:
+            form.published_at ||
+            new Date().toISOString(),
+          is_open: true,
+        })
+        .eq("id", form.id)
+        .eq("organizer_id", user.id);
+
+      // Do not overwrite a simultaneous change to this form.
+      update =
+        form.slug === null
+          ? update.is("slug", null)
+          : update.eq("slug", form.slug);
+
+      const {
+        data: updatedForm,
+        error: updateError,
+      } = await update
+        .select(
+          "id, organizer_id, title, slug, status, published_at, updated_at",
+        )
+        .maybeSingle();
+
+      if (
+        updateError?.code === "23505" &&
+        !form.slug
+      ) {
+        // Another request reserved this URL first.
+        candidate = `${baseSlug}-${attempt + 2}`;
+        continue;
+      }
+
+      if (updateError) throw updateError;
+
+      if (!updatedForm) {
+        return NextResponse.json(
+          {
+            error:
+              "The form changed while publishing. Refresh and try again.",
+          },
+          { status: 409 },
+        );
+      }
+
+      const publicUrl = publicFormUrl(
+        organizerSlug,
+        updatedForm.slug,
+      );
+
+      return NextResponse.json(
+        {
+          form: {
+            ...updatedForm,
+            organizer_slug: organizerSlug,
+            public_url: publicUrl,
+          },
+          publicUrl,
+          public_url: publicUrl,
+        },
+        {
+          headers: {
+            "Cache-Control": "private, no-store",
+          },
+        },
+      );
+    }
+
     return NextResponse.json(
-      { error: err?.message || "Failed to publish form" },
-      { status: 500 }
+      {
+        error:
+          "Could not reserve a form URL. Try a different title.",
+      },
+      { status: 409 },
+    );
+  } catch (error) {
+    console.error(
+      "POST /api/forms/[formId]/publish failed:",
+      error,
+    );
+
+    return NextResponse.json(
+      { error: "Failed to publish form" },
+      { status: 500 },
     );
   }
 }

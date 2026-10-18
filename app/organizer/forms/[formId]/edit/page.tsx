@@ -451,6 +451,8 @@ export default function EditOrganizerFormPage() {
           return withPageField;
         });
         setFields(withPage);
+        const maxPage = Math.max(1, ...withPage.map((f: Field) => f.page ?? 1));
+        setPages(Array.from({ length: maxPage }, (_, i) => i + 1));
         await fetch(`/api/forms/${formId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -503,6 +505,22 @@ export default function EditOrganizerFormPage() {
       saveFields(updated);
       return updated;
     });
+  };
+
+  // Removing a divider merges that page's questions into the previous page
+  // and shifts every later page down by one.
+  const deletePage = (page: number) => {
+    if (page <= 1) return;
+    setFields((prev) => {
+      const updated = prev.map((f) => {
+        const p = f.page ?? 1;
+        return p >= page ? { ...f, page: p - 1 } : f;
+      });
+      saveFields(updated);
+      return updated;
+    });
+    setPages((prev) => prev.slice(0, -1));
+    setActivePage((prev) => (prev >= page ? prev - 1 : prev));
   };
 
   const addOption = (id: string) => {
@@ -653,13 +671,30 @@ export default function EditOrganizerFormPage() {
       </button>
       <span className="text-[14px] text-[#A5A5A5]">Pages</span>
       {pages.map((page) => (
-        <button
-          key={page}
-          onClick={() => setActivePage(page)}
-          className={`text-[14px] pb-[1px] ${activePage === page ? "text-[#262626] border-b border-[#262626]" : "text-[#A5A5A5] border-b border-transparent"}`}
-        >
-          {page}
-        </button>
+        <span key={page} className="group relative inline-flex">
+          <button
+            onClick={() => setActivePage(page)}
+            className={`text-[14px] pb-[1px] ${activePage === page ? "text-[#262626] border-b border-[#262626]" : "text-[#A5A5A5] border-b border-transparent"}`}
+          >
+            {page}
+          </button>
+          {page > 1 && (
+            <button
+              onClick={() => deletePage(page)}
+              title={`Remove page ${page} divider`}
+              className="absolute -top-[8px] -right-[10px] hidden group-hover:flex w-[14px] h-[14px] rounded-full bg-white border border-[#E9E9E9] items-center justify-center text-[#C0BDB4] hover:text-[#A32D2D]"
+            >
+              <svg width="8" height="8" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M3 3l10 10M13 3L3 13"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          )}
+        </span>
       ))}
       <button
         onClick={() => {
