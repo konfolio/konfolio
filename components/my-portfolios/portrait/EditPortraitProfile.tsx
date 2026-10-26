@@ -6,6 +6,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import ArrowLeft from "@/components/icons/ArrowLeft"
 import ArrowDown from "@/components/icons/ArrowDown"
 import ImageIcon from "@/components/icons/ImageIcon"
+import PencilIcon from "@/components/icons/PencilIcon"
 import BrushIcon from "@/components/icons/BrushIcon"
 import LocationIcon from "@/components/icons/LocationIcon"
 import OpenTabIcon from "@/components/icons/OpenTabIcon"
@@ -272,7 +273,7 @@ export default function EditPortraitProfile({
 
   useEffect(() => {
     const next = previousVends.slice(0, 4)
-  
+
     setLocalPrevVends((cur) => {
       if (
         cur.length === next.length &&
@@ -280,7 +281,7 @@ export default function EditPortraitProfile({
       ) {
         return cur
       }
-  
+
       return next
     })
   }, [previousVends])
@@ -290,17 +291,17 @@ export default function EditPortraitProfile({
     setLocalPrevVends(trimmed)
     onChangePreviousVends?.(trimmed)
   }
-  
+
   const addVend = (raw: string) => {
     const text = (raw || "").trim()
     if (!text) return
     if (localPrevVends.length >= 4) return
-  
+
     pushPrevVends([...localPrevVends, text])
     setNewVend("")
     addInputRef.current?.focus()
   }
-  
+
   const deleteVendAt = (idx: number) => {
     const next = localPrevVends.filter((_, i) => i !== idx)
     pushPrevVends(next)
@@ -340,27 +341,27 @@ export default function EditPortraitProfile({
 
   const merchPickerBannerClass = bannerIsDark
     ? [
-        "[&_button]:!rounded-full",
-        "[&_button]:!overflow-hidden",
-        "[&_button]:!border-white/30",
-        "[&_button]:!bg-white/10",
-        "[&_button]:!text-white",
-        "[&_span]:!text-white",
-        "[&_svg]:!text-white",
-        "[&_path]:!stroke-white",
-        "[&_path]:!fill-white",
-      ].join(" ")
+      "[&_button]:!rounded-full",
+      "[&_button]:!overflow-hidden",
+      "[&_button]:!border-white/30",
+      "[&_button]:!bg-white/10",
+      "[&_button]:!text-white",
+      "[&_span]:!text-white",
+      "[&_svg]:!text-white",
+      "[&_path]:!stroke-white",
+      "[&_path]:!fill-white",
+    ].join(" ")
     : [
-        "[&_button]:!rounded-full",
-        "[&_button]:!overflow-hidden",
-        "[&_button]:!border-[#262626]",
-        "[&_button]:!bg-transparent",
-        "[&_button]:!text-[#262626]",
-        "[&_span]:!text-[#262626]",
-        "[&_svg]:!text-[#262626]",
-        "[&_path]:!stroke-[#262626]",
-        "[&_path]:!fill-[#262626]",
-      ].join(" ")
+      "[&_button]:!rounded-full",
+      "[&_button]:!overflow-hidden",
+      "[&_button]:!border-[#262626]",
+      "[&_button]:!bg-transparent",
+      "[&_button]:!text-[#262626]",
+      "[&_span]:!text-[#262626]",
+      "[&_svg]:!text-[#262626]",
+      "[&_path]:!stroke-[#262626]",
+      "[&_path]:!fill-[#262626]",
+    ].join(" ")
 
   const linkPickerBannerClass = bannerIsDark
     ? "[&_svg]:text-white [&_path]:stroke-white [&_path]:fill-white [&_button]:text-white [&_span]:text-white"
@@ -508,7 +509,7 @@ export default function EditPortraitProfile({
     () => localPrevVends.map(parseEventLine),
     [localPrevVends]
   )
-  
+
   const showPrevVendsSection = editable || localPrevVends.length > 0
 
   const safeTags = (Array.isArray(merchTags) ? merchTags : [])
@@ -541,7 +542,7 @@ export default function EditPortraitProfile({
                 onDrop={onDrop}
                 onDragOver={onDragOver}
                 className={[
-                  "relative h-[45px] w-[45px] shrink-0 overflow-hidden rounded-[10px] bg-white/10",
+                  "group/photo relative h-[45px] w-[45px] shrink-0 overflow-hidden rounded-[10px] bg-white/10",
                   editable ? "cursor-pointer" : "cursor-default",
                 ].join(" ")}
               >
@@ -552,7 +553,11 @@ export default function EditPortraitProfile({
                   className="hidden"
                   onChange={onFileInputChange}
                 />
-
+                {editable && (
+                  <span aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center opacity-0 transition-opacity group-hover/photo:opacity-100 group-focus-visible/photo:opacity-100">
+                    <PencilIcon className="h-[18px] w-[18px] text-black/40" />
+                  </span>
+                )}
                 {localImgUrl ? (
                   <img
                     src={localImgUrl}
@@ -892,7 +897,7 @@ export default function EditPortraitProfile({
         <div className="w-full max-w-[1182px] h-[102px] flex items-center gap-[20px] px-[24px] min-[1200px]:px-0">
           <div
             className={[
-              "relative w-[102px] h-[102px] min-w-[102px] shrink-0 bg-white border border-[#A5A5A5] border-[0.5px] rounded-[11.7339px] overflow-hidden",
+              "relative w-[102px] h-[102px] min-w-[102px] shrink-0 bg-white rounded-[11.7339px] overflow-hidden",
               editable ? "cursor-pointer" : "cursor-default",
             ].join(" ")}
             onDrop={onDrop}
@@ -903,11 +908,14 @@ export default function EditPortraitProfile({
             {editable ? (
               <button
                 type="button"
-                className="absolute inset-0 z-[1] bg-transparent cursor-pointer"
+                className="group/photo absolute inset-0 z-[1] bg-transparent cursor-pointer"
                 aria-label="Upload profile image"
                 onClick={openFilePicker}
               >
                 <span className="sr-only">Upload</span>
+                <span aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover/photo:opacity-100 group-focus-visible/photo:opacity-100">
+                  <PencilIcon className="h-[24px] w-[24px] text-black/40" />
+                </span>
               </button>
             ) : null}
 
@@ -1036,11 +1044,10 @@ export default function EditPortraitProfile({
                   >
                     <div className={`w-[16px] h-[16px] flex items-center justify-center ${bannerPrimaryIconClass}`}>
                       <BrushIcon
-                        className={`h-[16px] w-[16px] ${
-                          bannerIsDark
-                            ? "text-white [&_path]:stroke-white [&_path]:fill-none"
-                            : "text-[#262626] [&_path]:stroke-[#262626] [&_path]:fill-none"
-                        }`}
+                        className={`h-[16px] w-[16px] ${bannerIsDark
+                          ? "text-white [&_path]:stroke-white [&_path]:fill-none"
+                          : "text-[#262626] [&_path]:stroke-[#262626] [&_path]:fill-none"
+                          }`}
                       />
                     </div>
 

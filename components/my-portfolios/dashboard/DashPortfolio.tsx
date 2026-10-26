@@ -144,7 +144,7 @@ function collapseDuplicatePublicUrl(url: string) {
     if (
       segments.length >= 2 &&
       segments[segments.length - 1] ===
-        segments[segments.length - 2]
+      segments[segments.length - 2]
     ) {
       segments.pop()
     }
@@ -490,7 +490,7 @@ export default function DashPortfolio({
 
       const fullUrl =
         typeof window !== "undefined" &&
-        url.startsWith("/")
+          url.startsWith("/")
           ? `${window.location.origin}${url}`
           : url
 
@@ -603,7 +603,7 @@ export default function DashPortfolio({
           openNamePopup(
             "Unable to update name",
             result.message ||
-              "Something went wrong while updating the Konfolio name.",
+            "Something went wrong while updating the Konfolio name.",
             trimmed
           )
 
@@ -690,7 +690,7 @@ export default function DashPortfolio({
           openUrlPopup(
             "Unable to update URL",
             result.message ||
-              "Something went wrong while updating the portfolio URL.",
+            "Something went wrong while updating the portfolio URL.",
             normalized
           )
 
@@ -957,7 +957,7 @@ export default function DashPortfolio({
           {isEditingUrl ? (
             <div className="w-full flex items-center gap-[5px]">
               <span className="min-w-0 truncate text-[#A5A5A5] text-[14px] leading-[130%] font-normal">
-                {lockedUrlPrefix}
+                {lockedUrlPrefix.replace(/^https?:\/\//i, "")}
               </span>
 
               <input
@@ -1004,7 +1004,7 @@ export default function DashPortfolio({
               title="Copy published link"
             >
               <span className="min-w-0 truncate text-[#A5A5A5] text-[14px] leading-[130%] font-normal">
-                {resolvedPublicUrl}
+                {resolvedPublicUrl.replace(/^https?:\/\//i, "")}
               </span>
 
               <span className="relative flex items-center flex-shrink-0">

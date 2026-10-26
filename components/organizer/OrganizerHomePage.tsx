@@ -102,8 +102,8 @@ export default function OrganizerHomePage({ organizerId }: Props) {
           setProfile(json.profile ?? json.pprofile ?? null);
           setForms(json.forms || []);
         }
-      } catch (err: any) {
-        if (!ignore) setError(err?.message || "Something went wrong");
+      } catch (err) {
+        if (!ignore) setError(err instanceof Error ? err.message : "Something went wrong");
       } finally {
         if (!ignore) setLoading(false);
       }
@@ -197,7 +197,7 @@ export default function OrganizerHomePage({ organizerId }: Props) {
           ) : error ? (
             <div className="text-red-500">{error}</div>
           ) : (
-            <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+            <div className="grid grid-cols-1 gap-[30px]">
               {filteredForms.map((form) => {
                 const status = getStatusLabel(form.status);
 
@@ -250,7 +250,7 @@ export default function OrganizerHomePage({ organizerId }: Props) {
       </div>
 
       {profileOpen ? (
-        
+
         <OrganizerProfilePage
           organizerId={organizerId}
           isPopup={true}
