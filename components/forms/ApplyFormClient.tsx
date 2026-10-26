@@ -45,7 +45,6 @@ export default function ApplyFormClient({
   const [form, setForm] = useState<Form | null>(null);
   const [autofillData, setAutofillData] = useState<Record<string, any>>({});
   const [selectedKonfolioId, setSelectedKonfolioId] = useState<string | null>(null);
-  const [selectedMerchTags, setSelectedMerchTags] = useState<string[]>([]);
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -379,7 +378,6 @@ export default function ApplyFormClient({
     }));
 
     setSelectedKonfolioId(konfolioId);
-    setSelectedMerchTags(merchTags ?? []);
     setAutofillOpen(false);
   };
 
@@ -654,26 +652,6 @@ export default function ApplyFormClient({
           <AutofillPromptCard
             onClick={() => setAutofillOpen(true)}
           />
-
-          {selectedKonfolioId &&
-            selectedMerchTags.length > 0 && (
-              <div className="flex flex-col gap-[8px]">
-                <p className="text-[13px] text-[#A5A5A5]">
-                  What you sell
-                </p>
-
-                <div className="flex flex-wrap gap-[8px]">
-                  {selectedMerchTags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="inline-flex items-center h-[24px] px-[12px] rounded-full border border-[#E9E9E9] text-[13px] text-[#262626]"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
 
           {autofillOpen && (
             <AutofillDrawer

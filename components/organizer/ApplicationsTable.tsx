@@ -4,6 +4,23 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ApplicationDrawer from "./ApplicationDrawer";
 import useClickOutside from "@/components/hooks/useClickOutside";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Copy,
+  CopyPlus,
+  Eye,
+  EyeOff,
+  ExternalLink,
+  Highlighter,
+  ListPlus,
+  Lock,
+  LockOpen,
+  Pencil,
+  SeparatorVertical,
+  StickyNote,
+  Trash2,
+} from "lucide-react";
 
 export type Field = {
   id: string;
@@ -111,7 +128,6 @@ function pickFieldKey(
 export default function ApplicationsTable({
   formId,
   apps,
-  totalCount,
   fields,
   formTitle,
   loading,
@@ -119,12 +135,10 @@ export default function ApplicationsTable({
   updatingId,
   onStatusChange,
   onDrawerUpdate,
-  onReload,
   onDelete,
 }: {
   formId: string;
   apps: AppRow[];
-  totalCount: number;
   fields: Field[];
   formTitle?: string;
   loading: boolean;
@@ -132,7 +146,6 @@ export default function ApplicationsTable({
   updatingId: string | null;
   onStatusChange: (id: string, status: AppRow["status"]) => void;
   onDrawerUpdate: (id: string, updates: Partial<AppRow>) => void;
-  onReload: () => void;
   onDelete: (id: string) => void;
 }) {
   const [selectedApp, setSelectedApp] = useState<AppRow | null>(null);
@@ -502,7 +515,10 @@ export default function ApplicationsTable({
   }
 
   function deleteColumn(id: string) {
+    const column = columns.find((c) => c.id === id);
+    // Dividers hold no data, so there's nothing to confirm losing.
     if (
+      column?.kind !== "divider" &&
       !window.confirm(
         "Delete this column? Any notes or dropdown values entered in it will be lost.",
       )
@@ -634,7 +650,28 @@ export default function ApplicationsTable({
               <thead className="sticky top-0 z-20">
                 <tr className="bg-zinc-50 text-black/40 border-b border-zinc-200">
                   <th className="sticky left-0 z-30 bg-zinc-50 px-4 py-2.5 font-medium text-left">
-                    #
+                    <div className="flex items-center gap-[6px]">
+                      <span>#</span>
+                      {hiddenRowCount > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setShowHiddenRows((v) => !v)}
+                          title={
+                            showHiddenRows
+                              ? "Hide hidden rows"
+                              : `Show ${hiddenRowCount} hidden row${hiddenRowCount === 1 ? "" : "s"}`
+                          }
+                          className="flex items-center gap-[2px] rounded-md px-1 text-[12px] text-black/40 hover:bg-zinc-100 hover:text-zinc-700"
+                        >
+                          {showHiddenRows ? (
+                            <Eye size={13} />
+                          ) : (
+                            <EyeOff size={13} />
+                          )}
+                          {hiddenRowCount}
+                        </button>
+                      )}
+                    </div>
                   </th>
                   <th className="px-4 py-2.5 font-medium text-left">
                     Time Submitted
@@ -646,15 +683,16 @@ export default function ApplicationsTable({
                   <th className="px-4 py-2.5 font-medium text-left">Preferred</th>
                   <th className="px-4 py-2.5 font-medium text-left">Business</th>
                   <th className="px-4 py-2.5 font-medium text-left">
-                    <div className="flex items-center justify-between gap-[8px]">
+                    <div className="flex items-center gap-[6px]">
                       <span>Email</span>
                       <button
                         type="button"
                         onClick={copyEmails}
+                        aria-label="Copy emails of visible rows"
                         title="Copy emails of visible rows"
-                        className="shrink-0 rounded-md px-1.5 text-[12px] text-black/40 hover:bg-zinc-100 hover:text-zinc-700"
+                        className="shrink-0 rounded-md p-1 text-black/40 hover:bg-zinc-100 hover:text-zinc-700"
                       >
-                        Copy
+                        <Copy size={13} />
                       </button>
                     </div>
                   </th>
@@ -666,10 +704,29 @@ export default function ApplicationsTable({
                     return (
                       <th
                         key={c.id}
-                        className="relative px-4 py-2.5 font-medium text-left"
+                        className={`relative py-2.5 font-medium text-left ${
+                          c.kind === "divider" ? "group px-0" : "px-4"
+                        }`}
                       >
                         {c.kind === "divider" ? (
-                          <div className="mx-auto h-4 w-px bg-zinc-300" />
+                          <>
+                            <div
+                              className={`mx-auto h-4 w-px bg-zinc-300 ${
+                                c.locked ? "" : "group-hover:invisible"
+                              }`}
+                            />
+                            {!c.locked && (
+                              <button
+                                type="button"
+                                aria-label="Delete divider"
+                                title="Delete divider"
+                                onClick={() => deleteColumn(c.id)}
+                                className="absolute inset-0 m-auto flex h-5 w-5 items-center justify-center rounded-md text-black/40 opacity-0 hover:bg-rose-50 hover:text-rose-600 focus-visible:opacity-100 group-hover:opacity-100"
+                              >
+                                ×
+                              </button>
+                            )}
+                          </>
                         ) : editingColumnId === c.id ? (
                           <input
                             autoFocus
@@ -684,7 +741,16 @@ export default function ApplicationsTable({
                           />
                         ) : (
                           <div className="flex items-center justify-between gap-[8px]">
-                            <span className="truncate">{c.label}</span>
+                            <span className="flex min-w-0 items-center gap-[6px]">
+                              <span className="truncate">{c.label}</span>
+                              {c.locked && (
+                                <Lock
+                                  size={12}
+                                  aria-label="Locked"
+                                  className="shrink-0 text-black/40"
+                                />
+                              )}
+                            </span>
                             <button
                               type="button"
                               aria-label={`${c.label} column options`}
@@ -709,8 +775,9 @@ export default function ApplicationsTable({
                               type="button"
                               disabled={c.locked}
                               onClick={() => startRename(c)}
-                              className="block w-full rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50 disabled:opacity-40"
+                              className="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50 disabled:opacity-40"
                             >
+                              <Pencil size={14} className="shrink-0 text-black/40" />
                               Edit Name
                             </button>
                             <button
@@ -720,30 +787,38 @@ export default function ApplicationsTable({
                                 toggleColumnHidden(c.id);
                                 setColumnMenuOpenId(null);
                               }}
-                              className="block w-full rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50 disabled:opacity-40"
+                              className="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50 disabled:opacity-40"
                             >
+                              <EyeOff size={14} className="shrink-0 text-black/40" />
                               Hide
                             </button>
                             <button
                               type="button"
                               onClick={() => toggleColumnLocked(c.id)}
-                              className="block w-full rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50"
+                              className="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50"
                             >
+                              {c.locked ? (
+                                <LockOpen size={14} className="shrink-0 text-black/40" />
+                              ) : (
+                                <Lock size={14} className="shrink-0 text-black/40" />
+                              )}
                               {c.locked ? "Unlock" : "Lock"}
                             </button>
                             <button
                               type="button"
                               onClick={() => copyColumnValues(c)}
-                              className="block w-full rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50"
+                              className="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50"
                             >
+                              <Copy size={14} className="shrink-0 text-black/40" />
                               Copy Fields
                             </button>
                             <button
                               type="button"
                               disabled={c.locked}
                               onClick={() => copyColumn(c.id)}
-                              className="block w-full rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50 disabled:opacity-40"
+                              className="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50 disabled:opacity-40"
                             >
+                              <CopyPlus size={14} className="shrink-0 text-black/40" />
                               Duplicate Column
                             </button>
 
@@ -753,37 +828,42 @@ export default function ApplicationsTable({
                               type="button"
                               disabled={c.locked || colIndex === 0}
                               onClick={() => moveColumn(c.id, -1)}
-                              className="block w-full rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50 disabled:opacity-40"
+                              className="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50 disabled:opacity-40"
                             >
+                              <ArrowLeft size={14} className="shrink-0 text-black/40" />
                               Move Left
                             </button>
                             <button
                               type="button"
                               disabled={c.locked || colIndex === columns.length - 1}
                               onClick={() => moveColumn(c.id, 1)}
-                              className="block w-full rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50 disabled:opacity-40"
+                              className="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50 disabled:opacity-40"
                             >
+                              <ArrowRight size={14} className="shrink-0 text-black/40" />
                               Move Right
                             </button>
                             <button
                               type="button"
                               onClick={() => addCustomColumn("notes", c.id)}
-                              className="block w-full rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50"
+                              className="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50"
                             >
+                              <StickyNote size={14} className="shrink-0 text-black/40" />
                               Add Notes
                             </button>
                             <button
                               type="button"
                               onClick={() => addCustomColumn("dropdown", c.id)}
-                              className="block w-full rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50"
+                              className="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50"
                             >
+                              <ListPlus size={14} className="shrink-0 text-black/40" />
                               Add Dropdown
                             </button>
                             <button
                               type="button"
                               onClick={() => addCustomColumn("divider", c.id)}
-                              className="block w-full rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50"
+                              className="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm text-zinc-700 hover:bg-zinc-50"
                             >
+                              <SeparatorVertical size={14} className="shrink-0 text-black/40" />
                               Add Divider
                             </button>
 
@@ -792,8 +872,9 @@ export default function ApplicationsTable({
                             <button
                               type="button"
                               onClick={() => deleteColumn(c.id)}
-                              className="block w-full rounded-lg px-3 py-1.5 text-left text-sm text-rose-600 hover:bg-rose-50"
+                              className="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm text-rose-600 hover:bg-rose-50"
                             >
+                              <Trash2 size={14} className="shrink-0" />
                               Delete
                             </button>
                           </div>
@@ -979,7 +1060,12 @@ export default function ApplicationsTable({
                       }`}
                     >
                       <td className="sticky left-0 z-10 bg-white px-4 py-2.5 text-black/40">
-                        {idx + 1}
+                        <span className="flex items-center gap-[6px]">
+                          {idx + 1}
+                          {isHidden && (
+                            <EyeOff size={12} aria-label="Hidden row" />
+                          )}
+                        </span>
                       </td>
 
                       <td className="px-4 py-2.5 text-black/40 whitespace-nowrap">
@@ -1140,12 +1226,14 @@ export default function ApplicationsTable({
                                 href={publicKonfolioHref}
                                 target="_blank"
                                 onClick={() => setRowMenuOpenId(null)}
-                                className="block rounded-lg px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50"
+                                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50"
                               >
+                                <ExternalLink size={14} className="shrink-0 text-black/40" />
                                 Open portfolio
                               </Link>
                             ) : (
-                              <span className="block px-3 py-2 text-sm text-black/40">
+                              <span className="flex items-center gap-2 px-3 py-2 text-sm text-black/40">
+                                <ExternalLink size={14} className="shrink-0" />
                                 Open portfolio
                               </span>
                             )}
@@ -1157,7 +1245,10 @@ export default function ApplicationsTable({
                               }
                               className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50"
                             >
-                              Highlight
+                              <span className="flex items-center gap-2">
+                                <Highlighter size={14} className="shrink-0 text-black/40" />
+                                Highlight
+                              </span>
                               <span className="text-black/40">
                                 {highlightSubmenuOpen ? "︿" : "﹀"}
                               </span>
@@ -1201,8 +1292,13 @@ export default function ApplicationsTable({
                                 setRowHidden(a.id, !isHidden);
                                 setRowMenuOpenId(null);
                               }}
-                              className="block w-full rounded-lg px-3 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50"
+                              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50"
                             >
+                              {isHidden ? (
+                                <Eye size={14} className="shrink-0 text-black/40" />
+                              ) : (
+                                <EyeOff size={14} className="shrink-0 text-black/40" />
+                              )}
                               {isHidden ? "Unhide" : "Hide"}
                             </button>
 
@@ -1211,8 +1307,9 @@ export default function ApplicationsTable({
                             <button
                               type="button"
                               onClick={() => handleDelete(a.id)}
-                              className="block w-full rounded-lg px-3 py-2 text-left text-sm text-rose-600 hover:bg-rose-50"
+                              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-rose-600 hover:bg-rose-50"
                             >
+                              <Trash2 size={14} className="shrink-0" />
                               Delete application
                             </button>
                           </div>
@@ -1225,38 +1322,6 @@ export default function ApplicationsTable({
             </table>
           </div>
 
-          <div className="flex items-center justify-between border-t border-zinc-100 px-4 py-3 text-sm text-black/40">
-            <div className="flex items-center gap-3">
-              <span>
-                Showing{" "}
-                <span className="text-zinc-700">
-                  {visibleApps.length.toLocaleString()}
-                </span>{" "}
-                of{" "}
-                <span className="text-zinc-700">
-                  {totalCount.toLocaleString()}
-                </span>
-              </span>
-              {hiddenRowCount > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setShowHiddenRows((v) => !v)}
-                  className="text-black/40 underline hover:text-zinc-800"
-                >
-                  {showHiddenRows
-                    ? "Hide hidden rows"
-                    : `Show ${hiddenRowCount} hidden`}
-                </button>
-              )}
-            </div>
-            <button
-              type="button"
-              className="rounded-full border border-zinc-200 bg-white px-4 py-1.5 text-zinc-700 hover:bg-zinc-50"
-              onClick={onReload}
-            >
-              Refresh
-            </button>
-          </div>
         </div>
       </div>
       {selectedApp && (

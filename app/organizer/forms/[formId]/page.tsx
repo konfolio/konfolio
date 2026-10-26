@@ -246,7 +246,6 @@ export default function OrganizerFormPage() {
           <ApplicationsTable
             formId={formId}
             apps={filteredApps}
-            totalCount={apps.length}
             fields={fields}
             formTitle={formTitle}
             loading={loading}
@@ -254,7 +253,6 @@ export default function OrganizerFormPage() {
             updatingId={updatingId}
             onStatusChange={updateStatus}
             onDrawerUpdate={handleDrawerUpdate}
-            onReload={load}
             onDelete={deleteApplication}
           />
         </div>
