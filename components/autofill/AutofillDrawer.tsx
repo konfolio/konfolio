@@ -971,12 +971,17 @@ export default function AutofillDrawer({
   }, []);
 
   const getPublicKonfolioPath = (konfolio: Konfolio) => {
-    if (!businessSlug || !konfolio.portfolio_slug) {
-      return "";
-    }
+  const business = businessSlug?.trim();
+  const portfolio = konfolio.portfolio_slug?.trim();
 
-    return `/${businessSlug}/${konfolio.portfolio_slug}`;
-  };
+  if (!business) return "";
+
+  if (!portfolio || portfolio === business) {
+    return `/${business}`;
+  }
+
+  return `/${business}/${portfolio}`;
+};
 
   const getPublicKonfolioUrl = (konfolio: Konfolio) => {
     const path = getPublicKonfolioPath(konfolio);
