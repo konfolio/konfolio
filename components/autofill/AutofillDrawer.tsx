@@ -340,11 +340,12 @@ function inferFieldKey(field: any): string | undefined {
 
     portfolio: "portfolio",
     "portfolio website": "portfolio",
+    "portfolio url": "portfolio_url",
 
     "konfolio link": "konfolio_link",
     "konfolio url": "konfolio_link",
-    "portfolio link": "konfolio_link",
-    "public portfolio link": "konfolio_link",
+    "portfolio link": "portfolio_link",
+    "public portfolio link": "portfolio_link",
 
     "portfolio name": "portfolio_name",
     "konfolio name": "portfolio_name",
@@ -586,9 +587,9 @@ function getAutofillValue({
     social_media_links: otherLinks,
     links: otherLinks,
 
-    portfolio: publicKonfolioUrl,
-    portfolio_link: publicKonfolioUrl,
-    portfolio_url: publicKonfolioUrl,
+    portfolio: website,
+    portfolio_link: website,
+    portfolio_url: website,
     konfolio_link: publicKonfolioUrl,
     konfolio_url: publicKonfolioUrl,
     portfolio_name: konfolio.portfolio_name,
