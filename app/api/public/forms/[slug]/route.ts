@@ -83,7 +83,7 @@ function getRawAutofillValue(
     email: userEmail,
 
     location: profile.location,
-    sales_permit: profile.sales_permit,
+    //sales_permit: profile.sales_permit,
     will_apply: profile.will_apply,
     collabs: profile.collabs,
     first_vend: profile.first_vend,

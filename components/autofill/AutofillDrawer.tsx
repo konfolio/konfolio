@@ -543,7 +543,6 @@ function getAutofillValue({
     location:
       content.locationText ?? profile?.location,
 
-    sales_permit: profile?.sales_permit,
     will_apply: profile?.will_apply,
     collabs: profile?.collabs,
     first_vend: profile?.first_vend,
@@ -587,14 +586,11 @@ function getAutofillValue({
     social_media_links: otherLinks,
     links: otherLinks,
 
-    portfolio:
-      getPreferredLinkValue({
-        content,
-        profile,
-        key: "portfolio",
-      }) ?? publicKonfolioUrl,
-
+    portfolio: publicKonfolioUrl,
+    portfolio_link: publicKonfolioUrl,
+    portfolio_url: publicKonfolioUrl,
     konfolio_link: publicKonfolioUrl,
+    konfolio_url: publicKonfolioUrl,
     portfolio_name: konfolio.portfolio_name,
     konfolio_name: konfolio.portfolio_name,
   };
@@ -709,11 +705,13 @@ function formatValueForField(value: any, field: any) {
 
   const isMerchandiseField =
     normalizeFieldKey(field.field_key ?? field.fieldKey ?? "") ===
-    "merchandise";
+      "merchandise" ||
+    String(field.label ?? "").trim().toLowerCase() === "your merchandise";
 
   const isCheckboxField =
     fieldType === "checkbox" ||
     fieldType === "checkboxes" ||
+    fieldType === "multi_choice" ||
     fieldType === "multi_select" ||
     fieldType === "multiselect" ||
     fieldType === "multiple_select" ||
@@ -724,6 +722,7 @@ function formatValueForField(value: any, field: any) {
     (fieldType === "dropdown" ||
       fieldType === "select" ||
       fieldType === "radio" ||
+      fieldType === "single_choice" ||
       fieldType === "multiple_choice");
 
   if (typeof value === "boolean") {
@@ -758,6 +757,15 @@ function formatValueForField(value: any, field: any) {
 
     if (cleanedValues.length === 0) {
       return undefined;
+    }
+
+    // MerchTagsField options are suggestions, not an allowed-values list.
+    // Preserve every selected portfolio tag, including custom tags.
+    if (
+      isMerchandiseField &&
+      (fieldType === "dropdown" || fieldType === "select")
+    ) {
+      return cleanedValues;
     }
 
     if (isCheckboxField) {
@@ -1011,17 +1019,18 @@ export default function AutofillDrawer({
       }
     }
 
-    /*
-     * The drawer builds autofill locally from the applicant's
-     * profile as a fallback.
-     *
-     * Values returned by the public form API override the local
-     * values when the server was able to compute them.
-     */
+    // Selected portfolio values take priority over server defaults.
     const merged: Record<string, any> = {
-      ...locallyBuiltAutofill,
       ...autofillData,
+      ...locallyBuiltAutofill,
     };
+
+    // Permit answers must be entered manually, even if the server sent one.
+    for (const field of fields ?? []) {
+      if (inferFieldKey(field) === "sales_permit") {
+        delete merged[field.id];
+      }
+    }
 
     console.log(
       "LOCAL KONFOLIO AUTOFILL:",
