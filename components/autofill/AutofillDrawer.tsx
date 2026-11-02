@@ -329,7 +329,7 @@ function inferFieldKey(field: any): string | undefined {
     "other link": "other_links",
     "other links": "other_links",
     "additional link": "additional_link",
-    "additional links": "other_links",
+    "additional links": "additional_links",
     "social link": "social_media_link",
     "social media link": "social_media_link",
     "social links": "other_links",
@@ -520,15 +520,6 @@ function getAutofillValue({
     tumblr ??
     pixiv;
 
-  const additionalLink =
-    website ??
-    x ??
-    facebook ??
-    tiktok ??
-    bluesky ??
-    tumblr ??
-    pixiv;
-
   const values: Record<string, any> = {
     first_name: profile?.first_name,
     last_name: profile?.last_name,
@@ -580,9 +571,7 @@ function getAutofillValue({
     bluesky,
 
     social_media_link: socialMediaLink,
-    additional_link: additionalLink,
     other_links: otherLinks,
-    additional_links: otherLinks,
     social_links: otherLinks,
     social_media_links: otherLinks,
     links: otherLinks,
@@ -971,17 +960,12 @@ export default function AutofillDrawer({
   }, []);
 
   const getPublicKonfolioPath = (konfolio: Konfolio) => {
-  const business = businessSlug?.trim();
-  const portfolio = konfolio.portfolio_slug?.trim();
+    if (!businessSlug || !konfolio.portfolio_slug) {
+      return "";
+    }
 
-  if (!business) return "";
-
-  if (!portfolio || portfolio === business) {
-    return `/${business}`;
-  }
-
-  return `/${business}/${portfolio}`;
-};
+    return `/${businessSlug}/${konfolio.portfolio_slug}`;
+  };
 
   const getPublicKonfolioUrl = (konfolio: Konfolio) => {
     const path = getPublicKonfolioPath(konfolio);
@@ -1031,9 +1015,17 @@ export default function AutofillDrawer({
       ...locallyBuiltAutofill,
     };
 
-    // Permit answers must be entered manually, even if the server sent one.
+    // These fields require manual entry, even if the server sent a default.
     for (const field of fields ?? []) {
-      if (inferFieldKey(field) === "sales_permit") {
+      const fieldKey = inferFieldKey(field);
+      const labelKey = normalizeFieldKey(field.label);
+      if (
+        fieldKey === "sales_permit" ||
+        fieldKey === "additional_link" ||
+        fieldKey === "additional_links" ||
+        labelKey === "additional_link" ||
+        labelKey === "additional_links"
+      ) {
         delete merged[field.id];
       }
     }
