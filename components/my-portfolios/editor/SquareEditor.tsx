@@ -276,9 +276,9 @@ function isDarkHexColor(hex: string) {
   const full =
     clean.length === 3
       ? clean
-          .split("")
-          .map((c) => c + c)
-          .join("")
+        .split("")
+        .map((c) => c + c)
+        .join("")
       : clean;
 
   if (full.length !== 6) return false;
@@ -489,6 +489,8 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
         displayName: draft.displayName,
         locationText: draft.locationText,
         email: draft.email,
+        showLocation: draft.showLocation !== false,
+        showEmail: draft.showEmail !== false,
         links: draft.links,
         merchTags: draft.merchTags,
         previousVends: draft.previousVends,
@@ -613,7 +615,7 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
     return () => {
       try {
         delete (window as any).__konfolio_attempt_publish;
-      } catch {}
+      } catch { }
     };
   }, [onPressPublishWithValidation, readOnly]);
 
@@ -671,7 +673,7 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
         readOnly
           ? undefined
           : (_file, objectUrl) =>
-              patchDraft(draftId, { profileImageUrl: objectUrl })
+            patchDraft(draftId, { profileImageUrl: objectUrl })
       }
       businessName={draft.businessName}
       displayName={draft.displayName}
@@ -705,6 +707,10 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
       }
       locationText={draft.locationText}
       email={draft.email}
+      showLocation={draft.showLocation !== false}
+      showEmail={draft.showEmail !== false}
+      onChangeShowLocation={readOnly ? undefined : (visible) => patchDraft(draftId, { showLocation: visible })}
+      onChangeShowEmail={readOnly ? undefined : (visible) => patchDraft(draftId, { showEmail: visible })}
       onChangeLocationText={
         readOnly
           ? undefined
@@ -719,11 +725,11 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
         readOnly
           ? undefined
           : () =>
-              window.open(
-                `/my-portfolios/${draftId}/preview`,
-                "_blank",
-                "noopener,noreferrer",
-              )
+            window.open(
+              `/my-portfolios/${draftId}/preview`,
+              "_blank",
+              "noopener,noreferrer",
+            )
       }
       {...extraProps}
     />
@@ -783,9 +789,9 @@ export default function SquareEditor({ draftId, readOnly = false }: Props) {
             onPublishAnyway={
               isOptionalOnlyMode
                 ? () => {
-                    setMissingOpen(false);
-                    void handlePublish();
-                  }
+                  setMissingOpen(false);
+                  void handlePublish();
+                }
                 : undefined
             }
           />

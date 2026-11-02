@@ -4,14 +4,15 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import ArrowLeft from "@/components/icons/ArrowLeft"
 import ArrowDown from "@/components/icons/ArrowDown"
+import { PortfolioField, PreviousVend } from "@/components/my-portfolios/PortfolioEditingIndicators"
 import ImageIcon from "@/components/icons/ImageIcon"
+import PencilIcon from "@/components/icons/PencilIcon"
 import SecondaryButton from "@/components/buttons/SecondaryButton"
 import Link from "next/link"
 
 import BrushIcon from "@/components/icons/BrushIcon"
 import LocationIcon from "@/components/icons/LocationIcon"
 import OpenTabIcon from "@/components/icons/OpenTabIcon"
-import DeleteIcon from "@/components/icons/DeleteIcon"
 
 import HomeIcon from "@/components/icons/HomeIcon"
 import ShopIcon from "@/components/icons/ShopIcon"
@@ -27,6 +28,10 @@ import LinkPicker, { type LinkPickerValue } from "@/components/my-portfolios/Lin
 import ColorPicker from "@/components/my-portfolios/ColorPicker"
 
 type Props = {
+  showLocation?: boolean
+  showEmail?: boolean
+  onChangeShowLocation?: (visible: boolean) => void
+  onChangeShowEmail?: (visible: boolean) => void
   editable?: boolean
   mobileCollapsed?: boolean
   mobileExpanded?: boolean
@@ -84,19 +89,7 @@ type Props = {
   }) => void
 }
 
-function parseEventLine(line: string): { title: string; year?: string } {
-  const trimmed = (line || "").trim()
-  if (!trimmed) return { title: "" }
 
-  const m = trimmed.match(/^(.*?)(?:\s*\(?(\d{4})\)?)\s*$/)
-  if (!m) return { title: trimmed }
-
-  const maybeTitle = (m[1] ?? "").trim()
-  const maybeYear = m[2]
-
-  if (maybeYear && maybeTitle.length > 0) return { title: maybeTitle, year: maybeYear }
-  return { title: trimmed }
-}
 
 type OpenPicker = "banner" | "background" | null
 
@@ -110,9 +103,9 @@ function isDarkHexColor(hex: string) {
   const full =
     clean.length === 3
       ? clean
-          .split("")
-          .map((c) => c + c)
-          .join("")
+        .split("")
+        .map((c) => c + c)
+        .join("")
       : clean
 
   if (full.length !== 6) return false
@@ -199,6 +192,10 @@ function KonfolioLogo({ primaryTextColor }: { primaryTextColor: string }) {
 }
 
 export default function EditSquareProfileSidebar({
+  showLocation = true,
+  showEmail = true,
+  onChangeShowLocation,
+  onChangeShowEmail,
   editable = true,
   mobileCollapsed = false,
   mobileExpanded = false,
@@ -288,7 +285,6 @@ export default function EditSquareProfileSidebar({
     pushPrevVends(next)
   }
 
-  const parsedPrevVends = useMemo(() => localPrevVends.map(parseEventLine), [localPrevVends])
   const showPrevVendsSection = editable || localPrevVends.length > 0
 
   const [localBanner, setLocalBanner] = useState(bannerColor)
@@ -440,7 +436,7 @@ export default function EditSquareProfileSidebar({
               onDrop={onDrop}
               onDragOver={onDragOver}
               className={[
-                "relative h-[45px] w-[45px] shrink-0 overflow-hidden rounded-[10px] bg-white/10",
+                "group/photo relative h-[45px] w-[45px] shrink-0 overflow-hidden rounded-[10px] bg-white/10",
                 editable ? "cursor-pointer" : "cursor-default",
               ].join(" ")}
             >
@@ -452,6 +448,11 @@ export default function EditSquareProfileSidebar({
                 onChange={onFileInputChange}
               />
 
+              {editable && (
+                <span aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center opacity-0 transition-opacity group-hover/photo:opacity-100 group-focus-visible/photo:opacity-100">
+                  <PencilIcon className="h-[18px] w-[18px] text-black/40" />
+                </span>
+              )}
               {localImgUrl ? (
                 <img
                   src={localImgUrl}
@@ -468,7 +469,7 @@ export default function EditSquareProfileSidebar({
 
             <div className="flex min-w-0 flex-1 flex-col items-start gap-[6px] py-[2px]">
               {editable ? (
-                <input
+                <PortfolioField label="business name" editable={editable}><input
                   value={localBusiness}
                   onChange={(e) => {
                     setLocalBusiness(e.target.value)
@@ -479,7 +480,7 @@ export default function EditSquareProfileSidebar({
                     "min-h-[24px] w-full bg-transparent text-left font-inter text-[22px] font-normal leading-[140%] placeholder:text-[#A5A5A5] outline-none",
                     primaryTextClass,
                   ].join(" ")}
-                />
+                /></PortfolioField>
               ) : (
                 <p
                   className={[
@@ -492,7 +493,7 @@ export default function EditSquareProfileSidebar({
               )}
 
               {editable ? (
-                <input
+                <PortfolioField label="your name" editable={editable}><input
                   value={localDisplay}
                   onChange={(e) => {
                     setLocalDisplay(e.target.value)
@@ -500,7 +501,7 @@ export default function EditSquareProfileSidebar({
                   }}
                   placeholder="Your Name"
                   className="-mt-[4px] min-h-[24px] w-full bg-transparent text-left font-inter text-[15px] font-normal leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
-                />
+                /></PortfolioField>
               ) : (
                 <p className="-mt-[4px] m-0 min-h-[24px] w-full truncate text-left font-inter text-[15px] font-normal leading-[140%] text-[#A5A5A5]">
                   {safeStr(localDisplay) || "Your Name"}
@@ -618,37 +619,10 @@ export default function EditSquareProfileSidebar({
                       : "flex flex-wrap items-center",
                   ].join(" ")}
                 >
-                  {parsedPrevVends.map((ev, i) => (
-                    <div
-                      key={`${ev.title}-${ev.year ?? ""}-${i}`}
-                      className="group flex items-baseline justify-center gap-[6px]"
-                    >
-                      <span
-                        className={[
-                          "text-center font-inter text-[15px] font-normal leading-[140%]",
-                          primaryTextClass,
-                        ].join(" ")}
-                      >
-                        {ev.title}
-                      </span>
-
-                      {ev.year ? (
-                        <span className="font-inter text-[12px] italic leading-[140%] text-[#A5A5A5]">
-                          {ev.year}
-                        </span>
-                      ) : null}
-
-                      {editable ? (
-                        <button
-                          type="button"
-                          aria-label="Delete event"
-                          onClick={() => deleteVendAt(i)}
-                          className="text-[#A5A5A5] cursor-pointer"
-                        >
-                          <DeleteIcon className="h-[14px] w-[14px]" />
-                        </button>
-                      ) : null}
-                    </div>
+                  {localPrevVends.map((value, i) => (
+                    <PreviousVend key={i} value={value} editable={editable} textClassName={primaryTextClass}
+                      onChange={(next) => pushPrevVends(localPrevVends.map((item, index) => index === i ? next : item))}
+                      onDelete={() => deleteVendAt(i)} />
                   ))}
 
                   {editable && localPrevVends.length < 4 ? (
@@ -671,7 +645,7 @@ export default function EditSquareProfileSidebar({
             ) : null}
 
             <div className="flex w-full flex-col items-center gap-[10px]">
-              <div className="flex max-w-full items-center justify-center gap-[5px] text-[#A5A5A5]">
+              <PortfolioField label="location" editable={editable} visible={showLocation} onVisibilityChange={onChangeShowLocation}><div className="flex max-w-full items-center justify-center gap-[5px] text-[#A5A5A5]">
                 <LocationIcon className="h-[12px] w-[12px] shrink-0" />
 
                 {editable ? (
@@ -689,9 +663,9 @@ export default function EditSquareProfileSidebar({
                     {safeStr(localLocation) || "City, State"}
                   </span>
                 )}
-              </div>
+              </div></PortfolioField>
 
-              {editable ? (
+              <PortfolioField label="email" editable={editable} visible={showEmail} onVisibilityChange={onChangeShowEmail}>{editable ? (
                 <input
                   value={localEmail}
                   onChange={(e) => {
@@ -705,7 +679,7 @@ export default function EditSquareProfileSidebar({
                 <p className="m-0 w-full truncate text-center font-inter text-[15px] leading-[140%] text-[#A5A5A5]">
                   {safeStr(localEmail) || "myemailaddress@konfolio.com"}
                 </p>
-              )}
+              )}</PortfolioField>
             </div>
 
             {editable ? (
@@ -871,7 +845,7 @@ export default function EditSquareProfileSidebar({
       <div className="w-full max-w-[276px] flex-1 flex flex-col items-center justify-center gap-[30px]">
         <div
           className={[
-            "relative w-[189px] h-[189px] bg-white border border-[#A5A5A5] border-[0.5px] rounded-[15px] overflow-hidden",
+            "relative w-[189px] h-[189px] bg-white rounded-[15px] overflow-hidden",
             editable ? "cursor-pointer" : "cursor-default",
           ].join(" ")}
           onDrop={onDrop}
@@ -888,11 +862,14 @@ export default function EditSquareProfileSidebar({
           {editable ? (
             <button
               type="button"
-              className="absolute inset-0 cursor-pointer"
+              className="group/photo absolute inset-0 z-[1] cursor-pointer"
               aria-label="Upload profile image"
               onClick={openFilePicker}
             >
               <span className="sr-only">Upload</span>
+              <span aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover/photo:opacity-100 group-focus-visible/photo:opacity-100">
+                <PencilIcon className="h-[24px] w-[24px] text-black/40" />
+              </span>
             </button>
           ) : null}
 
@@ -919,7 +896,7 @@ export default function EditSquareProfileSidebar({
 
         <div className="w-full max-w-[276px] flex flex-col items-center gap-[12px]">
           {editable ? (
-            <input
+            <PortfolioField label="business name" editable={editable}><input
               value={localBusiness}
               onChange={(e) => {
                 setLocalBusiness(e.target.value)
@@ -930,7 +907,7 @@ export default function EditSquareProfileSidebar({
                 "w-full text-center font-inter font-normal text-[22px] leading-[140%] placeholder:text-[#A5A5A5] bg-transparent outline-none",
                 primaryTextClass,
               ].join(" ")}
-            />
+            /></PortfolioField>
           ) : (
             <p
               className={[
@@ -943,7 +920,7 @@ export default function EditSquareProfileSidebar({
           )}
 
           {editable ? (
-            <input
+            <PortfolioField label="your name" editable={editable}><input
               value={localDisplay}
               onChange={(e) => {
                 setLocalDisplay(e.target.value)
@@ -951,7 +928,7 @@ export default function EditSquareProfileSidebar({
               }}
               placeholder="Your Name"
               className="w-full text-center font-inter font-normal text-[15px] leading-[140%] text-[rgba(165,165,165,0.5)] placeholder:text-[rgba(165,165,165,0.5)] bg-transparent outline-none"
-            />
+            /></PortfolioField>
           ) : (
             <p className="m-0 w-full text-center font-inter font-normal text-[15px] leading-[140%] text-[#A5A5A5]">
               {safeStr(localDisplay) || "Your Name"}
@@ -962,7 +939,7 @@ export default function EditSquareProfileSidebar({
         <div className="w-full max-w-[276px] flex items-center justify-center">
           {editable ? (
             showAddLink ? (
-              <LinkPicker onAddLinkClick={onAddLinkClick} value={linksValue} onChange={onChangeLinks} bannerIsDark={bannerIsDark}/>
+              <LinkPicker onAddLinkClick={onAddLinkClick} value={linksValue} onChange={onChangeLinks} bannerIsDark={bannerIsDark} />
             ) : null
           ) : (
             <div className="flex items-center justify-center gap-[10px]">
@@ -1039,46 +1016,10 @@ export default function EditSquareProfileSidebar({
             </p>
 
             <div className="w-full flex flex-col items-center gap-[6px]">
-              {parsedPrevVends.map((ev, i) => (
-                <div key={`${ev.title}-${ev.year ?? ""}-${i}`} className="group relative w-full flex justify-center">
-                  <div className="flex items-baseline gap-[6px]">
-                    <span
-                      className={[
-                        "font-inter font-normal text-[15px] leading-[140%]",
-                        primaryTextClass,
-                      ].join(" ")}
-                    >
-                      {ev.title || ""}
-                    </span>
-                    {ev.year ? (
-                      <span className="font-inter italic font-normal text-[12px] leading-[140%] text-[#A5A5A5]">
-                        {ev.year}
-                      </span>
-                    ) : null}
-                  </div>
-
-                  {editable ? (
-                    <button
-                      type="button"
-                      aria-label="Delete event"
-                      className="
-                        absolute right-[12px] top-1/2 -translate-y-1/2
-                        opacity-0 transition-opacity
-                        group-hover:opacity-100
-                        text-[#A5A5A5]
-                        [&_path]:fill-[#A5A5A5]
-                        [&_path]:stroke-[#A5A5A5]
-                        cursor-pointer
-                      "
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        deleteVendAt(i)
-                      }}
-                    >
-                      <DeleteIcon className="w-[14px] h-[14px]" />
-                    </button>
-                  ) : null}
-                </div>
+              {localPrevVends.map((value, i) => (
+                <PreviousVend key={i} value={value} editable={editable} textClassName={primaryTextClass}
+                  onChange={(next) => pushPrevVends(localPrevVends.map((item, index) => index === i ? next : item))}
+                  onDelete={() => deleteVendAt(i)} />
               ))}
             </div>
 
@@ -1111,7 +1052,7 @@ export default function EditSquareProfileSidebar({
 
         <div className="w-full max-w-[276px] flex flex-col items-center gap-[12px]">
           <div className="flex justify-center">
-            <div className="inline-flex items-center gap-[5px]">
+            <PortfolioField label="location" editable={editable} visible={showLocation} onVisibilityChange={onChangeShowLocation}><div className="inline-flex items-center gap-[5px]">
               <div className="w-[12px] h-[12px] flex items-center justify-center text-[#A5A5A5]">
                 <LocationIcon className="w-[12px] h-[12px]" />
               </div>
@@ -1141,10 +1082,10 @@ export default function EditSquareProfileSidebar({
                   {safeStr(localLocation)}
                 </span>
               )}
-            </div>
+            </div></PortfolioField>
           </div>
 
-          {editable ? (
+          <PortfolioField label="email" editable={editable} visible={showEmail} onVisibilityChange={onChangeShowEmail}>{editable ? (
             <input
               value={localEmail}
               onChange={(e) => {
@@ -1167,7 +1108,7 @@ export default function EditSquareProfileSidebar({
             <p className="m-0 w-full text-center font-inter font-normal text-[15px] leading-[140%] text-[#A5A5A5]">
               {safeStr(localEmail)}
             </p>
-          )}
+          )}</PortfolioField>
         </div>
       </div>
 

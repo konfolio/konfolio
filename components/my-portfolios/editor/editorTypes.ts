@@ -23,6 +23,8 @@ export type BaseDraft = {
   updatedAt: number
   explore_enabled?: boolean
   thumbnail_url?: string | null
+  showLocation?: boolean
+  showEmail?: boolean
 }
 
 export type SquareDraft = BaseDraft & {

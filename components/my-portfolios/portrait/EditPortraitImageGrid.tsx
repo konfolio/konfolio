@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import ImageIcon from "@/components/icons/ImageIcon"
 import SlidersIcon from "@/components/icons/SlidersIcon"
 import PencilIcon from "@/components/icons/PencilIcon"
-import TrashIcon from "@/components/icons/TrashIcon"
+import { X } from "lucide-react"
 import EditImagePopover, { type ImageEdits } from "@/components/my-portfolios/EditImagePopover"
 
 type Cell = {
@@ -353,24 +353,24 @@ export default function EditPortraitImageGrid({
 
   const cardShellStyle: React.CSSProperties = backgroundIsDark
     ? {
-        boxShadow: "2px 4px 25px rgba(0,0,0,0.12)",
-      }
+      boxShadow: "2px 4px 25px rgba(0,0,0,0.12)",
+    }
     : {
-        boxShadow:
-          "2px 4px 25px rgba(165,165,165,0.1), inset 2.14645px 2.00046px 9.24px rgba(165,165,165,0.126), inset 1.21725px 1.13446px 4.62px rgba(165,165,165,0.126), inset 0 0 0 1px rgba(255,255,255,0.9)",
-      }
+      boxShadow:
+        "2px 4px 25px rgba(165,165,165,0.1), inset 2.14645px 2.00046px 9.24px rgba(165,165,165,0.126), inset 1.21725px 1.13446px 4.62px rgba(165,165,165,0.126), inset 0 0 0 1px rgba(255,255,255,0.9)",
+    }
 
   const gradientStyle: React.CSSProperties = backgroundIsDark
     ? {
-        background:
-          "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.76) 70%, #000000 100%)",
-        backdropFilter: "none",
-      }
+      background:
+        "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.76) 70%, #000000 100%)",
+      backdropFilter: "none",
+    }
     : {
-        background:
-          "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 70%, #FFFFFF 100%)",
-        backdropFilter: "none",
-      }
+      background:
+        "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 70%, #FFFFFF 100%)",
+      backdropFilter: "none",
+    }
 
   const overlayTextClass = backgroundIsDark ? "text-white" : "text-[#262626]"
   const prevVendTextClass = backgroundIsDark ? "text-white" : "text-[#262626]"
@@ -633,6 +633,7 @@ export default function EditPortraitImageGrid({
                             pointer-events-none
                             transition-opacity
                             group-hover:opacity-100 group-hover:pointer-events-auto
+                            group-focus-within:opacity-100 group-focus-within:pointer-events-auto
                           "
                         >
                           <button
@@ -642,7 +643,7 @@ export default function EditPortraitImageGrid({
                               startEditVend(i)
                             }}
                             aria-label="Edit previous vend"
-                            className="flex h-[16px] w-[16px] cursor-pointer items-center justify-center text-[#A5A5A5]"
+                            className="flex h-[16px] w-[16px] cursor-pointer items-center justify-center text-black/40"
                           >
                             <PencilIcon className="h-[16px] w-[16px]" />
                           </button>
@@ -654,9 +655,9 @@ export default function EditPortraitImageGrid({
                               deleteVend(i)
                             }}
                             aria-label="Delete previous vend"
-                            className="flex h-[16px] w-[16px] cursor-pointer items-center justify-center text-[#A5A5A5]"
+                            className="flex h-[16px] w-[16px] cursor-pointer items-center justify-center rounded-full bg-black/40 text-white"
                           >
-                            <TrashIcon className="h-[16px] w-[16px]" />
+                            <X className="h-[14px] w-[14px]" />
                           </button>
                         </span>
                       ) : null}
@@ -694,7 +695,7 @@ export default function EditPortraitImageGrid({
         </div>
       ) : null}
 
-      
+
     </section>
   )
 }
