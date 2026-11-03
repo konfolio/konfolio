@@ -1005,13 +1005,21 @@ export default function ApplicationsTable({
                   const first = a.applicant.firstName ?? "—";
                   const last = a.applicant.lastName ?? "—";
 
-                  const preferred =
-                    a.applicant.displayName ||
-                    [a.applicant.firstName, a.applicant.lastName]
-                      .filter(Boolean)
-                      .join(" ")
-                      .trim() ||
-                    "—";
+                  const preferredField = fields.find(
+  (field) =>
+    field.field_key === "preferred_name" ||
+    field.label.trim().toLowerCase() === "preferred name",
+);
+
+const answers = a.answers ?? {};
+
+const preferredValue =
+  preferredField &&
+  Object.prototype.hasOwnProperty.call(answers, preferredField.id)
+    ? answers[preferredField.id]
+    : answers[preferredField?.field_key ?? "preferred_name"];
+
+const preferred = formatAnswer(preferredValue);
 
                   const business = a.applicant.businessName ?? "—";
 
