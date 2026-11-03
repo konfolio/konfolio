@@ -92,7 +92,7 @@ export default function OrganizerFormCard({ form, onChanged }: Props) {
   }
 
   return (
-    <article className="relative flex w-full gap-[16px] rounded-[20px] bg-white p-[16px] text-[#262626] shadow-[0_3px_12px_rgba(0,0,0,0.06)] sm:gap-[20px]">
+    <article className="relative flex w-full max-w-[786px] gap-[16px] rounded-[20px] bg-white p-[16px] text-[#262626] shadow-[0_3px_12px_rgba(0,0,0,0.06)] sm:gap-[20px]">
       <Link href={`/organizer/forms/${form.id}`} aria-label={`View applications for ${form.title}`} className="flex min-h-[138px] w-[90px] shrink-0 items-center justify-center rounded-[14px] bg-[#F7F7F7] text-[32px] font-semibold text-[#999999] sm:w-[140px] sm:text-[40px]">
         {year}
       </Link>
@@ -134,8 +134,8 @@ export default function OrganizerFormCard({ form, onChanged }: Props) {
           </div>
           <Link href={`/organizer/forms/${form.id}/edit`} className="shrink-0 underline underline-offset-[4px] hover:opacity-70">Edit Form</Link>
         </div>
-        {message && <p role="status" className="text-[13px] text-[#666666]">{message}</p>}
-        {busy && !editing && <p role="status" className="text-[13px] text-[#666666]">Updating form...</p>}
+        {message && <p role="alert" className="absolute left-[16px] right-[16px] top-full mt-[4px] text-[13px] text-[#666666]">{message}</p>}
+        {busy && !editing && <p role="status" className="sr-only">Updating form...</p>}
       </div>
       <PortfolioDeleteConfirm open={deleteOpen} onClose={() => { if (!busy) setDeleteOpen(false); }} onCancel={() => setDeleteOpen(false)} onConfirmDelete={() => void mutate("DELETE")} title="Delete this form?" subtitle="This form and its submissions cannot be recovered after deletion." isDeleting={busy} />
     </article>

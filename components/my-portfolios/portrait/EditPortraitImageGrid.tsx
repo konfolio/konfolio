@@ -372,6 +372,8 @@ export default function EditPortraitImageGrid({
       backdropFilter: "none",
     }
 
+  const secondaryTextClass = backgroundIsDark ? "text-white/40" : "text-black/40"
+  const secondaryPlaceholderClass = backgroundIsDark ? "placeholder:text-white/40" : "placeholder:text-black/40"
   const overlayTextClass = backgroundIsDark ? "text-white" : "text-[#262626]"
   const prevVendTextClass = backgroundIsDark ? "text-white" : "text-[#262626]"
 
@@ -465,10 +467,10 @@ export default function EditPortraitImageGrid({
                       </div>
 
                       <div className="flex flex-col items-center gap-[7px]">
-                        <p className="m-0 text-center font-roboto text-[12px] leading-[14px] text-[#A5A5A5]">
+                        <p className={`m-0 text-center font-roboto text-[12px] leading-[14px] ${secondaryTextClass}`}>
                           Recommended:
                         </p>
-                        <p className="m-0 text-center font-roboto text-[17px] leading-[20px] text-[#A5A5A5]">
+                        <p className={`m-0 text-center font-roboto text-[17px] leading-[20px] ${secondaryTextClass}`}>
                           {RECOMMENDED[idx] ?? "Image"}
                         </p>
                       </div>
@@ -560,7 +562,7 @@ export default function EditPortraitImageGrid({
 
       {showPrevVendsSection ? (
         <div className="hidden w-full flex-col items-center gap-[6px] px-2 pt-[20px] min-[851px]:flex">
-          <p className="m-0 text-center font-inter text-[13px] font-normal leading-[16px] text-[#A5A5A5]">
+          <p className={`m-0 text-center font-inter text-[13px] font-normal leading-[16px] ${secondaryTextClass}`}>
             {previousVendsLabel}
           </p>
 
@@ -572,7 +574,7 @@ export default function EditPortraitImageGrid({
               return (
                 <div key={displayKey} className="group flex items-center gap-[6px]">
                   {i !== 0 ? (
-                    <span className="font-inter text-[16px] font-normal leading-[19px] text-[#A5A5A5]">
+                    <span className={`font-inter text-[16px] font-normal leading-[19px] ${secondaryTextClass}`}>
                       |
                     </span>
                   ) : null}
@@ -618,7 +620,7 @@ export default function EditPortraitImageGrid({
                         </span>
 
                         {ev.year ? (
-                          <span className="font-inter text-[12px] font-normal italic leading-[140%] text-[#A5A5A5]">
+                          <span className={`font-inter text-[12px] font-normal italic leading-[140%] ${secondaryTextClass}`}>
                             {ev.year}
                           </span>
                         ) : null}
@@ -680,16 +682,16 @@ export default function EditPortraitImageGrid({
                 }
               }}
               placeholder={vendPlaceholder}
-              className="
+              className={`
                 w-full max-w-[258px]
                 bg-transparent
                 text-center
                 font-inter
                 text-[16px] font-normal leading-[19px]
-                text-[#D3D3D3]
-                placeholder:text-[#D3D3D3]
+                ${secondaryTextClass}
+                ${secondaryPlaceholderClass}
                 outline-none
-              "
+              `}
             />
           ) : null}
         </div>

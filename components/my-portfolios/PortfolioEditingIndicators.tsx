@@ -16,7 +16,7 @@ export function PortfolioField({ children, label, editable, visible = true, onVi
     if (!editable) return visible ? <>{children}</> : null
 
     return (
-        <div ref={fieldRef} className={`group/field relative w-full min-w-0 ${onVisibilityChange ? "pr-[48px]" : "pr-[24px]"}`}>
+        <div ref={fieldRef} className={`group/field relative w-full min-w-0 ${onVisibilityChange ? "px-[48px]" : "px-[24px]"}`}>
             <div className={visible ? "" : "opacity-40"}>{children}</div>
             <div className="absolute right-0 top-1/2 z-30 flex -translate-y-1/2 items-center gap-[6px] opacity-0 pointer-events-none transition-opacity group-hover/field:opacity-100 group-hover/field:pointer-events-auto group-focus-within/field:opacity-100 group-focus-within/field:pointer-events-auto">
                 <button type="button" aria-label={`Edit ${label}`} title={`Edit ${label}`} className="flex h-[20px] w-[20px] items-center justify-center text-black/40 focus-visible:outline-2" onClick={() => {
@@ -50,7 +50,7 @@ export function PreviousVend({ value, editable, onChange, onDelete, textClassNam
         setEditing(false)
     }
     return (
-        <div className={`group/vend relative flex w-full items-center justify-center ${editable ? "pr-[48px]" : ""}`}>
+        <div className={`group/vend relative flex w-full items-center justify-center ${editable ? "px-[48px]" : ""}`}>
             {editing ? (
                 <input autoFocus aria-label="Previous vend" value={draft} onChange={(e) => setDraft(e.target.value)} onBlur={save} onKeyDown={(e) => {
                     if (e.key === "Enter") { e.preventDefault(); save() }
@@ -59,7 +59,7 @@ export function PreviousVend({ value, editable, onChange, onDelete, textClassNam
             ) : (
                 <span className={`inline-flex items-baseline gap-[6px] text-[15px] leading-[140%] ${textClassName}`}>
                     <span>{match ? match[1] : value}</span>
-                    {match && <span className="text-[12px] text-[#A5A5A5]">{match[2]}</span>}
+                    {match && <span className={`text-[12px] ${secondaryTextClass}`}>{match[2]}</span>}
                 </span>
             )}
             {editable && !editing && (

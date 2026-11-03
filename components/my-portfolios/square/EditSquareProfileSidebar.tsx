@@ -408,6 +408,9 @@ export default function EditSquareProfileSidebar({
   const bannerIsDark = useMemo(() => isDarkHexColor(localBanner), [localBanner])
   const backgroundIsDark = useMemo(() => isDarkHexColor(localBg), [localBg])
 
+  const secondaryTextClass = bannerIsDark ? "text-white/40" : "text-black/40"
+  const secondaryPlaceholderClass = bannerIsDark ? "placeholder:text-white/40" : "placeholder:text-black/40"
+
   const primaryTextClass = bannerIsDark ? "text-white" : "text-[#262626]"
   const primaryStrokeClass = bannerIsDark
     ? "[&_path]:stroke-white"
@@ -477,7 +480,7 @@ export default function EditSquareProfileSidebar({
                   }}
                   placeholder="Business Name"
                   className={[
-                    "min-h-[24px] w-full bg-transparent text-left font-inter text-[22px] font-normal leading-[140%] placeholder:text-[#A5A5A5] outline-none",
+                    `min-h-[24px] w-full bg-transparent text-left font-inter text-[22px] font-normal leading-[140%] ${secondaryPlaceholderClass} outline-none`,
                     primaryTextClass,
                   ].join(" ")}
                 /></PortfolioField>
@@ -500,10 +503,10 @@ export default function EditSquareProfileSidebar({
                     onChangeDisplayName?.(e.target.value)
                   }}
                   placeholder="Your Name"
-                  className="-mt-[4px] min-h-[24px] w-full bg-transparent text-left font-inter text-[15px] font-normal leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
+                  className={`-mt-[4px] min-h-[24px] w-full bg-transparent text-left font-inter text-[15px] font-normal leading-[140%] ${secondaryTextClass} ${secondaryPlaceholderClass} outline-none`}
                 /></PortfolioField>
               ) : (
-                <p className="-mt-[4px] m-0 min-h-[24px] w-full truncate text-left font-inter text-[15px] font-normal leading-[140%] text-[#A5A5A5]">
+                <p className={`-mt-[4px] m-0 min-h-[24px] w-full truncate text-left font-inter text-[15px] font-normal leading-[140%] ${secondaryTextClass}`}>
                   {safeStr(localDisplay) || "Your Name"}
                 </p>
               )}
@@ -607,7 +610,7 @@ export default function EditSquareProfileSidebar({
 
             {showPrevVendsSection ? (
               <div className="flex w-full flex-col items-center gap-[10px]">
-                <p className="m-0 w-full text-center font-inter text-[14px] font-normal leading-[130%] text-[#A5A5A5]">
+                <p className={`m-0 w-full text-center font-inter text-[14px] font-normal leading-[130%] ${secondaryTextClass}`}>
                   Previous Vends
                 </p>
 
@@ -637,7 +640,7 @@ export default function EditSquareProfileSidebar({
                         }
                       }}
                       placeholder={localPrevVends.length > 0 ? "Type an event..." : "Vended Event 2026"}
-                      className="w-full bg-transparent text-center font-inter text-[15px] leading-[140%] text-[#D3D3D3] placeholder:text-[#D3D3D3] outline-none"
+                      className={`w-full bg-transparent text-center font-inter text-[15px] leading-[140%] ${secondaryTextClass} ${secondaryPlaceholderClass} outline-none`}
                     />
                   ) : null}
                 </div>
@@ -656,10 +659,10 @@ export default function EditSquareProfileSidebar({
                       onChangeLocationText?.(e.target.value)
                     }}
                     placeholder="City, State"
-                    className="min-w-0 bg-transparent text-center font-inter text-[15px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
+                    className={`min-w-0 bg-transparent text-center font-inter text-[15px] leading-[140%] ${secondaryTextClass} ${secondaryPlaceholderClass} outline-none`}
                   />
                 ) : (
-                  <span className="min-w-0 truncate text-center font-inter text-[15px] leading-[140%] text-[#A5A5A5]">
+                  <span className={`min-w-0 truncate text-center font-inter text-[15px] leading-[140%] ${secondaryTextClass}`}>
                     {safeStr(localLocation) || "City, State"}
                   </span>
                 )}
@@ -673,10 +676,10 @@ export default function EditSquareProfileSidebar({
                     onChangeEmail?.(e.target.value)
                   }}
                   placeholder="myemailaddress@konfolio.com"
-                  className="w-full bg-transparent text-center font-inter text-[15px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
+                  className={`w-full bg-transparent text-center font-inter text-[15px] leading-[140%] ${secondaryTextClass} ${secondaryPlaceholderClass} outline-none`}
                 />
               ) : (
-                <p className="m-0 w-full truncate text-center font-inter text-[15px] leading-[140%] text-[#A5A5A5]">
+                <p className={`m-0 w-full truncate text-center font-inter text-[15px] leading-[140%] ${secondaryTextClass}`}>
                   {safeStr(localEmail) || "myemailaddress@konfolio.com"}
                 </p>
               )}</PortfolioField>
@@ -887,7 +890,7 @@ export default function EditSquareProfileSidebar({
               <div className="w-[52px] h-[52px] flex items-center justify-center text-[#A5A5A5] [&_path]:stroke-[#A5A5A5] [&_path]:fill-[#A5A5A5]">
                 <ImageIcon />
               </div>
-              <p className="m-0 w-[140px] font-inter font-normal text-[11px] leading-[13px] text-center text-[#A5A5A5]">
+              <p className="m-0 w-[140px] font-inter font-normal text-[11px] leading-[13px] text-center text-black/40">
                 {editable ? "Drop image here or click to open files" : ""}
               </p>
             </div>
@@ -904,7 +907,7 @@ export default function EditSquareProfileSidebar({
               }}
               placeholder="Business Name"
               className={[
-                "w-full text-center font-inter font-normal text-[22px] leading-[140%] placeholder:text-[#A5A5A5] bg-transparent outline-none",
+                `w-full text-center font-inter font-normal text-[22px] leading-[140%] ${secondaryPlaceholderClass} bg-transparent outline-none`,
                 primaryTextClass,
               ].join(" ")}
             /></PortfolioField>
@@ -927,10 +930,10 @@ export default function EditSquareProfileSidebar({
                 onChangeDisplayName?.(e.target.value)
               }}
               placeholder="Your Name"
-              className="w-full text-center font-inter font-normal text-[15px] leading-[140%] text-[rgba(165,165,165,0.5)] placeholder:text-[rgba(165,165,165,0.5)] bg-transparent outline-none"
+              className={`w-full text-center font-inter font-normal text-[15px] leading-[140%] ${secondaryTextClass} ${secondaryPlaceholderClass} bg-transparent outline-none`}
             /></PortfolioField>
           ) : (
-            <p className="m-0 w-full text-center font-inter font-normal text-[15px] leading-[140%] text-[#A5A5A5]">
+            <p className={`m-0 w-full text-center font-inter font-normal text-[15px] leading-[140%] ${secondaryTextClass}`}>
               {safeStr(localDisplay) || "Your Name"}
             </p>
           )}
@@ -1011,7 +1014,7 @@ export default function EditSquareProfileSidebar({
 
         {showPrevVendsSection ? (
           <div className="relative z-[10] w-[276px] flex flex-col items-center gap-[12px]">
-            <p className="m-0 w-full text-center font-inter font-normal text-[15px] leading-[140%] text-[#A5A5A5]">
+            <p className={`m-0 w-full text-center font-inter font-normal text-[15px] leading-[140%] ${secondaryTextClass}`}>
               Previous Vends
             </p>
 
@@ -1035,16 +1038,16 @@ export default function EditSquareProfileSidebar({
                   }
                 }}
                 placeholder={localPrevVends.length > 0 ? "Type an event..." : "Vended Event 2026"}
-                className="
+                className={`
                   w-full
                   text-center
                   font-inter font-normal
                   text-[15px] leading-[140%]
-                  text-[#D3D3D3]
-                  placeholder:text-[#D3D3D3]
+                  ${secondaryTextClass}
+                  ${secondaryPlaceholderClass}
                   bg-transparent
                   outline-none
-                "
+                `}
               />
             ) : null}
           </div>
@@ -1066,19 +1069,19 @@ export default function EditSquareProfileSidebar({
                   }}
                   placeholder="City, State"
                   size={Math.max(localLocation.length || 0, 8)}
-                  className="
+                  className={`
                     w-auto
                     text-center
                     font-inter font-normal
                     text-[15px] leading-[140%]
-                    text-[#A5A5A5]
-                    placeholder:text-[#A5A5A5]
+                     ${secondaryTextClass}
+                    ${secondaryPlaceholderClass}
                     bg-transparent
                     outline-none
-                  "
+                  `}
                 />
               ) : (
-                <span className="font-inter font-normal text-[15px] leading-[140%] text-[#A5A5A5]">
+                <span className={`font-inter font-normal text-[15px] leading-[140%] ${secondaryTextClass}`}>
                   {safeStr(localLocation)}
                 </span>
               )}
@@ -1093,19 +1096,19 @@ export default function EditSquareProfileSidebar({
                 onChangeEmail?.(e.target.value)
               }}
               placeholder="myemailaddress@konfolio.com"
-              className="
+              className={`
                 w-full
                 text-center
                 font-inter font-normal
                 text-[15px] leading-[140%]
-                text-[#A5A5A5]
-                placeholder:text-[#A5A5A5]
+                 ${secondaryTextClass}
+                ${secondaryPlaceholderClass}
                 bg-transparent
                 outline-none
-              "
+              `}
             />
           ) : (
-            <p className="m-0 w-full text-center font-inter font-normal text-[15px] leading-[140%] text-[#A5A5A5]">
+            <p className={`m-0 w-full text-center font-inter font-normal text-[15px] leading-[140%] ${secondaryTextClass}`}>
               {safeStr(localEmail)}
             </p>
           )}</PortfolioField>

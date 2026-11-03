@@ -318,6 +318,8 @@ export default function EditPortraitProfile({
 
   const bannerIsDark = isDarkHexColor(localBanner)
   const resolvedBackgroundIsDark = backgroundIsDark ?? isDarkHexColor(localBg)
+  const secondaryTextClass = bannerIsDark ? "text-white/40" : "text-black/40"
+  const secondaryPlaceholderClass = bannerIsDark ? "placeholder:text-white/40" : "placeholder:text-black/40"
   const bannerPrimaryColor = bannerIsDark ? "#FFFFFF" : "#262626"
 
   const bannerPrimaryTextClass = bannerIsDark
@@ -574,7 +576,7 @@ export default function EditPortraitProfile({
                     onChangeBusinessName?.(e.target.value)
                   }}
                   className={[
-                    "min-h-[24px] w-full bg-transparent text-left font-inter text-[22px] font-normal leading-[140%] placeholder:text-[#A5A5A5] outline-none",
+                    `min-h-[24px] w-full bg-transparent text-left font-inter text-[22px] font-normal leading-[140%] ${secondaryPlaceholderClass} outline-none`,
                     bannerPrimaryTextClass,
                   ].join(" ")}
                 /></PortfolioField>
@@ -588,7 +590,7 @@ export default function EditPortraitProfile({
                     setLocalName(e.target.value)
                     onChangeDisplayName?.(e.target.value)
                   }}
-                  className="-mt-[4px] min-h-[24px] w-full bg-transparent text-left font-inter text-[15px] font-normal leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
+                  className={`-mt-[4px] min-h-[24px] w-full bg-transparent text-left font-inter text-[15px] font-normal leading-[140%] ${secondaryTextClass} ${secondaryPlaceholderClass} outline-none`}
                 /></PortfolioField>
               </div>
             </div>
@@ -689,7 +691,7 @@ export default function EditPortraitProfile({
               {/* Previous Vends */}
               {showPrevVendsSection ? (
                 <div className="flex w-full flex-col items-center gap-[10px]">
-                  <p className="m-0 w-full text-center font-inter text-[14px] font-normal leading-[130%] text-[#A5A5A5]">
+                  <p className={`m-0 w-full text-center font-inter text-[14px] font-normal leading-[130%] ${secondaryTextClass}`}>
                     Previous Vends
                   </p>
 
@@ -719,7 +721,7 @@ export default function EditPortraitProfile({
                           }
                         }}
                         placeholder={localPrevVends.length > 0 ? "Type an event..." : "Vended Event 2026"}
-                        className="w-full bg-transparent text-center font-inter text-[15px] leading-[140%] text-[#D3D3D3] placeholder:text-[#D3D3D3] outline-none"
+                        className={`w-full bg-transparent text-center font-inter text-[15px] leading-[140%] ${secondaryTextClass} ${secondaryPlaceholderClass} outline-none`}
                       />
                     ) : null}
                   </div>
@@ -739,7 +741,7 @@ export default function EditPortraitProfile({
                       setLocalLocation(e.target.value)
                       onChangeLocationText?.(e.target.value)
                     }}
-                    className="min-w-0 bg-transparent text-center font-inter text-[15px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
+                    className={`min-w-0 bg-transparent text-center font-inter text-[15px] leading-[140%] ${secondaryTextClass} ${secondaryPlaceholderClass} outline-none`}
                   />
                 </div></PortfolioField>
 
@@ -752,7 +754,7 @@ export default function EditPortraitProfile({
                     setLocalEmail(e.target.value)
                     onChangeEmail?.(e.target.value)
                   }}
-                  className="w-full bg-transparent text-center font-inter text-[15px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
+                  className={`w-full bg-transparent text-center font-inter text-[15px] leading-[140%] ${secondaryTextClass} ${secondaryPlaceholderClass} outline-none`}
                 /></PortfolioField>
               </div>
 
@@ -895,7 +897,7 @@ export default function EditPortraitProfile({
                 <div className="w-[40px] h-[40px] text-[#A5A5A5] [&_path]:stroke-[#A5A5A5] [&_path]:fill-[#A5A5A5]">
                   <ImageIcon />
                 </div>
-                {editable && <p className="m-0 w-[90px] text-center text-[10px] leading-[12px] text-[#A5A5A5]">Drop image here or click to open files</p>}
+                {editable && <p className="m-0 w-[90px] text-center text-[10px] leading-[12px] text-black/40">Drop image here or click to open files</p>}
               </div>
             )}
           </div>
@@ -1010,8 +1012,8 @@ export default function EditPortraitProfile({
                     <div className={`w-[16px] h-[16px] flex items-center justify-center ${bannerPrimaryIconClass}`}>
                       <BrushIcon
                         className={`h-[16px] w-[16px] ${bannerIsDark
-                            ? "text-white [&_path]:stroke-white [&_path]:fill-none"
-                            : "text-[#262626] [&_path]:stroke-[#262626] [&_path]:fill-none"
+                          ? "text-white [&_path]:stroke-white [&_path]:fill-none"
+                          : "text-[#262626] [&_path]:stroke-[#262626] [&_path]:fill-none"
                           }`}
                       />
                     </div>
@@ -1136,7 +1138,7 @@ export default function EditPortraitProfile({
                         onChangeLocationText?.(e.target.value)
                       }}
                       style={{ width: `${locationPxWidth}px` }}
-                      className="max-w-[238px] text-right font-inter font-normal text-[15px] leading-[18px] text-[#A5A5A5] placeholder:text-[#A5A5A5] bg-transparent outline-none"
+                      className={`max-w-[238px] text-right font-inter font-normal text-[15px] leading-[18px] ${secondaryTextClass} ${secondaryPlaceholderClass} bg-transparent outline-none`}
                     />
                   </div></PortfolioField>
                 </div>
@@ -1159,7 +1161,7 @@ export default function EditPortraitProfile({
                     setLocalEmail(e.target.value)
                     onChangeEmail?.(e.target.value)
                   }}
-                  className="w-full text-right font-inter font-normal text-[15px] leading-[18px] text-[#A5A5A5] placeholder:text-[#A5A5A5] bg-transparent outline-none"
+                  className={`w-full text-right font-inter font-normal text-[15px] leading-[18px] ${secondaryTextClass} ${secondaryPlaceholderClass} bg-transparent outline-none`}
                 /></PortfolioField>
               </div>
             </div>
