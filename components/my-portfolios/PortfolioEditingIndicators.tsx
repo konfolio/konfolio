@@ -44,6 +44,10 @@ export function PreviousVend({ value, editable, onChange, onDelete, textClassNam
     const [editing, setEditing] = useState(false)
     const [draft, setDraft] = useState(value)
     const match = value.match(/^(.*?)\s+(\d{4})$/)
+    const secondaryTextClass = textClassName.includes("text-white")
+        ? "text-white/40"
+        : "text-black/40"
+
     function save() {
         const next = draft.trim()
         if (next) onChange(next)
