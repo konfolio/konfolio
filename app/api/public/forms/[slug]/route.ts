@@ -88,18 +88,25 @@ function getRawAutofillValue(
     collabs: profile.collabs,
     first_vend: profile.first_vend,
 
-    previous_vending: profile.prev_vends,
-    prev_vends: profile.prev_vends,
+    //previous_vending: profile.prev_vends,
+    //prev_vends: profile.prev_vends,
 
-    vend_experience_1: profile.prev_vends?.[0],
-    vend_experience_2: profile.prev_vends?.[1],
-    vend_experience_3: profile.prev_vends?.[2],
-    vend_experience_4: profile.prev_vends?.[3],
+    //vend_experience_1: profile.prev_vends?.[0],
+    //vend_experience_2: profile.prev_vends?.[1],
+    //vend_experience_3: profile.prev_vends?.[2],
+    //vend_experience_4: profile.prev_vends?.[3],
 
     instagram: getLinkValue(profile, "instagram"),
     tiktok: getLinkValue(profile, "tiktok"),
     website: getLinkValue(profile, "website"),
     portfolio: getLinkValue(profile, "portfolio"),
+    
+    shop: getLinkValue(profile, "shop"),
+    shop_link: getLinkValue(profile, "shop"),
+    shop_url: getLinkValue(profile, "shop"),
+    online_shop: getLinkValue(profile, "shop"),
+    online_shop_link: getLinkValue(profile, "shop"),
+    online_shop_url: getLinkValue(profile, "shop"),
   };
 
   return cleanValue(map[fieldKey]);

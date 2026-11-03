@@ -337,6 +337,8 @@ function inferFieldKey(field: any): string | undefined {
     links: "other_links",
 
     "online shop": "shop",
+    "online shop link": "shop",
+    "online shop url": "shop",
 
     portfolio: "portfolio",
     "portfolio website": "portfolio",
@@ -396,6 +398,19 @@ function inferFieldKey(field: any): string | undefined {
   };
 
   return labelMap[normalizedLabel];
+}
+
+function isVendingExperienceField(field: any) {
+  const keys = [inferFieldKey(field), normalizeFieldKey(field.label)];
+  return keys.some((key) => {
+    if (!key) return false;
+    return /^(vend|vending)_experience(?:_\d+)?$/.test(key) ||
+      [
+        "previous_vending", "previous_vends", "prev_vends", "past_vends",
+        "past_events", "previous_events", "previous_vending_events",
+        "previous_vending_experience", "events_vended", "events_you_have_vended",
+      ].includes(key);
+  });
 }
 
 function getAutofillValue({
@@ -540,18 +555,6 @@ function getAutofillValue({
     first_vend: profile?.first_vend,
 
     has_previous_vends: previousVends.length > 0,
-    previous_vending: previousVends,
-    previous_vends: previousVends,
-    prev_vends: previousVends,
-    past_vends: previousVends,
-    past_events: previousVends,
-    previous_events: previousVends,
-
-    vend_experience_1: previousVends[0],
-    vend_experience_2: previousVends[1],
-    vend_experience_3: previousVends[2],
-    vend_experience_4: previousVends[3],
-
     merchandise_tags: merchTags,
     merch_tags: merchTags,
     merchandise: merchTags,
@@ -561,6 +564,11 @@ function getAutofillValue({
     website,
     shop,
     store: shop,
+    online_shop: shop,
+    online_shop_link: shop,
+    online_shop_url: shop,
+    shop_link: shop,
+    shop_url: shop,
     instagram,
     facebook,
     x,
@@ -989,6 +997,7 @@ export default function AutofillDrawer({
     const locallyBuiltAutofill: Record<string, any> = {};
 
     for (const field of fields ?? []) {
+      if (isVendingExperienceField(field)) continue;
       const fieldKey = inferFieldKey(field);
 
       const rawValue = getAutofillValue({
@@ -1020,6 +1029,7 @@ export default function AutofillDrawer({
       const fieldKey = inferFieldKey(field);
       const labelKey = normalizeFieldKey(field.label);
       if (
+        isVendingExperienceField(field) ||
         fieldKey === "sales_permit" ||
         fieldKey === "additional_link" ||
         fieldKey === "additional_links" ||
