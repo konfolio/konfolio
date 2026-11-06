@@ -8,6 +8,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Copy,
+  ChevronsLeftRightEllipsis,
   CopyPlus,
   Eye,
   EyeOff,
@@ -559,7 +560,7 @@ export default function ApplicationsTable({
     }));
   }
 
-  const totalColumnCount = 11 + visibleColumns.length + 2;
+  const totalColumnCount = 11 + columns.length + 2;
 
   const visibleApps = useMemo(
     () => (showHiddenRows ? apps : apps.filter((a) => !hiddenRowIds[a.id])),
@@ -637,10 +638,16 @@ export default function ApplicationsTable({
                 <col style={{ width: "260px" }} />
                 <col style={{ width: "200px" }} />
                 <col style={{ width: "140px" }} />
-                {visibleColumns.map((c) => (
+                {columns.map((c) => (
                   <col
                     key={c.id}
-                    style={{ width: c.kind === "divider" ? "24px" : "200px" }}
+                    style={{
+                      width: c.hidden
+                        ? "36px"
+                        : c.kind === "divider"
+                          ? "24px"
+                          : "200px",
+                    }}
                   />
                 ))}
                 <col style={{ width: "44px" }} />
@@ -699,8 +706,22 @@ export default function ApplicationsTable({
                   <th className="px-4 py-2.5 font-medium text-left">Location</th>
                   <th className="px-4 py-2.5 font-medium text-left">Konfolio</th>
 
-                  {visibleColumns.map((c) => {
-                    const colIndex = columns.findIndex((x) => x.id === c.id);
+                  {columns.map((c, colIndex) => {
+                    if (c.hidden) {
+                      return (
+                        <th key={c.id} className="px-0 py-2.5 text-center">
+                          <button
+                            type="button"
+                            aria-label={`Show column ${c.label || "divider"}`}
+                            title={`Show ${c.label || "divider"}`}
+                            onClick={() => toggleColumnHidden(c.id)}
+                            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-black/40 hover:bg-zinc-200 hover:text-zinc-800"
+                          >
+                            <ChevronsLeftRightEllipsis size={14} />
+                          </button>
+                        </th>
+                      );
+                    }
                     return (
                       <th
                         key={c.id}
@@ -883,7 +904,7 @@ export default function ApplicationsTable({
                     );
                   })}
 
-                  <th className="relative px-2 py-2.5 text-center">
+                  <th className="sticky right-[44px] z-30 bg-zinc-50 px-2 py-2.5 text-center">
                     <button
                       className="h-8 w-8 rounded-full hover:bg-zinc-100 text-black/40"
                       aria-label="Add column"
@@ -974,7 +995,7 @@ export default function ApplicationsTable({
                       </div>
                     )}
                   </th>
-                  <th className="px-2 py-2.5" />
+                  <th className="sticky right-0 z-30 bg-zinc-50 px-2 py-2.5" />
                 </tr>
               </thead>
 
@@ -1147,7 +1168,9 @@ export default function ApplicationsTable({
                         )}
                       </td>
 
-                      {visibleColumns.map((c) => (
+                      {columns.map((c) => c.hidden ? (
+                        <td key={c.id} className="px-0 py-2.5" />
+                      ) : (
                         <td
                           key={c.id}
                           className="px-4 py-2.5 truncate"
@@ -1197,10 +1220,12 @@ export default function ApplicationsTable({
                         </td>
                       ))}
 
-                      <td className="px-2 py-2.5 text-center text-black/40" />
+                      <td className="sticky right-[44px] z-10 bg-white px-2 py-2.5 text-center text-black/40" />
 
                       <td
-                        className="relative px-2 py-2.5 text-right"
+                        className={`sticky right-0 bg-white px-2 py-2.5 text-right ${
+                          rowMenuOpenId === a.id ? "z-30" : "z-10"
+                        }`}
                         onClick={(e) => e.stopPropagation()}
                       >
                         <button

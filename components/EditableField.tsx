@@ -47,6 +47,10 @@ export default function EditableField({
 }) {
   const [editingLabel, setEditingLabel] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [commonTagsOpen, setCommonTagsOpen] = useState(false);
+  const isMerch =
+    field.field_key === "merchandise" ||
+    field.label.trim().toLowerCase() === "your merchandise";
 
   return (
     <div
@@ -248,6 +252,65 @@ export default function EditableField({
             </svg>
           </div>
           {/* Editable options list */}
+          {isMerch ? (
+            <div className="flex flex-col gap-[6px]">
+              <button
+                type="button"
+                onClick={() => setCommonTagsOpen((v) => !v)}
+                aria-expanded={commonTagsOpen}
+                className="flex items-center justify-between py-[6px] text-[14px] text-[#262626]"
+              >
+                Common Tags
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  className={`transition-transform ${commonTagsOpen ? "rotate-180" : ""}`}
+                >
+                  <path
+                    d="M4 6l4 4 4-4"
+                    stroke="#262626"
+                    strokeWidth="1.3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+              {commonTagsOpen &&
+                (field.options ?? []).map((opt, i) => (
+                  <div key={i} className="flex items-center gap-[8px] group/opt pl-[4px]">
+                    <input
+                      value={opt}
+                      onChange={(e) => onOptionChange(i, e.target.value)}
+                      className="flex-1 text-[13px] text-[#262626] border-b border-transparent focus:border-[#C0BDB4] outline-none bg-transparent"
+                    />
+                    <button
+                      onClick={() => onOptionDelete(i)}
+                      className="opacity-0 group-hover/opt:opacity-100 text-[#C0BDB4] hover:text-[#A32D2D]"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                        <path
+                          d="M3 3l10 10M13 3L3 13"
+                          stroke="currentColor"
+                          strokeWidth="1.4"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              <button
+                onClick={() => {
+                  setCommonTagsOpen(true);
+                  onOptionAdd();
+                }}
+                className="self-start text-[14px] text-[#C0BDB4] hover:text-[#262626]"
+              >
+                + Add Option
+              </button>
+            </div>
+          ) : (
           <div className="flex flex-col gap-[6px] pl-[4px]">
             {(field.options ?? []).map((opt, i) => (
               <div key={i} className="flex items-center gap-[8px] group/opt">
@@ -279,6 +342,7 @@ export default function EditableField({
               + Add option
             </button>
           </div>
+          )}
         </div>
       ) : field.type === "image" ? (
         <div className="h-[80px] rounded-[10px] border border-dashed border-[#C0BDB4] bg-white flex items-center justify-center gap-[8px] text-[13px] text-[#C0BDB4] cursor-default">
