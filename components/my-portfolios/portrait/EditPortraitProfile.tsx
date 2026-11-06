@@ -5,12 +5,13 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 
 import ArrowLeft from "@/components/icons/ArrowLeft"
 import ArrowDown from "@/components/icons/ArrowDown"
+import { PortfolioField, PreviousVend } from "@/components/my-portfolios/PortfolioEditingIndicators"
 import ImageIcon from "@/components/icons/ImageIcon"
+import PencilIcon from "@/components/icons/PencilIcon"
 import BrushIcon from "@/components/icons/BrushIcon"
 import LocationIcon from "@/components/icons/LocationIcon"
 import OpenTabIcon from "@/components/icons/OpenTabIcon"
 import SecondaryButton from "@/components/buttons/SecondaryButton"
-import DeleteIcon from "@/components/icons/DeleteIcon"
 import Link from "next/link"
 
 import HomeIcon from "@/components/icons/HomeIcon"
@@ -29,6 +30,10 @@ import MerchTagPicker from "@/components/my-portfolios/MerchTagPicker"
 type OpenPicker = "banner" | "background" | null
 
 type Props = {
+  showLocation?: boolean
+  showEmail?: boolean
+  onChangeShowLocation?: (visible: boolean) => void
+  onChangeShowEmail?: (visible: boolean) => void
   editable?: boolean
   mobileCollapsed?: boolean
   mobileExpanded?: boolean
@@ -178,26 +183,15 @@ function KonfolioLogoInline({ color = "#262626" }: { color?: string }) {
   )
 }
 
-function parseEventLine(line: string): { title: string; year?: string } {
-  const trimmed = (line || "").trim()
-  if (!trimmed) return { title: "" }
 
-  const m = trimmed.match(/^(.*?)(?:\s*\(?(\d{4})\)?)\s*$/)
-  if (!m) return { title: trimmed }
-
-  const maybeTitle = (m[1] ?? "").trim()
-  const maybeYear = m[2]
-
-  if (maybeYear && maybeTitle.length > 0) {
-    return { title: maybeTitle, year: maybeYear }
-  }
-
-  return { title: trimmed }
-}
 
 const EMPTY_PREVIOUS_VENDS: string[] = []
 
 export default function EditPortraitProfile({
+  showLocation = true,
+  showEmail = true,
+  onChangeShowLocation,
+  onChangeShowEmail,
   editable = true,
   mobileCollapsed = false,
   mobileExpanded = false,
@@ -272,7 +266,7 @@ export default function EditPortraitProfile({
 
   useEffect(() => {
     const next = previousVends.slice(0, 4)
-  
+
     setLocalPrevVends((cur) => {
       if (
         cur.length === next.length &&
@@ -280,7 +274,7 @@ export default function EditPortraitProfile({
       ) {
         return cur
       }
-  
+
       return next
     })
   }, [previousVends])
@@ -290,17 +284,17 @@ export default function EditPortraitProfile({
     setLocalPrevVends(trimmed)
     onChangePreviousVends?.(trimmed)
   }
-  
+
   const addVend = (raw: string) => {
     const text = (raw || "").trim()
     if (!text) return
     if (localPrevVends.length >= 4) return
-  
+
     pushPrevVends([...localPrevVends, text])
     setNewVend("")
     addInputRef.current?.focus()
   }
-  
+
   const deleteVendAt = (idx: number) => {
     const next = localPrevVends.filter((_, i) => i !== idx)
     pushPrevVends(next)
@@ -324,6 +318,8 @@ export default function EditPortraitProfile({
 
   const bannerIsDark = isDarkHexColor(localBanner)
   const resolvedBackgroundIsDark = backgroundIsDark ?? isDarkHexColor(localBg)
+  const secondaryTextClass = bannerIsDark ? "text-white/40" : "text-black/40"
+  const secondaryPlaceholderClass = bannerIsDark ? "placeholder:text-white/40" : "placeholder:text-black/40"
   const bannerPrimaryColor = bannerIsDark ? "#FFFFFF" : "#262626"
 
   const bannerPrimaryTextClass = bannerIsDark
@@ -340,27 +336,27 @@ export default function EditPortraitProfile({
 
   const merchPickerBannerClass = bannerIsDark
     ? [
-        "[&_button]:!rounded-full",
-        "[&_button]:!overflow-hidden",
-        "[&_button]:!border-white/30",
-        "[&_button]:!bg-white/10",
-        "[&_button]:!text-white",
-        "[&_span]:!text-white",
-        "[&_svg]:!text-white",
-        "[&_path]:!stroke-white",
-        "[&_path]:!fill-white",
-      ].join(" ")
+      "[&_button]:!rounded-full",
+      "[&_button]:!overflow-hidden",
+      "[&_button]:!border-white/30",
+      "[&_button]:!bg-white/10",
+      "[&_button]:!text-white",
+      "[&_span]:!text-white",
+      "[&_svg]:!text-white",
+      "[&_path]:!stroke-white",
+      "[&_path]:!fill-white",
+    ].join(" ")
     : [
-        "[&_button]:!rounded-full",
-        "[&_button]:!overflow-hidden",
-        "[&_button]:!border-[#262626]",
-        "[&_button]:!bg-transparent",
-        "[&_button]:!text-[#262626]",
-        "[&_span]:!text-[#262626]",
-        "[&_svg]:!text-[#262626]",
-        "[&_path]:!stroke-[#262626]",
-        "[&_path]:!fill-[#262626]",
-      ].join(" ")
+      "[&_button]:!rounded-full",
+      "[&_button]:!overflow-hidden",
+      "[&_button]:!border-[#262626]",
+      "[&_button]:!bg-transparent",
+      "[&_button]:!text-[#262626]",
+      "[&_span]:!text-[#262626]",
+      "[&_svg]:!text-[#262626]",
+      "[&_path]:!stroke-[#262626]",
+      "[&_path]:!fill-[#262626]",
+    ].join(" ")
 
   const linkPickerBannerClass = bannerIsDark
     ? "[&_svg]:text-white [&_path]:stroke-white [&_path]:fill-white [&_button]:text-white [&_span]:text-white"
@@ -504,11 +500,8 @@ export default function EditPortraitProfile({
 
   const activeLinks = useMemo(() => getActiveLinkUrls(linksValue), [linksValue])
 
-  const parsedPrevVends = useMemo(
-    () => localPrevVends.map(parseEventLine),
-    [localPrevVends]
-  )
-  
+
+
   const showPrevVendsSection = editable || localPrevVends.length > 0
 
   const safeTags = (Array.isArray(merchTags) ? merchTags : [])
@@ -541,7 +534,7 @@ export default function EditPortraitProfile({
                 onDrop={onDrop}
                 onDragOver={onDragOver}
                 className={[
-                  "relative h-[45px] w-[45px] shrink-0 overflow-hidden rounded-[10px] bg-white/10",
+                  "group/photo relative h-[45px] w-[45px] shrink-0 overflow-hidden rounded-[10px] bg-white/10",
                   editable ? "cursor-pointer" : "cursor-default",
                 ].join(" ")}
               >
@@ -553,6 +546,11 @@ export default function EditPortraitProfile({
                   onChange={onFileInputChange}
                 />
 
+                {editable && (
+                  <span aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center opacity-0 transition-opacity group-hover/photo:opacity-100 group-focus-visible/photo:opacity-100">
+                    <PencilIcon className="h-[18px] w-[18px] text-black/40" />
+                  </span>
+                )}
                 {localImgUrl ? (
                   <img
                     src={localImgUrl}
@@ -568,7 +566,7 @@ export default function EditPortraitProfile({
               </button>
 
               <div className="flex min-w-0 flex-1 flex-col items-start gap-[6px] py-[2px]">
-                <input
+                <PortfolioField label="business name" editable={editable}><input
                   value={localBusiness}
                   placeholder={BUSINESS_PLACEHOLDER}
                   readOnly={!editable}
@@ -578,12 +576,12 @@ export default function EditPortraitProfile({
                     onChangeBusinessName?.(e.target.value)
                   }}
                   className={[
-                    "min-h-[24px] w-full bg-transparent text-left font-inter text-[22px] font-normal leading-[140%] placeholder:text-[#A5A5A5] outline-none",
+                    `min-h-[24px] w-full bg-transparent text-left font-inter text-[22px] font-normal leading-[140%] ${secondaryPlaceholderClass} outline-none`,
                     bannerPrimaryTextClass,
                   ].join(" ")}
-                />
+                /></PortfolioField>
 
-                <input
+                <PortfolioField label="your name" editable={editable}><input
                   value={localName}
                   placeholder={NAME_PLACEHOLDER}
                   readOnly={!editable}
@@ -592,8 +590,8 @@ export default function EditPortraitProfile({
                     setLocalName(e.target.value)
                     onChangeDisplayName?.(e.target.value)
                   }}
-                  className="-mt-[4px] min-h-[24px] w-full bg-transparent text-left font-inter text-[15px] font-normal leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
-                />
+                  className={`-mt-[4px] min-h-[24px] w-full bg-transparent text-left font-inter text-[15px] font-normal leading-[140%] ${secondaryTextClass} ${secondaryPlaceholderClass} outline-none`}
+                /></PortfolioField>
               </div>
             </div>
 
@@ -693,7 +691,7 @@ export default function EditPortraitProfile({
               {/* Previous Vends */}
               {showPrevVendsSection ? (
                 <div className="flex w-full flex-col items-center gap-[10px]">
-                  <p className="m-0 w-full text-center font-inter text-[14px] font-normal leading-[130%] text-[#A5A5A5]">
+                  <p className={`m-0 w-full text-center font-inter text-[14px] font-normal leading-[130%] ${secondaryTextClass}`}>
                     Previous Vends
                   </p>
 
@@ -705,37 +703,10 @@ export default function EditPortraitProfile({
                         : "flex flex-wrap items-center",
                     ].join(" ")}
                   >
-                    {parsedPrevVends.map((ev, i) => (
-                      <div
-                        key={`${ev.title}-${ev.year ?? ""}-${i}`}
-                        className="group flex items-baseline justify-center gap-[6px]"
-                      >
-                        <span
-                          className={[
-                            "text-center font-inter text-[15px] font-normal leading-[140%]",
-                            bannerPrimaryTextClass,
-                          ].join(" ")}
-                        >
-                          {ev.title}
-                        </span>
-
-                        {ev.year ? (
-                          <span className="font-inter text-[12px] italic leading-[140%] text-[#A5A5A5]">
-                            {ev.year}
-                          </span>
-                        ) : null}
-
-                        {editable ? (
-                          <button
-                            type="button"
-                            aria-label="Delete event"
-                            onClick={() => deleteVendAt(i)}
-                            className="text-[#A5A5A5] cursor-pointer"
-                          >
-                            <DeleteIcon className="h-[14px] w-[14px]" />
-                          </button>
-                        ) : null}
-                      </div>
+                    {localPrevVends.map((value, i) => (
+                      <PreviousVend key={i} value={value} editable={editable} textClassName={bannerPrimaryTextClass}
+                        onChange={(next) => pushPrevVends(localPrevVends.map((item, index) => index === i ? next : item))}
+                        onDelete={() => deleteVendAt(i)} />
                     ))}
 
                     {editable && localPrevVends.length < 4 ? (
@@ -750,7 +721,7 @@ export default function EditPortraitProfile({
                           }
                         }}
                         placeholder={localPrevVends.length > 0 ? "Type an event..." : "Vended Event 2026"}
-                        className="w-full bg-transparent text-center font-inter text-[15px] leading-[140%] text-[#D3D3D3] placeholder:text-[#D3D3D3] outline-none"
+                        className={`w-full bg-transparent text-center font-inter text-[15px] leading-[140%] ${secondaryTextClass} ${secondaryPlaceholderClass} outline-none`}
                       />
                     ) : null}
                   </div>
@@ -758,7 +729,7 @@ export default function EditPortraitProfile({
               ) : null}
 
               <div className="flex w-full flex-col items-center gap-[10px]">
-                <div className="flex max-w-full items-center justify-center gap-[5px] text-[#A5A5A5]">
+                <PortfolioField label="location" editable={editable} visible={showLocation} onVisibilityChange={onChangeShowLocation}><div className="flex max-w-full items-center justify-center gap-[5px] text-[#A5A5A5]">
                   <LocationIcon className="h-[12px] w-[12px] shrink-0" />
 
                   <input
@@ -770,11 +741,11 @@ export default function EditPortraitProfile({
                       setLocalLocation(e.target.value)
                       onChangeLocationText?.(e.target.value)
                     }}
-                    className="min-w-0 bg-transparent text-center font-inter text-[15px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
+                    className={`min-w-0 bg-transparent text-center font-inter text-[15px] leading-[140%] ${secondaryTextClass} ${secondaryPlaceholderClass} outline-none`}
                   />
-                </div>
+                </div></PortfolioField>
 
-                <input
+                <PortfolioField label="email" editable={editable} visible={showEmail} onVisibilityChange={onChangeShowEmail}><input
                   value={localEmail}
                   placeholder={EMAIL_PLACEHOLDER}
                   readOnly={!editable}
@@ -783,8 +754,8 @@ export default function EditPortraitProfile({
                     setLocalEmail(e.target.value)
                     onChangeEmail?.(e.target.value)
                   }}
-                  className="w-full bg-transparent text-center font-inter text-[15px] leading-[140%] text-[#A5A5A5] placeholder:text-[#A5A5A5] outline-none"
-                />
+                  className={`w-full bg-transparent text-center font-inter text-[15px] leading-[140%] ${secondaryTextClass} ${secondaryPlaceholderClass} outline-none`}
+                /></PortfolioField>
               </div>
 
               {editable ? (
@@ -892,7 +863,7 @@ export default function EditPortraitProfile({
         <div className="w-full max-w-[1182px] h-[102px] flex items-center gap-[20px] px-[24px] min-[1200px]:px-0">
           <div
             className={[
-              "relative w-[102px] h-[102px] min-w-[102px] shrink-0 bg-white border border-[#A5A5A5] border-[0.5px] rounded-[11.7339px] overflow-hidden",
+              "relative w-[102px] h-[102px] min-w-[102px] shrink-0 bg-white rounded-[11.7339px] overflow-hidden",
               editable ? "cursor-pointer" : "cursor-default",
             ].join(" ")}
             onDrop={onDrop}
@@ -903,11 +874,14 @@ export default function EditPortraitProfile({
             {editable ? (
               <button
                 type="button"
-                className="absolute inset-0 z-[1] bg-transparent cursor-pointer"
+                className="group/photo absolute inset-0 z-[1] bg-transparent cursor-pointer"
                 aria-label="Upload profile image"
                 onClick={openFilePicker}
               >
                 <span className="sr-only">Upload</span>
+                <span aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover/photo:opacity-100 group-focus-visible/photo:opacity-100">
+                  <PencilIcon className="h-[24px] w-[24px] text-black/40" />
+                </span>
               </button>
             ) : null}
 
@@ -919,10 +893,11 @@ export default function EditPortraitProfile({
                 draggable={false}
               />
             ) : (
-              <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-[5px]">
                 <div className="w-[40px] h-[40px] text-[#A5A5A5] [&_path]:stroke-[#A5A5A5] [&_path]:fill-[#A5A5A5]">
                   <ImageIcon />
                 </div>
+                {editable && <p className="m-0 w-[90px] text-center text-[10px] leading-[12px] text-black/40">Drop image here or click to open files</p>}
               </div>
             )}
           </div>
@@ -930,7 +905,7 @@ export default function EditPortraitProfile({
           <div className="min-w-0 flex-1 h-[105px] flex items-center gap-[10px]">
             <div className="min-w-0 flex-1 h-[100px] flex flex-col items-start gap-[15px]">
               <div className="w-full h-[21px] flex items-center gap-[10px] pt-[5px]">
-                <input
+                <PortfolioField label="business name" editable={editable}><input
                   value={localBusiness}
                   placeholder={BUSINESS_PLACEHOLDER}
                   readOnly={!editable}
@@ -954,7 +929,7 @@ export default function EditPortraitProfile({
                     onChangeBusinessName?.(e.target.value)
                   }}
                   className={`w-full font-inter font-normal text-[22px] leading-[27px] bg-transparent outline-none ${bannerPrimaryTextClass}`}
-                />
+                /></PortfolioField>
               </div>
 
               <div className="flex items-center gap-[10px]">
@@ -1036,11 +1011,10 @@ export default function EditPortraitProfile({
                   >
                     <div className={`w-[16px] h-[16px] flex items-center justify-center ${bannerPrimaryIconClass}`}>
                       <BrushIcon
-                        className={`h-[16px] w-[16px] ${
-                          bannerIsDark
-                            ? "text-white [&_path]:stroke-white [&_path]:fill-none"
-                            : "text-[#262626] [&_path]:stroke-[#262626] [&_path]:fill-none"
-                        }`}
+                        className={`h-[16px] w-[16px] ${bannerIsDark
+                          ? "text-white [&_path]:stroke-white [&_path]:fill-none"
+                          : "text-[#262626] [&_path]:stroke-[#262626] [&_path]:fill-none"
+                          }`}
                       />
                     </div>
 
@@ -1106,7 +1080,7 @@ export default function EditPortraitProfile({
               </div>
 
               <div className="w-[260px] h-[54px] flex flex-col items-end justify-center gap-[4px] pt-[4px]">
-                <input
+                <PortfolioField label="your name" editable={editable}><input
                   value={localName}
                   placeholder={NAME_PLACEHOLDER}
                   readOnly={!editable}
@@ -1125,7 +1099,7 @@ export default function EditPortraitProfile({
                     onChangeDisplayName?.(e.target.value)
                   }}
                   className={`w-full text-right font-inter font-normal text-[15px] leading-[18px] bg-transparent outline-none ${bannerPrimaryTextClass}`}
-                />
+                /></PortfolioField>
 
                 <div className="w-[260px] flex justify-end relative overflow-visible">
                   <span
@@ -1135,7 +1109,7 @@ export default function EditPortraitProfile({
                     {localLocation}
                   </span>
 
-                  <div className="flex items-center justify-end w-full">
+                  <PortfolioField label="location" editable={editable} visible={showLocation} onVisibilityChange={onChangeShowLocation}><div className="flex items-center justify-end w-full">
                     <span className="inline-flex items-center mr-[5px] shrink-0 text-[#A5A5A5] [&_path]:fill-[#A5A5A5]">
                       <LocationIcon className="w-[12px] h-[12px]" />
                     </span>
@@ -1164,12 +1138,12 @@ export default function EditPortraitProfile({
                         onChangeLocationText?.(e.target.value)
                       }}
                       style={{ width: `${locationPxWidth}px` }}
-                      className="max-w-[238px] text-right font-inter font-normal text-[15px] leading-[18px] text-[#A5A5A5] placeholder:text-[#A5A5A5] bg-transparent outline-none"
+                      className={`max-w-[238px] text-right font-inter font-normal text-[15px] leading-[18px] ${secondaryTextClass} ${secondaryPlaceholderClass} bg-transparent outline-none`}
                     />
-                  </div>
+                  </div></PortfolioField>
                 </div>
 
-                <input
+                <PortfolioField label="email" editable={editable} visible={showEmail} onVisibilityChange={onChangeShowEmail}><input
                   value={localEmail}
                   placeholder={EMAIL_PLACEHOLDER}
                   readOnly={!editable}
@@ -1187,8 +1161,8 @@ export default function EditPortraitProfile({
                     setLocalEmail(e.target.value)
                     onChangeEmail?.(e.target.value)
                   }}
-                  className="w-full text-right font-inter font-normal text-[15px] leading-[18px] text-[#A5A5A5] placeholder:text-[#A5A5A5] bg-transparent outline-none"
-                />
+                  className={`w-full text-right font-inter font-normal text-[15px] leading-[18px] ${secondaryTextClass} ${secondaryPlaceholderClass} bg-transparent outline-none`}
+                /></PortfolioField>
               </div>
             </div>
           </div>

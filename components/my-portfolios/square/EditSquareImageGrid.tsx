@@ -228,7 +228,8 @@ export default function EditSquareImageGrid({
 
     setImageFromFile(idx, file)
   }
-
+  const secondaryTextClass = backgroundIsDark ? "text-white/40" : "text-black/40"
+  const secondaryPlaceholderClass = backgroundIsDark ? "placeholder:text-white/40" : "placeholder:text-black/40"
   return (
     <section className="flex w-full min-w-0 max-w-[922px] flex-col items-center justify-center py-0 min-[701px]:min-w-[600px] min-[701px]:py-[30px]">
       <div className="w-full min-w-[600px] max-w-[922px] max-[700px]:min-w-0">
@@ -311,11 +312,11 @@ export default function EditSquareImageGrid({
                       </div>
 
                       <div className="flex flex-col items-center gap-[7px]">
-                        <p className="m-0 font-roboto text-[12px] leading-[14px] text-[#A5A5A5] text-center">
+                        <p className={`m-0 font-roboto text-[12px] leading-[14px] ${secondaryTextClass} text-center`}>
                           Recommended:
                         </p>
 
-                        <p className="m-0 font-roboto text-[17px] leading-[20px] text-[#A5A5A5] text-center">
+                        <p className={`m-0 font-roboto text-[17px] leading-[20px] ${secondaryTextClass} text-center`}>
                           {RECOMMENDED[idx]}
                         </p>
                       </div>

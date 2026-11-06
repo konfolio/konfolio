@@ -329,7 +329,7 @@ function inferFieldKey(field: any): string | undefined {
     "other link": "other_links",
     "other links": "other_links",
     "additional link": "additional_link",
-    "additional links": "other_links",
+    "additional links": "additional_links",
     "social link": "social_media_link",
     "social media link": "social_media_link",
     "social links": "other_links",
@@ -337,14 +337,17 @@ function inferFieldKey(field: any): string | undefined {
     links: "other_links",
 
     "online shop": "shop",
+    "online shop link": "shop",
+    "online shop url": "shop",
 
     portfolio: "portfolio",
     "portfolio website": "portfolio",
+    "portfolio url": "portfolio_url",
 
     "konfolio link": "konfolio_link",
     "konfolio url": "konfolio_link",
-    "portfolio link": "konfolio_link",
-    "public portfolio link": "konfolio_link",
+    "portfolio link": "portfolio_link",
+    "public portfolio link": "portfolio_link",
 
     "portfolio name": "portfolio_name",
     "konfolio name": "portfolio_name",
@@ -395,6 +398,19 @@ function inferFieldKey(field: any): string | undefined {
   };
 
   return labelMap[normalizedLabel];
+}
+
+function isVendingExperienceField(field: any) {
+  const keys = [inferFieldKey(field), normalizeFieldKey(field.label)];
+  return keys.some((key) => {
+    if (!key) return false;
+    return /^(vend|vending)_experience(?:_\d+)?$/.test(key) ||
+      [
+        "previous_vending", "previous_vends", "prev_vends", "past_vends",
+        "past_events", "previous_events", "previous_vending_events",
+        "previous_vending_experience", "events_vended", "events_you_have_vended",
+      ].includes(key);
+  });
 }
 
 function getAutofillValue({
@@ -519,15 +535,6 @@ function getAutofillValue({
     tumblr ??
     pixiv;
 
-  const additionalLink =
-    website ??
-    x ??
-    facebook ??
-    tiktok ??
-    bluesky ??
-    tumblr ??
-    pixiv;
-
   const values: Record<string, any> = {
     first_name: profile?.first_name,
     last_name: profile?.last_name,
@@ -543,24 +550,11 @@ function getAutofillValue({
     location:
       content.locationText ?? profile?.location,
 
-    sales_permit: profile?.sales_permit,
     will_apply: profile?.will_apply,
     collabs: profile?.collabs,
     first_vend: profile?.first_vend,
 
     has_previous_vends: previousVends.length > 0,
-    previous_vending: previousVends,
-    previous_vends: previousVends,
-    prev_vends: previousVends,
-    past_vends: previousVends,
-    past_events: previousVends,
-    previous_events: previousVends,
-
-    vend_experience_1: previousVends[0],
-    vend_experience_2: previousVends[1],
-    vend_experience_3: previousVends[2],
-    vend_experience_4: previousVends[3],
-
     merchandise_tags: merchTags,
     merch_tags: merchTags,
     merchandise: merchTags,
@@ -570,6 +564,11 @@ function getAutofillValue({
     website,
     shop,
     store: shop,
+    online_shop: shop,
+    online_shop_link: shop,
+    online_shop_url: shop,
+    shop_link: shop,
+    shop_url: shop,
     instagram,
     facebook,
     x,
@@ -580,21 +579,16 @@ function getAutofillValue({
     bluesky,
 
     social_media_link: socialMediaLink,
-    additional_link: additionalLink,
     other_links: otherLinks,
-    additional_links: otherLinks,
     social_links: otherLinks,
     social_media_links: otherLinks,
     links: otherLinks,
 
-    portfolio:
-      getPreferredLinkValue({
-        content,
-        profile,
-        key: "portfolio",
-      }) ?? publicKonfolioUrl,
-
+    portfolio: website,
+    portfolio_link: website,
+    portfolio_url: website,
     konfolio_link: publicKonfolioUrl,
+    konfolio_url: publicKonfolioUrl,
     portfolio_name: konfolio.portfolio_name,
     konfolio_name: konfolio.portfolio_name,
   };
@@ -709,11 +703,13 @@ function formatValueForField(value: any, field: any) {
 
   const isMerchandiseField =
     normalizeFieldKey(field.field_key ?? field.fieldKey ?? "") ===
-    "merchandise";
+      "merchandise" ||
+    String(field.label ?? "").trim().toLowerCase() === "your merchandise";
 
   const isCheckboxField =
     fieldType === "checkbox" ||
     fieldType === "checkboxes" ||
+    fieldType === "multi_choice" ||
     fieldType === "multi_select" ||
     fieldType === "multiselect" ||
     fieldType === "multiple_select" ||
@@ -724,6 +720,7 @@ function formatValueForField(value: any, field: any) {
     (fieldType === "dropdown" ||
       fieldType === "select" ||
       fieldType === "radio" ||
+      fieldType === "single_choice" ||
       fieldType === "multiple_choice");
 
   if (typeof value === "boolean") {
@@ -758,6 +755,15 @@ function formatValueForField(value: any, field: any) {
 
     if (cleanedValues.length === 0) {
       return undefined;
+    }
+
+    // MerchTagsField options are suggestions, not an allowed-values list.
+    // Preserve every selected portfolio tag, including custom tags.
+    if (
+      isMerchandiseField &&
+      (fieldType === "dropdown" || fieldType === "select")
+    ) {
+      return cleanedValues;
     }
 
     if (isCheckboxField) {
@@ -991,6 +997,7 @@ export default function AutofillDrawer({
     const locallyBuiltAutofill: Record<string, any> = {};
 
     for (const field of fields ?? []) {
+      if (isVendingExperienceField(field)) continue;
       const fieldKey = inferFieldKey(field);
 
       const rawValue = getAutofillValue({
@@ -1011,17 +1018,27 @@ export default function AutofillDrawer({
       }
     }
 
-    /*
-     * The drawer builds autofill locally from the applicant's
-     * profile as a fallback.
-     *
-     * Values returned by the public form API override the local
-     * values when the server was able to compute them.
-     */
+    // Selected portfolio values take priority over server defaults.
     const merged: Record<string, any> = {
-      ...locallyBuiltAutofill,
       ...autofillData,
+      ...locallyBuiltAutofill,
     };
+
+    // These fields require manual entry, even if the server sent a default.
+    for (const field of fields ?? []) {
+      const fieldKey = inferFieldKey(field);
+      const labelKey = normalizeFieldKey(field.label);
+      if (
+        isVendingExperienceField(field) ||
+        fieldKey === "sales_permit" ||
+        fieldKey === "additional_link" ||
+        fieldKey === "additional_links" ||
+        labelKey === "additional_link" ||
+        labelKey === "additional_links"
+      ) {
+        delete merged[field.id];
+      }
+    }
 
     console.log(
       "LOCAL KONFOLIO AUTOFILL:",
