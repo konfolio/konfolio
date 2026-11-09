@@ -92,11 +92,11 @@ export default function OrganizerFormCard({ form, onChanged }: Props) {
   }
 
   return (
-    <article className="relative flex w-full max-w-[786px] gap-[16px] rounded-[20px] bg-white p-[16px] text-[#262626] shadow-[0_3px_12px_rgba(0,0,0,0.06)] sm:gap-[20px]">
-      <Link href={`/organizer/forms/${form.id}`} aria-label={`View applications for ${form.title}`} className="flex min-h-[138px] w-[90px] shrink-0 items-center justify-center rounded-[14px] bg-[#F7F7F7] text-[32px] font-semibold text-[#999999] sm:w-[140px] sm:text-[40px]">
+    <article className="relative flex w-full min-w-0 gap-[12px] rounded-[20px] bg-white p-[14px] text-[#262626] shadow-[0_3px_12px_rgba(0,0,0,0.06)] sm:gap-[16px]">
+      <Link href={`/organizer/forms/${form.id}`} aria-label={`View applications for ${form.title}`} className="flex min-h-[116px] w-[72px] shrink-0 items-center justify-center rounded-[14px] bg-[#F7F7F7] text-[28px] font-semibold text-[#999999] sm:w-[100px] sm:text-[32px]">
         {year}
       </Link>
-      <div className="flex min-w-0 flex-1 flex-col gap-[22px] py-[3px]">
+      <div className="flex min-w-0 flex-1 flex-col gap-[14px] py-[3px]">
         <div className="flex min-h-[20px] items-center justify-between gap-3">
           <span className="inline-flex items-center gap-[9px] text-[15px] leading-[140%]">
             <span className={`h-[12px] w-[12px] shrink-0 rounded-full ${form.status === "receiving" ? "bg-[#00CC00]" : "bg-[#A5A5A5]"}`} />
@@ -119,15 +119,15 @@ export default function OrganizerFormCard({ form, onChanged }: Props) {
         </div>
         {editing ? (
           <form onSubmit={(e) => { e.preventDefault(); if (title.trim()) void mutate("PATCH", { title: title.trim() }); }} className="flex flex-wrap items-center gap-2">
-            <input autoFocus aria-label="Form name" value={title} onChange={(e) => setTitle(e.target.value)} onKeyDown={(e) => { if (e.key === "Escape") setEditing(false); }} required disabled={busy} className="w-full min-w-0 border-b border-[#A5A5A5] bg-transparent text-[22px] outline-none" />
+            <input autoFocus aria-label="Form name" value={title} onChange={(e) => setTitle(e.target.value)} onKeyDown={(e) => { if (e.key === "Escape") setEditing(false); }} required disabled={busy} className="w-full min-w-0 border-b border-[#A5A5A5] bg-transparent text-[20px] outline-none" />
             <button type="submit" disabled={busy || !title.trim()} className="text-sm underline disabled:opacity-40">{busy ? "Saving..." : "Save"}</button>
             <button type="button" onClick={() => setEditing(false)} disabled={busy} className="text-sm text-[#999999]">Cancel</button>
           </form>
         ) : (
-          <Link href={`/organizer/forms/${form.id}`} className="truncate text-[22px] leading-[140%]">{form.title}</Link>
+          <Link href={`/organizer/forms/${form.id}`} className="truncate text-[20px] leading-[140%]">{form.title}</Link>
         )}
-        <div className="mt-auto flex flex-wrap items-center justify-between gap-x-[20px] gap-y-[12px] text-[14px] sm:text-[15px]">
-          <div className="flex flex-wrap items-center gap-x-[22px] gap-y-[12px]">
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-x-[16px] gap-y-[10px] text-[13px] sm:text-[14px]">
+          <div className="flex flex-wrap items-center gap-x-[14px] gap-y-[10px]">
             <Metric label="Last Edited"><TimeIcon size={20} /><span>{editedDate}</span></Metric>
             <Metric label="Visitors"><EyeIcon size={20} /><span>{form.views ?? 0}</span></Metric>
             <Metric label="Submissions"><UserIcon size={20} /><span>{form.applications_count ?? 0}</span></Metric>

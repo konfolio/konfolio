@@ -453,7 +453,7 @@ export default function EditSquareProfileSidebar({
 
               {editable && (
                 <span aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center opacity-0 transition-opacity group-hover/photo:opacity-100 group-focus-visible/photo:opacity-100">
-                  <PencilIcon className="h-[18px] w-[18px] text-black/40" />
+                  <PencilIcon className={`h-[18px] w-[18px] ${localImgUrl && bannerIsDark ? "text-white/40" : "text-black/40"}`} />
                 </span>
               )}
               {localImgUrl ? (
@@ -472,7 +472,7 @@ export default function EditSquareProfileSidebar({
 
             <div className="flex min-w-0 flex-1 flex-col items-start gap-[6px] py-[2px]">
               {editable ? (
-                <PortfolioField label="business name" editable={editable}><input
+                <PortfolioField label="business name" editable={editable} isDark={bannerIsDark}><input
                   value={localBusiness}
                   onChange={(e) => {
                     setLocalBusiness(e.target.value)
@@ -496,7 +496,7 @@ export default function EditSquareProfileSidebar({
               )}
 
               {editable ? (
-                <PortfolioField label="your name" editable={editable}><input
+                <PortfolioField label="your name" editable={editable} isDark={bannerIsDark}><input
                   value={localDisplay}
                   onChange={(e) => {
                     setLocalDisplay(e.target.value)
@@ -648,7 +648,7 @@ export default function EditSquareProfileSidebar({
             ) : null}
 
             <div className="flex w-full flex-col items-center gap-[10px]">
-              <PortfolioField label="location" editable={editable} visible={showLocation} onVisibilityChange={onChangeShowLocation}><div className="flex max-w-full items-center justify-center gap-[5px] text-[#A5A5A5]">
+              <PortfolioField label="location" editable={editable} isDark={bannerIsDark} visible={showLocation} onVisibilityChange={onChangeShowLocation}><div className={`flex max-w-full items-center justify-center gap-[5px] ${secondaryTextClass}`}>
                 <LocationIcon className="h-[12px] w-[12px] shrink-0" />
 
                 {editable ? (
@@ -668,7 +668,7 @@ export default function EditSquareProfileSidebar({
                 )}
               </div></PortfolioField>
 
-              <PortfolioField label="email" editable={editable} visible={showEmail} onVisibilityChange={onChangeShowEmail}>{editable ? (
+              <PortfolioField label="email" editable={editable} isDark={bannerIsDark} visible={showEmail} onVisibilityChange={onChangeShowEmail}>{editable ? (
                 <input
                   value={localEmail}
                   onChange={(e) => {
@@ -871,7 +871,7 @@ export default function EditSquareProfileSidebar({
             >
               <span className="sr-only">Upload</span>
               <span aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover/photo:opacity-100 group-focus-visible/photo:opacity-100">
-                <PencilIcon className="h-[24px] w-[24px] text-black/40" />
+                <PencilIcon className={`h-[24px] w-[24px] ${localImgUrl && bannerIsDark ? "text-white/40" : "text-black/40"}`} />
               </span>
             </button>
           ) : null}
@@ -899,7 +899,7 @@ export default function EditSquareProfileSidebar({
 
         <div className="w-full max-w-[276px] flex flex-col items-center gap-[12px]">
           {editable ? (
-            <PortfolioField label="business name" editable={editable}><input
+            <PortfolioField label="business name" editable={editable} isDark={bannerIsDark}><input
               value={localBusiness}
               onChange={(e) => {
                 setLocalBusiness(e.target.value)
@@ -923,7 +923,7 @@ export default function EditSquareProfileSidebar({
           )}
 
           {editable ? (
-            <PortfolioField label="your name" editable={editable}><input
+            <PortfolioField label="your name" editable={editable} isDark={bannerIsDark}><input
               value={localDisplay}
               onChange={(e) => {
                 setLocalDisplay(e.target.value)
@@ -1055,8 +1055,8 @@ export default function EditSquareProfileSidebar({
 
         <div className="w-full max-w-[276px] flex flex-col items-center gap-[12px]">
           <div className="flex justify-center">
-            <PortfolioField label="location" editable={editable} visible={showLocation} onVisibilityChange={onChangeShowLocation}><div className="inline-flex items-center gap-[5px]">
-              <div className="w-[12px] h-[12px] flex items-center justify-center text-[#A5A5A5]">
+            <PortfolioField label="location" editable={editable} isDark={bannerIsDark} visible={showLocation} onVisibilityChange={onChangeShowLocation}><div className="inline-flex items-center gap-[5px]">
+              <div className={`w-[12px] h-[12px] flex items-center justify-center ${secondaryTextClass}`}>
                 <LocationIcon className="w-[12px] h-[12px]" />
               </div>
 
@@ -1088,7 +1088,7 @@ export default function EditSquareProfileSidebar({
             </div></PortfolioField>
           </div>
 
-          <PortfolioField label="email" editable={editable} visible={showEmail} onVisibilityChange={onChangeShowEmail}>{editable ? (
+          <PortfolioField label="email" editable={editable} isDark={bannerIsDark} visible={showEmail} onVisibilityChange={onChangeShowEmail}>{editable ? (
             <input
               value={localEmail}
               onChange={(e) => {

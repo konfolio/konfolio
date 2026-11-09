@@ -4,12 +4,15 @@ import { useEffect, useRef, useState } from "react"
 import ImageIcon from "@/components/icons/ImageIcon"
 import SlidersIcon from "@/components/icons/SlidersIcon"
 import EditImagePopover, { type ImageEdits } from "@/components/my-portfolios/EditImagePopover"
+import { PortfolioImageLinkEditor, PortfolioImageText } from "@/components/my-portfolios/PortfolioImageControls"
+import { normalizePortfolioImageUrl } from "@/lib/portfolioImageLinks"
 
 type Cell = {
   id: string
   src?: string
   title?: string
   description?: string
+  href?: string
   edits?: ImageEdits
 }
 
@@ -241,12 +244,14 @@ export default function EditSquareImageGrid({
             const col = idx % 3
             const placement: "right" | "left" = col === 2 ? "left" : "right"
             const imgStyle = editsToImgStyle(cell.edits)
+            const imageHref = normalizePortfolioImageUrl(cell.href ?? "")
+            const patchCell = (patch: Partial<Cell>) => updateCells((prev) => prev.map((item, index) => index === idx ? { ...item, ...patch } : item))
 
             return (
               <div
                 key={cell.id ?? String(idx)}
                 className={[
-                  "group relative aspect-square overflow-visible rounded-none min-[701px]:rounded-[15px]",
+                  "group relative aspect-square overflow-visible rounded-none min-[701px]:rounded-[15px] focus-within:z-[200]",
                   MOBILE_ORDER_CLASSES[idx] ?? "order-none",
                 ].join(" ")}
                 onDragOver={(e) => onDragOver(idx, e)}
@@ -288,13 +293,15 @@ export default function EditSquareImageGrid({
                       <span className="sr-only">Upload</span>
                     </button>
                   ) : (
-                    <div className="absolute inset-0 z-[0]" />
+                    hasImage && imageHref ? (
+                      <a href={imageHref} target="_blank" rel="noopener noreferrer" aria-label={`Open ${cell.title || `image ${idx + 1}`} (opens in new tab)`} className="absolute inset-0 z-[2] focus-visible:outline-2 focus-visible:outline-offset-[-4px]" />
+                    ) : <div className="absolute inset-0 z-[0]" />
                   )}
 
                   {hasImage ? (
                     <img
                       src={cell.src}
-                      alt=""
+                      alt={cell.title || ""}
                       className="absolute inset-0 w-full h-full object-cover pointer-events-none z-[1]"
                       style={{
                         ...imgStyle,
@@ -323,7 +330,7 @@ export default function EditSquareImageGrid({
                     </div>
                   )}
 
-                  <div className="pointer-events-none absolute left-0 right-0 bottom-0 opacity-100 min-[701px]:opacity-0 min-[701px]:group-hover:opacity-100 transition-opacity z-[3]">
+                  <div className="pointer-events-none absolute left-0 right-0 bottom-0 opacity-100 min-[701px]:opacity-0 min-[701px]:group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity z-[3]">
                     <div
                       className="absolute left-[-2px] right-[-2px] bottom-[-2px]"
                       style={{
@@ -347,22 +354,20 @@ export default function EditSquareImageGrid({
                     />
 
                     <div className="absolute left-0 right-0 bottom-0 h-[70px] px-[15px] py-[15px] flex flex-col justify-end items-start">
-                      <p
+                      <PortfolioImageText
+                        value={cell.title ?? "Title"} placeholder="Title" label={`image ${idx + 1} title`} editable={editable} onChange={(title) => patchCell({ title })}
                         className={[
                           "m-0 w-full font-inter font-normal text-[17px] leading-[140%]",
                           backgroundIsDark ? "text-white" : "text-[#262626]",
                         ].join(" ")}
-                      >
-                        {cell.title ?? "Title"}
-                      </p>
-                      <p
+                      />
+                      <PortfolioImageText
+                        value={cell.description ?? "Short description"} placeholder="Short description" label={`image ${idx + 1} description`} editable={editable} onChange={(description) => patchCell({ description })}
                         className={[
                           "m-0 w-full font-inter font-normal text-[15px] leading-[150%]",
                           backgroundIsDark ? "text-white" : "text-[#262626]",
                         ].join(" ")}
-                      >
-                        {cell.description ?? "Short description"}
-                      </p>
+                      />
                     </div>
                   </div>
 
@@ -371,6 +376,7 @@ export default function EditSquareImageGrid({
                   ) : null}
                 </div>
 
+                {editable && hasImage && <PortfolioImageLinkEditor href={cell.href} label={cell.title || `image ${idx + 1}`} onChange={(href) => patchCell({ href })} />}
                 {editable ? (
                   <>
                     <button

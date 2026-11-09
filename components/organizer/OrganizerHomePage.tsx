@@ -197,7 +197,7 @@ export default function OrganizerHomePage({ organizerId }: Props) {
           ) : error ? (
             <div className="text-red-500">{error}</div>
           ) : (
-            <div className="grid grid-cols-1 gap-[30px]">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,460px),1fr))] items-start gap-[24px]">
               {filteredForms.map((form) => {
                 const status = getStatusLabel(form.status);
 

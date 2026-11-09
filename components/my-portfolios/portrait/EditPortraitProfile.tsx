@@ -548,7 +548,7 @@ export default function EditPortraitProfile({
 
                 {editable && (
                   <span aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center opacity-0 transition-opacity group-hover/photo:opacity-100 group-focus-visible/photo:opacity-100">
-                    <PencilIcon className="h-[18px] w-[18px] text-black/40" />
+                    <PencilIcon className={`h-[18px] w-[18px] ${localImgUrl && bannerIsDark ? "text-white/40" : "text-black/40"}`} />
                   </span>
                 )}
                 {localImgUrl ? (
@@ -566,7 +566,7 @@ export default function EditPortraitProfile({
               </button>
 
               <div className="flex min-w-0 flex-1 flex-col items-start gap-[6px] py-[2px]">
-                <PortfolioField label="business name" editable={editable}><input
+                <PortfolioField label="business name" editable={editable} isDark={bannerIsDark}><input
                   value={localBusiness}
                   placeholder={BUSINESS_PLACEHOLDER}
                   readOnly={!editable}
@@ -581,7 +581,7 @@ export default function EditPortraitProfile({
                   ].join(" ")}
                 /></PortfolioField>
 
-                <PortfolioField label="your name" editable={editable}><input
+                <PortfolioField label="your name" editable={editable} isDark={bannerIsDark}><input
                   value={localName}
                   placeholder={NAME_PLACEHOLDER}
                   readOnly={!editable}
@@ -729,7 +729,7 @@ export default function EditPortraitProfile({
               ) : null}
 
               <div className="flex w-full flex-col items-center gap-[10px]">
-                <PortfolioField label="location" editable={editable} visible={showLocation} onVisibilityChange={onChangeShowLocation}><div className="flex max-w-full items-center justify-center gap-[5px] text-[#A5A5A5]">
+                <PortfolioField label="location" editable={editable} isDark={bannerIsDark} visible={showLocation} onVisibilityChange={onChangeShowLocation}><div className={`flex max-w-full items-center justify-center gap-[5px] ${secondaryTextClass}`}>
                   <LocationIcon className="h-[12px] w-[12px] shrink-0" />
 
                   <input
@@ -745,7 +745,7 @@ export default function EditPortraitProfile({
                   />
                 </div></PortfolioField>
 
-                <PortfolioField label="email" editable={editable} visible={showEmail} onVisibilityChange={onChangeShowEmail}><input
+                <PortfolioField label="email" editable={editable} isDark={bannerIsDark} visible={showEmail} onVisibilityChange={onChangeShowEmail}><input
                   value={localEmail}
                   placeholder={EMAIL_PLACEHOLDER}
                   readOnly={!editable}
@@ -880,7 +880,7 @@ export default function EditPortraitProfile({
               >
                 <span className="sr-only">Upload</span>
                 <span aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover/photo:opacity-100 group-focus-visible/photo:opacity-100">
-                  <PencilIcon className="h-[24px] w-[24px] text-black/40" />
+                  <PencilIcon className={`h-[24px] w-[24px] ${localImgUrl && bannerIsDark ? "text-white/40" : "text-black/40"}`} />
                 </span>
               </button>
             ) : null}
@@ -905,7 +905,7 @@ export default function EditPortraitProfile({
           <div className="min-w-0 flex-1 h-[105px] flex items-center gap-[10px]">
             <div className="min-w-0 flex-1 h-[100px] flex flex-col items-start gap-[15px]">
               <div className="w-full h-[21px] flex items-center gap-[10px] pt-[5px]">
-                <PortfolioField label="business name" editable={editable}><input
+                <PortfolioField label="business name" editable={editable} isDark={bannerIsDark} indicatorPlacement="inline"><input
                   value={localBusiness}
                   placeholder={BUSINESS_PLACEHOLDER}
                   readOnly={!editable}
@@ -1080,7 +1080,7 @@ export default function EditPortraitProfile({
               </div>
 
               <div className="w-[260px] h-[54px] flex flex-col items-end justify-center gap-[4px] pt-[4px]">
-                <PortfolioField label="your name" editable={editable}><input
+                <PortfolioField label="your name" editable={editable} isDark={bannerIsDark}><input
                   value={localName}
                   placeholder={NAME_PLACEHOLDER}
                   readOnly={!editable}
@@ -1109,8 +1109,8 @@ export default function EditPortraitProfile({
                     {localLocation}
                   </span>
 
-                  <PortfolioField label="location" editable={editable} visible={showLocation} onVisibilityChange={onChangeShowLocation}><div className="flex items-center justify-end w-full">
-                    <span className="inline-flex items-center mr-[5px] shrink-0 text-[#A5A5A5] [&_path]:fill-[#A5A5A5]">
+                  <PortfolioField label="location" editable={editable} isDark={bannerIsDark} visible={showLocation} onVisibilityChange={onChangeShowLocation}><div className="flex items-center justify-end w-full">
+                    <span className={`inline-flex items-center mr-[5px] shrink-0 ${secondaryTextClass} [&_path]:fill-current`}>
                       <LocationIcon className="w-[12px] h-[12px]" />
                     </span>
 
@@ -1143,7 +1143,7 @@ export default function EditPortraitProfile({
                   </div></PortfolioField>
                 </div>
 
-                <PortfolioField label="email" editable={editable} visible={showEmail} onVisibilityChange={onChangeShowEmail}><input
+                <PortfolioField label="email" editable={editable} isDark={bannerIsDark} visible={showEmail} onVisibilityChange={onChangeShowEmail}><input
                   value={localEmail}
                   placeholder={EMAIL_PLACEHOLDER}
                   readOnly={!editable}

@@ -52,10 +52,10 @@ export default function MyFormsPage() {
       <DashboardProfileHeader formCount={forms.length} />
 
       <section className="w-full flex justify-center px-4 sm:px-8 lg:px-[150px] py-[40px]">
-        <div className="w-full max-w-[1212px] grid grid-cols-1 gap-[30px]">
-          {error && <p role="alert" className="text-red-600">{error}</p>}
+        <div className="grid w-full max-w-[1212px] grid-cols-[repeat(auto-fill,minmax(min(100%,460px),1fr))] items-start gap-[24px]">
+          {error && <p role="alert" className="col-span-full text-red-600">{error}</p>}
           {loading ? (
-            <p>Loading...</p>
+            <p className="col-span-full">Loading...</p>
           ) : (
             forms.map((form) => (
               <OrganizerFormCard key={form.id} form={form} onChanged={getUserForms} />

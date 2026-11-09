@@ -7,12 +7,15 @@ import SlidersIcon from "@/components/icons/SlidersIcon"
 import PencilIcon from "@/components/icons/PencilIcon"
 import { X } from "lucide-react"
 import EditImagePopover, { type ImageEdits } from "@/components/my-portfolios/EditImagePopover"
+import { PortfolioImageLinkEditor, PortfolioImageText } from "@/components/my-portfolios/PortfolioImageControls"
+import { normalizePortfolioImageUrl } from "@/lib/portfolioImageLinks"
 
 type Cell = {
   id: string
   src?: string
   title?: string
   description?: string
+  href?: string
   edits?: ImageEdits
 }
 
@@ -138,6 +141,7 @@ export default function EditPortraitImageGrid({
       src: c.src ?? "",
       title: c.title ?? "Title",
       description: c.description ?? "Short description",
+      href: c.href,
       edits: c.edits ?? { ...DEFAULT_EDITS },
     }))
 
@@ -402,12 +406,14 @@ export default function EditPortraitImageGrid({
             const placement: "right" | "left" = col === 3 ? "left" : "right"
 
             const imgStyle = editsToImgStyle(cell.edits)
+            const imageHref = normalizePortfolioImageUrl(cell.href ?? "")
+            const patchCell = (patch: Partial<Cell>) => updateCells((prev) => prev.map((item, index) => index === idx ? { ...item, ...patch } : item))
 
             return (
               <div
                 key={cell.id ?? String(idx)}
                 className={`
-                  group relative
+                   group relative focus-within:z-[200]
                   aspect-[274/345]
                   w-full
                   overflow-visible
@@ -436,7 +442,7 @@ export default function EditPortraitImageGrid({
                   ].join(" ")}
                   style={cardShellStyle}
                 >
-                  <button
+                  {editable ? <button
                     type="button"
                     className={[
                       "absolute inset-0 z-[0] bg-transparent",
@@ -448,12 +454,13 @@ export default function EditPortraitImageGrid({
                       if (isEditorOpen) return
                       openFilePicker(idx)
                     }}
-                  />
+                  /> : <div className="absolute inset-0 z-[0]" />}
+                  {!editable && hasImage && imageHref && <a href={imageHref} target="_blank" rel="noopener noreferrer" aria-label={`Open ${cell.title || `image ${idx + 1}`} (opens in new tab)`} className="absolute inset-0 z-[2] focus-visible:outline-2 focus-visible:outline-offset-[-4px]" />}
 
                   {hasImage ? (
                     <img
                       src={cell.src}
-                      alt=""
+                      alt={cell.title || ""}
                       className="absolute inset-0 z-[1] h-full w-full object-cover pointer-events-none"
                       style={imgStyle}
                       draggable={false}
@@ -484,17 +491,13 @@ export default function EditPortraitImageGrid({
                       z-[2]
                       flex h-[70px] flex-col items-start justify-end
                       px-[15px] pb-[10px] pt-[12px]
-                      opacity-100 min-[851px]:opacity-0 min-[851px]:group-hover:opacity-100
+                         opacity-100 min-[851px]:opacity-0 min-[851px]:group-hover:opacity-100 group-focus-within:opacity-100
                       transition-opacity
                     "
                     style={gradientStyle}
                   >
-                    <p className={`m-0 w-full font-inter text-[17px] font-normal leading-[140%] ${overlayTextClass}`}>
-                      {cell.title ?? "Title"}
-                    </p>
-                    <p className={`m-0 w-full font-inter text-[15px] font-normal leading-[140%] ${overlayTextClass}`}>
-                      {cell.description ?? "Short description"}
-                    </p>
+                    <PortfolioImageText value={cell.title ?? "Title"} placeholder="Title" label={`image ${idx + 1} title`} editable={editable} onChange={(title) => patchCell({ title })} className={`m-0 w-full font-inter text-[17px] font-normal leading-[140%] ${overlayTextClass}`} />
+                    <PortfolioImageText value={cell.description ?? "Short description"} placeholder="Short description" label={`image ${idx + 1} description`} editable={editable} onChange={(description) => patchCell({ description })} className={`m-0 w-full font-inter text-[15px] font-normal leading-[140%] ${overlayTextClass}`} />
                   </div>
 
                   {editable && isDragOver && (
@@ -502,6 +505,7 @@ export default function EditPortraitImageGrid({
                   )}
                 </div>
 
+                {editable && hasImage && <PortfolioImageLinkEditor href={cell.href} label={cell.title || `image ${idx + 1}`} onChange={(href) => patchCell({ href })} />}
                 {editable ? (
                   <>
                     <button
@@ -657,7 +661,7 @@ export default function EditPortraitImageGrid({
                               deleteVend(i)
                             }}
                             aria-label="Delete previous vend"
-                            className="flex h-[16px] w-[16px] cursor-pointer items-center justify-center rounded-full bg-black/40 text-white"
+                            className={`flex h-[16px] w-[16px] cursor-pointer items-center justify-center rounded-full ${backgroundIsDark ? "bg-white/40 text-black" : "bg-black/40 text-white"}`}
                           >
                             <X className="h-[14px] w-[14px]" />
                           </button>

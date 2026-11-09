@@ -7,6 +7,7 @@ export type SquareCell = {
   src?: string
   title?: string
   description?: string
+  href?: string
 }
 
 export type PortraitCell = {
@@ -14,6 +15,7 @@ export type PortraitCell = {
   src?: string
   title?: string
   description?: string
+  href?: string
 }
 
 export type BaseDraft = {
