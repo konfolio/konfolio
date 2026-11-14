@@ -268,7 +268,7 @@ export default function ArtistProfileEditPopover({
     locationText: locationTextFromProps = "City, State",
     firstName = "First",
     lastName = "Last",
-    preferredName = "Preferred Name",
+    preferredName = "",
     formsFilled = 0,
     visitors = 0,
     exploreTags: exploreTagsProp,
@@ -488,10 +488,8 @@ export default function ArtistProfileEditPopover({
         }
 
         const pref = String(r2.preferred_name ?? "").trim();
-        if (pref) {
-          pn = pref;
-          setPreferredNameText(pref);
-        }
+      pn = pref;
+      setPreferredNameText(pref);
 
         const em = String(r2.email ?? "").trim();
         if (em) setEmailText(em);
@@ -937,7 +935,7 @@ export default function ArtistProfileEditPopover({
                       placeholder="Preferred Name"
                       textClassName="text-[15px] leading-[150%] font-normal text-[#D3D3D3]"
                       onChange={setPreferredNameText}
-                      onTrash={() => setPreferredNameText("Preferred Name")}
+                      onTrash={() => setPreferredNameText("")}
                     />
                   </div>
                 </div>
