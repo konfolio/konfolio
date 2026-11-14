@@ -87,7 +87,7 @@ type SocialKey =
   | "pixiv"
   | "bluesky";
 
-type LinksMap = Partial<Record<SocialKey, string>>;
+type LinksMap = Record<string, string>;
 
 const SOCIAL_ROWS: {
   key: SocialKey;
@@ -157,9 +157,8 @@ function isNonEmptyString(v: any): v is string {
 function normalizeLinksMap(v: any): LinksMap {
   if (!v || typeof v !== "object" || Array.isArray(v)) return {};
   const out: LinksMap = {};
-  for (const row of SOCIAL_ROWS) {
-    const raw = (v as any)[row.key];
-    if (isNonEmptyString(raw)) out[row.key] = String(raw).trim();
+  for (const [key, value] of Object.entries(v)) {
+    if (isNonEmptyString(value)) out[key] = value.trim();
   }
   return out;
 }
@@ -206,10 +205,15 @@ function inferSocialKey(url: string): SocialKey | null {
   }
 }
 
-function pickFallbackLinkKey(current: LinksMap): SocialKey {
-  if (!current.website) return "website";
-  if (!current.shop) return "shop";
-  return "website";
+function pickAvailableLinkKey(current: LinksMap, platform: SocialKey | null): string {
+  const primaryKey = platform ?? "website";
+  if (!Object.prototype.hasOwnProperty.call(current, primaryKey)) return primaryKey;
+
+  let index = 1;
+  while (Object.prototype.hasOwnProperty.call(current, `additional_${index}`)) {
+    index += 1;
+  }
+  return `additional_${index}`;
 }
 
 function countLinks(m: LinksMap) {
@@ -219,12 +223,11 @@ function countLinks(m: LinksMap) {
 function limitLinksToMax(m: LinksMap, max: number): LinksMap {
   const out: LinksMap = {};
   let n = 0;
-  for (const row of SOCIAL_ROWS) {
-    const v = m[row.key];
-    if (!isNonEmptyString(v)) continue;
-    out[row.key] = v;
-    n += 1;
+  for (const [key, value] of Object.entries(m)) {
+    if (!isNonEmptyString(value)) continue;
     if (n >= max) break;
+    out[key] = value.trim();
+    n += 1;
   }
   return out;
 }
@@ -332,6 +335,13 @@ export default function ArtistProfileEditPopover({
 
   const linksCount = countLinks(linksMap);
   const canAddLink = linksCount < 5;
+  const additionalLinkKeys = Object.keys(linksMap).filter(
+    (key) => isNonEmptyString(linksMap[key]) && !SOCIAL_ROWS.some((row) => row.key === key),
+  );
+  const linkRows = [
+    ...SOCIAL_ROWS,
+    ...additionalLinkKeys.map((key) => ({ key, label: "Additional Link", Icon: LinkIcon })),
+  ];
 
   useEffect(() => setBusinessNameText(businessName), [businessName]);
   useEffect(
@@ -1077,33 +1087,39 @@ export default function ArtistProfileEditPopover({
                 </p>
 
                 <div className="flex w-full flex-col gap-[10px]">
-                  {SOCIAL_ROWS.map((r) => {
+                  {linkRows.map((r) => {
                     const href = linksMap[r.key];
                     if (!isNonEmptyString(href)) return null;
 
                     return (
-                      <EditableLinkRow
-                        key={r.key}
-                        Icon={r.Icon}
-                        value={href}
-                        onChangeValue={(next) => {
-                          setLinksMap((prev) => ({ ...prev, [r.key]: next }));
-                        }}
-                        onCommit={(finalValue) => {
-                          const trimmed = finalValue.trim();
-                          setLinksMap((prev) => ({
-                            ...prev,
-                            [r.key]: trimmed,
-                          }));
-                        }}
-                        onTrash={() => {
-                          setLinksMap((prev) => {
-                            const next: LinksMap = { ...prev };
-                            delete (next as any)[r.key];
-                            return next;
-                          });
-                        }}
-                      />
+                      <div key={r.key}>
+                        {r.key === additionalLinkKeys[0] ? (
+                          <p className="mb-[10px] mt-[5px] text-[13px] text-[#A5A5A5]">
+                            Additional Links
+                          </p>
+                        ) : null}
+                        <EditableLinkRow
+                          Icon={r.Icon}
+                          value={href}
+                          onChangeValue={(next) => {
+                            setLinksMap((prev) => ({ ...prev, [r.key]: next }));
+                          }}
+                          onCommit={(finalValue) => {
+                            const trimmed = finalValue.trim();
+                            setLinksMap((prev) => ({
+                              ...prev,
+                              [r.key]: trimmed,
+                            }));
+                          }}
+                          onTrash={() => {
+                            setLinksMap((prev) => {
+                              const next: LinksMap = { ...prev };
+                              delete next[r.key];
+                              return next;
+                            });
+                          }}
+                        />
+                      </div>
                     );
                   })}
 
@@ -1130,7 +1146,7 @@ export default function ArtistProfileEditPopover({
 
                             setLinksMap((prev) => {
                               if (countLinks(prev) >= 5) return prev;
-                              const chosen = key ?? pickFallbackLinkKey(prev);
+                              const chosen = pickAvailableLinkKey(prev, key);
                               const next = { ...prev, [chosen]: url };
                               if (countLinks(next) > 5) return prev;
                               return next;
