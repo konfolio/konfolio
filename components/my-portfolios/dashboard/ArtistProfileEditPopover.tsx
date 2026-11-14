@@ -269,8 +269,8 @@ export default function ArtistProfileEditPopover({
     profileImageUrl = "",
     businessName = "Business Name",
     locationText: locationTextFromProps = "City, State",
-    firstName = "First",
-    lastName = "Last",
+    firstName = "",
+    lastName = "",
     preferredName = "",
     formsFilled = 0,
     visitors = 0,
@@ -486,16 +486,12 @@ export default function ArtistProfileEditPopover({
         }
 
         const f = String(r2.first_name ?? "").trim();
-        if (f) {
-          fn = f;
-          setFirstNameText(f);
-        }
+        fn = f;
+        setFirstNameText(f);
 
         const l = String(r2.last_name ?? "").trim();
-        if (l) {
-          ln = l;
-          setLastNameText(l);
-        }
+        ln = l;
+        setLastNameText(l);
 
         const pref = String(r2.preferred_name ?? "").trim();
       pn = pref;
@@ -922,20 +918,20 @@ export default function ArtistProfileEditPopover({
                   <div className="w-full sm:w-[200px]">
                     <EditableInline
                       value={firstNameText}
-                      placeholder="First"
+                      placeholder="First name"
                       textClassName="text-[15px] leading-[150%] font-normal text-[#262626]"
                       onChange={setFirstNameText}
-                      onTrash={() => setFirstNameText("First")}
+                      onTrash={() => setFirstNameText("")}
                     />
                   </div>
 
                   <div className="w-full sm:w-[200px]">
                     <EditableInline
                       value={lastNameText}
-                      placeholder="Last"
+                      placeholder="Last name"
                       textClassName="text-[15px] leading-[150%] font-normal text-[#262626]"
                       onChange={setLastNameText}
-                      onTrash={() => setLastNameText("Last")}
+                      onTrash={() => setLastNameText("")}
                     />
                   </div>
 
@@ -951,7 +947,9 @@ export default function ArtistProfileEditPopover({
                 </div>
 
                 <p className="text-[12px] italic leading-[140%] text-[#A5A5A5]">
-                  “First Last” will be shown on your portfolio.
+                  {[firstNameText.trim(), lastNameText.trim()].filter(Boolean).join(" ")
+                    ? `“${[firstNameText.trim(), lastNameText.trim()].filter(Boolean).join(" ")}” will be shown on your portfolio.`
+                    : "Add your first and last name to show your name on your portfolio."}
                 </p>
 
                 <div className="mt-[40px] w-full md:mt-[50px]">
