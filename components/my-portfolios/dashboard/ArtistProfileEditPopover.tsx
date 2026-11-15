@@ -87,7 +87,7 @@ type SocialKey =
   | "pixiv"
   | "bluesky";
 
-type LinksMap = Partial<Record<SocialKey, string>>;
+type LinksMap = Record<string, string>;
 
 const SOCIAL_ROWS: {
   key: SocialKey;
@@ -157,9 +157,8 @@ function isNonEmptyString(v: any): v is string {
 function normalizeLinksMap(v: any): LinksMap {
   if (!v || typeof v !== "object" || Array.isArray(v)) return {};
   const out: LinksMap = {};
-  for (const row of SOCIAL_ROWS) {
-    const raw = (v as any)[row.key];
-    if (isNonEmptyString(raw)) out[row.key] = String(raw).trim();
+  for (const [key, value] of Object.entries(v)) {
+    if (isNonEmptyString(value)) out[key] = value.trim();
   }
   return out;
 }
@@ -206,10 +205,15 @@ function inferSocialKey(url: string): SocialKey | null {
   }
 }
 
-function pickFallbackLinkKey(current: LinksMap): SocialKey {
-  if (!current.website) return "website";
-  if (!current.shop) return "shop";
-  return "website";
+function pickAvailableLinkKey(current: LinksMap, platform: SocialKey | null): string {
+  const primaryKey = platform ?? "website";
+  if (!Object.prototype.hasOwnProperty.call(current, primaryKey)) return primaryKey;
+
+  let index = 1;
+  while (Object.prototype.hasOwnProperty.call(current, `additional_${index}`)) {
+    index += 1;
+  }
+  return `additional_${index}`;
 }
 
 function countLinks(m: LinksMap) {
@@ -219,12 +223,11 @@ function countLinks(m: LinksMap) {
 function limitLinksToMax(m: LinksMap, max: number): LinksMap {
   const out: LinksMap = {};
   let n = 0;
-  for (const row of SOCIAL_ROWS) {
-    const v = m[row.key];
-    if (!isNonEmptyString(v)) continue;
-    out[row.key] = v;
-    n += 1;
+  for (const [key, value] of Object.entries(m)) {
+    if (!isNonEmptyString(value)) continue;
     if (n >= max) break;
+    out[key] = value.trim();
+    n += 1;
   }
   return out;
 }
@@ -266,9 +269,9 @@ export default function ArtistProfileEditPopover({
     profileImageUrl = "",
     businessName = "Business Name",
     locationText: locationTextFromProps = "City, State",
-    firstName = "First",
-    lastName = "Last",
-    preferredName = "Preferred Name",
+    firstName = "",
+    lastName = "",
+    preferredName = "",
     formsFilled = 0,
     visitors = 0,
     exploreTags: exploreTagsProp,
@@ -332,6 +335,13 @@ export default function ArtistProfileEditPopover({
 
   const linksCount = countLinks(linksMap);
   const canAddLink = linksCount < 5;
+  const additionalLinkKeys = Object.keys(linksMap).filter(
+    (key) => isNonEmptyString(linksMap[key]) && !SOCIAL_ROWS.some((row) => row.key === key),
+  );
+  const linkRows = [
+    ...SOCIAL_ROWS,
+    ...additionalLinkKeys.map((key) => ({ key, label: "Additional Link", Icon: LinkIcon })),
+  ];
 
   useEffect(() => setBusinessNameText(businessName), [businessName]);
   useEffect(
@@ -476,22 +486,16 @@ export default function ArtistProfileEditPopover({
         }
 
         const f = String(r2.first_name ?? "").trim();
-        if (f) {
-          fn = f;
-          setFirstNameText(f);
-        }
+        fn = f;
+        setFirstNameText(f);
 
         const l = String(r2.last_name ?? "").trim();
-        if (l) {
-          ln = l;
-          setLastNameText(l);
-        }
+        ln = l;
+        setLastNameText(l);
 
         const pref = String(r2.preferred_name ?? "").trim();
-        if (pref) {
-          pn = pref;
-          setPreferredNameText(pref);
-        }
+      pn = pref;
+      setPreferredNameText(pref);
 
         const em = String(r2.email ?? "").trim();
         if (em) setEmailText(em);
@@ -914,20 +918,20 @@ export default function ArtistProfileEditPopover({
                   <div className="w-full sm:w-[200px]">
                     <EditableInline
                       value={firstNameText}
-                      placeholder="First"
+                      placeholder="First name"
                       textClassName="text-[15px] leading-[150%] font-normal text-[#262626]"
                       onChange={setFirstNameText}
-                      onTrash={() => setFirstNameText("First")}
+                      onTrash={() => setFirstNameText("")}
                     />
                   </div>
 
                   <div className="w-full sm:w-[200px]">
                     <EditableInline
                       value={lastNameText}
-                      placeholder="Last"
+                      placeholder="Last name"
                       textClassName="text-[15px] leading-[150%] font-normal text-[#262626]"
                       onChange={setLastNameText}
-                      onTrash={() => setLastNameText("Last")}
+                      onTrash={() => setLastNameText("")}
                     />
                   </div>
 
@@ -937,13 +941,15 @@ export default function ArtistProfileEditPopover({
                       placeholder="Preferred Name"
                       textClassName="text-[15px] leading-[150%] font-normal text-[#D3D3D3]"
                       onChange={setPreferredNameText}
-                      onTrash={() => setPreferredNameText("Preferred Name")}
+                      onTrash={() => setPreferredNameText("")}
                     />
                   </div>
                 </div>
 
                 <p className="text-[12px] italic leading-[140%] text-[#A5A5A5]">
-                  “First Last” will be shown on your portfolio.
+                  {[firstNameText.trim(), lastNameText.trim()].filter(Boolean).join(" ")
+                    ? `“${[firstNameText.trim(), lastNameText.trim()].filter(Boolean).join(" ")}” will be shown on your portfolio.`
+                    : "Add your first and last name to show your name on your portfolio."}
                 </p>
 
                 <div className="mt-[40px] w-full md:mt-[50px]">
@@ -1079,33 +1085,39 @@ export default function ArtistProfileEditPopover({
                 </p>
 
                 <div className="flex w-full flex-col gap-[10px]">
-                  {SOCIAL_ROWS.map((r) => {
+                  {linkRows.map((r) => {
                     const href = linksMap[r.key];
                     if (!isNonEmptyString(href)) return null;
 
                     return (
-                      <EditableLinkRow
-                        key={r.key}
-                        Icon={r.Icon}
-                        value={href}
-                        onChangeValue={(next) => {
-                          setLinksMap((prev) => ({ ...prev, [r.key]: next }));
-                        }}
-                        onCommit={(finalValue) => {
-                          const trimmed = finalValue.trim();
-                          setLinksMap((prev) => ({
-                            ...prev,
-                            [r.key]: trimmed,
-                          }));
-                        }}
-                        onTrash={() => {
-                          setLinksMap((prev) => {
-                            const next: LinksMap = { ...prev };
-                            delete (next as any)[r.key];
-                            return next;
-                          });
-                        }}
-                      />
+                      <div key={r.key}>
+                        {r.key === additionalLinkKeys[0] ? (
+                          <p className="mb-[10px] mt-[5px] text-[13px] text-[#A5A5A5]">
+                            Additional Links
+                          </p>
+                        ) : null}
+                        <EditableLinkRow
+                          Icon={r.Icon}
+                          value={href}
+                          onChangeValue={(next) => {
+                            setLinksMap((prev) => ({ ...prev, [r.key]: next }));
+                          }}
+                          onCommit={(finalValue) => {
+                            const trimmed = finalValue.trim();
+                            setLinksMap((prev) => ({
+                              ...prev,
+                              [r.key]: trimmed,
+                            }));
+                          }}
+                          onTrash={() => {
+                            setLinksMap((prev) => {
+                              const next: LinksMap = { ...prev };
+                              delete next[r.key];
+                              return next;
+                            });
+                          }}
+                        />
+                      </div>
                     );
                   })}
 
@@ -1132,7 +1144,7 @@ export default function ArtistProfileEditPopover({
 
                             setLinksMap((prev) => {
                               if (countLinks(prev) >= 5) return prev;
-                              const chosen = key ?? pickFallbackLinkKey(prev);
+                              const chosen = pickAvailableLinkKey(prev, key);
                               const next = { ...prev, [chosen]: url };
                               if (countLinks(next) > 5) return prev;
                               return next;

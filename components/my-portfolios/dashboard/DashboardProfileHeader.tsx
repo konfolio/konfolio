@@ -129,25 +129,8 @@ export default function DashboardProfileHeader({
   }, [])
 
   function handleProfileSaved(patch: Profile) {
-    setProfile((prev) => {
-      const base =
-        prev ??
-        ({
-          first_name: null,
-          last_name: null,
-          preferred_name: null,
-          business_name: null,
-          profile_image_url: null,
-        } as Profile)
-
-      return {
-        first_name: patch.first_name ?? base.first_name ?? null,
-        last_name: patch.last_name ?? base.last_name ?? null,
-        preferred_name: patch.preferred_name ?? base.preferred_name ?? null,
-        business_name: patch.business_name ?? base.business_name ?? null,
-        profile_image_url: patch.profile_image_url ?? base.profile_image_url ?? null,
-      }
-    })
+    // The popup sends every profile field; null explicitly clears a value.
+    setProfile({ ...patch })
   }
 
   const fullName = useMemo(() => fullNameFromProfile(profile), [profile])
@@ -184,7 +167,7 @@ export default function DashboardProfileHeader({
       locationText: "City, State",
       firstName: (profile?.first_name || "").trim() || "First",
       lastName: (profile?.last_name || "").trim() || "Last",
-      preferredName: (profile?.preferred_name || "").trim() || "Preferred Name",
+      preferredName: (profile?.preferred_name || "").trim(),
 
       formsFilled: 0,
       visitors: 0,
