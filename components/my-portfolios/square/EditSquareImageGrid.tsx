@@ -6,6 +6,7 @@ import SlidersIcon from "@/components/icons/SlidersIcon"
 import EditImagePopover, { type ImageEdits } from "@/components/my-portfolios/EditImagePopover"
 import { PortfolioImageLinkEditor, PortfolioImageText } from "@/components/my-portfolios/PortfolioImageControls"
 import { normalizePortfolioImageUrl } from "@/lib/portfolioImageLinks"
+import ReframedImage from "@/components/my-portfolios/ReframedImage"
 
 type Cell = {
   id: string
@@ -299,17 +300,7 @@ export default function EditSquareImageGrid({
                   )}
 
                   {hasImage ? (
-                    <img
-                      src={cell.src}
-                      alt={cell.title || ""}
-                      className="absolute inset-0 w-full h-full object-cover pointer-events-none z-[1]"
-                      style={{
-                        ...imgStyle,
-                        transform: `${imgStyle.transform} scale(1.02)`,
-                        transformOrigin: "center",
-                      }}
-                      draggable={false}
-                    />
+                    <ReframedImage src={cell.src!} alt={cell.title || ""} edits={cell.edits ?? DEFAULT_EDITS} filter={imgStyle.filter} />
                   ) : null}
 
                   {!hasImage && (
@@ -397,7 +388,7 @@ export default function EditSquareImageGrid({
                         setOpenEditorIdx((cur) => (cur === idx ? null : idx))
                       }}
                     >
-                      <SlidersIcon />
+                      <SlidersIcon className={`${backgroundIsDark ? "text-white" : "text-black"} [&_path]:stroke-current`} />
                     </button>
 
                     {isEditorOpen && (

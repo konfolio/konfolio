@@ -9,6 +9,7 @@ import { X } from "lucide-react"
 import EditImagePopover, { type ImageEdits } from "@/components/my-portfolios/EditImagePopover"
 import { PortfolioImageLinkEditor, PortfolioImageText } from "@/components/my-portfolios/PortfolioImageControls"
 import { normalizePortfolioImageUrl } from "@/lib/portfolioImageLinks"
+import ReframedImage from "@/components/my-portfolios/ReframedImage"
 
 type Cell = {
   id: string
@@ -458,13 +459,7 @@ export default function EditPortraitImageGrid({
                   {!editable && hasImage && imageHref && <a href={imageHref} target="_blank" rel="noopener noreferrer" aria-label={`Open ${cell.title || `image ${idx + 1}`} (opens in new tab)`} className="absolute inset-0 z-[2] focus-visible:outline-2 focus-visible:outline-offset-[-4px]" />}
 
                   {hasImage ? (
-                    <img
-                      src={cell.src}
-                      alt={cell.title || ""}
-                      className="absolute inset-0 z-[1] h-full w-full object-cover pointer-events-none"
-                      style={imgStyle}
-                      draggable={false}
-                    />
+                    <ReframedImage src={cell.src!} alt={cell.title || ""} edits={cell.edits ?? DEFAULT_EDITS} filter={imgStyle.filter} />
                   ) : null}
 
                   {!hasImage && (
@@ -525,7 +520,7 @@ export default function EditPortraitImageGrid({
                         setOpenEditorIdx((cur) => (cur === idx ? null : idx))
                       }}
                     >
-                      <SlidersIcon />
+                      <SlidersIcon className={`${backgroundIsDark ? "text-white" : "text-black"} [&_path]:stroke-current`} />
                     </button>
 
                     {isEditorOpen && (
@@ -649,7 +644,7 @@ export default function EditPortraitImageGrid({
                               startEditVend(i)
                             }}
                             aria-label="Edit previous vend"
-                            className="flex h-[16px] w-[16px] cursor-pointer items-center justify-center text-black/40"
+                            className={`flex h-[16px] w-[16px] cursor-pointer items-center justify-center ${backgroundIsDark ? "text-white" : "text-black"}`}
                           >
                             <PencilIcon className="h-[16px] w-[16px]" />
                           </button>

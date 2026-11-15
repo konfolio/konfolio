@@ -548,7 +548,7 @@ export default function EditPortraitProfile({
 
                 {editable && (
                   <span aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center opacity-0 transition-opacity group-hover/photo:opacity-100 group-focus-visible/photo:opacity-100">
-                    <PencilIcon className={`h-[18px] w-[18px] ${localImgUrl && bannerIsDark ? "text-white/40" : "text-black/40"}`} />
+                    <PencilIcon className={`h-[18px] w-[18px] ${localImgUrl && bannerIsDark ? "text-white" : "text-black"}`} />
                   </span>
                 )}
                 {localImgUrl ? (
@@ -880,7 +880,7 @@ export default function EditPortraitProfile({
               >
                 <span className="sr-only">Upload</span>
                 <span aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover/photo:opacity-100 group-focus-visible/photo:opacity-100">
-                  <PencilIcon className={`h-[24px] w-[24px] ${localImgUrl && bannerIsDark ? "text-white/40" : "text-black/40"}`} />
+                  <PencilIcon className={`h-[24px] w-[24px] ${localImgUrl && bannerIsDark ? "text-white" : "text-black"}`} />
                 </span>
               </button>
             ) : null}

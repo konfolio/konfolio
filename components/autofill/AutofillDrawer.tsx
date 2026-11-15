@@ -149,8 +149,8 @@ function getPreferredLinkValue({
 }) {
   const hasKonfolioLinkConfiguration = Boolean(
     content.links &&
-      (Array.isArray(content.links.activeKeys) ||
-        content.links.linksByKey),
+    (Array.isArray(content.links.activeKeys) ||
+      content.links.linksByKey),
   );
 
   if (hasKonfolioLinkConfiguration) {
@@ -434,24 +434,24 @@ function getAutofillValue({
 
   const merchTags = Array.isArray(content.merchTags)
     ? content.merchTags
-        .filter(
-          (value): value is string =>
-            typeof value === "string" &&
-            value.trim().length > 0,
-        )
-        .map((value) => value.trim())
+      .filter(
+        (value): value is string =>
+          typeof value === "string" &&
+          value.trim().length > 0,
+      )
+      .map((value) => value.trim())
     : [];
 
   const previousVendsFromKonfolio = Array.isArray(
     content.previousVends,
   )
     ? content.previousVends
-        .filter(
-          (value): value is string =>
-            typeof value === "string" &&
-            value.trim().length > 0,
-        )
-        .map((value) => value.trim())
+      .filter(
+        (value): value is string =>
+          typeof value === "string" &&
+          value.trim().length > 0,
+      )
+      .map((value) => value.trim())
     : [];
 
   const previousVends =
@@ -642,9 +642,9 @@ function getFieldOptionEntries(field: any) {
       return null;
     })
     .filter(Boolean) as Array<{
-    label: string;
-    value: any;
-  }>;
+      label: string;
+      value: any;
+    }>;
 }
 
 function findMatchingFieldOption(
@@ -662,9 +662,9 @@ function findMatchingFieldOption(
   const exactMatch = options.find((option) => {
     return (
       normalizeComparableValue(option.label) ===
-        normalizedValue ||
+      normalizedValue ||
       normalizeComparableValue(option.value) ===
-        normalizedValue
+      normalizedValue
     );
   });
 
@@ -703,7 +703,7 @@ function formatValueForField(value: any, field: any) {
 
   const isMerchandiseField =
     normalizeFieldKey(field.field_key ?? field.fieldKey ?? "") ===
-      "merchandise" ||
+    "merchandise" ||
     String(field.label ?? "").trim().toLowerCase() === "your merchandise";
 
   const isCheckboxField =
@@ -825,6 +825,7 @@ export default function AutofillDrawer({
 }) {
   const [konfolios, setKonfolios] = useState<Konfolio[]>([]);
   const [loading, setLoading] = useState(true);
+  const [portfoliosLoaded, setPortfoliosLoaded] = useState(false);
 
   const [displayName, setDisplayName] = useState("Your Name");
   const [businessName, setBusinessName] = useState("");
@@ -858,6 +859,7 @@ export default function AutofillDrawer({
     const load = async () => {
       try {
         setLoading(true);
+        setPortfoliosLoaded(false);
 
         const {
           data: { user },
@@ -924,8 +926,9 @@ export default function AutofillDrawer({
           );
         }
 
-        if (konfolioRes.data) {
+        if (!konfolioRes.error && konfolioRes.data) {
           setKonfolios(konfolioRes.data as Konfolio[]);
+          setPortfoliosLoaded(true);
         }
 
         if (profileRes.error) {
@@ -953,8 +956,8 @@ export default function AutofillDrawer({
 
           setAvatarUrl(
             profile.avatar_url ??
-              profile.profile_image_url ??
-              null,
+            profile.profile_image_url ??
+            null,
           );
         }
       } catch (error) {
@@ -965,7 +968,13 @@ export default function AutofillDrawer({
     };
 
     load();
+    window.addEventListener("focus", load);
+    return () => window.removeEventListener("focus", load);
   }, []);
+
+  const portfolioLimitReached =
+    userEmail?.trim().toLowerCase() !== "konfolios@gmail.com" && konfolios.length >= 3;
+  const createDisabled = loading || !portfoliosLoaded || portfolioLimitReached;
 
   const getPublicKonfolioPath = (konfolio: Konfolio) => {
     if (!businessSlug || !konfolio.portfolio_slug) {
@@ -1067,8 +1076,8 @@ export default function AutofillDrawer({
       getKonfolioContent(konfolio).merchTags,
     )
       ? getKonfolioContent(konfolio).merchTags!.filter(
-          (t): t is string => typeof t === "string" && t.trim() !== "",
-        )
+        (t): t is string => typeof t === "string" && t.trim() !== "",
+      )
       : [];
 
     onAutofill(merged, konfolio.id, selectedMerchTags);
@@ -1084,7 +1093,7 @@ export default function AutofillDrawer({
       />
 
       {/* Drawer */}
-      <div className="fixed right-0 top-0 z-50 h-full w-[380px] bg-[#1C1C1C] flex flex-col overflow-hidden">
+      <div className="fixed right-0 top-0 z-50 h-full w-full max-w-[380px] bg-[#1C1C1C] flex flex-col overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-[20px] py-[16px] border-b border-white/10">
           <span className="text-[13px] text-white/50 font-medium tracking-wide uppercase">
@@ -1101,51 +1110,65 @@ export default function AutofillDrawer({
 
         {/* Profile row */}
         <div className="flex items-center justify-between px-[20px] py-[16px] border-b border-white/10">
-          <div className="flex items-center gap-[12px]">
+          <div className="flex min-w-0 items-center gap-[12px]">
             {avatarUrl ? (
               <Image
                 src={avatarUrl}
                 alt="Avatar"
                 width={36}
                 height={36}
-                className="rounded-full object-cover"
+                className="shrink-0 rounded-full object-cover"
               />
             ) : (
-              <div className="w-[36px] h-[36px] rounded-full bg-white/10 flex items-center justify-center text-[13px] text-white/50">
+              <div className="w-[36px] h-[36px] shrink-0 rounded-full bg-white/10 flex items-center justify-center text-[13px] text-white/50">
                 {displayName[0]?.toUpperCase()}
               </div>
             )}
 
-            <div>
-              <p className="text-[14px] text-white font-medium">
+            <div className="min-w-0">
+              <p className="truncate text-[14px] text-white font-medium">
                 {businessName || "Business Name"}
               </p>
 
-              <p className="text-[12px] text-white/40">
+              <p className="truncate text-[12px] text-white/40">
                 {displayName}
               </p>
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-white/30 hover:text-white"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
+          <div className="flex shrink-0 items-center gap-[12px]">
+            <button
+              type="button"
+              disabled={createDisabled}
+              title={portfolioLimitReached ? "You have reached the 3-portfolio limit." : "Create a portfolio in a new tab"}
+              onClick={() => {
+                if (!createDisabled) window.open("/my-portfolios/new", "_blank", "noopener,noreferrer");
+              }}
+              className="hidden h-[30px] items-center gap-[6px] rounded-full border border-white/40 px-[12px] text-[12px] text-white hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40 md:inline-flex"
             >
-              <path
-                d="M3 3l10 10M13 3L3 13"
-                stroke="currentColor"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-              />
-            </svg>
-          </button>
+              <span aria-hidden="true">+</span> Create
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close autofill"
+              className="text-white/30 hover:text-white"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+              >
+                <path
+                  d="M3 3l10 10M13 3L3 13"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
 
         <p className="px-[20px] py-[14px] text-[13px] text-white/50">
@@ -1174,8 +1197,8 @@ export default function AutofillDrawer({
               getKonfolioContent(konfolio).merchTags,
             )
               ? getKonfolioContent(konfolio).merchTags!.filter(
-                  (t): t is string => typeof t === "string" && t.trim() !== "",
-                )
+                (t): t is string => typeof t === "string" && t.trim() !== "",
+              )
               : [];
 
             return (

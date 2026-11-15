@@ -16,6 +16,7 @@ type FieldProps = {
 export function PortfolioField({ children, label, editable, visible = true, onVisibilityChange, isDark = false, indicatorPlacement = "edge" }: FieldProps) {
     const fieldRef = useRef<HTMLDivElement>(null)
     const indicatorTextClass = isDark ? "text-white/40" : "text-black/40"
+    const editTextClass = isDark ? "text-white" : "text-black"
     const inline = indicatorPlacement === "inline"
     if (!editable) return visible ? <>{children}</> : null
 
@@ -23,7 +24,7 @@ export function PortfolioField({ children, label, editable, visible = true, onVi
         <div ref={fieldRef} className={`group/field relative min-w-0 ${inline ? "inline-flex max-w-full items-center gap-[6px]" : `w-full ${onVisibilityChange ? "px-[48px]" : "px-[24px]"}`}`}>
             <div className={`${visible ? "" : "opacity-40"} ${inline ? "min-w-0 [&_input]:!w-auto [&_input]:max-w-full [&_input]:[field-sizing:content]" : ""}`}>{children}</div>
             <div className={`${inline ? "relative flex shrink-0" : "absolute right-0 top-1/2 z-30 flex -translate-y-1/2"} items-center gap-[6px] opacity-0 pointer-events-none transition-opacity group-hover/field:opacity-100 group-hover/field:pointer-events-auto group-focus-within/field:opacity-100 group-focus-within/field:pointer-events-auto`}>
-                <button type="button" aria-label={`Edit ${label}`} title={`Edit ${label}`} className={`flex h-[20px] w-[20px] items-center justify-center ${indicatorTextClass} focus-visible:outline-2`} onClick={() => {
+                <button type="button" aria-label={`Edit ${label}`} title={`Edit ${label}`} className={`flex h-[20px] w-[20px] items-center justify-center ${editTextClass} focus-visible:outline-2`} onClick={() => {
                     const input = fieldRef.current?.querySelector("input")
                     input?.focus()
                     input?.select()
@@ -72,7 +73,7 @@ export function PreviousVend({ value, editable, onChange, onDelete, textClassNam
             )}
             {editable && !editing && (
                 <div className="absolute right-0 top-1/2 z-30 flex -translate-y-1/2 items-center gap-[6px] opacity-0 pointer-events-none transition-opacity group-hover/vend:opacity-100 group-hover/vend:pointer-events-auto group-focus-within/vend:opacity-100 group-focus-within/vend:pointer-events-auto">
-                    <button type="button" aria-label={`Edit ${value}`} onClick={() => { setDraft(value); setEditing(true) }} className={`flex h-[20px] w-[20px] items-center justify-center ${secondaryTextClass}`}><Pencil size={16} strokeWidth={1.5} /></button>
+                    <button type="button" aria-label={`Edit ${value}`} onClick={() => { setDraft(value); setEditing(true) }} className={`flex h-[20px] w-[20px] items-center justify-center ${textClassName.includes("text-white") ? "text-white" : "text-black"}`}><Pencil size={16} strokeWidth={1.5} /></button>
                     <button type="button" aria-label={`Remove ${value}`} onClick={onDelete} className={`flex h-[20px] w-[20px] items-center justify-center rounded-full ${textClassName.includes("text-white") ? "bg-white/40 text-black" : "bg-black/40 text-white"}`}><X size={15} strokeWidth={1.5} /></button>
                 </div>
             )}
