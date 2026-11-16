@@ -916,41 +916,41 @@ export default function ArtistProfileEditPopover({
               <div className="flex w-full flex-col gap-[10px]">
                 <div className="flex flex-wrap content-start items-start gap-x-[15px] gap-y-[10px]">
                   <div className="w-full sm:w-[200px]">
-                    <EditableInline
-                      value={firstNameText}
-                      placeholder="First name"
-                      textClassName="text-[15px] leading-[150%] font-normal text-[#262626]"
-                      onChange={setFirstNameText}
-                      onTrash={() => setFirstNameText("")}
-                    />
+                    <p className="w-full truncate text-[15px] leading-[150%] font-normal text-black/40">
+  {firstNameText}
+</p>
+                  </div>
+
+                  <div className="w-full sm:w-[200px]">
+                    <p className="w-full truncate text-[15px] leading-[150%] font-normal text-black/40">
+  {lastNameText}
+</p>
                   </div>
 
                   <div className="w-full sm:w-[200px]">
                     <EditableInline
-                      value={lastNameText}
-                      placeholder="Last name"
-                      textClassName="text-[15px] leading-[150%] font-normal text-[#262626]"
-                      onChange={setLastNameText}
-                      onTrash={() => setLastNameText("")}
-                    />
-                  </div>
-
-                  <div className="w-full sm:w-[200px]">
-                    <EditableInline
-                      value={preferredNameText}
-                      placeholder="Preferred Name"
-                      textClassName="text-[15px] leading-[150%] font-normal text-[#D3D3D3]"
-                      onChange={setPreferredNameText}
-                      onTrash={() => setPreferredNameText("")}
-                    />
+  value={preferredNameText}
+  placeholder="Preferred Name"
+  textClassName={`text-[15px] leading-[150%] font-normal ${
+    preferredNameText.trim() ? "text-[#262626]" : "text-[#D3D3D3]"
+  }`}
+  onChange={setPreferredNameText}
+  onTrash={() => setPreferredNameText("")}
+/>
                   </div>
                 </div>
 
                 <p className="text-[12px] italic leading-[140%] text-[#A5A5A5]">
-                  {[firstNameText.trim(), lastNameText.trim()].filter(Boolean).join(" ")
-                    ? `“${[firstNameText.trim(), lastNameText.trim()].filter(Boolean).join(" ")}” will be shown on your portfolio.`
-                    : "Add your first and last name to show your name on your portfolio."}
-                </p>
+  {(
+    preferredNameText.trim() ||
+    [firstNameText.trim(), lastNameText.trim()].filter(Boolean).join(" ")
+  )
+    ? `“${
+        preferredNameText.trim() ||
+        [firstNameText.trim(), lastNameText.trim()].filter(Boolean).join(" ")
+      }” will be shown on your portfolio.`
+    : "Add your name to show it on your portfolio."}
+</p>
 
                 <div className="mt-[40px] w-full md:mt-[50px]">
                   <p className="w-full truncate text-[15px] font-normal leading-[150%] text-black/40">
