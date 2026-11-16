@@ -947,10 +947,16 @@ export default function ArtistProfileEditPopover({
                 </div>
 
                 <p className="text-[12px] italic leading-[140%] text-[#A5A5A5]">
-                  {[firstNameText.trim(), lastNameText.trim()].filter(Boolean).join(" ")
-                    ? `“${[firstNameText.trim(), lastNameText.trim()].filter(Boolean).join(" ")}” will be shown on your portfolio.`
-                    : "Add your first and last name to show your name on your portfolio."}
-                </p>
+  {(
+    preferredNameText.trim() ||
+    [firstNameText.trim(), lastNameText.trim()].filter(Boolean).join(" ")
+  )
+    ? `“${
+        preferredNameText.trim() ||
+        [firstNameText.trim(), lastNameText.trim()].filter(Boolean).join(" ")
+      }” will be shown on your portfolio.`
+    : "Add your name to show it on your portfolio."}
+</p>
 
                 <div className="mt-[40px] w-full md:mt-[50px]">
                   <p className="w-full truncate text-[15px] font-normal leading-[150%] text-black/40">
