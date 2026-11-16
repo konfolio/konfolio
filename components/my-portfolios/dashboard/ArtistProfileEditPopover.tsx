@@ -916,33 +916,27 @@ export default function ArtistProfileEditPopover({
               <div className="flex w-full flex-col gap-[10px]">
                 <div className="flex flex-wrap content-start items-start gap-x-[15px] gap-y-[10px]">
                   <div className="w-full sm:w-[200px]">
-                    <EditableInline
-                      value={firstNameText}
-                      placeholder="First name"
-                      textClassName="text-[15px] leading-[150%] font-normal text-[#262626]"
-                      onChange={setFirstNameText}
-                      onTrash={() => setFirstNameText("")}
-                    />
+                    <p className="w-full truncate text-[15px] leading-[150%] font-normal text-black/40">
+  {firstNameText}
+</p>
+                  </div>
+
+                  <div className="w-full sm:w-[200px]">
+                    <p className="w-full truncate text-[15px] leading-[150%] font-normal text-black/40">
+  {lastNameText}
+</p>
                   </div>
 
                   <div className="w-full sm:w-[200px]">
                     <EditableInline
-                      value={lastNameText}
-                      placeholder="Last name"
-                      textClassName="text-[15px] leading-[150%] font-normal text-[#262626]"
-                      onChange={setLastNameText}
-                      onTrash={() => setLastNameText("")}
-                    />
-                  </div>
-
-                  <div className="w-full sm:w-[200px]">
-                    <EditableInline
-                      value={preferredNameText}
-                      placeholder="Preferred Name"
-                      textClassName="text-[15px] leading-[150%] font-normal text-[#D3D3D3]"
-                      onChange={setPreferredNameText}
-                      onTrash={() => setPreferredNameText("")}
-                    />
+  value={preferredNameText}
+  placeholder="Preferred Name"
+  textClassName={`text-[15px] leading-[150%] font-normal ${
+    preferredNameText.trim() ? "text-[#262626]" : "text-[#D3D3D3]"
+  }`}
+  onChange={setPreferredNameText}
+  onTrash={() => setPreferredNameText("")}
+/>
                   </div>
                 </div>
 
