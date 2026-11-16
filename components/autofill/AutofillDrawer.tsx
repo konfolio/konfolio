@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
 
 import { supabase } from "@/lib/supabaseClient";
+import AutofillPortfolioModal from "@/components/autofill/AutofillPortfolioModal";
 
 type SocialKey =
   | "website"
@@ -329,7 +328,7 @@ function inferFieldKey(field: any): string | undefined {
     "other link": "other_links",
     "other links": "other_links",
     "additional link": "additional_link",
-    "additional links": "additional_links",
+    "additional links": "other_links",
     "social link": "social_media_link",
     "social media link": "social_media_link",
     "social links": "other_links",
@@ -337,17 +336,14 @@ function inferFieldKey(field: any): string | undefined {
     links: "other_links",
 
     "online shop": "shop",
-    "online shop link": "shop",
-    "online shop url": "shop",
 
     portfolio: "portfolio",
     "portfolio website": "portfolio",
-    "portfolio url": "portfolio_url",
 
     "konfolio link": "konfolio_link",
     "konfolio url": "konfolio_link",
-    "portfolio link": "portfolio_link",
-    "public portfolio link": "portfolio_link",
+    "portfolio link": "konfolio_link",
+    "public portfolio link": "konfolio_link",
 
     "portfolio name": "portfolio_name",
     "konfolio name": "portfolio_name",
@@ -398,19 +394,6 @@ function inferFieldKey(field: any): string | undefined {
   };
 
   return labelMap[normalizedLabel];
-}
-
-function isVendingExperienceField(field: any) {
-  const keys = [inferFieldKey(field), normalizeFieldKey(field.label)];
-  return keys.some((key) => {
-    if (!key) return false;
-    return /^(vend|vending)_experience(?:_\d+)?$/.test(key) ||
-      [
-        "previous_vending", "previous_vends", "prev_vends", "past_vends",
-        "past_events", "previous_events", "previous_vending_events",
-        "previous_vending_experience", "events_vended", "events_you_have_vended",
-      ].includes(key);
-  });
 }
 
 function getAutofillValue({
@@ -535,6 +518,15 @@ function getAutofillValue({
     tumblr ??
     pixiv;
 
+  const additionalLink =
+    website ??
+    x ??
+    facebook ??
+    tiktok ??
+    bluesky ??
+    tumblr ??
+    pixiv;
+
   const values: Record<string, any> = {
     first_name: profile?.first_name,
     last_name: profile?.last_name,
@@ -550,11 +542,24 @@ function getAutofillValue({
     location:
       content.locationText ?? profile?.location,
 
+    sales_permit: profile?.sales_permit,
     will_apply: profile?.will_apply,
     collabs: profile?.collabs,
     first_vend: profile?.first_vend,
 
     has_previous_vends: previousVends.length > 0,
+    previous_vending: previousVends,
+    previous_vends: previousVends,
+    prev_vends: previousVends,
+    past_vends: previousVends,
+    past_events: previousVends,
+    previous_events: previousVends,
+
+    vend_experience_1: previousVends[0],
+    vend_experience_2: previousVends[1],
+    vend_experience_3: previousVends[2],
+    vend_experience_4: previousVends[3],
+
     merchandise_tags: merchTags,
     merch_tags: merchTags,
     merchandise: merchTags,
@@ -564,11 +569,6 @@ function getAutofillValue({
     website,
     shop,
     store: shop,
-    online_shop: shop,
-    online_shop_link: shop,
-    online_shop_url: shop,
-    shop_link: shop,
-    shop_url: shop,
     instagram,
     facebook,
     x,
@@ -579,16 +579,21 @@ function getAutofillValue({
     bluesky,
 
     social_media_link: socialMediaLink,
+    additional_link: additionalLink,
     other_links: otherLinks,
+    additional_links: otherLinks,
     social_links: otherLinks,
     social_media_links: otherLinks,
     links: otherLinks,
 
-    portfolio: website,
-    portfolio_link: website,
-    portfolio_url: website,
+    portfolio:
+      getPreferredLinkValue({
+        content,
+        profile,
+        key: "portfolio",
+      }) ?? publicKonfolioUrl,
+
     konfolio_link: publicKonfolioUrl,
-    konfolio_url: publicKonfolioUrl,
     portfolio_name: konfolio.portfolio_name,
     konfolio_name: konfolio.portfolio_name,
   };
@@ -703,13 +708,11 @@ function formatValueForField(value: any, field: any) {
 
   const isMerchandiseField =
     normalizeFieldKey(field.field_key ?? field.fieldKey ?? "") ===
-    "merchandise" ||
-    String(field.label ?? "").trim().toLowerCase() === "your merchandise";
+    "merchandise";
 
   const isCheckboxField =
     fieldType === "checkbox" ||
     fieldType === "checkboxes" ||
-    fieldType === "multi_choice" ||
     fieldType === "multi_select" ||
     fieldType === "multiselect" ||
     fieldType === "multiple_select" ||
@@ -720,7 +723,6 @@ function formatValueForField(value: any, field: any) {
     (fieldType === "dropdown" ||
       fieldType === "select" ||
       fieldType === "radio" ||
-      fieldType === "single_choice" ||
       fieldType === "multiple_choice");
 
   if (typeof value === "boolean") {
@@ -755,15 +757,6 @@ function formatValueForField(value: any, field: any) {
 
     if (cleanedValues.length === 0) {
       return undefined;
-    }
-
-    // MerchTagsField options are suggestions, not an allowed-values list.
-    // Preserve every selected portfolio tag, including custom tags.
-    if (
-      isMerchandiseField &&
-      (fieldType === "dropdown" || fieldType === "select")
-    ) {
-      return cleanedValues;
     }
 
     if (isCheckboxField) {
@@ -841,19 +834,6 @@ export default function AutofillDrawer({
 
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
-  useEffect(() => {
-    const handler = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    };
-
-    window.addEventListener("keydown", handler);
-
-    return () => {
-      window.removeEventListener("keydown", handler);
-    };
-  }, [onClose]);
 
   useEffect(() => {
     const load = async () => {
@@ -944,6 +924,7 @@ export default function AutofillDrawer({
           setProfileData(profile);
 
           const name =
+            profile.preferred_name ||
             profile.display_name ||
             [profile.first_name, profile.last_name]
               .filter(Boolean)
@@ -1006,7 +987,6 @@ export default function AutofillDrawer({
     const locallyBuiltAutofill: Record<string, any> = {};
 
     for (const field of fields ?? []) {
-      if (isVendingExperienceField(field)) continue;
       const fieldKey = inferFieldKey(field);
 
       const rawValue = getAutofillValue({
@@ -1027,27 +1007,17 @@ export default function AutofillDrawer({
       }
     }
 
-    // Selected portfolio values take priority over server defaults.
+    /*
+     * The drawer builds autofill locally from the applicant's
+     * profile as a fallback.
+     *
+     * Values returned by the public form API override the local
+     * values when the server was able to compute them.
+     */
     const merged: Record<string, any> = {
-      ...autofillData,
       ...locallyBuiltAutofill,
+      ...autofillData,
     };
-
-    // These fields require manual entry, even if the server sent a default.
-    for (const field of fields ?? []) {
-      const fieldKey = inferFieldKey(field);
-      const labelKey = normalizeFieldKey(field.label);
-      if (
-        isVendingExperienceField(field) ||
-        fieldKey === "sales_permit" ||
-        fieldKey === "additional_link" ||
-        fieldKey === "additional_links" ||
-        labelKey === "additional_link" ||
-        labelKey === "additional_links"
-      ) {
-        delete merged[field.id];
-      }
-    }
 
     console.log(
       "LOCAL KONFOLIO AUTOFILL:",
@@ -1085,228 +1055,28 @@ export default function AutofillDrawer({
   };
 
   return (
-    <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-40 bg-black/30"
-        onClick={onClose}
-      />
-
-      {/* Drawer */}
-      <div className="fixed right-0 top-0 z-50 h-full w-full max-w-[380px] bg-[#1C1C1C] flex flex-col overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between px-[20px] py-[16px] border-b border-white/10">
-          <span className="text-[13px] text-white/50 font-medium tracking-wide uppercase">
-            Select Autofill
-          </span>
-
-          <button
-            type="button"
-            className="text-white/30 hover:text-white text-[11px] font-mono"
-          >
-            {"</>"}
-          </button>
-        </div>
-
-        {/* Profile row */}
-        <div className="flex items-center justify-between px-[20px] py-[16px] border-b border-white/10">
-          <div className="flex min-w-0 items-center gap-[12px]">
-            {avatarUrl ? (
-              <Image
-                src={avatarUrl}
-                alt="Avatar"
-                width={36}
-                height={36}
-                className="shrink-0 rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-[36px] h-[36px] shrink-0 rounded-full bg-white/10 flex items-center justify-center text-[13px] text-white/50">
-                {displayName[0]?.toUpperCase()}
-              </div>
-            )}
-
-            <div className="min-w-0">
-              <p className="truncate text-[14px] text-white font-medium">
-                {businessName || "Business Name"}
-              </p>
-
-              <p className="truncate text-[12px] text-white/40">
-                {displayName}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex shrink-0 items-center gap-[12px]">
-            <button
-              type="button"
-              disabled={createDisabled}
-              title={portfolioLimitReached ? "You have reached the 3-portfolio limit." : "Create a portfolio in a new tab"}
-              onClick={() => {
-                if (!createDisabled) window.open("/my-portfolios/new", "_blank", "noopener,noreferrer");
-              }}
-              className="hidden h-[30px] items-center gap-[6px] rounded-full border border-white/40 px-[12px] text-[12px] text-white hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40 md:inline-flex"
-            >
-              <span aria-hidden="true">+</span> Create
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Close autofill"
-              className="text-white/30 hover:text-white"
-            >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-              >
-                <path
-                  d="M3 3l10 10M13 3L3 13"
-                  stroke="currentColor"
-                  strokeWidth="1.4"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <p className="px-[20px] py-[14px] text-[13px] text-white/50">
-          Select a portfolio to use as autofill.
-        </p>
-
-        {/* Konfolio list */}
-        <div className="flex-1 overflow-y-auto px-[16px] pb-[20px] flex flex-col gap-[12px]">
-          {loading && (
-            <p className="text-[13px] text-white/30 text-center py-8">
-              Loading...
-            </p>
-          )}
-
-          {!loading && konfolios.length === 0 && (
-            <p className="text-[13px] text-white/30 text-center py-8">
-              No portfolios found.
-            </p>
-          )}
-
-          {konfolios.map((konfolio) => {
-            const publicKonfolioPath =
-              getPublicKonfolioPath(konfolio);
-
-            const cardMerchTags = Array.isArray(
-              getKonfolioContent(konfolio).merchTags,
-            )
-              ? getKonfolioContent(konfolio).merchTags!.filter(
-                (t): t is string => typeof t === "string" && t.trim() !== "",
-              )
-              : [];
-
-            return (
-              <div
-                key={konfolio.id}
-                onClick={() => handleSelect(konfolio)}
-                className="rounded-[12px] bg-white/5 border border-white/10 overflow-hidden cursor-pointer hover:border-white/30 transition-colors"
-              >
-                {/* Thumbnail */}
-                <div className="w-full h-[160px] bg-white/5">
-                  {konfolio.thumbnail_url ? (
-                    <Image
-                      src={konfolio.thumbnail_url}
-                      alt={
-                        konfolio.portfolio_name ??
-                        "Portfolio"
-                      }
-                      width={348}
-                      height={160}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-white/5" />
-                  )}
-                </div>
-
-                {/* Info */}
-                <div className="px-[14px] py-[12px] flex items-center justify-between">
-                  <div>
-                    <p className="text-[14px] text-white">
-                      {konfolio.portfolio_name ??
-                        "Portfolio Name"}
-                    </p>
-
-                    <div className="flex items-center gap-[6px] mt-[4px]">
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                      >
-                        <path
-                          d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 3v4l2.5 2.5"
-                          stroke="white"
-                          strokeOpacity="0.4"
-                          strokeWidth="1.3"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-
-                      <span className="text-[11px] text-white/40">
-                        {new Date(
-                          konfolio.updated_at,
-                        ).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
-                      </span>
-                    </div>
-
-                    {cardMerchTags.length > 0 && (
-                      <div className="flex flex-wrap gap-[4px] mt-[8px]">
-                        {cardMerchTags.slice(0, 6).map((tag) => (
-                          <span
-                            key={tag}
-                            className="inline-flex items-center h-[20px] px-[8px] rounded-full border border-white/15 text-[10px] text-white/60"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {publicKonfolioPath && (
-                    <Link
-                      href={publicKonfolioPath}
-                      target="_blank"
-                      onClick={(event) =>
-                        event.stopPropagation()
-                      }
-                      className="flex items-center gap-[6px] bg-[#262626] text-white text-[12px] px-[12px] py-[6px] rounded-full hover:bg-white/20 transition-colors"
-                    >
-                      View
-
-                      <svg
-                        width="10"
-                        height="10"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                      >
-                        <path
-                          d="M6 3H3.5A1.5 1.5 0 0 0 2 4.5v8A1.5 1.5 0 0 0 3.5 14h8A1.5 1.5 0 0 0 13 12.5V10M10 2h4m0 0v4m0-4L6.5 9.5"
-                          stroke="currentColor"
-                          strokeWidth="1.3"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </Link>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </>
+    <AutofillPortfolioModal
+      portfolios={konfolios.map((portfolio) => ({
+        id: portfolio.id,
+        name: portfolio.portfolio_name || "Portfolio Name",
+        thumbnailUrl: portfolio.thumbnail_url,
+        updatedAt: portfolio.updated_at,
+        href: getPublicKonfolioPath(portfolio),
+      }))}
+      loading={loading}
+      businessName={businessName}
+      displayName={displayName}
+      avatarUrl={avatarUrl}
+      createDisabled={createDisabled}
+      limitReached={portfolioLimitReached}
+      onCreate={() => {
+        if (!createDisabled) window.open("/my-portfolios/new", "_blank", "noopener,noreferrer");
+      }}
+      onSelect={(id) => {
+        const portfolio = konfolios.find((item) => item.id === id);
+        if (portfolio) handleSelect(portfolio);
+      }}
+      onClose={onClose}
+    />
   );
 }
