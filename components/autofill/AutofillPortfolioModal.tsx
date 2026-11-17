@@ -35,7 +35,6 @@ function formatDate(value: string) {
 }
 
 export default function AutofillPortfolioModal({ portfolios, loading, businessName, displayName, avatarUrl, createDisabled, limitReached, onCreate, onSelect, onClose }: Props) {
-    const headingId = useId();
     const descriptionId = useId();
     const dialogRef = useRef<HTMLDivElement>(null);
     const closeRef = useRef<HTMLButtonElement>(null);
@@ -72,18 +71,17 @@ export default function AutofillPortfolioModal({ portfolios, loading, businessNa
     }, [onClose]);
 
     return (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#1C1C1C]/95 px-[16px] py-[24px] md:px-[30px]"
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center px-[16px] py-[24px] backdrop-blur-[5px] md:px-[30px]"
             onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-            <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={headingId} aria-describedby={descriptionId} tabIndex={-1}
-                className="flex max-h-[calc(100dvh-48px)] w-full max-w-[900px] min-h-0 flex-col outline-none">
-                <h2 id={headingId} className="mb-[14px] shrink-0 text-[16px] font-normal leading-[140%] text-white/40">Select Autofill</h2>
-                <div className="relative flex min-h-0 flex-col overflow-hidden rounded-[16px] bg-[#F7F7F7] md:rounded-[12px]">
+            <div ref={dialogRef} role="dialog" aria-modal="true" aria-label="Choose a portfolio for autofill" aria-describedby={descriptionId} tabIndex={-1}
+                className="flex max-h-[calc(100dvh-48px)] w-full max-w-[995px] min-h-0 flex-col outline-none md:h-[850px]">
+                <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[15px] bg-[#F7F7F7] shadow-[5px_5px_25px_rgba(0,0,0,0.1)]">
                     <button ref={closeRef} type="button" onClick={onClose} aria-label="Close autofill"
                         className="absolute right-[20px] top-[20px] z-20 flex h-[24px] w-[24px] items-center justify-center text-[#262626] hover:opacity-60 focus-visible:outline-2 md:right-[20px] md:top-[18px]">
                         <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 3l14 14M17 3L3 17" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" /></svg>
                     </button>
 
-                    <div className="min-h-0 overflow-y-auto overscroll-contain px-[24px] pb-[24px] pt-[24px] md:px-[80px]">
+                    <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-[24px] pb-[24px] pt-[24px] md:px-[97px] md:py-[30px]">
                         <div className="flex min-w-0 items-center gap-[12px] pr-[28px]">
                             {avatarUrl ? (
                                 <Image src={avatarUrl} alt="Your profile" width={40} height={40} className="h-[40px] w-[40px] shrink-0 rounded-full object-cover md:h-[36px] md:w-[36px]" />
