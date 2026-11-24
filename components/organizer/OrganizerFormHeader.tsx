@@ -167,23 +167,23 @@ export default function OrganizerFormHeader({
   const hasActiveFilters = activeChips.length > 0 || order !== "time_submitted";
 
   return (
-    <div className="pt-8">
-      <div className="flex items-start justify-between gap-6">
-        <div className="flex items-start gap-4">
+    <div className="mb-2 shrink-0 border-b border-zinc-100 py-2 sm:py-3">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <div className="flex min-w-0 items-start gap-3">
           <button
-            className="mt-1 text-zinc-500 hover:text-zinc-800"
+            className="mt-0.5 shrink-0 text-zinc-500 hover:text-zinc-800"
             aria-label="Back"
             onClick={() => window.history.back()}
           >
             ←
           </button>
 
-          <div>
-            <div className="text-2xl font-semibold">
+          <div className="min-w-0">
+            <div className="truncate text-xl font-semibold leading-tight" title={form?.title ?? undefined}>
               {loading ? "Loading..." : form?.title || "Untitled Form"}
             </div>
 
-            <div className="mt-1 flex items-center gap-4 text-sm text-zinc-500">
+            <div className="mt-0.5 flex items-center gap-3 whitespace-nowrap text-xs text-zinc-500 sm:text-sm">
               <div className="flex items-center gap-2">
                 <span
                   className={`inline-block h-2 w-2 rounded-full ${statusDotColor(form?.status)}`}
@@ -209,13 +209,13 @@ export default function OrganizerFormHeader({
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
           <div className="relative">
             <input
               placeholder="Search applicants"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="h-9 w-56 rounded-full border border-zinc-200 bg-white pl-9 pr-3 text-sm outline-none focus:border-zinc-400"
+              className="h-9 w-44 lg:w-56 rounded-full border border-zinc-200 bg-white pl-9 pr-3 text-sm outline-none focus:border-zinc-400"
             />
             <span className="absolute left-3 top-2.5 text-zinc-400">⌕</span>
           </div>
@@ -441,7 +441,6 @@ export default function OrganizerFormHeader({
         </div>
       </div>
 
-      <div className="mt-6 border-t border-zinc-100" />
     </div>
   );
 }

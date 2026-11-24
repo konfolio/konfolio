@@ -370,6 +370,19 @@ export default function EditOrganizerFormPage() {
   const formId = params.formId as string;
 
   const dragFieldId = useRef<string | null>(null);
+  const saveQueue = useRef<Promise<Response | null>>(Promise.resolve(null));
+  const previewInFlight = useRef(false);
+  const [openingPreview, setOpeningPreview] = useState(false);
+
+  const enqueueSave = (updates: Record<string, unknown>) => {
+    const request = saveQueue.current.catch(() => null).then(() => fetch(`/api/forms/${formId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updates),
+    }));
+    saveQueue.current = request;
+    return request;
+  };
 
   const [pages, setPages] = useState([1]);
   const [appCount, setAppCount] = useState(0);
@@ -424,11 +437,7 @@ export default function EditOrganizerFormPage() {
 
       if (!formJson.form.fields || formJson.form.fields.length === 0) {
         setFields(DEFAULT_FIELDS);
-        await fetch(`/api/forms/${formId}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ fields: DEFAULT_FIELDS }),
-        });
+        await enqueueSave({ fields: DEFAULT_FIELDS });
       } else {
         // Forms saved before merch fields got real default options were
         // persisted with an empty `options: []` on "Your Merchandise" and
@@ -451,24 +460,42 @@ export default function EditOrganizerFormPage() {
           return withPageField;
         });
         setFields(withPage);
-        const maxPage = Math.max(1, ...withPage.map((f: Field) => f.page ?? 1));
-        setPages(Array.from({ length: maxPage }, (_, i) => i + 1));
-        await fetch(`/api/forms/${formId}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ fields: withPage }),
-        });
+        await enqueueSave({ fields: withPage });
       }
     };
     fetchForm();
   }, [formId]);
 
   const saveFormMeta = async (updates: Record<string, any>) => {
-    await fetch(`/api/forms/${formId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updates),
-    });
+    await enqueueSave(updates);
+  };
+
+  const handlePreview = async () => {
+    if (!formData || uploadingImage || previewInFlight.current) return;
+    const previewTab = window.open("", "_blank");
+    if (!previewTab) {
+      alert("Please allow pop-ups to open the form preview.");
+      return;
+    }
+    previewTab.opener = null;
+    previewInFlight.current = true;
+    setOpeningPreview(true);
+    try {
+      const res = await enqueueSave({
+        fields, tags, description,
+        event_date_start: eventDateStart || null,
+        event_address: eventAddress,
+        cover_image_url: coverImageUrl,
+      });
+      if (!res.ok) throw new Error("Could not save the latest form changes.");
+      previewTab.location.replace(`/organizer/forms/${formId}/preview`);
+    } catch (error) {
+      previewTab.close();
+      alert(error instanceof Error ? error.message : "Unable to open the form preview.");
+    } finally {
+      previewInFlight.current = false;
+      setOpeningPreview(false);
+    }
   };
 
   const updatePlaceholder = (id: string, val: string) => {
@@ -483,12 +510,11 @@ export default function EditOrganizerFormPage() {
 
   const saveFields = async (updatedFields: Field[]) => {
     setSaving(true);
-    await fetch(`/api/forms/${formId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fields: updatedFields }),
-    });
-    setSaving(false);
+    try {
+      await enqueueSave({ fields: updatedFields });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const updateField = (id: string, updates: Partial<Field>) => {
@@ -505,22 +531,6 @@ export default function EditOrganizerFormPage() {
       saveFields(updated);
       return updated;
     });
-  };
-
-  // Removing a divider merges that page's questions into the previous page
-  // and shifts every later page down by one.
-  const deletePage = (page: number) => {
-    if (page <= 1) return;
-    setFields((prev) => {
-      const updated = prev.map((f) => {
-        const p = f.page ?? 1;
-        return p >= page ? { ...f, page: p - 1 } : f;
-      });
-      saveFields(updated);
-      return updated;
-    });
-    setPages((prev) => prev.slice(0, -1));
-    setActivePage((prev) => (prev >= page ? prev - 1 : prev));
   };
 
   const addOption = (id: string) => {
@@ -671,30 +681,13 @@ export default function EditOrganizerFormPage() {
       </button>
       <span className="text-[14px] text-[#A5A5A5]">Pages</span>
       {pages.map((page) => (
-        <span key={page} className="group relative inline-flex">
-          <button
-            onClick={() => setActivePage(page)}
-            className={`text-[14px] pb-[1px] ${activePage === page ? "text-[#262626] border-b border-[#262626]" : "text-[#A5A5A5] border-b border-transparent"}`}
-          >
-            {page}
-          </button>
-          {page > 1 && (
-            <button
-              onClick={() => deletePage(page)}
-              title={`Remove page ${page} divider`}
-              className="absolute -top-[8px] -right-[10px] hidden group-hover:flex w-[14px] h-[14px] rounded-full bg-white border border-[#E9E9E9] items-center justify-center text-[#C0BDB4] hover:text-[#A32D2D]"
-            >
-              <svg width="8" height="8" viewBox="0 0 16 16" fill="none">
-                <path
-                  d="M3 3l10 10M13 3L3 13"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
-          )}
-        </span>
+        <button
+          key={page}
+          onClick={() => setActivePage(page)}
+          className={`text-[14px] pb-[1px] ${activePage === page ? "text-[#262626] border-b border-[#262626]" : "text-[#A5A5A5] border-b border-transparent"}`}
+        >
+          {page}
+        </button>
       ))}
       <button
         onClick={() => {
@@ -766,7 +759,7 @@ export default function EditOrganizerFormPage() {
           >
             {publishing ? "Publishing..." : "Publish"}
           </button>
-          <button className="w-[40px] h-[40px] rounded-full border border-[#E9E9E9] flex items-center justify-center hover:opacity-70">
+          <button type="button" onClick={handlePreview} disabled={!formData || openingPreview || publishing || uploadingImage} aria-label={openingPreview ? "Opening form preview" : "Preview form in a new tab"} title="Preview form" className="w-[40px] h-[40px] rounded-full border border-[#E9E9E9] flex items-center justify-center hover:opacity-70 disabled:opacity-50 disabled:cursor-not-allowed">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path
                 d="M6 3H3.5A1.5 1.5 0 0 0 2 4.5v8A1.5 1.5 0 0 0 3.5 14h8A1.5 1.5 0 0 0 13 12.5V10M10 2h4m0 0v4m0-4L6.5 9.5"

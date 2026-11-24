@@ -32,15 +32,17 @@ type Form = {
   recurrenceText?: string | null;
 };
 
-type ApplyFormClientProps = {
-  organizerSlug?: string;
-  formSlug: string;
-};
+type ApplyFormClientProps =
+  | { mode?: "public"; organizerSlug?: string; formSlug: string; previewFormId?: never }
+  | { mode: "preview"; previewFormId: string; organizerSlug?: never; formSlug?: never };
 
 export default function ApplyFormClient({
   organizerSlug,
-  formSlug: slug,
+  formSlug: slug = "",
+  mode = "public",
+  previewFormId,
 }: ApplyFormClientProps) {
+  const isPreview = mode === "preview";
   const [currentPage, setCurrentPage] = useState(1);
   const [form, setForm] = useState<Form | null>(null);
   const [autofillData, setAutofillData] = useState<Record<string, any>>({});
@@ -98,7 +100,9 @@ export default function ApplyFormClient({
           : "";
 
         const res = await fetch(
-          `/api/public/forms/${encodeURIComponent(slug)}${query}`,
+          isPreview
+            ? `/api/forms/${encodeURIComponent(previewFormId ?? "")}`
+            : `/api/public/forms/${encodeURIComponent(slug)}${query}`,
           {
             signal: controller.signal,
             cache: "no-store",
@@ -120,7 +124,7 @@ export default function ApplyFormClient({
 
         setForm(json.form);
 
-        if (json.autofill && Object.keys(json.autofill).length > 0) {
+        if (!isPreview && json.autofill && Object.keys(json.autofill).length > 0) {
           setAutofillData(json.autofill);
 
           setResponses((previousResponses) => ({
@@ -129,19 +133,21 @@ export default function ApplyFormClient({
           }));
         }
 
-        const submitCheck = await fetch(
-          `/api/forms/apply/check?formId=${encodeURIComponent(json.form.id)}`,
-          {
-            signal: controller.signal,
-            cache: "no-store",
-          },
-        );
+        if (!isPreview) {
+          const submitCheck = await fetch(
+            `/api/forms/apply/check?formId=${encodeURIComponent(json.form.id)}`,
+            {
+              signal: controller.signal,
+              cache: "no-store",
+            },
+          );
 
-        if (submitCheck.ok) {
-          const { submitted } = await submitCheck.json();
+          if (submitCheck.ok) {
+            const { submitted } = await submitCheck.json();
 
-          if (!controller.signal.aborted && submitted) {
-            setAlreadySubmitted(true);
+            if (!controller.signal.aborted && submitted) {
+              setAlreadySubmitted(true);
+            }
           }
         }
 
@@ -175,10 +181,11 @@ export default function ApplyFormClient({
     fetchForm();
 
     return () => controller.abort();
-  }, [slug, organizerSlug]);
+  }, [slug, organizerSlug, isPreview, previewFormId]);
 
   const handleSubmit = async () => {
     if (
+      isPreview ||
       !form ||
       submitting ||
       submitted ||
@@ -297,7 +304,7 @@ export default function ApplyFormClient({
       if (res.status === 403) {
         alert(
           json?.error ||
-            "This form is no longer accepting applications.",
+          "This form is no longer accepting applications.",
         );
         return;
       }
@@ -309,7 +316,7 @@ export default function ApplyFormClient({
 
       alert(
         json?.error ||
-          "Something went wrong while submitting. Please try again.",
+        "Something went wrong while submitting. Please try again.",
       );
     } catch (err) {
       console.error("Submit error:", err);
@@ -481,133 +488,133 @@ export default function ApplyFormClient({
 
               {(organizerName ||
                 Object.keys(organizerLinks).length > 0) && (
-                <>
-                  <p className="text-[13px] text-[#A5A5A5] mt-[8px]">
-                    Stay updated with{" "}
-                    {organizerName || "the organizer"} here:
-                  </p>
+                  <>
+                    <p className="text-[13px] text-[#A5A5A5] mt-[8px]">
+                      Stay updated with{" "}
+                      {organizerName || "the organizer"} here:
+                    </p>
 
-                  <div className="flex items-center gap-[14px] mt-[4px]">
-                    {organizerLinks.website && (
-                      <Link
-                        href={organizerLinks.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#262626] hover:opacity-70"
-                      >
-                        <svg
-                          width="18"
-                          height="18"
-                          viewBox="0 0 18 18"
-                          fill="none"
+                    <div className="flex items-center gap-[14px] mt-[4px]">
+                      {organizerLinks.website && (
+                        <Link
+                          href={organizerLinks.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#262626] hover:opacity-70"
                         >
-                          <rect
-                            x="1.5"
-                            y="1.5"
-                            width="15"
-                            height="15"
-                            rx="2"
-                            stroke="currentColor"
-                            strokeWidth="1.3"
-                          />
-                          <path
-                            d="M1.5 9h15M9 1.5C9 1.5 6.5 4.5 6.5 9s2.5 7.5 2.5 7.5M9 1.5C9 1.5 11.5 4.5 11.5 9S9 16.5 9 16.5"
-                            stroke="currentColor"
-                            strokeWidth="1.3"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                      </Link>
-                    )}
+                          <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 18 18"
+                            fill="none"
+                          >
+                            <rect
+                              x="1.5"
+                              y="1.5"
+                              width="15"
+                              height="15"
+                              rx="2"
+                              stroke="currentColor"
+                              strokeWidth="1.3"
+                            />
+                            <path
+                              d="M1.5 9h15M9 1.5C9 1.5 6.5 4.5 6.5 9s2.5 7.5 2.5 7.5M9 1.5C9 1.5 11.5 4.5 11.5 9S9 16.5 9 16.5"
+                              stroke="currentColor"
+                              strokeWidth="1.3"
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                        </Link>
+                      )}
 
-                    {organizerLinks.instagram && (
-                      <Link
-                        href={organizerLinks.instagram}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#262626] hover:opacity-70"
-                      >
-                        <svg
-                          width="18"
-                          height="18"
-                          viewBox="0 0 18 18"
-                          fill="none"
+                      {organizerLinks.instagram && (
+                        <Link
+                          href={organizerLinks.instagram}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#262626] hover:opacity-70"
                         >
-                          <rect
-                            x="1.5"
-                            y="1.5"
-                            width="15"
-                            height="15"
-                            rx="4"
-                            stroke="currentColor"
-                            strokeWidth="1.3"
-                          />
-                          <circle
-                            cx="9"
-                            cy="9"
-                            r="3"
-                            stroke="currentColor"
-                            strokeWidth="1.3"
-                          />
-                          <circle
-                            cx="13"
-                            cy="5"
-                            r="0.75"
-                            fill="currentColor"
-                          />
-                        </svg>
-                      </Link>
-                    )}
+                          <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 18 18"
+                            fill="none"
+                          >
+                            <rect
+                              x="1.5"
+                              y="1.5"
+                              width="15"
+                              height="15"
+                              rx="4"
+                              stroke="currentColor"
+                              strokeWidth="1.3"
+                            />
+                            <circle
+                              cx="9"
+                              cy="9"
+                              r="3"
+                              stroke="currentColor"
+                              strokeWidth="1.3"
+                            />
+                            <circle
+                              cx="13"
+                              cy="5"
+                              r="0.75"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </Link>
+                      )}
 
-                    {organizerLinks.x && (
-                      <Link
-                        href={organizerLinks.x}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#262626] hover:opacity-70"
-                      >
-                        <svg
-                          width="18"
-                          height="18"
-                          viewBox="0 0 18 18"
-                          fill="none"
+                      {organizerLinks.x && (
+                        <Link
+                          href={organizerLinks.x}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#262626] hover:opacity-70"
                         >
-                          <path
-                            d="M2 2l14 14M16 2L2 16"
-                            stroke="currentColor"
-                            strokeWidth="1.3"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                      </Link>
-                    )}
+                          <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 18 18"
+                            fill="none"
+                          >
+                            <path
+                              d="M2 2l14 14M16 2L2 16"
+                              stroke="currentColor"
+                              strokeWidth="1.3"
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                        </Link>
+                      )}
 
-                    {organizerLinks.facebook && (
-                      <Link
-                        href={organizerLinks.facebook}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#262626] hover:opacity-70"
-                      >
-                        <svg
-                          width="18"
-                          height="18"
-                          viewBox="0 0 18 18"
-                          fill="none"
+                      {organizerLinks.facebook && (
+                        <Link
+                          href={organizerLinks.facebook}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#262626] hover:opacity-70"
                         >
-                          <path
-                            d="M12 2h-2a3 3 0 0 0-3 3v2H5v3h2v6h3v-6h2l1-3h-3V5a1 1 0 0 1 1-1h2V2Z"
-                            stroke="currentColor"
-                            strokeWidth="1.3"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </Link>
-                    )}
-                  </div>
-                </>
-              )}
+                          <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 18 18"
+                            fill="none"
+                          >
+                            <path
+                              d="M12 2h-2a3 3 0 0 0-3 3v2H5v3h2v6h3v-6h2l1-3h-3V5a1 1 0 0 1 1-1h2V2Z"
+                              stroke="currentColor"
+                              strokeWidth="1.3"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </Link>
+                      )}
+                    </div>
+                  </>
+                )}
             </div>
           </div>
         </div>
@@ -623,6 +630,11 @@ export default function ApplyFormClient({
 
       <div className="w-full flex justify-center px-[16px] sm:px-[40px] py-[40px]">
         <div className="w-full max-w-[720px] flex flex-col gap-[32px]">
+          {isPreview && (
+            <div role="status" className="rounded-[12px] border border-[#E9E9E9] bg-white px-[20px] py-[14px] text-[14px] text-[#262626]">
+              Preview only — responses entered here will not be submitted.
+            </div>
+          )}
           <div className="flex items-start justify-between gap-[16px]">
             <FormHeader form={form} />
 
@@ -670,11 +682,10 @@ export default function ApplyFormClient({
               ).map((p) => (
                 <div
                   key={p}
-                  className={`w-[8px] h-[8px] rounded-full ${
-                    p === currentPage
+                  className={`w-[8px] h-[8px] rounded-full ${p === currentPage
                       ? "bg-[#262626]"
                       : "bg-[#E9E9E9]"
-                  }`}
+                    }`}
                 />
               ))}
 
@@ -732,7 +743,7 @@ export default function ApplyFormClient({
                           responses[f.id].length === 0)),
                   );
 
-                  if (missing.length > 0) {
+                  if (!isPreview && missing.length > 0) {
                     alert(
                       `Please fill in: ${missing
                         .map((f: any) => f.label)
@@ -753,6 +764,7 @@ export default function ApplyFormClient({
               <button
                 onClick={handleSubmit}
                 disabled={
+                  isPreview ||
                   submitting ||
                   submitted ||
                   alreadySubmitted
@@ -897,10 +909,10 @@ function FormHeader({ form }: { form: Form }) {
             {isRecurring
               ? recurrenceText
               : form.event_date_start &&
-                formatEventDateRange(
-                  form.event_date_start,
-                  form.event_date_end,
-                )}
+              formatEventDateRange(
+                form.event_date_start,
+                form.event_date_end,
+              )}
           </span>
         </div>
       )}

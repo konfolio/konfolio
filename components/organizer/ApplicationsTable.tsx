@@ -615,15 +615,15 @@ export default function ApplicationsTable({
 
   return (
     <>
-      <div className="w-full">
+      <div className="flex min-h-0 flex-1 flex-col">
         {errorMsg && (
-          <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+          <div className="mb-2 shrink-0 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
             {errorMsg}
           </div>
         )}
 
-        <div className="rounded-2xl border border-zinc-200 bg-white shadow-[0_1px_0_rgba(0,0,0,0.02)]">
-          <div className="h-[calc(100vh-260px)] overflow-auto">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-[0_1px_0_rgba(0,0,0,0.02)]">
+          <div className="min-h-0 flex-1 overflow-auto">
             {/* wider so horizontal scroll works like your screenshot */}
             <table className="w-full min-w-[1500px] table-fixed text-[14px]">
               <colgroup>
@@ -654,7 +654,7 @@ export default function ApplicationsTable({
                 <col style={{ width: "44px" }} />
               </colgroup>
 
-              <thead className="sticky top-0 z-20">
+              <thead className="sticky top-0 z-20 whitespace-nowrap">
                 <tr className="bg-zinc-50 text-black/40 border-b border-zinc-200">
                   <th className="sticky left-0 z-30 bg-zinc-50 px-4 py-2.5 font-medium text-left">
                     <div className="flex items-center gap-[6px]">
@@ -763,7 +763,7 @@ export default function ApplicationsTable({
                         ) : (
                           <div className="flex items-center justify-between gap-[8px]">
                             <span className="flex min-w-0 items-center gap-[6px]">
-                              <span className="truncate">{c.label}</span>
+                              <span className="truncate" title={c.label}>{c.label}</span>
                               {c.locked && (
                                 <Lock
                                   size={12}
@@ -1360,15 +1360,10 @@ const preferred = formatAnswer(preferredValue);
       {selectedApp && (
         <ApplicationDrawer
           app={selectedApp}
-          position={{
-            index: apps.findIndex((a) => a.id === selectedApp.id),
-            total: apps.length,
-          }}
           formTitle={formTitle}
           fields={fields}
           allApplicants={apps}
-          onSelectApplicant={(a) => setSelectedApp(a)}
-          onUpdate={(updates) => handleDrawerUpdate(selectedApp.id, updates)}
+          onUpdate={handleDrawerUpdate}
           onClose={() => setSelectedApp(null)}
         />
       )}

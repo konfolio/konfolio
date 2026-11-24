@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 import { AppRow, Field } from "./ApplicationsTable";
 import ApplicantsExpand from "./ApplicantsExpand";
 import PublicKonfolioView from "@/components/public/PublicKonfolioView";
@@ -78,17 +79,14 @@ export default function ApplicationDrawer({
   formTitle,
   fields,
   allApplicants,
-  onSelectApplicant,
   onUpdate,
   onClose,
 }: {
   app: AppRow | null;
-  position?: { index: number; total: number };
   formTitle?: string;
   fields?: Field[];
   allApplicants?: AppRow[];
-  onSelectApplicant?: (app: AppRow) => void;
-  onUpdate?: (updates: Partial<AppRow>) => void;
+  onUpdate?: (id: string, updates: Partial<AppRow>) => void;
   onClose: () => void;
 }) {
   const feed = useMemo<AppRow[]>(() => {
@@ -101,7 +99,8 @@ export default function ApplicationDrawer({
     return i >= 0 ? i : 0;
   }, [feed, app?.id]);
 
-  const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const [currentIndex, setActiveIndex] = useState(initialIndex);
+  const activeIndex = Math.min(currentIndex, Math.max(0, feed.length - 1));
   const [expandOpen, setExpandOpen] = useState(false);
 
   const scrollerRef = useRef<HTMLDivElement | null>(null);
@@ -109,8 +108,12 @@ export default function ApplicationDrawer({
   const didInitialScroll = useRef(false);
 
   const scrollToIndex = useCallback(
-    (i: number, behavior: ScrollBehavior = "smooth") => {
-      cardRefs.current[i]?.scrollIntoView({ block: "start", behavior });
+    (i: number) => {
+      const scroller = scrollerRef.current;
+      const card = cardRefs.current[i];
+      if (!scroller || !card) return;
+      const padding = parseFloat(getComputedStyle(scroller).scrollPaddingTop) || 0;
+      scroller.scrollTo({ top: card.offsetTop - padding, behavior: "instant" });
     },
     [],
   );
@@ -119,53 +122,21 @@ export default function ApplicationDrawer({
   useLayoutEffect(() => {
     if (didInitialScroll.current) return;
     if (feed.length === 0) return;
-    scrollToIndex(initialIndex, "auto");
-    setActiveIndex(initialIndex);
+    scrollToIndex(initialIndex);
     didInitialScroll.current = true;
   }, [initialIndex, feed.length, scrollToIndex]);
 
-  // React to an externally-driven selection change (e.g. parent picks a
-  // different row) once the feed is already open.
-  useEffect(() => {
-    if (!didInitialScroll.current) return;
-    const i = feed.findIndex((a) => a.id === app?.id);
-    if (i >= 0 && i !== activeIndex) {
-      scrollToIndex(i);
-      setActiveIndex(i);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [app?.id]);
+  function updateActiveIndex() {
+    const scroller = scrollerRef.current;
+    const [first, second] = cardRefs.current;
+    if (!scroller || !first || !second || feed.length < 2) return;
 
-  // Track which card is on screen -> that's the active applicant.
-  useEffect(() => {
-    const root = scrollerRef.current;
-    if (!root) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        let best: { idx: number; ratio: number } | null = null;
-        for (const e of entries) {
-          const idx = Number((e.target as HTMLElement).dataset.idx);
-          if (Number.isNaN(idx)) continue;
-          if (!best || e.intersectionRatio > best.ratio) {
-            best = { idx, ratio: e.intersectionRatio };
-          }
-        }
-        if (best && best.ratio >= 0.5) {
-          setActiveIndex((prev) => (prev === best!.idx ? prev : best!.idx));
-        }
-      },
-      { root, threshold: [0.25, 0.5, 0.75, 1] },
-    );
-    cardRefs.current.forEach((el) => el && io.observe(el));
-    return () => io.disconnect();
-  }, [feed.length]);
-
-  // Let the parent (position counter, row selection) follow the feed.
-  useEffect(() => {
-    const a = feed[activeIndex];
-    if (a && a.id !== app?.id) onSelectApplicant?.(a);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeIndex]);
+    // Every card has the same height and gap, including unloaded cards.
+    const step = second.offsetTop - first.offsetTop;
+    if (step <= 0) return;
+    const index = Math.round(scroller.scrollTop / step);
+    setActiveIndex(Math.max(0, Math.min(index, feed.length - 1)));
+  }
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -180,7 +151,7 @@ export default function ApplicationDrawer({
 
   return (
     <div
-      className="absolute inset-0 z-50 bg-black/40 p-4 backdrop-blur-sm"
+      className="absolute inset-0 z-50 bg-black/40 p-2 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
@@ -188,11 +159,11 @@ export default function ApplicationDrawer({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Breadcrumb — tracks the active applicant */}
-        <div className="relative flex shrink-0 items-center gap-[10px] border-b border-[#E9E9E9] bg-white px-[20px] py-[14px]">
+        <div className="relative flex shrink-0 items-center gap-[10px] border-b border-[#E9E9E9] bg-white px-3 py-2 sm:px-4">
           <button
             onClick={onClose}
             aria-label="Back"
-            className="text-black/40 hover:text-[#262626]"
+            className="shrink-0 text-black/40 hover:text-[#262626]"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path
@@ -212,7 +183,7 @@ export default function ApplicationDrawer({
             </svg>
           </button>
 
-          <span className="text-[14px] text-black/40">
+          <span className="truncate text-[14px] text-black/40" title={formTitle}>
             {formTitle || "Untitled Form"}
           </span>
           <span className="text-[14px] text-[#C0BDB4]">/</span>
@@ -234,15 +205,15 @@ export default function ApplicationDrawer({
 
           <button
             onClick={() => setExpandOpen((v) => !v)}
-            className="flex items-center gap-[4px] text-[14px] font-medium text-[#262626] hover:opacity-70"
+            className="flex min-w-0 items-center gap-[4px] text-[14px] font-medium text-[#262626] hover:opacity-70"
           >
-            {activeName}
+            <span className="truncate" title={activeName}>{activeName}</span>
             <svg
               width="10"
               height="10"
               viewBox="0 0 16 16"
               fill="none"
-              className={`transition-transform ${expandOpen ? "rotate-180" : ""}`}
+              className={`shrink-0 transition-transform ${expandOpen ? "rotate-180" : ""}`}
             >
               <path
                 d="M4 6l4 4 4-4"
@@ -254,9 +225,30 @@ export default function ApplicationDrawer({
             </svg>
           </button>
 
-          <span className="ml-auto text-[13px] text-black/40">
+          <span className="ml-auto shrink-0 text-[13px] text-black/40">
             {activeIndex + 1} / {feed.length}
           </span>
+
+          <button
+            type="button"
+            aria-label="Previous applicant"
+            title="Previous applicant"
+            disabled={activeIndex === 0}
+            onClick={() => scrollToIndex(activeIndex - 1)}
+            className="grid size-7 shrink-0 place-items-center rounded-md hover:bg-zinc-100 disabled:opacity-30"
+          >
+            <ChevronUp size={16} />
+          </button>
+          <button
+            type="button"
+            aria-label="Next applicant"
+            title="Next applicant"
+            disabled={activeIndex >= feed.length - 1}
+            onClick={() => scrollToIndex(activeIndex + 1)}
+            className="grid size-7 shrink-0 place-items-center rounded-md hover:bg-zinc-100 disabled:opacity-30"
+          >
+            <ChevronDown size={16} />
+          </button>
 
           {expandOpen && (
             <>
@@ -264,7 +256,7 @@ export default function ApplicationDrawer({
                 className="fixed inset-0 z-40"
                 onClick={() => setExpandOpen(false)}
               />
-              <div className="absolute left-[130px] top-[calc(100%+8px)] z-50">
+              <div className="absolute left-2 top-[calc(100%+8px)] z-50 sm:left-[130px]">
                 <ApplicantsExpand
                   applicants={feed}
                   currentAppId={activeApp.id}
@@ -273,7 +265,6 @@ export default function ApplicationDrawer({
                     const i = feed.findIndex((x) => x.id === a.id);
                     if (i >= 0) {
                       scrollToIndex(i);
-                      setActiveIndex(i);
                     }
                   }}
                 />
@@ -285,30 +276,26 @@ export default function ApplicationDrawer({
         {/* Vertical scroll-snap feed */}
         <div
           ref={scrollerRef}
-          className="flex min-h-0 flex-1 snap-y snap-proximity flex-col gap-[16px] overflow-y-auto overscroll-contain p-[16px] [&::-webkit-scrollbar]:hidden"
-          style={{ scrollbarWidth: "none" }}
+          onScroll={updateActiveIndex}
+          className="relative flex min-h-0 flex-1 snap-y snap-proximity scroll-pt-2 flex-col gap-2 overflow-y-auto overscroll-contain px-2 pt-2 pb-8 sm:px-3"
         >
           {feed.map((a, i) => {
             const mounted = Math.abs(i - activeIndex) <= WINDOW;
             return (
               <div
                 key={a.id}
-                data-idx={i}
                 ref={(el) => {
                   cardRefs.current[i] = el;
                 }}
-                className="shrink-0 snap-start"
-                style={{ height: "calc(100% - 40px)" }}
+                className="h-full shrink-0 snap-start"
               >
-                <div className="flex h-full w-full overflow-hidden rounded-2xl border border-[#E9E9E9] bg-white shadow-sm">
+                <div className="flex h-full w-full flex-col gap-2 md:flex-row">
                   {mounted ? (
                     <ApplicationFeedItem
                       app={a}
                       fields={fields}
                       number={i + 1}
-                      onUpdate={(u) => {
-                        if (a.id === feed[activeIndex]?.id) onUpdate?.(u);
-                      }}
+                      onUpdate={(updates) => onUpdate?.(a.id, updates)}
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center text-[13px] text-black/40">
@@ -321,6 +308,72 @@ export default function ApplicationDrawer({
           })}
         </div>
       </div>
+    </div>
+  );
+}
+
+function ApplicationPortfolio({ app }: { app: AppRow }) {
+  const paneRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0);
+  const hasPortfolio = Boolean(app.konfolio.id && app.konfolio.content);
+
+  useLayoutEffect(() => {
+    const pane = paneRef.current;
+    const canvas = canvasRef.current;
+    if (!pane || !canvas) return;
+
+    const fit = () =>
+      setScale(Math.min(
+        pane.clientWidth / canvas.offsetWidth,
+        pane.clientHeight / canvas.offsetHeight,
+      ));
+
+    fit();
+    const observer = new ResizeObserver(fit);
+    observer.observe(pane);
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, [hasPortfolio]);
+
+  const website = app.applicant.links?.website?.trim();
+  const externalPortfolio = website && /^https?:\/\//i.test(website) ? website : null;
+
+  return (
+    <div ref={paneRef} className="relative min-h-0 min-w-0 flex-1 overflow-clip rounded-xl bg-zinc-100">
+      {hasPortfolio ? (
+        <div
+          ref={canvasRef}
+          className="absolute top-1/2 left-1/2 w-[1000px]"
+          style={{ transform: `translate(-50%, -50%) scale(${scale})` }}
+        >
+          <PublicKonfolioView
+            konfolioId={app.konfolio.id}
+            template={app.konfolio.template}
+            content={app.konfolio.content}
+            ownerBusinessName={app.applicant.businessName ?? ""}
+            trackAnalytics={false}
+            embedded
+          />
+        </div>
+      ) : (
+        <div className="flex h-full flex-col items-center justify-center gap-2 px-4 text-center">
+          <p className="max-w-full truncate font-medium">{nameLines(app).primaryName}</p>
+          {externalPortfolio ? (
+            <a
+              href={externalPortfolio}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex max-w-full items-center gap-2 rounded-full bg-white px-4 py-2 text-sm hover:bg-zinc-50"
+            >
+              <span className="truncate">{externalPortfolio}</span>
+              <ExternalLink size={14} className="shrink-0" />
+            </a>
+          ) : (
+            <p className="text-sm text-zinc-500">No portfolio submitted</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -366,8 +419,6 @@ function ApplicationFeedItem({
     ({ key }) => app.applicant.links?.[key],
   );
 
-  const hasPortfolio = Boolean(app.konfolio.id && app.konfolio.content);
-
   const handleStatusChange = async (newStatus: AppRow["status"]) => {
     const previous = status;
     setStatus(newStatus);
@@ -397,28 +448,10 @@ function ApplicationFeedItem({
 
   return (
     <>
-      {/* Portfolio (dark profile sidebar + image grid). PublicKonfolioView
-          is built for a full page, so its root <main> forces min-h-screen —
-          override that here so it fits this card instead of padding out to
-          a full viewport every time. */}
-      <div className="min-w-0 flex-1 overflow-y-auto bg-[#F7F7F7] [&>main]:min-h-0">
-        {hasPortfolio ? (
-          <PublicKonfolioView
-            konfolioId={app.konfolio.id}
-            template={app.konfolio.template}
-            content={app.konfolio.content}
-            ownerBusinessName={app.applicant.businessName ?? ""}
-            trackAnalytics={false}
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center text-[13px] text-black/40">
-            No portfolio submitted
-          </div>
-        )}
-      </div>
+      <ApplicationPortfolio app={app} />
 
       {/* Meta panel */}
-      <div className="flex w-[420px] shrink-0 flex-col overflow-y-auto border-l border-[#E9E9E9] bg-white">
+      <div className="flex h-[42%] min-h-0 min-w-0 shrink-0 flex-col overflow-y-auto rounded-xl border border-zinc-200 bg-white md:h-full md:w-[28%] md:min-w-[240px] md:max-w-[420px]">
         <div className="flex items-center justify-between border-b border-[#E9E9E9] px-[20px] py-[16px]">
           <span className="text-[13px] text-black/40">
             {app.createdAt

@@ -84,12 +84,14 @@ export default function PublicKonfolioView({
   content,
   ownerBusinessName,
   trackAnalytics = true,
+  embedded = false,
 }: {
   konfolioId: string
   template: Template
   content: any
   ownerBusinessName: string
   trackAnalytics?: boolean
+  embedded?: boolean
 }) {
   const [mobileProfileOpen, setMobileProfileOpen] = React.useState(false)
 
@@ -221,13 +223,13 @@ export default function PublicKonfolioView({
 
   if (template === "square") {
     return (
-      <main className="w-full min-h-screen overflow-x-hidden" style={{ backgroundColor }}>
-        <div className="w-full px-0 min-[701px]:py-0 min-[1200px]:px-[80px] xl:px-[120px]">
+      <main className={embedded ? "w-full" : "w-full min-h-screen overflow-x-hidden"} style={{ backgroundColor }}>
+        <div className={embedded ? "w-full px-4" : "w-full px-0 min-[701px]:py-0 min-[1200px]:px-[80px] xl:px-[120px]"}>
           <div
             data-thumbnail-target="konfolio-grid"
             className="mx-auto w-full max-w-[1512px]"
           >
-            <div className="hidden w-full flex-col max-[700px]:flex">
+            <div className="hidden w-full flex-col max-[700px]:flex" style={embedded ? { display: "none" } : undefined}>
               <EditSquareProfileSidebar
                 editable={false}
                 mobileCollapsed={true}
@@ -259,7 +261,7 @@ export default function PublicKonfolioView({
               />
             </div>
 
-            <div className="hidden w-full flex-row items-start justify-center gap-[20px] min-[701px]:flex">
+            <div className={embedded ? "flex w-full items-stretch justify-center gap-4 [&>aside]:min-h-0 [&>aside]:w-[30%] [&>aside]:shrink-0 [&>section]:min-w-0 [&>section]:py-4 [&>section>div>div.grid]:grid-cols-3 [&>section>div>div.grid]:gap-3 [&>section>div>div.grid>div]:order-none" : "hidden w-full flex-row items-start justify-center gap-[20px] min-[701px]:flex"}>
               <EditSquareProfileSidebar
                 editable={false}
                 backHref={backHref}
@@ -294,9 +296,9 @@ export default function PublicKonfolioView({
   }
 
   return (
-    <main className="w-full min-h-screen overflow-x-hidden" style={{ backgroundColor }}>
+    <main className={embedded ? "w-full" : "w-full min-h-screen overflow-x-hidden"} style={{ backgroundColor }}>
       <div data-thumbnail-target="konfolio-grid" className="w-full">
-        <div className="hidden w-full flex-col max-[700px]:flex">
+        <div className="hidden w-full flex-col max-[700px]:flex" style={embedded ? { display: "none" } : undefined}>
           <EditPortraitProfile
             editable={false}
             mobileCollapsed={true}
@@ -329,7 +331,7 @@ export default function PublicKonfolioView({
           />
         </div>
 
-        <div className="hidden w-full flex-col min-[701px]:flex">
+        <div className={embedded ? "flex w-full flex-col [&>header]:flex" : "hidden w-full flex-col min-[701px]:flex"}>
           <EditPortraitProfile
             editable={false}
             backHref={backHref}
@@ -350,7 +352,7 @@ export default function PublicKonfolioView({
             onSocialLinkClick={handleSocialLinkClick}
           />
 
-          <div className="w-full px-[24px] min-[1200px]:px-[80px] xl:px-[120px]">
+          <div className={embedded ? "w-full px-4 [&_section]:py-4 [&_section>div>div.grid]:grid-cols-4 [&_section>div>div.grid]:gap-3 [&_section>div:last-child:not(:first-child)]:flex" : "w-full px-[24px] min-[1200px]:px-[80px] xl:px-[120px]"}>
             <div className="mx-auto w-full max-w-[1512px]">
               <EditPortraitImageGrid
                 editable={false}
