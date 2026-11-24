@@ -17,6 +17,8 @@ import WandIcon from "@/components/icons/WandIcon"
 import RevertIcon from "@/components/icons/RevertIcon"
 
 import SliderField from "@/components/my-portfolios/SliderField"
+import ReframedImage from "@/components/my-portfolios/ReframedImage"
+import { getImageFrame, type ImageFrameMetrics } from "@/lib/imageFraming"
 
 export type ImageEdits = {
   rotate: number
@@ -25,6 +27,8 @@ export type ImageEdits = {
   contrast: number
   saturation: number
   temperature: number
+  panX?: number
+  panY?: number
 }
 
 type Variant = "square" | "portrait"
@@ -104,6 +108,8 @@ const DEFAULT_EDITS: ImageEdits = {
   contrast: 50,
   saturation: 50,
   temperature: 50,
+  panX: 0,
+  panY: 0,
 }
 
 export default function EditImagePopover({
@@ -124,6 +130,9 @@ export default function EditImagePopover({
   useClickOutside(popoverRef, onClose, { enabled: true, closeOnEsc: true })
 
   const [shiftX, setShiftX] = useState(0)
+  const [frameMetrics, setFrameMetrics] = useState<ImageFrameMetrics | null>(null)
+  const [dragging, setDragging] = useState(false)
+  const dragRef = useRef<{ pointerId: number; x: number; y: number; panX: number; panY: number } | null>(null)
 
   const clampToViewport = () => {
     const el = popoverRef.current
@@ -158,9 +167,14 @@ export default function EditImagePopover({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const mergedEdits = edits ?? DEFAULT_EDITS
+  const mergedEdits = { ...DEFAULT_EDITS, ...edits }
   const setEdit = (patch: Partial<ImageEdits>) => {
     const next: ImageEdits = { ...mergedEdits, ...patch }
+    if (frameMetrics) {
+      const frame = getImageFrame(frameMetrics, next)
+      next.panX = frame.panX
+      next.panY = frame.panY
+    }
     onChangeEdits?.(next)
   }
 
@@ -238,8 +252,14 @@ export default function EditImagePopover({
           overflow-hidden
           bg-[rgba(165,165,165,0.068)]
           backdrop-blur-[7.58px]
+           ${imageSrc ? dragging ? "cursor-grabbing" : "cursor-grab" : ""}
         `}
+        tabIndex={imageSrc ? 0 : undefined}
+        role="group"
+        aria-label="Image framing. Drag to move the image, or use arrow keys. Press Home to center."
         style={{
+          touchAction: imageSrc ? "none" : undefined,
+          userSelect: dragging ? "none" : undefined,
           boxShadow: [
             "0 0 0 1.25px rgba(255,255,255,0.95)",
             "0 0 18px rgba(255,255,255,0.55)",
@@ -250,16 +270,46 @@ export default function EditImagePopover({
             "inset 1.21725px 1.13446px 4.62px rgba(165,165,165,0.126)",
           ].join(", "),
         }}
+        onPointerDown={(event) => {
+          if (!imageSrc || !frameMetrics || event.button !== 0 || event.isPrimary === false) return
+          if ((event.target as HTMLElement).closest("input, button, textarea, a")) return
+          event.preventDefault()
+          event.stopPropagation()
+          const frame = getImageFrame(frameMetrics, mergedEdits)
+          dragRef.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, panX: frame.panX, panY: frame.panY }
+          event.currentTarget.setPointerCapture(event.pointerId)
+          event.currentTarget.focus()
+          setDragging(true)
+        }}
+        onPointerMove={(event) => {
+          const drag = dragRef.current
+          if (!drag || !frameMetrics || drag.pointerId !== event.pointerId) return
+          event.preventDefault()
+          setEdit({ panX: drag.panX + (event.clientX - drag.x) / frameMetrics.frameWidth * 100, panY: drag.panY + (event.clientY - drag.y) / frameMetrics.frameHeight * 100 })
+        }}
+        onPointerUp={(event) => {
+          if (dragRef.current?.pointerId !== event.pointerId) return
+          dragRef.current = null
+          setDragging(false)
+          if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId)
+        }}
+        onPointerCancel={() => { dragRef.current = null; setDragging(false) }}
+        onLostPointerCapture={() => { dragRef.current = null; setDragging(false) }}
+        onKeyDown={(event) => {
+          if (event.target !== event.currentTarget || !imageSrc || !frameMetrics) return
+          const step = event.shiftKey ? 5 : 1
+          const delta: Record<string, [number, number]> = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }
+          if (event.key === "Home") { event.preventDefault(); setEdit({ panX: 0, panY: 0 }) }
+          else if (delta[event.key]) {
+            event.preventDefault()
+            const frame = getImageFrame(frameMetrics, mergedEdits)
+            setEdit({ panX: frame.panX + delta[event.key][0], panY: frame.panY + delta[event.key][1] })
+          }
+        }}
       >
         {imageSrc ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={imageSrc}
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover"
-            style={imgStyle}
-            draggable={false}
-          />
+          <ReframedImage src={imageSrc} alt={titleText} edits={mergedEdits} filter={imgStyle.filter} onMetrics={setFrameMetrics} />
         ) : null}
 
         {/* Editable overlay */}

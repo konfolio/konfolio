@@ -1,4 +1,3 @@
-// components/my-portfolios/dashboard/DashboardProfileHeader.tsx
 "use client"
 
 import Link from "next/link"
@@ -21,7 +20,6 @@ type Profile = {
 }
 
 type Props = {
-  // Optional overrides
   profileImageUrl?: string
   businessName?: string
   displayNameLine?: string
@@ -35,10 +33,10 @@ type Props = {
 }
 
 const MAX_PUBLISHED_KONFOLIOS = 3
+const UNLIMITED_KONFOLIO_EMAIL = "konfolios@gmail.com"
 
-function pad2(n: number) {
-  const s = String(Math.max(0, Math.floor(n)))
-  return s.length >= 2 ? s : `0${s}`
+function hasUnlimitedKonfolios(email?: string | null) {
+  return email?.trim().toLowerCase() === UNLIMITED_KONFOLIO_EMAIL
 }
 
 function fullNameFromProfile(p: Profile | null) {
@@ -61,11 +59,9 @@ export default function DashboardProfileHeader({
 }: Props) {
   const [signedIn, setSignedIn] = useState(false)
   const [profile, setProfile] = useState<Profile | null>(null)
-
-  // Published konfolio count from Supabase
   const [publishedCount, setPublishedCount] = useState(0)
+  const [isUnlimitedAccount, setIsUnlimitedAccount] = useState(false)
 
-  // popovers
   const [profilePopoverOpen, setProfilePopoverOpen] = useState(false)
   const [limitOpen, setLimitOpen] = useState(false)
 
@@ -82,10 +78,12 @@ export default function DashboardProfileHeader({
         setSignedIn(false)
         setProfile(null)
         setPublishedCount(0)
+        setIsUnlimitedAccount(false)
         return
       }
 
       setSignedIn(true)
+      setIsUnlimitedAccount(hasUnlimitedKonfolios(user.email))
 
       const profileRes = await supabase
         .from("profiles")
@@ -131,24 +129,8 @@ export default function DashboardProfileHeader({
   }, [])
 
   function handleProfileSaved(patch: Profile) {
-    setProfile((prev) => {
-      const base =
-        prev ?? ({
-          first_name: null,
-          last_name: null,
-          preferred_name: null,
-          business_name: null,
-          profile_image_url: null,
-        } as Profile)
-
-      return {
-        first_name: patch.first_name ?? base.first_name ?? null,
-        last_name: patch.last_name ?? base.last_name ?? null,
-        preferred_name: patch.preferred_name ?? base.preferred_name ?? null,
-        business_name: patch.business_name ?? base.business_name ?? null,
-        profile_image_url: patch.profile_image_url ?? base.profile_image_url ?? null,
-      }
-    })
+    // The popup sends every profile field; null explicitly clears a value.
+    setProfile({ ...patch })
   }
 
   const fullName = useMemo(() => fullNameFromProfile(profile), [profile])
@@ -173,7 +155,9 @@ export default function DashboardProfileHeader({
   const resolvedCount = konfolioCountOverride ?? publishedCount
   const showChecker = !resolvedProfileImageUrl
 
-  const limitReached = resolvedCount >= MAX_PUBLISHED_KONFOLIOS
+  const limitReached =
+    !isUnlimitedAccount && resolvedCount >= MAX_PUBLISHED_KONFOLIOS
+
   const createBlocked = signedIn && limitReached
 
   const popoverData: ArtistProfilePopupData = useMemo(
@@ -183,7 +167,7 @@ export default function DashboardProfileHeader({
       locationText: "City, State",
       firstName: (profile?.first_name || "").trim() || "First",
       lastName: (profile?.last_name || "").trim() || "Last",
-      preferredName: (profile?.preferred_name || "").trim() || "Preferred Name",
+      preferredName: (profile?.preferred_name || "").trim(),
 
       formsFilled: 0,
       visitors: 0,
@@ -200,7 +184,7 @@ export default function DashboardProfileHeader({
       profile?.first_name,
       profile?.last_name,
       profile?.preferred_name,
-    ],
+    ]
   )
 
   return (
@@ -213,10 +197,10 @@ export default function DashboardProfileHeader({
           className,
         ].join(" ")}
       >
-        <div className="w-full flex items-center justify-center px-[150px] pt-[15px]">
-          <div className="w-full max-w-[1212px] h-[80px] flex items-end justify-between gap-[15px]">
-            <div className="flex items-center gap-[19px] h-[80px] flex-1 min-w-0">
-              <div className="relative w-[80px] h-[80px] rounded-[71.4286px] overflow-hidden bg-[#F7F7F7] shrink-0">
+        <div className="w-full flex items-center justify-center px-4 sm:px-8 lg:px-[150px] pt-[15px]">
+          <div className="w-full max-w-[1212px] flex flex-col sm:flex-row sm:items-end justify-between gap-[24px] sm:gap-[15px]">
+            <div className="flex items-center gap-[16px] sm:gap-[19px] min-h-[80px] flex-1 min-w-0">
+              <div className="relative w-[64px] h-[64px] sm:w-[80px] sm:h-[80px] rounded-full overflow-hidden bg-[#F7F7F7] shrink-0">
                 {!showChecker ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -237,9 +221,9 @@ export default function DashboardProfileHeader({
                 )}
               </div>
 
-              <div className="flex flex-col items-start py-[5px] h-[80px] flex-1 min-w-0">
+              <div className="flex flex-col items-start py-[5px] flex-1 min-w-0">
                 <div className="flex flex-col items-start gap-[4px] w-full">
-                  <div className="text-[20px] leading-[28px] font-normal text-[#262626] truncate">
+                  <div className="text-[18px] sm:text-[20px] leading-[140%] font-normal text-[#262626] truncate">
                     {resolvedBusinessName}
                   </div>
 
@@ -267,11 +251,7 @@ export default function DashboardProfileHeader({
               </div>
             </div>
 
-            <div className="flex flex-col items-end gap-[14px] w-[150px] h-[54px] shrink-0">
-              <div className="text-right text-[14px] leading-[130%] font-normal text-[#A5A5A5] w-full">
-                {pad2(resolvedCount)} konfolios
-              </div>
-
+            <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-[14px] w-full sm:w-[150px] shrink-0">
               <SecondaryButton
                 onClick={() => {
                   if (!signedIn) return
@@ -333,26 +313,26 @@ function KonfolioLimitModal({
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4">
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
 
-      <div className="relative w-[420px] rounded-[16px] bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+      <div className="relative w-full max-w-[420px] rounded-[16px] bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
         <div className="text-[18px] font-semibold text-[#262626]">
           Konfolio limit reached
         </div>
 
         <div className="mt-2 text-[14px] leading-[140%] text-[#6B6B6B]">
-          You can have up to {max} published konfolios. You currently have {count}.
-          To create a new one, delete an existing portfolio.
+          You can have up to {max} published konfolios. You currently have{" "}
+          {count}.
         </div>
 
-        <div className="mt-6 flex justify-end gap-3">
+        <div className="mt-6 flex justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="h-[40px] rounded-[999px] border border-[#DADADA] px-4 text-[14px] text-[#262626] cursor-pointer"
+            className="h-[40px] rounded-[999px] bg-[#262626] px-4 text-[14px] text-white cursor-pointer"
           >
-            Close
+            Okay
           </button>
         </div>
       </div>

@@ -242,9 +242,9 @@ export default function CreateKonfolioPopover({
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto px-4 py-6">
       <div className="absolute inset-0 bg-black/25" />
-
+  
       <div
         ref={panelRef}
         className="relative"

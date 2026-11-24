@@ -1,34 +1,46 @@
 import Image from "next/image"
 import { roboto } from "@/app/fonts"
-import ArrowRight from "@/components/icons/ArrowRight"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
-import Link from "next/link"
 
-const primaryBtn =
-  "min-w-[150px] h-[39px] px-[40px] py-[13px] flex items-center justify-center gap-[7px] rounded-full bg-[#262626] text-white transition-all duration-100 ease-out hover:bg-[#262626CC] active:bg-[#262626B2]"
+const forceWhiteArrow =
+  "[&_svg]:block [&_svg]:h-[13px] [&_svg]:w-[13px] [&_path]:!stroke-white"
 
 export default function Section5() {
   return (
-    <section className="w-full h-[916.87px] px-[25px] sm:px-10 lg:px-[248px] py-[60px] flex flex-col items-center gap-[55px]">
-      
-      {/* Frame 86 */}
-      <div className="w-[338px] h-[87px] flex flex-col items-center gap-[30px]">
-        <p className={`${roboto.className} text-[25px] leading-[29px] text-[#262626]`}>
+    <section className="flex w-full flex-col items-center gap-[35px] px-[10px] py-[50px] sm:px-[25px] md:gap-[45px] md:py-[65px] xl:h-[916.87px] xl:gap-[55px] xl:px-[248px] xl:py-[60px]">
+      <div className="flex w-full max-w-[338px] flex-col items-center gap-[30px] xl:h-[87px]">
+        <p
+          className={`${roboto.className} text-center text-[19px] leading-[115%] text-[#262626] sm:text-[22px] md:text-[24px] xl:text-[25px] xl:leading-[29px]`}
+        >
           Ready to create your Konfolio?
         </p>
 
-        <PrimaryButton href="/onboarding/audience" className="w-[154px]">
-            Let's Go
+        <PrimaryButton
+          href="/onboarding/audience"
+          className={`w-[154px] ${forceWhiteArrow}`}
+        >
+          Let's Go
         </PrimaryButton>
       </div>
 
-      {/* Sample portfolios */}
-      <div className="relative w-[1015px] h-[560.87px]">
-        {/* Linvaniin */}
-        <div className="absolute w-[717.74px] h-[466.15px] rounded-[20px] border border-[rgba(165,165,165,0.5)]
-          shadow-[3.47px_3.47px_12.99px_rgba(0,0,0,0.1)]
-          left-[calc(50%-358.87px-148.63px)] top-[calc(50%-233.08px-23.36px)]
-          overflow-hidden">
+      <div className="relative mb-[20px] h-[310px] w-full max-w-[373px] sm:mb-[30px] md:mb-[45px] lg:mb-[55px] xl:mb-0 sm:h-[390px] md:h-[470px] lg:h-[520px] xl:h-[560.87px] sm:max-w-[560px] md:max-w-[720px] lg:max-w-[900px] xl:max-w-none xl:w-[1015px]">
+        <div
+          className="
+            absolute left-1/2 top-0
+            h-[231.86px] w-[357px] -translate-x-[56%]
+            overflow-hidden rounded-[10px]
+            border border-[rgba(165,165,165,0.5)]
+            shadow-[1.22px_1.22px_4.58px_rgba(0,0,0,0.12)]
+            sm:h-[320px] sm:w-[493px]
+            md:h-[390px] md:w-[602px]
+            lg:h-[440px] lg:w-[680px]
+            xl:h-[466.15px] xl:w-[717.74px]
+            xl:translate-x-0 xl:rounded-[20px]
+            xl:shadow-[3.47px_3.47px_12.99px_rgba(0,0,0,0.1)]
+            xl:left-[calc(50%-358.87px-148.63px)]
+            xl:top-[calc(50%-233.08px-23.36px)]
+          "
+        >
           <Image
             src="/images/linvaniin_home.png"
             alt="Linvaniin Konfolio"
@@ -37,11 +49,23 @@ export default function Section5() {
           />
         </div>
 
-        {/* Califlair */}
-        <div className="absolute w-[717.74px] h-[466.15px] rounded-[20px] border border-[rgba(165,165,165,0.5)]
-          shadow-[3.47px_3.47px_12.99px_rgba(0,0,0,0.1)]
-          left-[calc(50%-358.87px+148.63px)] top-[calc(50%-233.08px+71.36px)]
-          overflow-hidden">
+        <div
+          className="
+            absolute left-1/2 top-[78px]
+            h-[231.86px] w-[357px] -translate-x-[44%]
+            overflow-hidden rounded-[10px]
+            border border-[rgba(165,165,165,0.5)]
+            shadow-[1.22px_1.22px_4.58px_rgba(0,0,0,0.12)]
+            sm:top-[100px] sm:h-[320px] sm:w-[493px]
+            md:top-[120px] md:h-[390px] md:w-[602px]
+            lg:top-[135px] lg:h-[440px] lg:w-[680px]
+            xl:h-[466.15px] xl:w-[717.74px]
+            xl:translate-x-0 xl:rounded-[20px]
+            xl:shadow-[3.47px_3.47px_12.99px_rgba(0,0,0,0.1)]
+            xl:left-[calc(50%-358.87px+148.63px)]
+            xl:top-[calc(50%-233.08px+71.36px)]
+          "
+        >
           <Image
             src="/images/califlair_home.png"
             alt="Califlair Konfolio"
@@ -51,17 +75,20 @@ export default function Section5() {
         </div>
       </div>
 
-      {/* Frame 87 */}
-      <div className="w-[393px] h-[39px] flex items-center justify-center gap-[20px]">
-        <p className={`${roboto.className} text-[25px] leading-[29px] text-[#262626]`}>
+      <div className="flex w-full max-w-[393px] flex-col items-center justify-center gap-[20px] md:flex-row xl:h-[39px]">
+        <p
+          className={`${roboto.className} text-center text-[19px] leading-[115%] text-[#262626] sm:text-[22px] md:text-[24px] xl:text-[25px] xl:leading-[29px]`}
+        >
           Not ready yet?
         </p>
 
-        <PrimaryButton href="/explore" className="w-[214px]">
+        <PrimaryButton
+          href="/explore"
+          className={`w-[214px] ${forceWhiteArrow}`}
+        >
           Explore Konfolios
         </PrimaryButton>
       </div>
-
     </section>
   )
 }

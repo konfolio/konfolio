@@ -31,6 +31,9 @@ type Draft = {
   // audience
   mode?: Mode
 
+  // beta access
+  betaCode: string
+
   // name
   firstName: string
   lastName: string
@@ -73,6 +76,9 @@ type Actions = {
   // audience
   setMode: (mode: Mode) => void
   setModeAndResetFlow: (mode: Mode) => void
+
+  // beta access
+  setBetaCode: (v: string) => void
 
   // name
   setFirstName: (v: string) => void
@@ -135,6 +141,8 @@ const initialDraft: Draft = {
   hasHydrated: false,
 
   mode: undefined,
+
+  betaCode: "",
 
   firstName: "",
   lastName: "",
@@ -257,6 +265,9 @@ export const useOnboardingDraft = create<Draft & Actions>()(
         }
       },
 
+      // beta access
+      setBetaCode: (v) => set({ betaCode: v }),
+
       // name
       setFirstName: (v) => set({ firstName: v }),
       setLastName: (v) => set({ lastName: v }),
@@ -284,8 +295,6 @@ export const useOnboardingDraft = create<Draft & Actions>()(
 
       setLinkValue: (key, value) => {
         const nextLinks = { ...get().links, [key]: value }
-        // If they typed into a link that isn't active yet, auto-activate it (still capped).
-        // This helps prevent "value set but key not visible" edge cases.
         const curKeys = get().activeLinkKeys
         const nextKeys = curKeys.includes(key) ? curKeys : clampActiveLinkKeys([...curKeys, key])
         set({ links: nextLinks, activeLinkKeys: nextKeys })
@@ -334,7 +343,6 @@ export const useOnboardingDraft = create<Draft & Actions>()(
       },
 
       onRehydrateStorage: () => (_state, _error) => {
-        // ensure link keys are clamped after hydrate too
         const s = useOnboardingDraft.getState()
         useOnboardingDraft.setState({
           hasHydrated: true,

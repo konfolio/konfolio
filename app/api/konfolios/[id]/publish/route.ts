@@ -3,17 +3,39 @@ import { createClient } from "@supabase/supabase-js"
 import chromium from "@sparticuz/chromium"
 import puppeteer from "puppeteer-core"
 import fs from "fs"
+import path from "path"
+
+export const runtime = "nodejs"
+export const maxDuration = 60
+
+const THUMBNAIL_TARGET_SELECTOR = '[data-thumbnail-target="konfolio-grid"]'
 
 async function getExecutablePath() {
-  if (process.env.CHROME_EXECUTABLE_PATH) return process.env.CHROME_EXECUTABLE_PATH
+  if (process.env.CHROME_EXECUTABLE_PATH) {
+    return process.env.CHROME_EXECUTABLE_PATH
+  }
 
+  // Local Mac Chrome for development
   const macChrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-  if (fs.existsSync(macChrome)) return macChrome
+  if (fs.existsSync(macChrome)) {
+    return macChrome
+  }
+
+  // Vercel/serverless path
+  const chromiumBinPath = path.join(
+    process.cwd(),
+    "node_modules",
+    "@sparticuz",
+    "chromium",
+    "bin"
+  )
+
+  if (fs.existsSync(chromiumBinPath)) {
+    return await chromium.executablePath(chromiumBinPath)
+  }
 
   return await chromium.executablePath()
 }
-
-export const runtime = "nodejs"
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -24,16 +46,6 @@ function getBearerToken(req: Request) {
   const authHeader = req.headers.get("authorization") || ""
   if (!authHeader.startsWith("Bearer ")) return null
   return authHeader.slice("Bearer ".length).trim()
-}
-
-function slugify(input: string): string {
-  return (input || "")
-    .toLowerCase()
-    .trim()
-    .replace(/['"]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "")
 }
 
 function getAppBaseUrl(req: Request) {
@@ -50,20 +62,30 @@ function getAppBaseUrl(req: Request) {
   return url.origin.replace(/\/+$/, "")
 }
 
-export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
+export async function POST(
+  req: Request,
+  ctx: { params: Promise<{ id: string }> }
+) {
   let browser: Awaited<ReturnType<typeof puppeteer.launch>> | null = null
 
   try {
     const { id: konfolioId } = await ctx.params
-    console.log("[THUMBNAIL] Starting publish thumbnail generation for konfolio:", konfolioId)
+
+    console.log(
+      "[THUMBNAIL] Starting publish thumbnail generation for konfolio:",
+      konfolioId
+    )
 
     const token = getBearerToken(req)
+
     if (!token) {
       console.log("[THUMBNAIL] Missing bearer token")
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { data: userData, error: userErr } = await supabaseAdmin.auth.getUser(token)
+    const { data: userData, error: userErr } =
+      await supabaseAdmin.auth.getUser(token)
+
     if (userErr || !userData.user) {
       console.log("[THUMBNAIL] Failed auth:", userErr?.message ?? "No user")
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -74,7 +96,9 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
 
     const { data: k, error: kErr } = await supabaseAdmin
       .from("konfolios")
-      .select("id, user_id, template, content, status, portfolio_slug")
+      .select(
+        "id, user_id, template, content, status, explore_enabled, portfolio_name, portfolio_slug"
+      )
       .eq("id", konfolioId)
       .maybeSingle()
 
@@ -92,12 +116,14 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       id: k.id,
       status: k.status,
       template: k.template,
+      explore_enabled: k.explore_enabled,
+      portfolio_name: k.portfolio_name,
       portfolio_slug: k.portfolio_slug,
     })
 
     const { data: profile, error: profileErr } = await supabaseAdmin
       .from("profiles")
-      .select("business_name")
+      .select("business_slug")
       .eq("id", userId)
       .maybeSingle()
 
@@ -106,16 +132,25 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       return NextResponse.json({ error: profileErr.message }, { status: 500 })
     }
 
-    const businessSlug = slugify(String(profile?.business_name ?? ""))
-    const portfolioSlug = slugify(String(k.portfolio_slug ?? ""))
+    const businessSlug = profile?.business_slug
+    const portfolioSlug = k.portfolio_slug
 
-    console.log("[THUMBNAIL] businessSlug:", businessSlug)
-    console.log("[THUMBNAIL] portfolioSlug:", portfolioSlug)
-
-    if (!businessSlug || !portfolioSlug) {
-      console.log("[THUMBNAIL] Missing slug data for screenshot")
+    if (!businessSlug) {
       return NextResponse.json(
-        { error: "Missing business or portfolio slug for thumbnail generation" },
+        {
+          error:
+            "Missing business slug. Please complete onboarding again or update your business name.",
+        },
+        { status: 400 }
+      )
+    }
+
+    if (!portfolioSlug) {
+      return NextResponse.json(
+        {
+          error:
+            "Missing portfolio slug. Please rename/save this Konfolio before publishing.",
+        },
         { status: 400 }
       )
     }
@@ -124,8 +159,14 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
 
     const { error: pubErr } = await supabaseAdmin
       .from("konfolios")
-      .update({ status: "published", published_at: publishedAt })
+      .update({
+        status: "published",
+        //explore_enabled: true,
+        published_at: publishedAt,
+        updated_at: publishedAt,
+      })
       .eq("id", konfolioId)
+      .eq("user_id", userId)
 
     if (pubErr) {
       console.log("[THUMBNAIL] Publish update error:", pubErr.message)
@@ -135,23 +176,40 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     console.log("[THUMBNAIL] Marked konfolio published at:", publishedAt)
 
     const baseUrl = getAppBaseUrl(req)
-    const publicUrl = `${baseUrl}/${businessSlug}/${portfolioSlug}?thumbnail=1&t=${encodeURIComponent(
+
+    // This is the public URL users should see/copy/open.
+    const publicPath =
+      portfolioSlug === businessSlug
+        ? `/${businessSlug}`
+        : `/${businessSlug}/${portfolioSlug}`
+
+    const prettyPublicUrl = `${baseUrl}${publicPath}`
+
+    // This URL is only for Puppeteer thumbnail generation.
+    // Keep using the working UUID explore route so thumbnails do not screenshot a 404.
+    const screenshotUrl = `${prettyPublicUrl}?thumbnail=1&t=${encodeURIComponent(
       publishedAt
     )}`
 
     console.log("[THUMBNAIL] baseUrl:", baseUrl)
-    console.log("[THUMBNAIL] publicUrl:", publicUrl)
+    console.log("[THUMBNAIL] publicPath:", publicPath)
+    console.log("[THUMBNAIL] prettyPublicUrl:", prettyPublicUrl)
+    console.log("[THUMBNAIL] screenshotUrl:", screenshotUrl)
 
     const executablePath = await getExecutablePath()
-    const isMacLocal = executablePath.includes("Google Chrome.app")
+    const isLocalChrome = executablePath.includes("Google Chrome.app")
 
     console.log("[THUMBNAIL] executablePath:", executablePath)
-    console.log("[THUMBNAIL] isMacLocal:", isMacLocal)
+    console.log("[THUMBNAIL] isLocalChrome:", isLocalChrome)
+
+    const headlessMode: true | "shell" = isLocalChrome ? true : "shell"
 
     browser = await puppeteer.launch({
-      args: isMacLocal ? [] : chromium.args,
+      args: isLocalChrome
+        ? puppeteer.defaultArgs({ headless: true })
+        : puppeteer.defaultArgs({ args: chromium.args, headless: "shell" }),
       executablePath,
-      headless: true,
+      headless: headlessMode,
       defaultViewport: { width: 1512, height: 982 },
     })
 
@@ -160,28 +218,89 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     const page = await browser.newPage()
     console.log("[THUMBNAIL] New page created")
 
-    await page.goto(publicUrl, {
+    const response = await page.goto(screenshotUrl, {
       waitUntil: "networkidle0",
       timeout: 60000,
     })
 
+    if (!response || !response.ok()) {
+      throw new Error(
+        `Thumbnail page failed to load. Status: ${response?.status()} URL: ${screenshotUrl}`
+      )
+    }
+
+    const pageText = await page.evaluate(() => document.body.innerText)
+
+    if (
+      pageText.includes("404") ||
+      pageText.includes("This page could not be found")
+    ) {
+      throw new Error(`Thumbnail target rendered a 404 page: ${screenshotUrl}`)
+    }
+
     console.log("[THUMBNAIL] Public page loaded successfully")
 
-    const png = await page.screenshot({
-      type: "png",
-      fullPage: true,
+    // Make sure images are fully loaded before screenshotting.
+    await page.evaluate(async () => {
+      const images = Array.from(document.images)
+
+      await Promise.all(
+        images.map((img) => {
+          if (img.complete) return Promise.resolve()
+
+          return new Promise<void>((resolve) => {
+            img.onload = () => resolve()
+            img.onerror = () => resolve()
+          })
+        })
+      )
     })
 
-    console.log("[THUMBNAIL] Screenshot captured from public page")
+    console.log("[THUMBNAIL] Images loaded")
 
-    const thumbPath = `${userId}/${konfolioId}/thumbnail.png`
+    let png: string | Uint8Array
+
+    try {
+      await page.waitForSelector(THUMBNAIL_TARGET_SELECTOR, {
+        timeout: 10000,
+      })
+
+      const thumbnailTarget = await page.$(THUMBNAIL_TARGET_SELECTOR)
+
+      if (!thumbnailTarget) {
+        throw new Error("Thumbnail target not found after waitForSelector")
+      }
+
+      png = await thumbnailTarget.screenshot({
+        type: "png",
+      })
+
+      console.log("[THUMBNAIL] Screenshot captured from Konfolio image grid")
+    } catch (screenshotErr: any) {
+      console.log(
+        "[THUMBNAIL] Could not capture grid only. Falling back to full-page screenshot:",
+        screenshotErr?.message ?? screenshotErr
+      )
+
+      png = await page.screenshot({
+        type: "png",
+        fullPage: true,
+      })
+
+      console.log("[THUMBNAIL] Fallback full-page screenshot captured")
+    }
+
+    // Use a fresh filename every time so the browser/CDN does not keep showing
+    // the old 404 thumbnail from cache.
+    const thumbPath = `${userId}/${konfolioId}/thumbnail-${Date.now()}.png`
     console.log("[THUMBNAIL] Uploading thumbnail to:", thumbPath)
 
     const { error: upErr } = await supabaseAdmin.storage
       .from("konfolio-images")
       .upload(thumbPath, png, {
         contentType: "image/png",
-        upsert: true,
+        cacheControl: "3600",
+        upsert: false,
       })
 
     if (upErr) {
@@ -200,6 +319,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       .from("konfolios")
       .update({ thumbnail_url: thumbnailUrl })
       .eq("id", konfolioId)
+      .eq("user_id", userId)
 
     if (tErr) {
       console.log("[THUMBNAIL] thumbnail_url save error:", tErr.message)
@@ -212,20 +332,36 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       ok: true,
       status: "published",
       publishedAt,
-      publicUrl,
+
+      businessSlug,
+      portfolioSlug,
+      publicPath,
+      publicUrl: prettyPublicUrl,
+      viewUrl: prettyPublicUrl,
+
+      screenshotUrl,
       thumbnailUrl,
-      thumbnailUrlWithBust: `${thumbnailUrl}?t=${encodeURIComponent(publishedAt)}`,
+      thumbnailUrlWithBust: `${thumbnailUrl}?t=${encodeURIComponent(
+        publishedAt
+      )}`,
     })
   } catch (e: any) {
     console.log("[THUMBNAIL] Fatal error:", e?.message ?? e)
-    return NextResponse.json({ error: e?.message ?? "Unknown error" }, { status: 500 })
+
+    return NextResponse.json(
+      { error: e?.message ?? "Unknown error" },
+      { status: 500 }
+    )
   } finally {
     if (browser) {
       try {
         await browser.close()
         console.log("[THUMBNAIL] Browser closed")
       } catch (closeErr: any) {
-        console.log("[THUMBNAIL] Browser close error:", closeErr?.message ?? closeErr)
+        console.log(
+          "[THUMBNAIL] Browser close error:",
+          closeErr?.message ?? closeErr
+        )
       }
     }
   }

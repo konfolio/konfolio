@@ -36,6 +36,11 @@ type KonfolioRow = {
   thumbnail_url: string | null
   updated_at: string | null
   published_at: string | null
+  explore_enabled: boolean | null
+
+  view_count: number | null
+  unique_visitor_count: number | null
+  link_click_count: number | null
 }
 
 export default function MyPortfoliosPage() {
@@ -92,7 +97,7 @@ export default function MyPortfoliosPage() {
     const res = await supabase
       .from("konfolios")
       .select(
-        "id, user_id, portfolio_name, portfolio_slug, status, thumbnail_url, updated_at, published_at"
+        "id, user_id, portfolio_name, portfolio_slug, status, thumbnail_url, updated_at, published_at, explore_enabled, view_count, unique_visitor_count, link_click_count"
       )
       .eq("user_id", user.id)
       .order("updated_at", { ascending: false })
@@ -119,10 +124,10 @@ export default function MyPortfoliosPage() {
           ? `${r.thumbnail_url}?t=${encodeURIComponent(bust)}`
           : null,
         updatedAt: r.updated_at,
-        exploreEnabled: true,
-        views: 0,
-        uniqueViewers: 0,
-        linkClicks: 0,
+        exploreEnabled: r.explore_enabled ?? false,
+        views: r.view_count ?? 0,
+        uniqueViewers: r.unique_visitor_count ?? 0,
+        linkClicks: r.link_click_count ?? 0,
       }
     })
 
@@ -217,12 +222,12 @@ export default function MyPortfoliosPage() {
         konfolioCount={publishedCount}
       />
 
-      <section className="w-full flex justify-center px-6">
-        <div className="w-full max-w-[1212px] py-[60px]">
+      <section className="flex w-full justify-center px-4 sm:px-6">
+        <div className="w-full max-w-[1212px] py-[35px] sm:py-[60px]">
           {loading ? null : hasPublished ? (
             <DashPortfolioGrid
               items={items}
-              urlBase=""
+              urlBase="https://konfolio.com"
               onPublishedCountChange={setPublishedCount}
               onEdit={(id) => {
                 window.location.href = `/my-portfolios/${id}/edit`
@@ -257,6 +262,7 @@ export default function MyPortfoliosPage() {
       <PortfolioNameCard
         isOpen={nameCardOpen}
         businessSlug={businessSlug}
+        existingNames={items.map((item) => item.portfolioName)}
         onClose={closeNameCard}
         onContinue={(name) => {
           setPendingPortfolioName(name)

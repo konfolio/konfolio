@@ -109,9 +109,11 @@ const ROWS: Row[] = [
 function normalize(s: string) {
   return s.trim().replace(/\s+/g, " ")
 }
+
 function keyify(s: string) {
   return normalize(s).toLowerCase()
 }
+
 function splitLowAccuracy(label: string) {
   const re = /\s*-\s*low accuracy\s*$/i
   const isLow = re.test(label)
@@ -127,6 +129,7 @@ type Props = {
   onChange?: (next: string[]) => void
 
   layout?: "default" | "inlineLeft"
+  isDarkBanner?: boolean
 }
 
 type Anchor = { left: number; top: number }
@@ -137,9 +140,11 @@ export default function MerchTagPicker({
   value,
   onChange,
   layout = "default",
+  isDarkBanner = false,
 }: Props) {
   const [internalSelected, setInternalSelected] = useState<string[]>([])
   const selected = value ?? internalSelected
+
   const setSelected = (next: string[]) => {
     onChange?.(next)
     if (value === undefined) setInternalSelected(next)
@@ -156,6 +161,36 @@ export default function MerchTagPicker({
 
   const limitReached = selected.length >= maxTags
   const selectedSet = useMemo(() => new Set(selected.map(keyify)), [selected])
+
+  const selectedTagClassName = isDarkBanner
+  ? `
+    border-white/30
+    text-white
+    [&_span]:!text-white
+    bg-[rgba(255,255,255,0.1)]
+  `
+  : `
+    border-[#A5A5A5]/50
+    text-[#262626]
+    [&_span]:!text-[#262626]
+  `
+
+  const emptyMerchTagClassName = isDarkBanner
+  ? `
+    border-white/30
+    text-white
+    [&_span]:!text-white
+    [&_svg]:text-white
+    [&_path]:stroke-white
+    bg-[rgba(255,255,255,0.1)]
+  `
+  : `
+    border-[#A5A5A5]/50
+    text-[#A5A5A5]
+    [&_span]:!text-[#A5A5A5]
+    [&_svg]:text-[#A5A5A5]
+    [&_path]:stroke-[#A5A5A5]
+  `
 
   useClickOutside(wrapRef, () => setOpen(false), { enabled: open, closeOnEsc: true })
 
@@ -353,7 +388,9 @@ export default function MerchTagPicker({
                         hover:bg-[#F7F7F7]
                       "
                     >
-                      <span className="font-inter text-[14px] leading-[140%] text-[#262626]">{base}</span>
+                      <span className="font-inter text-[14px] leading-[140%] text-[#262626]">
+                        {base}
+                      </span>
 
                       {isLow ? (
                         <span
@@ -418,6 +455,7 @@ export default function MerchTagPicker({
       const next = measureAnchor()
       if (next) setAnchor(next)
     }
+
     window.addEventListener("resize", onResize)
     return () => window.removeEventListener("resize", onResize)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -426,7 +464,7 @@ export default function MerchTagPicker({
   if (layout === "inlineLeft") {
     const TagChip = (label: string) => (
       <div key={label} className="relative group">
-        <Tag label={label} />
+        <Tag label={label} className={selectedTagClassName} />
         <button
           type="button"
           aria-label={`Remove ${label}`}
@@ -470,16 +508,7 @@ export default function MerchTagPicker({
         aria-label="Add merch tags"
       >
         {selected.length === 0 ? (
-          <Tag
-            label="Merch"
-            showPlus
-            className="
-              border-[#A5A5A5]/50
-              text-[#A5A5A5]
-              [&_span]:text-[#A5A5A5]
-              [&_svg]:text-[#A5A5A5]
-            "
-          />
+          <Tag label="Merch" showPlus className={emptyMerchTagClassName} />
         ) : (
           <div
             className="
@@ -529,7 +558,7 @@ export default function MerchTagPicker({
         <div className="w-[276px] flex flex-row flex-wrap justify-center items-center content-center gap-[10px]">
           {selected.map((label) => (
             <div key={label} className="relative group">
-              <Tag label={label} />
+              <Tag label={label} className={selectedTagClassName} />
               <button
                 type="button"
                 aria-label={`Remove ${label}`}
@@ -570,16 +599,7 @@ export default function MerchTagPicker({
             aria-label="Add merch tags"
           >
             {selected.length === 0 ? (
-              <Tag
-                label="Merch"
-                showPlus
-                className="
-                  border-[#A5A5A5]/50
-                  text-[#A5A5A5]
-                  [&_span]:text-[#A5A5A5]
-                  [&_svg]:text-[#A5A5A5]
-                "
-              />
+              <Tag label="Merch" showPlus className={emptyMerchTagClassName} />
             ) : (
               <div
                 className="

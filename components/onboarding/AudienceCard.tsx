@@ -13,7 +13,7 @@ export default function AudienceCard() {
     setModeAndResetFlow(next)
 
     router.push(
-      next === "artist" ? "/onboarding/name/artist" : "/onboarding/name/host"
+      next === "artist" ? "/onboarding/name/artist" : "/onboarding/beta"
     )
   }
 

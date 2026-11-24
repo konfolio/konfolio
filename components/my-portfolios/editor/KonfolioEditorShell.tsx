@@ -1,4 +1,3 @@
-// components/my-portfolios/editor/KonfolioEditorShell.tsx
 "use client"
 
 import { useEffect, useState } from "react"
@@ -78,7 +77,7 @@ function normalizeUpdatedAt(data: any): number {
 
 /**
  * Your GET route returns:
- * { id, template, status, updatedAt, content }
+ * { id, template, status, updatedAt, content, explore_enabled, thumbnail_url }
  * content may be JSON object OR stringified JSON.
  */
 function draftFromGetResponse(data: any): KonfolioDraft | null {
@@ -108,6 +107,9 @@ function draftFromGetResponse(data: any): KonfolioDraft | null {
     template,
     status: data?.status === "published" ? "published" : "draft",
     updatedAt: normalizeUpdatedAt(data),
+
+    explore_enabled: !!data?.explore_enabled,
+    thumbnail_url: data?.thumbnail_url ?? null,
 
     bannerColor: String(content.bannerColor ?? "#FFFFFF"),
     backgroundColor: String(content.backgroundColor ?? "#F7F7F7"),
@@ -141,7 +143,6 @@ export default function KonfolioEditorShell({ konfolioId, initialDraft, mode = "
     const boot = async () => {
       setBooting(true)
 
-      // 1) If a server-provided initialDraft exists, prefer it
       if (initialDraft) {
         setDraft(konfolioId, initialDraft)
         if (!alive) return
@@ -149,14 +150,12 @@ export default function KonfolioEditorShell({ konfolioId, initialDraft, mode = "
         return
       }
 
-      // 2) If store already has it, we're good
       if (draft) {
         if (!alive) return
         setBooting(false)
         return
       }
 
-      // 3) Load from backend (AUTHED)
       try {
         const sessionRes = await supabase.auth.getSession()
         const token = sessionRes.data.session?.access_token
@@ -178,11 +177,9 @@ export default function KonfolioEditorShell({ konfolioId, initialDraft, mode = "
           const nextDraft = draftFromGetResponse(data)
           if (nextDraft) setDraft(konfolioId, nextDraft)
         } else {
-          // eslint-disable-next-line no-console
           console.log("[KonfolioEditorShell] GET failed", res.status)
         }
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.log("[KonfolioEditorShell] GET error", e)
       }
 
@@ -202,15 +199,15 @@ export default function KonfolioEditorShell({ konfolioId, initialDraft, mode = "
 
   if (booting || !readyDraft) {
     return (
-      <main className="w-full min-h-[982px] bg-[#F7F7F7]">
-        <div className="w-full px-[25px] sm:px-10 lg:px-[150px]">
-          <div className="mx-auto max-w-[1512px]">
-            <div className="flex items-start justify-center gap-[20px]">
-              <div className="w-[316px] h-[982px] rounded-[15px] bg-white/60 animate-pulse" />
-              <div className="w-[922px] h-[982px] flex items-center justify-center">
-                <div className="w-[922px] h-[922px] grid grid-cols-3 gap-[15px]">
+      <main className="w-full min-h-screen overflow-x-hidden bg-[#F7F7F7]">
+        <div className="w-full px-[16px] py-[20px] sm:px-6 md:px-10 lg:px-[80px] xl:px-[120px]">
+          <div className="mx-auto w-full max-w-[1512px]">
+            <div className="flex w-full flex-col items-center justify-center gap-[20px] lg:flex-row lg:items-start">
+              <div className="h-[520px] w-full max-w-[316px] rounded-[15px] bg-white/60 animate-pulse lg:h-[982px]" />
+              <div className="flex w-full max-w-[922px] items-center justify-center">
+                <div className="grid w-full grid-cols-3 gap-[8px] sm:gap-[12px] lg:gap-[15px]">
                   {Array.from({ length: 9 }).map((_, i) => (
-                    <div key={i} className="rounded-[15px] bg-white/60 animate-pulse" />
+                    <div key={i} className="aspect-square rounded-[15px] bg-white/60 animate-pulse" />
                   ))}
                 </div>
               </div>
@@ -221,7 +218,6 @@ export default function KonfolioEditorShell({ konfolioId, initialDraft, mode = "
     )
   }
 
-  // We pass a "readonly" flag down so editors can disable edit affordances.
   const readOnly = mode === "preview"
 
   if (readyDraft.template === "square") {

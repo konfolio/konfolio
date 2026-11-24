@@ -1,7 +1,7 @@
 // app/my-portfolios/new/page.tsx
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import { Suspense, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 
 import Navbar from "@/components/Navbar"
@@ -39,15 +39,13 @@ function hasMeaningfulOnboarding(o: any) {
   )
 }
 
-export default function NewKonfolioPage() {
+function NewKonfolioInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  // Onboarding store hydration
   const hasOnboardingHydrated = useOnboardingDraft((s) => s.hasHydrated)
   const forceOnboardingHydrate = useOnboardingDraft((s) => s.forceHydrate)
 
-  // Konfolio drafts store hydration
   const hasKonfolioHydrated = useKonfolioDraftStore((s) => s.hasHydrated)
   const forceKonfolioHydrate = useKonfolioDraftStore((s) => s.forceHydrate)
 
@@ -97,13 +95,10 @@ export default function NewKonfolioPage() {
     if (template === "square") {
       const o = useOnboardingDraft.getState()
 
-      // Debug: print exactly what we are using
-      // eslint-disable-next-line no-console
       console.log("[NEW] createAndGo", { source, template, hasOnboardingHydrated, onboardingSnapshot: o })
 
       const useOnboarding = hasMeaningfulOnboarding(o)
 
-      // eslint-disable-next-line no-console
       console.log("[NEW] hasMeaningfulOnboarding?", useOnboarding)
 
       const draft = useOnboarding
@@ -125,7 +120,6 @@ export default function NewKonfolioPage() {
           })
         : createDraftFromProfile({ id, template: "square" })
 
-      // eslint-disable-next-line no-console
       console.log("[NEW] draft built:", {
         debugSource: useOnboarding ? "fromOnboardingToSquareDraft" : "createDraftFromProfile",
         businessName: draft.businessName,
@@ -175,8 +169,25 @@ export default function NewKonfolioPage() {
     <>
       <Navbar />
       <main className="min-h-[calc(100vh-61px)] flex justify-center pt-[60px] pb-[80px]">
-      <CreateKonfolioCard title="Create your first Konfolio" />
+        <CreateKonfolioCard title="Create your first Konfolio" />
       </main>
     </>
+  )
+}
+
+export default function NewKonfolioPage() {
+  return (
+    <Suspense
+      fallback={
+        <>
+          <Navbar />
+          <main className="min-h-[calc(100vh-61px)] flex items-center justify-center">
+            <p className="font-inter text-[14px] text-[#A5A5A5]">Loading…</p>
+          </main>
+        </>
+      }
+    >
+      <NewKonfolioInner />
+    </Suspense>
   )
 }

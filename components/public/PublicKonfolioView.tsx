@@ -2,10 +2,10 @@
 "use client"
 
 import * as React from "react"
+import ProtectedEmail from "@/components/public/ProtectedEmail"
 
 import EditSquareProfileSidebar from "@/components/my-portfolios/square/EditSquareProfileSidebar"
 import EditSquareImageGrid from "@/components/my-portfolios/square/EditSquareImageGrid"
-
 import EditPortraitProfile from "@/components/my-portfolios/portrait/EditPortraitProfile"
 import EditPortraitImageGrid from "@/components/my-portfolios/portrait/EditPortraitImageGrid"
 
@@ -20,6 +20,46 @@ function safeArr(v: any): string[] {
   return v.map((x) => safeStr(x)).filter(Boolean)
 }
 
+function normalizePreviousVends(raw: any): string[] {
+  if (!Array.isArray(raw)) return []
+
+  return raw
+    .map((vend: any, i: number) => {
+      if (typeof vend === "string") {
+        return vend.trim()
+      }
+
+      const name = safeStr(vend?.name ?? vend?.event_name ?? `Vend ${i + 1}`)
+      const year = safeStr(vend?.year ?? vend?.event_year)
+
+      return year ? `${name} ${year}` : name
+    })
+    .filter(Boolean)
+}
+
+function firstColor(...values: any[]) {
+  for (const value of values) {
+    const color = safeStr(value)
+    if (color) return color
+  }
+  return ""
+}
+
+function isColorDark(color: string) {
+  const c = safeStr(color).replace("#", "")
+
+  if (c.length !== 6) return false
+
+  const r = parseInt(c.substring(0, 2), 16)
+  const g = parseInt(c.substring(2, 4), 16)
+  const b = parseInt(c.substring(4, 6), 16)
+
+  if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return false
+
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+  return luminance < 0.5
+}
+
 function toLinksValue(raw: any) {
   if (
     raw &&
@@ -32,81 +72,229 @@ function toLinksValue(raw: any) {
   }
 
   const linksByKey = raw && typeof raw === "object" ? raw : {}
-  const activeKeys = Object.keys(linksByKey).filter((k) => safeStr((linksByKey as any)[k]).length > 0)
+  const activeKeys = Object.keys(linksByKey).filter(
+    (k) => safeStr((linksByKey as any)[k]).length > 0,
+  )
+
   return { activeKeys, linksByKey }
 }
 
-function toPrevVendsValue(content: any): string {
-  const v = safeStr(content?.previousVendsValue)
-  if (v) return v
-
-  const arr = safeArr(content?.previousVends)
-  if (arr.length === 0) return "Vended Event 2026"
-  return arr.slice(0, 4).join("|")
-}
-
 export default function PublicKonfolioView({
+  konfolioId,
   template,
   content,
   ownerBusinessName,
-  portfolioName,
+  trackAnalytics = true,
+  embedded = false,
 }: {
+  konfolioId: string
   template: Template
   content: any
   ownerBusinessName: string
-  portfolioName: string
+  trackAnalytics?: boolean
+  embedded?: boolean
 }) {
-  const bannerColor = safeStr(content?.bannerColor) || "#FFFFFF"
-  const backgroundColor = safeStr(content?.backgroundColor) || "#F7F7F7"
+  const [mobileProfileOpen, setMobileProfileOpen] = React.useState(false)
+
+  React.useEffect(() => {
+    if (!trackAnalytics) return
+
+    const isThumbnailMode =
+      new URLSearchParams(window.location.search).get("thumbnail") === "1"
+
+    if (isThumbnailMode) return
+
+    const key = "konfolio_visitor_id"
+    let visitorId = window.localStorage.getItem(key)
+
+    if (!visitorId) {
+      visitorId = window.crypto.randomUUID()
+      window.localStorage.setItem(key, visitorId)
+    }
+
+    fetch(`/api/konfolios/${konfolioId}/view`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        visitorId,
+        referrer: document.referrer || null,
+      }),
+    }).catch(console.error)
+  }, [konfolioId, trackAnalytics])
+
+  function getVisitorId() {
+    const key = "konfolio_visitor_id"
+    let visitorId = window.localStorage.getItem(key)
+
+    if (!visitorId) {
+      visitorId = window.crypto.randomUUID()
+      window.localStorage.setItem(key, visitorId)
+    }
+
+    return visitorId
+  }
+
+  const handleSocialLinkClick = React.useCallback(
+    (link: {
+      key?: string
+      id?: string
+      label?: string
+      title?: string
+      url?: string
+    }) => {
+      if (!link.url) return
+      if (!trackAnalytics) return
+
+      const isThumbnailMode =
+        new URLSearchParams(window.location.search).get("thumbnail") === "1"
+
+      if (isThumbnailMode) return
+
+      fetch(`/api/konfolios/${konfolioId}/link-click`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          visitorId: getVisitorId(),
+          linkKey: link.key ?? link.id ?? null,
+          label: link.label ?? link.title ?? null,
+          url: link.url,
+        }),
+      }).catch(console.error)
+    },
+    [konfolioId, trackAnalytics],
+  )
+
+  const bannerColor =
+    firstColor(
+      content?.bannerColor,
+      content?.colors?.bannerColor,
+      content?.colors?.banner,
+      content?.profile?.bannerColor,
+      content?.profile?.banner,
+    ) || "#FFFFFF"
+
+  const backgroundColor =
+    firstColor(
+      content?.backgroundColor,
+      content?.colors?.backgroundColor,
+      content?.colors?.background,
+      content?.profile?.backgroundColor,
+      content?.profile?.background,
+    ) || "#F7F7F7"
+
+  const backgroundIsDark = isColorDark(backgroundColor)
 
   const profileImageUrl = safeStr(content?.profileImageUrl)
   const displayName = safeStr(content?.displayName) || "Your Name"
   const locationText = safeStr(content?.locationText) || "City, State"
-  const email = safeStr(content?.email) || "myemailaddress@konfolio.com"
+  const showEmail = content?.showEmail !== false && content?.hasPublicEmail === true
+  const publicEmailSlot = showEmail ? <ProtectedEmail key={konfolioId} konfolioId={konfolioId} /> : null
 
-  const businessName = safeStr(content?.businessName) || safeStr(ownerBusinessName) || "Business Name"
+  const businessName =
+    safeStr(content?.businessName) || safeStr(ownerBusinessName) || "Business Name"
 
-  // Memoize object/array props so child components don't see new references every render.
-  const linksValue = React.useMemo(() => toLinksValue(content?.linksValue ?? content?.links ?? {}), [content])
+  const linksValue = React.useMemo(
+    () => toLinksValue(content?.linksValue ?? content?.links ?? {}),
+    [content],
+  )
 
   const merchTags = React.useMemo(() => safeArr(content?.merchTags), [content])
-  const previousVendsArr = React.useMemo(() => safeArr(content?.previousVends), [content])
-  const images = React.useMemo(() => (Array.isArray(content?.images) ? content.images : []), [content])
 
-  // IMPORTANT: pass stable array refs for swatches so child effects don't loop.
+  const previousVendsArr = React.useMemo(
+    () => normalizePreviousVends(content?.previousVends),
+    [content],
+  )
+
+  const images = React.useMemo(
+    () => (Array.isArray(content?.images) ? content.images : []),
+    [content],
+  )
+
   const bannerSwatches = React.useMemo(() => safeArr(content?.bannerSwatches), [content])
-  const backgroundSwatches = React.useMemo(() => safeArr(content?.backgroundSwatches), [content])
 
-  const prevVendsValue = React.useMemo(() => toPrevVendsValue(content), [content])
+  const backgroundSwatches = React.useMemo(
+    () => safeArr(content?.backgroundSwatches),
+    [content],
+  )
 
   const backHref = "/"
 
   if (template === "square") {
     return (
-      <main className="w-full overflow-hidden" style={{ backgroundColor }}>
-        <div className="w-full flex justify-center">
-          <div className="flex gap-6 items-stretch">
-            <EditSquareProfileSidebar
-              editable={false}
-              backHref={backHref}
-              bannerColor={bannerColor}
-              backgroundColor={backgroundColor}
-              bannerSwatches={bannerSwatches}
-              backgroundSwatches={backgroundSwatches}
-              profileImageUrl={profileImageUrl}
-              businessName={businessName}
-              displayName={displayName}
-              locationText={locationText}
-              email={email}
-              linksValue={linksValue}
-              merchTags={merchTags}
-              previousVends={previousVendsArr}
-              showAddLink={false}
-              showMerchTag={false}
-              publishLabel=""
-            />
+      <main className={embedded ? "w-full" : "w-full min-h-screen overflow-x-hidden"} style={{ backgroundColor }}>
+        <div className={embedded ? "w-full px-4" : "w-full px-0 min-[701px]:py-0 min-[1200px]:px-[80px] xl:px-[120px]"}>
+          <div
+            data-thumbnail-target="konfolio-grid"
+            className="mx-auto w-full max-w-[1512px]"
+          >
+            <div className="hidden w-full flex-col max-[700px]:flex" style={embedded ? { display: "none" } : undefined}>
+              <EditSquareProfileSidebar
+                editable={false}
+                mobileCollapsed={true}
+                mobileExpanded={mobileProfileOpen}
+                onToggleMobile={() => setMobileProfileOpen((prev) => !prev)}
+                backHref={backHref}
+                bannerColor={bannerColor}
+                backgroundColor={backgroundColor}
+                bannerSwatches={bannerSwatches}
+                backgroundSwatches={backgroundSwatches}
+                profileImageUrl={profileImageUrl}
+                businessName={businessName}
+                displayName={displayName}
+                locationText={locationText}
+                email=""
+                showEmail={showEmail}
+                publicEmailSlot={publicEmailSlot}
+                linksValue={linksValue}
+                merchTags={merchTags}
+                previousVends={previousVendsArr}
+                showAddLink={false}
+                showMerchTag={false}
+                publishLabel=""
+                onSocialLinkClick={handleSocialLinkClick}
+              />
 
-            <EditSquareImageGrid editable={false} images={images} />
+              <EditSquareImageGrid
+                editable={false}
+                images={images}
+                backgroundIsDark={backgroundIsDark}
+              />
+            </div>
+
+            <div className={embedded ? "flex w-full items-stretch justify-center gap-4 [&>aside]:min-h-0 [&>aside]:w-[30%] [&>aside]:shrink-0 [&>section]:min-w-0 [&>section]:py-4 [&>section>div>div.grid]:grid-cols-3 [&>section>div>div.grid]:gap-3 [&>section>div>div.grid>div]:order-none" : "hidden w-full flex-row items-start justify-center gap-[20px] min-[701px]:flex"}>
+              <EditSquareProfileSidebar
+                editable={false}
+                backHref={backHref}
+                bannerColor={bannerColor}
+                backgroundColor={backgroundColor}
+                bannerSwatches={bannerSwatches}
+                backgroundSwatches={backgroundSwatches}
+                profileImageUrl={profileImageUrl}
+                businessName={businessName}
+                displayName={displayName}
+                locationText={locationText}
+                email=""
+                showEmail={showEmail}
+                publicEmailSlot={publicEmailSlot}
+                linksValue={linksValue}
+                merchTags={merchTags}
+                previousVends={previousVendsArr}
+                showAddLink={false}
+                showMerchTag={false}
+                publishLabel=""
+                onSocialLinkClick={handleSocialLinkClick}
+              />
+
+              <EditSquareImageGrid
+                editable={false}
+                images={images}
+                backgroundIsDark={backgroundIsDark}
+              />
+            </div>
           </div>
         </div>
       </main>
@@ -114,32 +302,78 @@ export default function PublicKonfolioView({
   }
 
   return (
-    <main className="w-full overflow-hidden" style={{ backgroundColor }}>
-      <div className="w-full flex flex-col items-center">
-        <EditPortraitProfile
-          editable={false}
-          backHref={backHref}
-          bannerColor={bannerColor}
-          backgroundColor={backgroundColor}
-          bannerSwatches={bannerSwatches}
-          backgroundSwatches={backgroundSwatches}
-          profileImageUrl={profileImageUrl}
-          businessName={businessName}
-          displayName={displayName}
-          locationText={locationText}
-          email={email}
-          linksValue={linksValue}
-          merchTags={merchTags}
-          showAddLink={false}
-          publishLabel=""
-        />
+    <main className={embedded ? "w-full" : "w-full min-h-screen overflow-x-hidden"} style={{ backgroundColor }}>
+      <div data-thumbnail-target="konfolio-grid" className="w-full">
+        <div className="hidden w-full flex-col max-[700px]:flex" style={embedded ? { display: "none" } : undefined}>
+          <EditPortraitProfile
+            editable={false}
+            mobileCollapsed={true}
+            mobileExpanded={mobileProfileOpen}
+            onToggleMobile={() => setMobileProfileOpen((prev) => !prev)}
+            backHref={backHref}
+            bannerColor={bannerColor}
+            backgroundColor={backgroundColor}
+            bannerSwatches={bannerSwatches}
+            backgroundSwatches={backgroundSwatches}
+            profileImageUrl={profileImageUrl}
+            businessName={businessName}
+            displayName={displayName}
+            locationText={locationText}
+            email=""
+                showEmail={showEmail}
+                publicEmailSlot={publicEmailSlot}
+            linksValue={linksValue}
+            merchTags={merchTags}
+            previousVends={previousVendsArr}
+            showAddLink={false}
+            publishLabel=""
+            onSocialLinkClick={handleSocialLinkClick}
+          />
 
-        <EditPortraitImageGrid
-          editable={false}
-          images={images}
-          previousVendsLabel="Previous Vends"
-          previousVendsValue={prevVendsValue}
-        />
+          <EditPortraitImageGrid
+            editable={false}
+            images={images}
+            previousVendsLabel="Previous Vends"
+            previousVends={previousVendsArr}
+            backgroundIsDark={backgroundIsDark}
+          />
+        </div>
+
+        <div className={embedded ? "flex w-full flex-col [&>header]:flex" : "hidden w-full flex-col min-[701px]:flex"}>
+          <EditPortraitProfile
+            editable={false}
+            backHref={backHref}
+            bannerColor={bannerColor}
+            backgroundColor={backgroundColor}
+            bannerSwatches={bannerSwatches}
+            backgroundSwatches={backgroundSwatches}
+            profileImageUrl={profileImageUrl}
+            businessName={businessName}
+            displayName={displayName}
+            locationText={locationText}
+            email=""
+                showEmail={showEmail}
+                publicEmailSlot={publicEmailSlot}
+            linksValue={linksValue}
+            merchTags={merchTags}
+            previousVends={previousVendsArr}
+            showAddLink={false}
+            publishLabel=""
+            onSocialLinkClick={handleSocialLinkClick}
+          />
+
+          <div className={embedded ? "w-full px-4 [&_section]:py-4 [&_section>div>div.grid]:grid-cols-4 [&_section>div>div.grid]:gap-3 [&_section>div:last-child:not(:first-child)]:flex" : "w-full px-[24px] min-[1200px]:px-[80px] xl:px-[120px]"}>
+            <div className="mx-auto w-full max-w-[1512px]">
+              <EditPortraitImageGrid
+                editable={false}
+                images={images}
+                previousVendsLabel="Previous Vends"
+                previousVends={previousVendsArr}
+                backgroundIsDark={backgroundIsDark}
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   )

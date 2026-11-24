@@ -9,7 +9,7 @@ const supabase = createClient(
 
 export async function GET() {
   const page = "home";
-
+  
   // total viewings
   const totalRes = await supabase
     .from("site_views")

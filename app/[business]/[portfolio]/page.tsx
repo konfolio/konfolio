@@ -1,67 +1,133 @@
-// app/[business]/[portfolio]/page.tsx
-import { notFound } from "next/navigation"
-import { createClient } from "@supabase/supabase-js"
-import PublicKonfolioView from "@/components/public/PublicKonfolioView"
+import { notFound, redirect } from "next/navigation";
 
-type Template = "square" | "portrait"
+import PublicKonfolioView from "@/components/public/PublicKonfolioView";
+import ApplyFormClient from "@/components/forms/ApplyFormClient";
 
-function slugify(input: string): string {
-  return (input || "")
+import {
+  createPublicFormsAdminClient,
+  findOrganizer,
+} from "@/lib/publicFormLookup";
+
+import { publicFormUrl } from "@/lib/publicFormUrls";
+import { toPublicKonfolioContent } from "@/lib/publicKonfolioContent";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+function slugify(input: string) {
+  return input
     .toLowerCase()
     .trim()
     .replace(/['"]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "")
+    .replace(/^-|-$/g, "");
 }
-
-export const runtime = "nodejs"
 
 export default async function PublicKonfolioPage({
   params,
 }: {
-  params: Promise<{ business: string; portfolio: string }>
+  params: Promise<{
+    business: string;
+    portfolio: string;
+  }>;
 }) {
-  const { business, portfolio } = await params
+  const { business, portfolio } = await params;
 
-  const businessSlug = slugify(business)
-  const portfolioSlug = slugify(portfolio)
-  if (!businessSlug || !portfolioSlug) return notFound()
+  const businessSlug = slugify(business);
+  const itemSlug = slugify(portfolio);
 
-  const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
+  if (!businessSlug || !itemSlug) {
+    notFound();
+  }
 
-  const { data: profiles, error: profErr } = await supabaseAdmin
-    .from("profiles")
-    .select("id, business_name")
-    .not("business_name", "is", null)
+  const db = createPublicFormsAdminClient();
 
-  if (profErr || !profiles?.length) return notFound()
+  const owner = await findOrganizer(
+    db,
+    businessSlug,
+  );
 
-  const owner = profiles.find((p: any) => slugify(String(p.business_name ?? "")) === businessSlug)
-  if (!owner) return notFound()
+  if (!owner) {
+    notFound();
+  }
 
-  const { data: k, error: kErr } = await supabaseAdmin
-    .from("konfolios")
-    .select("id, template, status, content, portfolio_name, portfolio_slug")
-    .eq("user_id", owner.id)
-    .eq("portfolio_slug", portfolioSlug)
-    .eq("status", "published")
-    .maybeSingle()
+  const [
+    { data: form, error: formError },
+    { data: k, error: portfolioError },
+  ] = await Promise.all([
+    db
+      .from("alley_forms")
+      .select("id, slug")
+      .eq("organizer_id", owner.id)
+      .eq("slug", itemSlug)
+      .in("status", ["receiving", "closed"])
+      .maybeSingle(),
 
-  if (kErr || !k) return notFound()
+    db
+      .from("konfolios")
+      .select("id, template, content")
+      .eq("user_id", owner.id)
+      .eq("portfolio_slug", itemSlug)
+      .eq("status", "published")
+      .maybeSingle(),
+  ]);
 
-  const template: Template = (k.template as any) === "portrait" ? "portrait" : "square"
-  const content: any = k.content ?? {}
+  if (formError) throw formError;
+  if (portfolioError) throw portfolioError;
 
+  if (form && k) {
+    throw new Error(
+      "Conflicting public URL: apply the form URL migration",
+    );
+  }
+
+  if (form) {
+    if (
+      business !== businessSlug ||
+      portfolio !== itemSlug
+    ) {
+      redirect(
+        publicFormUrl(businessSlug, itemSlug),
+      );
+    }
+
+    return (
+      <ApplyFormClient
+        key={form.id}
+        organizerSlug={businessSlug}
+        formSlug={itemSlug}
+      />
+    );
+  }
+
+  if (!k) {
+    notFound();
+  }
+
+  if (businessSlug === itemSlug) {
+    redirect(`/${businessSlug}`);
+  }
+
+  // Remove email before sending content to the browser.
+  // Also sets hasPublicEmail for the protected reveal button.
+  const publicContent = toPublicKonfolioContent(
+    k.content ?? {},
+  );
+
+  // Published Link Access Only portfolios remain accessible.
   return (
     <PublicKonfolioView
-      template={template}
-      content={content}
-      ownerBusinessName={String(owner.business_name ?? "")}
-      portfolioName={String(k.portfolio_name ?? "")}
+      konfolioId={k.id}
+      template={
+        k.template === "portrait"
+          ? "portrait"
+          : "square"
+      }
+      content={publicContent}
+      ownerBusinessName={String(
+        owner.business_name ?? "",
+      )}
     />
-  )
+  );
 }

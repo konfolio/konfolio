@@ -1,43 +1,50 @@
-// components/my-portfolios/editor/PortraitEditor.tsx
-"use client"
+// components/my-portfolios/portrait/PortraitEditor.tsx
+"use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useKonfolioDraftStore } from "@/stores/konfolioDraftStore"
-import KonfolioExitGuard from "@/components/my-portfolios/KonfolioExitGuard"
-import EditPortraitProfile from "@/components/my-portfolios/portrait/EditPortraitProfile"
-import EditPortraitImageGrid from "@/components/my-portfolios/portrait/EditPortraitImageGrid"
-import PublishPopover from "@/components/my-portfolios/editor/PublishPopover"
-import PublishMissingFieldsPopover from "@/components/my-portfolios/editor/PublishMissingFieldsPopover"
+import { useKonfolioDraftStore } from "@/stores/konfolioDraftStore";
+import KonfolioExitGuard from "@/components/my-portfolios/KonfolioExitGuard";
+import EditPortraitProfile from "@/components/my-portfolios/portrait/EditPortraitProfile";
+import EditPortraitImageGrid from "@/components/my-portfolios/portrait/EditPortraitImageGrid";
+import PublishPopover from "@/components/my-portfolios/editor/PublishPopover";
+import PublishMissingFieldsPopover from "@/components/my-portfolios/editor/PublishMissingFieldsPopover";
 
-import { supabase } from "@/lib/supabase/browser"
+import { supabase } from "@/lib/supabase/browser";
+import {
+  exportFromImageUrl,
+  type KonfolioExportType,
+} from "@/lib/konfolio/exportFromImage";
 
-type Props = { draftId: string; readOnly?: boolean }
+type Props = { draftId: string; readOnly?: boolean };
+type ExportType = KonfolioExportType;
 
 async function getAccessToken(): Promise<string | null> {
-  const { data } = await supabase.auth.getSession()
-  return data.session?.access_token ?? null
-}
-
-function slugify(input: string): string {
-  return (input || "")
-    .toLowerCase()
-    .trim()
-    .replace(/['"]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "")
+  const { data } = await supabase.auth.getSession();
+  return data.session?.access_token ?? null;
 }
 
 function cleanString(x: any): string {
-  return String(x ?? "").trim()
+  return String(x ?? "").trim();
+}
+
+function isDarkHexColor(hex: string) {
+  const cleaned = cleanString(hex).replace("#", "");
+  if (!/^[0-9A-Fa-f]{6}$/.test(cleaned)) return false;
+
+  const r = parseInt(cleaned.slice(0, 2), 16);
+  const g = parseInt(cleaned.slice(2, 4), 16);
+  const b = parseInt(cleaned.slice(4, 6), 16);
+
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  return brightness < 150;
 }
 
 function isMeaningfulText(x: any): boolean {
-  const v = cleanString(x)
-  if (!v) return false
+  const v = cleanString(x);
+  if (!v) return false;
 
-  const lower = v.toLowerCase()
+  const lower = v.toLowerCase();
 
   const bannedExact = new Set([
     "your name",
@@ -55,122 +62,136 @@ function isMeaningfulText(x: any): boolean {
     "http://",
     "https://",
     "www.",
-  ])
+  ]);
 
-  if (bannedExact.has(lower)) return false
+  if (bannedExact.has(lower)) return false;
 
-  if (lower === "https://" || lower === "http://" || lower === "www.") return false
-  if (lower.startsWith("https://") && lower.length <= "https://".length + 2) return false
-  if (lower.startsWith("http://") && lower.length <= "http://".length + 2) return false
+  if (lower === "https://" || lower === "http://" || lower === "www.")
+    return false;
+  if (lower.startsWith("https://") && lower.length <= "https://".length + 2)
+    return false;
+  if (lower.startsWith("http://") && lower.length <= "http://".length + 2)
+    return false;
 
-  return true
+  return true;
 }
 
 function looksLikeRealUrl(x: any): boolean {
-  const v = cleanString(x)
-  if (!v) return false
-  const lower = v.toLowerCase()
+  const v = cleanString(x);
+  if (!v) return false;
+  const lower = v.toLowerCase();
 
-  if (lower === "https://" || lower === "http://" || lower === "www.") return false
+  if (lower === "https://" || lower === "http://" || lower === "www.")
+    return false;
 
-  const hasDot = v.includes(".")
-  const hasAlphaNum = /[a-z0-9]/i.test(v)
-  if (!hasDot || !hasAlphaNum) return false
+  const hasDot = v.includes(".");
+  const hasAlphaNum = /[a-z0-9]/i.test(v);
+  if (!hasDot || !hasAlphaNum) return false;
 
-  if (lower.endsWith("instagram.com") || lower.endsWith("instagram.com/")) return false
-  if (lower.endsWith("tiktok.com") || lower.endsWith("tiktok.com/")) return false
+  if (lower.endsWith("instagram.com") || lower.endsWith("instagram.com/"))
+    return false;
+  if (lower.endsWith("tiktok.com") || lower.endsWith("tiktok.com/"))
+    return false;
 
-  return true
+  return true;
 }
 
 function looksLikeRealEmail(x: any): boolean {
-  const v = cleanString(x)
-  if (!v) return false
-  const lower = v.toLowerCase()
+  const v = cleanString(x);
+  if (!v) return false;
+  const lower = v.toLowerCase();
 
-  if (lower === "myemailaddress@konfolio.com") return false
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+  if (lower === "myemailaddress@konfolio.com") return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 }
 
 function isRealImageSrc(src: any): boolean {
-  const v = cleanString(src)
-  if (!v) return false
+  const v = cleanString(src);
+  if (!v) return false;
 
-  const lower = v.toLowerCase()
-  if (lower.includes("placeholder")) return false
-  if (lower === "about:blank") return false
+  const lower = v.toLowerCase();
+  if (lower.includes("placeholder")) return false;
+  if (lower === "about:blank") return false;
 
-  return true
+  return true;
 }
 
 function hasAnyBusinessLink(links: any): boolean {
-  if (!links) return false
+  if (!links) return false;
 
-  const activeKeys = Array.isArray(links?.activeKeys) ? links.activeKeys : []
-  const linksByKey = links?.linksByKey && typeof links.linksByKey === "object" ? links.linksByKey : null
+  const activeKeys = Array.isArray(links?.activeKeys) ? links.activeKeys : [];
+  const linksByKey =
+    links?.linksByKey && typeof links.linksByKey === "object"
+      ? links.linksByKey
+      : null;
 
   if (activeKeys.length > 0 && linksByKey) {
     for (const k of activeKeys) {
-      const url = (linksByKey as any)[k]
-      if (looksLikeRealUrl(url)) return true
+      const url = (linksByKey as any)[k];
+      if (looksLikeRealUrl(url)) return true;
     }
-    return false
+    return false;
   }
 
   if (Array.isArray(links)) {
-    return links.some((l) => looksLikeRealUrl(l?.url) || looksLikeRealUrl(l))
+    return links.some((l) => looksLikeRealUrl(l?.url) || looksLikeRealUrl(l));
   }
 
   if (typeof links === "object") {
     for (const v of Object.values(links)) {
-      if (looksLikeRealUrl(v)) return true
-      if (v && typeof v === "object" && looksLikeRealUrl((v as any).url)) return true
+      if (looksLikeRealUrl(v)) return true;
+      if (v && typeof v === "object" && looksLikeRealUrl((v as any).url))
+        return true;
     }
   }
 
-  return false
+  return false;
 }
 
 function isGridFilled(images: any, requiredSlots: number): boolean {
-  const arr = Array.isArray(images) ? images : []
-  const n = Math.max(0, Math.floor(requiredSlots))
-  if (n === 0) return false
-  if (arr.length < n) return false
+  const arr = Array.isArray(images) ? images : [];
+  const n = Math.max(0, Math.floor(requiredSlots));
+  if (n === 0) return false;
+  if (arr.length < n) return false;
 
   for (let i = 0; i < n; i++) {
-    if (!isRealImageSrc(arr[i]?.src)) return false
+    if (!isRealImageSrc(arr[i]?.src)) return false;
   }
-  return true
+  return true;
 }
 
 function computeMissingLabelsPortrait(draft: any) {
-  const required: string[] = []
-  const optional: string[] = []
+  const required: string[] = [];
+  const optional: string[] = [];
 
-  if (!isRealImageSrc(draft?.profileImageUrl)) required.push("Profile Image")
-  if (!isMeaningfulText(draft?.businessName)) required.push("Business Name")
-  if (!isMeaningfulText(draft?.displayName)) required.push("Your Name")
-  if (!hasAnyBusinessLink(draft?.links)) required.push("Business Link")
+  if (!isRealImageSrc(draft?.profileImageUrl)) required.push("Profile Image");
+  if (!isMeaningfulText(draft?.businessName)) required.push("Business Name");
+  if (!isMeaningfulText(draft?.displayName)) required.push("Your Name");
+  if (!hasAnyBusinessLink(draft?.links)) required.push("Business Link");
 
   const merch = Array.isArray(draft?.merchTags)
     ? draft.merchTags.map((t: any) => cleanString(t)).filter(Boolean)
-    : []
-  if (merch.length === 0) required.push("Merchandise")
+    : [];
+  if (merch.length === 0) required.push("Merchandise");
 
-  if (!isGridFilled(draft?.images, 8)) required.push("Featured Image")
+  if (!isGridFilled(draft?.images, 8)) required.push("Image");
 
-  const prev = Array.isArray(draft?.previousVends) ? draft.previousVends : []
-  if (prev.length === 0) optional.push("Previous Vends")
+  const prev = Array.isArray(draft?.previousVends) ? draft.previousVends : [];
+  if (prev.length === 0) optional.push("Previous Vends");
 
-  if (!isMeaningfulText(draft?.locationText)) optional.push("Your Location")
-  if (!looksLikeRealEmail(draft?.email)) optional.push("Email Address")
+  if (!isMeaningfulText(draft?.locationText)) optional.push("Your Location");
+  if (!looksLikeRealEmail(draft?.email)) optional.push("Email Address");
 
-  return { required, optional }
+  return { required, optional };
 }
 
 function snapshotForDirtyCheck(draft: any) {
-  const bannerSwatches = Array.isArray(draft?.bannerSwatches) ? draft.bannerSwatches : []
-  const backgroundSwatches = Array.isArray(draft?.backgroundSwatches) ? draft.backgroundSwatches : []
+  const bannerSwatches = Array.isArray(draft?.bannerSwatches)
+    ? draft.bannerSwatches
+    : [];
+  const backgroundSwatches = Array.isArray(draft?.backgroundSwatches)
+    ? draft.backgroundSwatches
+    : [];
 
   return {
     template: draft?.template ?? "portrait",
@@ -187,134 +208,269 @@ function snapshotForDirtyCheck(draft: any) {
     merchTags: draft?.merchTags ?? [],
     previousVends: draft?.previousVends ?? [],
     images: Array.isArray(draft?.images) ? draft.images : [],
-  }
+    explore_enabled: !!draft?.explore_enabled,
+    thumbnail_url: draft?.thumbnail_url ?? null,
+  };
 }
 
 async function uploadBlobSrcToStorage(opts: {
-  blobSrc: string
-  konfolioId: string
-  token: string
+  blobSrc: string;
+  konfolioId: string;
+  token: string;
 }): Promise<string> {
-  const { blobSrc, konfolioId, token } = opts
+  const { blobSrc, konfolioId, token } = opts;
 
-  const blobRes = await fetch(blobSrc)
-  if (!blobRes.ok) throw new Error("Failed to read local image blob")
-  const blob = await blobRes.blob()
+  // Read the local object URL into a Blob.
+  const blobRes = await fetch(blobSrc);
+  if (!blobRes.ok) throw new Error("Failed to read local image blob");
 
-  const mime = blob.type || "application/octet-stream"
-  const ext =
-    mime === "image/png"
-      ? "png"
-      : mime === "image/jpeg"
-        ? "jpg"
-        : mime === "image/webp"
-          ? "webp"
-          : "png"
+  const blob = await blobRes.blob();
+  const contentType = blob.type === "image/jpg" ? "image/jpeg" : blob.type;
 
-  const file = new File([blob], `upload.${ext}`, { type: mime })
-  const form = new FormData()
-  form.append("file", file)
+  if (!contentType || !contentType.startsWith("image/")) {
+    throw new Error("The selected file is not a supported image.");
+  }
 
-  const upRes = await fetch(`/api/konfolios/${konfolioId}/images/upload`, {
+  // Ask the authenticated Konfolio API for a short-lived signed upload token.
+  // Only lightweight JSON goes through Vercel; the image itself does not.
+  const signedRes = await fetch(`/api/konfolios/${konfolioId}/images/upload`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    body: form,
-  })
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ contentType }),
+  });
 
-  const upJson = await upRes.json().catch(() => ({}))
-  if (!upRes.ok) throw new Error(upJson?.error ?? "Image upload failed")
+  const signedJson = await signedRes.json().catch(() => ({}));
+  if (!signedRes.ok) {
+    throw new Error(signedJson?.error ?? "Could not prepare image upload");
+  }
 
-  const imageUrl = String(upJson?.imageUrl ?? "").trim()
-  if (!imageUrl) throw new Error("Upload succeeded but no imageUrl returned")
+  const path = cleanString(signedJson?.path);
+  const uploadToken = cleanString(signedJson?.token);
+  const imageUrl = cleanString(signedJson?.imageUrl);
 
-  return imageUrl
+  if (!path || !uploadToken || !imageUrl) {
+    throw new Error(
+      "Upload preparation succeeded but returned incomplete data",
+    );
+  }
+
+  // Upload directly from the browser to Supabase Storage.
+  // This bypasses Vercel's request-body size limit.
+  const { error: uploadError } = await supabase.storage
+    .from("konfolio-images")
+    .uploadToSignedUrl(path, uploadToken, blob, {
+      contentType,
+      cacheControl: "3600",
+    });
+
+  if (uploadError) {
+    throw new Error(uploadError.message || "Image upload failed");
+  }
+
+  return imageUrl;
 }
 
 export default function PortraitEditor({ draftId, readOnly = false }: Props) {
-  const draft = useKonfolioDraftStore((s) => s.draftsById[draftId])
-  const patchDraft = useKonfolioDraftStore((s) => s.patchDraft)
+  const draft = useKonfolioDraftStore((s) => s.draftsById[draftId]);
+  const patchDraft = useKonfolioDraftStore((s) => s.patchDraft);
 
-  const [publishOpen, setPublishOpen] = useState(false)
-  const [publishStatus, setPublishStatus] = useState<"idle" | "publishing" | "success" | "error">(
-    "idle"
-  )
-  const [publishError, setPublishError] = useState("")
-  const [publishedUrl, setPublishedUrl] = useState<string>("")
-  const [publishedPortfolioName, setPublishedPortfolioName] = useState<string>("")
-  const [allowExploreSearch, setAllowExploreSearch] = useState(true)
+  const [publishOpen, setPublishOpen] = useState(false);
+  const [publishStatus, setPublishStatus] = useState<
+    "idle" | "publishing" | "success" | "error"
+  >("idle");
+  const [publishError, setPublishError] = useState("");
+  const [publishedUrl, setPublishedUrl] = useState("");
+  const [publishedPortfolioName, setPublishedPortfolioName] = useState("");
+  const [publishedThumbnailUrl, setPublishedThumbnailUrl] = useState<
+    string | null
+  >(null);
+  const [allowExploreSearch, setAllowExploreSearch] = useState<boolean>(false);
+  const [isTogglingExploreSearch, setIsTogglingExploreSearch] = useState(false);
+  const [mobileProfileExpanded, setMobileProfileExpanded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const [savedSnapshot, setSavedSnapshot] = useState<string>("")
+  const [savedSnapshot, setSavedSnapshot] = useState("");
 
-  const [missingOpen, setMissingOpen] = useState(false)
-  const [missingRequired, setMissingRequired] = useState<string[]>([])
-  const [missingOptional, setMissingOptional] = useState<string[]>([])
-
-  if (!draft || draft.template !== "portrait") return null
+  const [missingOpen, setMissingOpen] = useState(false);
+  const [missingRequired, setMissingRequired] = useState<string[]>([]);
+  const [missingOptional, setMissingOptional] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!draft) return
-    if (savedSnapshot) return
-    setSavedSnapshot(JSON.stringify(snapshotForDirtyCheck(draft)))
+    const handleResize = () => {
+      const nextIsMobile = window.innerWidth < 850;
+      setIsMobile(nextIsMobile);
+
+      if (!nextIsMobile) {
+        setMobileProfileExpanded(false);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (!draft) return;
+    setAllowExploreSearch(!!draft.explore_enabled);
+  }, [draft?.explore_enabled, draft]);
+
+  useEffect(() => {
+    if (!draft) return;
+    if (savedSnapshot) return;
+    setSavedSnapshot(JSON.stringify(snapshotForDirtyCheck(draft)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [draftId, !!draft])
+  }, [draftId, !!draft]);
 
-  const currentSnapshot = useMemo(() => JSON.stringify(snapshotForDirtyCheck(draft)), [draft])
-  const hasUnsavedChanges = Boolean(savedSnapshot) && currentSnapshot !== savedSnapshot
+  const currentSnapshot = useMemo(
+    () => JSON.stringify(snapshotForDirtyCheck(draft)),
+    [draft],
+  );
+  const hasUnsavedChanges =
+    Boolean(savedSnapshot) && currentSnapshot !== savedSnapshot;
 
-  const bannerSwatches = Array.isArray((draft as any).bannerSwatches) ? (draft as any).bannerSwatches : []
-  const backgroundSwatches = Array.isArray((draft as any).backgroundSwatches)
-    ? (draft as any).backgroundSwatches
-    : []
+  const bannerSwatches = Array.isArray(draft?.bannerSwatches)
+    ? draft.bannerSwatches
+    : [];
+  const backgroundSwatches = Array.isArray(draft?.backgroundSwatches)
+    ? draft.backgroundSwatches
+    : [];
+  const backgroundIsDark = isDarkHexColor(draft?.backgroundColor);
 
   const liveUrl = useMemo(() => {
-    if (publishedUrl) return publishedUrl
-    if (typeof window === "undefined") return `/my-portfolios/${draftId}/preview`
-    return `${window.location.origin}/my-portfolios/${draftId}/preview`
-  }, [publishedUrl, draftId])
+    if (publishedUrl) return publishedUrl;
+    if (typeof window === "undefined")
+      return `/my-portfolios/${draftId}/preview`;
+    return `${window.location.origin}/my-portfolios/${draftId}/preview`;
+  }, [publishedUrl, draftId]);
 
-  const exitGuardEnabled = !readOnly && (draft.status === "draft" || hasUnsavedChanges)
+  const exitGuardEnabled =
+    !readOnly && !!draft && (draft.status === "draft" || hasUnsavedChanges);
 
-  async function handlePublish() {
-    if (readOnly) return
+  async function handleToggleExploreSearch(next: boolean) {
+    if (isTogglingExploreSearch || readOnly) return;
 
-    setPublishOpen(true)
-    setPublishStatus("publishing")
-    setPublishError("")
-    setPublishedUrl("")
+    const prev = allowExploreSearch;
 
-    const initialName =
-      cleanString((draft as any).portfolioName ?? (draft as any).portfolio_name) ||
-      cleanString(draft.displayName) ||
-      "Portfolio"
-    setPublishedPortfolioName(initialName)
+    setAllowExploreSearch(next);
+    patchDraft(draftId, { explore_enabled: next });
+    setIsTogglingExploreSearch(true);
 
     try {
-      const token = await getAccessToken()
+      const token = await getAccessToken();
+      if (!token)
+        throw new Error("You must be signed in to update this setting.");
+
+      const res = await fetch(`/api/konfolios/${draftId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          explore_enabled: next,
+        }),
+      });
+
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(json?.error ?? "Failed to update explore setting.");
+      }
+    } catch (e) {
+      console.error("[EXPLORE TOGGLE] Failed:", e);
+      setAllowExploreSearch(prev);
+      patchDraft(draftId, { explore_enabled: prev });
+    } finally {
+      setIsTogglingExploreSearch(false);
+    }
+  }
+
+  async function handleExport(type: ExportType) {
+    const imageUrl =
+      cleanString(publishedThumbnailUrl) ||
+      cleanString((draft as any)?.thumbnail_url) ||
+      cleanString((draft as any)?.thumbnailUrl);
+
+    if (!imageUrl) {
+      alert("No thumbnail available for export yet.");
+      return;
+    }
+
+    const portfolioName =
+      publishedPortfolioName ||
+      cleanString(
+        (draft as any)?.portfolioName ?? (draft as any)?.portfolio_name,
+      ) ||
+      cleanString(draft?.displayName) ||
+      "Portfolio";
+
+    try {
+      await exportFromImageUrl({
+        imageUrl,
+        format: type,
+        portfolioName,
+      });
+    } catch (error) {
+      console.error("Export failed:", error);
+      alert("Export failed. Please try again.");
+    }
+  }
+
+  async function handlePublish() {
+    if (readOnly || !draft) return;
+
+    setPublishOpen(true);
+    setPublishStatus("publishing");
+    setPublishError("");
+    setPublishedUrl("");
+    setPublishedThumbnailUrl(null);
+
+    const initialName =
+      cleanString(
+        (draft as any).portfolioName ?? (draft as any).portfolio_name,
+      ) ||
+      cleanString(draft.displayName) ||
+      "Portfolio";
+    setPublishedPortfolioName(initialName);
+
+    try {
+      const token = await getAccessToken();
       if (!token) {
-        setPublishStatus("error")
-        setPublishError("You must be signed in to publish.")
-        return
+        setPublishStatus("error");
+        setPublishError("You must be signed in to publish.");
+        return;
       }
 
-      const images = Array.isArray(draft.images) ? [...(draft.images as any[])] : []
+      const images = Array.isArray(draft.images) ? [...draft.images] : [];
       for (let i = 0; i < images.length; i++) {
-        const src = cleanString(images[i]?.src)
+        const src = cleanString(images[i]?.src);
         if (src.startsWith("blob:")) {
-          const imageUrl = await uploadBlobSrcToStorage({ blobSrc: src, konfolioId: draftId, token })
-          images[i] = { ...images[i], src: imageUrl }
+          const imageUrl = await uploadBlobSrcToStorage({
+            blobSrc: src,
+            konfolioId: draftId,
+            token,
+          });
+          images[i] = { ...images[i], src: imageUrl };
         }
       }
 
-      let profileImageUrl = cleanString(draft.profileImageUrl)
+      let profileImageUrl = cleanString(draft.profileImageUrl);
       if (profileImageUrl.startsWith("blob:")) {
         profileImageUrl = await uploadBlobSrcToStorage({
           blobSrc: profileImageUrl,
           konfolioId: draftId,
           token,
-        })
+        });
       }
 
-      patchDraft(draftId, { images, profileImageUrl } as any)
+      patchDraft(draftId, {
+        images,
+        profileImageUrl,
+        explore_enabled: allowExploreSearch,
+      });
 
       const content = {
         bannerColor: draft.bannerColor,
@@ -330,19 +486,26 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
         merchTags: draft.merchTags,
         previousVends: draft.previousVends,
         images: images.slice(0, 8),
-      }
+      };
 
       const saveRes = await fetch(`/api/konfolios/${draftId}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ template: draft.template, content }),
-      })
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          template: draft.template,
+          content,
+          explore_enabled: allowExploreSearch,
+        }),
+      });
 
-      const saveJson = await saveRes.json().catch(() => ({}))
+      const saveJson = await saveRes.json().catch(() => ({}));
       if (!saveRes.ok) {
-        setPublishStatus("error")
-        setPublishError(saveJson?.error ?? "Save failed.")
-        return
+        setPublishStatus("error");
+        setPublishError(saveJson?.error ?? "Save failed.");
+        return;
       }
 
       setSavedSnapshot(
@@ -352,149 +515,236 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
             ...content,
             images: content.images,
             profileImageUrl,
-          })
-        )
-      )
+            explore_enabled: allowExploreSearch,
+          }),
+        ),
+      );
 
       const pubRes = await fetch(`/api/konfolios/${draftId}/publish`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
-      })
+      });
 
-      const pubJson = await pubRes.json().catch(() => ({}))
+      const pubJson = await pubRes.json().catch(() => ({}));
       if (!pubRes.ok) {
-        setPublishStatus("error")
-        setPublishError(pubJson?.error ?? "Publish failed.")
-        return
+        setPublishStatus("error");
+        setPublishError(pubJson?.error ?? "Publish failed.");
+        return;
       }
 
       const getRes = await fetch(`/api/konfolios/${draftId}`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
-      })
-      const getJson = await getRes.json().catch(() => ({}))
+      });
+      const getJson = await getRes.json().catch(() => ({}));
 
-      const portfolioNameFromDb = cleanString(getJson?.portfolioName ?? getJson?.portfolio_name)
+      const portfolioNameFromDb = cleanString(
+        getJson?.portfolioName ?? getJson?.portfolio_name,
+      );
+      setPublishedPortfolioName(portfolioNameFromDb || initialName);
 
-      const portfolioSlug =
-        cleanString(getJson?.portfolioSlug ?? getJson?.portfolio_slug) ||
-        slugify(portfolioNameFromDb) ||
-        slugify(cleanString(draft.displayName)) ||
-        "portfolio"
+      const origin =
+        typeof window === "undefined" ? "" : window.location.origin;
+      const backendViewUrl = cleanString(pubJson?.viewUrl);
+      const backendPublicUrl = cleanString(pubJson?.publicUrl);
+      const fallbackViewUrl = `${origin}/explore/${draftId}`;
 
-      setPublishedPortfolioName(portfolioNameFromDb || initialName)
+      const safeBackendPublicUrl =
+        backendPublicUrl.includes(`/explore/${draftId}`) &&
+        !backendPublicUrl.includes("thumbnail=1")
+          ? backendPublicUrl
+          : "";
 
-      const businessSlug = slugify(cleanString((content as any).businessName)) || "business"
-      const origin = typeof window === "undefined" ? "" : window.location.origin
-      setPublishedUrl(`${origin}/${businessSlug}/${portfolioSlug}`)
+      setPublishedUrl(
+        backendViewUrl || safeBackendPublicUrl || fallbackViewUrl,
+      );
 
-      patchDraft(draftId, { status: "published" } as any)
-      setPublishStatus("success")
-      console.log("[PUBLISH] Success:", pubJson)
+      const nextExploreEnabled =
+        typeof getJson?.exploreEnabled === "boolean"
+          ? getJson.exploreEnabled
+          : typeof getJson?.explore_enabled === "boolean"
+            ? getJson.explore_enabled
+            : true;
+
+      const nextThumbnailUrl =
+        cleanString(pubJson?.thumbnailUrl) ||
+        cleanString(getJson?.thumbnailUrl) ||
+        cleanString(getJson?.thumbnail_url) ||
+        null;
+
+      setPublishedThumbnailUrl(nextThumbnailUrl);
+
+      patchDraft(draftId, {
+        status: "published",
+        explore_enabled: nextExploreEnabled,
+        thumbnail_url: nextThumbnailUrl,
+      });
+
+      setPublishStatus("success");
+      console.log("[PUBLISH] Success:", pubJson);
     } catch (e: any) {
-      setPublishStatus("error")
-      setPublishError(e?.message ?? "Publish failed.")
+      setPublishStatus("error");
+      setPublishError(e?.message ?? "Publish failed.");
     }
   }
 
   const onPressPublishWithValidation = useCallback(() => {
-    if (readOnly) return
+    if (readOnly || !draft) return;
 
-    const missing = computeMissingLabelsPortrait(draft)
+    const missing = computeMissingLabelsPortrait(draft);
 
-    const hasRequired = missing.required.length > 0
-    const hasOptional = missing.optional.length > 0
+    const hasRequired = missing.required.length > 0;
+    const hasOptional = missing.optional.length > 0;
 
     if (hasRequired || hasOptional) {
-      setMissingRequired(missing.required)
-      setMissingOptional(missing.optional)
-      setMissingOpen(true)
-      return
+      setMissingRequired(missing.required);
+      setMissingOptional(missing.optional);
+      setMissingOpen(true);
+      return;
     }
 
-    void handlePublish()
-  }, [draft, readOnly])
+    void handlePublish();
+  }, [draft, readOnly, allowExploreSearch]);
 
   useEffect(() => {
-    if (readOnly) return
-
-    ;(window as any).__konfolio_attempt_publish = () => {
-      onPressPublishWithValidation()
-    }
+    if (readOnly) return;
+    (window as any).__konfolio_attempt_publish = () => {
+      onPressPublishWithValidation();
+    };
 
     return () => {
       try {
-        delete (window as any).__konfolio_attempt_publish
+        delete (window as any).__konfolio_attempt_publish;
       } catch {}
-    }
-  }, [onPressPublishWithValidation, readOnly])
+    };
+  }, [onPressPublishWithValidation, readOnly]);
+
+  if (!draft || draft.template !== "portrait") return null;
 
   const isOptionalOnlyMode =
-    !readOnly && missingOpen && missingRequired.length === 0 && missingOptional.length > 0
+    !readOnly &&
+    missingOpen &&
+    missingRequired.length === 0 &&
+    missingOptional.length > 0;
+
+  const profileProps = {
+    backHref: "/my-portfolios",
+    bannerColor: draft.bannerColor,
+    backgroundColor: draft.backgroundColor,
+    backgroundIsDark,
+    bannerSwatches,
+    backgroundSwatches,
+    profileImageUrl: draft.profileImageUrl,
+    businessName: draft.businessName,
+    displayName: draft.displayName,
+    locationText: draft.locationText,
+    email: draft.email,
+    linksValue: draft.links,
+    merchTags: draft.merchTags,
+    publishLabel: readOnly ? "" : "Publish",
+  };
 
   const content = (
-    <main className="w-full min-h-[982px]" style={{ backgroundColor: draft.backgroundColor }}>
-      <div className="w-full px-[25px] sm:px-10 lg:px-[150px]">
-        <div className="mx-auto max-w-[1512px]">
-          <div className="flex flex-col items-center">
-            <EditPortraitProfile
-              editable={!readOnly}
-              backHref="/my-portfolios"
-              onBack={() => {
-                if (readOnly) {
-                  const editHref = `/my-portfolios/${draftId}/edit`
-                  if (typeof window === "undefined") return
-                  if (window.history.length > 1) window.history.back()
-                  else window.location.href = editHref
-                  return
-                }
+    <main
+      className="w-full min-h-screen overflow-x-hidden"
+      style={{ backgroundColor: draft.backgroundColor }}
+    >
+      <div className="w-full px-0 py-0">
+        <div className="mx-auto w-full max-w-[1512px]">
+          {readOnly ? (
+            <div className="flex w-full flex-col items-center justify-center gap-[20px]">
+              <EditPortraitProfile
+                editable={false}
+                mobileCollapsed={isMobile}
+                mobileExpanded={mobileProfileExpanded}
+                onToggleMobile={() => setMobileProfileExpanded((v) => !v)}
+                previousVends={draft.previousVends}
+                showAddLink={false}
+                {...profileProps}
+              />
 
-                const fn = (window as any).__konfolio_attempt_exit
-                if (typeof fn === "function") {
-                  fn("/my-portfolios")
-                  return
+              <div className="w-full px-0 min-[851px]:px-[16px] min-[851px]:sm:px-6 min-[851px]:md:px-10 min-[851px]:lg:px-[80px] min-[851px]:xl:px-[120px]">
+                <EditPortraitImageGrid
+                  editable={false}
+                  backgroundIsDark={backgroundIsDark}
+                  images={draft.images}
+                  previousVends={draft.previousVends}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="flex w-full flex-col items-center justify-center gap-[20px]">
+              <EditPortraitProfile
+                editable={true}
+                mobileCollapsed={isMobile}
+                mobileExpanded={mobileProfileExpanded}
+                onToggleMobile={() => setMobileProfileExpanded((v) => !v)}
+                previousVends={draft.previousVends}
+                onChangePreviousVends={(vals) =>
+                  patchDraft(draftId, { previousVends: vals })
                 }
-                window.location.href = "/my-portfolios"
-              }}
-              bannerColor={draft.bannerColor}
-              backgroundColor={draft.backgroundColor}
-              onChangeBannerColor={readOnly ? undefined : (hex) => patchDraft(draftId, { bannerColor: hex })}
-              onChangeBackgroundColor={readOnly ? undefined : (hex) => patchDraft(draftId, { backgroundColor: hex })}
-              bannerSwatches={bannerSwatches}
-              backgroundSwatches={backgroundSwatches}
-              onChangeBannerSwatches={readOnly ? undefined : (next) => patchDraft(draftId, { bannerSwatches: next } as any)}
-              onChangeBackgroundSwatches={readOnly ? undefined : (next) => patchDraft(draftId, { backgroundSwatches: next } as any)}
-              profileImageUrl={draft.profileImageUrl}
-              onChangeProfileImage={readOnly ? undefined : (_file, objectUrl) => patchDraft(draftId, { profileImageUrl: objectUrl })}
-              businessName={draft.businessName}
-              onChangeBusinessName={readOnly ? undefined : (val) => patchDraft(draftId, { businessName: val })}
-              displayName={draft.displayName}
-              onChangeDisplayName={readOnly ? undefined : (val) => patchDraft(draftId, { displayName: val })}
-              locationText={draft.locationText}
-              onChangeLocationText={readOnly ? undefined : (val) => patchDraft(draftId, { locationText: val })}
-              email={draft.email}
-              onChangeEmail={readOnly ? undefined : (val) => patchDraft(draftId, { email: val })}
-              linksValue={draft.links}
-              onChangeLinks={readOnly ? undefined : (next) => patchDraft(draftId, { links: next } as any)}
-              merchTags={draft.merchTags}
-              onChangeMerchTags={readOnly ? undefined : (next) => patchDraft(draftId, { merchTags: next } as any)}
-              publishLabel={readOnly ? "" : "Publish"}
-              onPublish={readOnly ? undefined : () => onPressPublishWithValidation()}
-              onOpenPreview={
-                readOnly
-                  ? undefined
-                  : () => window.open(`/my-portfolios/${draftId}/preview`, "_blank", "noopener,noreferrer")
-              }
-            />
+                onBack={() => {
+                  const fn = (window as any).__konfolio_attempt_exit;
+                  if (typeof fn === "function") {
+                    fn("/my-portfolios");
+                    return;
+                  }
+                  window.location.href = "/my-portfolios";
+                }}
+                onChangeBannerColor={(hex) =>
+                  patchDraft(draftId, { bannerColor: hex })
+                }
+                onChangeBackgroundColor={(hex) =>
+                  patchDraft(draftId, { backgroundColor: hex })
+                }
+                onChangeBannerSwatches={(next) =>
+                  patchDraft(draftId, { bannerSwatches: next })
+                }
+                onChangeBackgroundSwatches={(next) =>
+                  patchDraft(draftId, { backgroundSwatches: next })
+                }
+                onChangeProfileImage={(_file, objectUrl) =>
+                  patchDraft(draftId, { profileImageUrl: objectUrl })
+                }
+                onChangeBusinessName={(val) =>
+                  patchDraft(draftId, { businessName: val })
+                }
+                onChangeDisplayName={(val) =>
+                  patchDraft(draftId, { displayName: val })
+                }
+                onChangeLocationText={(val) =>
+                  patchDraft(draftId, { locationText: val })
+                }
+                onChangeEmail={(val) => patchDraft(draftId, { email: val })}
+                onChangeLinks={(next) => patchDraft(draftId, { links: next })}
+                onChangeMerchTags={(next) =>
+                  patchDraft(draftId, { merchTags: next })
+                }
+                onPublish={() => onPressPublishWithValidation()}
+                onOpenPreview={() =>
+                  window.open(
+                    `/my-portfolios/${draftId}/preview`,
+                    "_blank",
+                    "noopener,noreferrer",
+                  )
+                }
+                {...profileProps}
+              />
 
-            <EditPortraitImageGrid
-              editable={!readOnly}
-              images={draft.images as any}
-              onChangeImages={readOnly ? undefined : (images) => patchDraft(draftId, { images } as any)}
-              previousVendsValue={(draft.previousVends ?? []).join(" | ")}
-              onChangePreviousVends={readOnly ? undefined : (vals) => patchDraft(draftId, { previousVends: vals } as any)}
-            />
-          </div>
+              <div className="w-full px-[16px] sm:px-6 md:px-10 lg:px-[80px] xl:px-[120px]">
+                <EditPortraitImageGrid
+                  editable={true}
+                  backgroundIsDark={backgroundIsDark}
+                  images={draft.images}
+                  onChangeImages={(images) => patchDraft(draftId, { images })}
+                  previousVends={draft.previousVends}
+                  onChangePreviousVends={(vals) =>
+                    patchDraft(draftId, { previousVends: vals })
+                  }
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -509,8 +759,8 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
             onPublishAnyway={
               isOptionalOnlyMode
                 ? () => {
-                    setMissingOpen(false)
-                    void handlePublish()
+                    setMissingOpen(false);
+                    void handlePublish();
                   }
                 : undefined
             }
@@ -519,15 +769,27 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
           <PublishPopover
             open={publishOpen}
             onClose={() => {
-              setPublishOpen(false)
-              setPublishStatus("idle")
-              setPublishError("")
+              setPublishOpen(false);
+              setPublishStatus("idle");
+              setPublishError("");
             }}
-            portfolioName={publishedPortfolioName || cleanString(draft.displayName) || "Portfolio"}
+            portfolioName={
+              publishedPortfolioName ||
+              cleanString(draft.displayName) ||
+              "Portfolio"
+            }
             liveUrl={liveUrl}
-            onExport={() => {}}
+            onExport={handleExport}
+            thumbnailUrl={
+              publishedThumbnailUrl ||
+              cleanString(
+                (draft as any).thumbnail_url ?? (draft as any).thumbnailUrl,
+              ) ||
+              null
+            }
             allowExploreSearch={allowExploreSearch}
-            onToggleExploreSearch={(next) => setAllowExploreSearch(next)}
+            onToggleExploreSearch={handleToggleExploreSearch}
+            isTogglingExploreSearch={isTogglingExploreSearch}
             onGoToExplore={() => window.open("/explore", "_blank")}
             status={publishStatus}
             errorMessage={publishError}
@@ -535,13 +797,17 @@ export default function PortraitEditor({ draftId, readOnly = false }: Props) {
         </>
       )}
     </main>
-  )
+  );
 
-  if (readOnly) return content
+  if (readOnly) return content;
 
   return (
-    <KonfolioExitGuard enabled={exitGuardEnabled} draftId={draftId} backHref="/my-portfolios">
+    <KonfolioExitGuard
+      enabled={exitGuardEnabled}
+      draftId={draftId}
+      backHref="/my-portfolios"
+    >
       {content}
     </KonfolioExitGuard>
-  )
+  );
 }

@@ -2,6 +2,7 @@
 import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
+  
   images: {
     remotePatterns: [
       {
@@ -9,6 +10,14 @@ const nextConfig: NextConfig = {
         hostname: "jhocsvjoqsncizdsmyol.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
+    ],
+  },
+
+  serverExternalPackages: ["ws","@sparticuz/chromium", "puppeteer-core"],
+
+  outputFileTracingIncludes: {
+    "/api/konfolios/[id]/publish": [
+      "./node_modules/@sparticuz/chromium/bin/**/*",
     ],
   },
 }

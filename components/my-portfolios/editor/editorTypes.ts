@@ -1,4 +1,5 @@
 import type { LinkPickerValue } from "@/components/my-portfolios/LinkPicker"
+import type { ImageEdits } from "@/components/my-portfolios/EditImagePopover"
 
 export type TemplateType = "square" | "portrait"
 
@@ -7,6 +8,8 @@ export type SquareCell = {
   src?: string
   title?: string
   description?: string
+  href?: string
+  edits?: ImageEdits
 }
 
 export type PortraitCell = {
@@ -14,6 +17,8 @@ export type PortraitCell = {
   src?: string
   title?: string
   description?: string
+  href?: string
+  edits?: ImageEdits
 }
 
 export type BaseDraft = {
@@ -21,6 +26,10 @@ export type BaseDraft = {
   template: TemplateType
   status: "draft" | "published"
   updatedAt: number
+  explore_enabled?: boolean
+  thumbnail_url?: string | null
+  showLocation?: boolean
+  showEmail?: boolean
 }
 
 export type SquareDraft = BaseDraft & {
@@ -62,7 +71,7 @@ export type PortraitDraft = BaseDraft & {
   merchTags: string[]
   previousVends: string[]
 
-  images: PortraitCell[] // 8 cells
+  images: PortraitCell[]
 }
 
 export type KonfolioDraft = SquareDraft | PortraitDraft

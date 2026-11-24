@@ -1,35 +1,66 @@
-"use client"
+import { notFound } from "next/navigation"
+import { createSupabaseServerClient } from "@/lib/supabase/server"
+import PublicKonfolioView from "@/components/public/PublicKonfolioView"
 
-import ProfileSidebar from "@/components/featured/ProfileSidebar"
-import ImageGrid from "@/components/featured/ImageGrid"
+export const dynamic = "force-dynamic"
 
-export default function MockPortfolioPage() {
+function isValidUuid(value: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    value
+  )
+}
+
+export default async function PortfolioPage({
+  params,
+}: {
+  params: Promise<{ portfolioId: string }>
+}) {
+  const { portfolioId } = await params
+  const supabase = await createSupabaseServerClient()
+
+  const cleanPortfolioId = decodeURIComponent(portfolioId).trim()
+
+  let portfolioQuery = supabase
+    .from("konfolios")
+    .select("id, user_id, template, content, portfolio_name, portfolio_slug")
+    .eq("status", "published")
+    .eq("explore_enabled", true)
+
+  if (isValidUuid(cleanPortfolioId)) {
+    portfolioQuery = portfolioQuery.eq("id", cleanPortfolioId)
+  } else {
+    portfolioQuery = portfolioQuery.eq("portfolio_slug", cleanPortfolioId)
+  }
+
+  const { data: portfolio, error: portfolioError } =
+    await portfolioQuery.maybeSingle()
+
+  if (portfolioError) {
+    console.error("Portfolio query error:", portfolioError)
+    notFound()
+  }
+
+  if (!portfolio) {
+    console.error("Portfolio not found for:", cleanPortfolioId)
+    notFound()
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("business_name")
+    .eq("id", portfolio.user_id)
+    .maybeSingle()
+
+  if (profileError) {
+    console.error("Portfolio profile query error:", profileError)
+  }
+
   return (
-    <main className="w-full min-h-[982px] bg-[#F7F7F7]">
-      {/* Figma header uses 150px side padding; match that for this template */}
-      <div className="w-full px-[25px] sm:px-10 lg:px-[150px]">
-        <div className="mx-auto max-w-[1512px]">
-          {/* Template row */}
-          <div className="flex items-start justify-center gap-[20px]">
-            <ProfileSidebar
-              businessName="Business Name"
-              displayName="Name"
-              profileImageUrl="" // blank => no image
-              merchTags={["Tag", "Tag"]}
-              previousVends={[{ name: "Vended Event", year: "2026" }]}
-              locationText="City, State"
-              email="myemailaddress@konfolio.com"
-              links={{
-                instagram: "https://instagram.com",
-                x: "https://x.com",
-                // only these two icons will render
-              }}
-            />
-
-            <ImageGrid />
-          </div>
-        </div>
-      </div>
-    </main>
+    <PublicKonfolioView
+      konfolioId={portfolio.id}
+      template={portfolio.template === "portrait" ? "portrait" : "square"}
+      content={portfolio.content ?? {}}
+      ownerBusinessName={profile?.business_name ?? ""}
+    />
   )
 }

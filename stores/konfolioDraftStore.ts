@@ -1,4 +1,3 @@
-// stores/konfolioDraftStore.ts
 "use client"
 
 import { create } from "zustand"
@@ -39,6 +38,7 @@ export const useKonfolioDraftStore = create<State>()(
       initDraftIfMissing: (draft) => {
         set((s) => {
           if (s.draftsById[draft.id]) return s
+
           return {
             ...s,
             draftsById: {
@@ -64,12 +64,12 @@ export const useKonfolioDraftStore = create<State>()(
           const cur = s.draftsById[id]
           if (!cur) return s
 
-          const next = {
+          const next: KonfolioDraft = {
             ...cur,
             ...patch,
             template: cur.template,
             updatedAt: Date.now(),
-          } as KonfolioDraft
+          }
 
           return {
             ...s,
@@ -85,7 +85,10 @@ export const useKonfolioDraftStore = create<State>()(
         set((s) => {
           const next = { ...s.draftsById }
           delete next[id]
-          return { ...s, draftsById: next }
+          return {
+            ...s,
+            draftsById: next,
+          }
         })
       },
     }),

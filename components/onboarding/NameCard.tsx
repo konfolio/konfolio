@@ -1,25 +1,26 @@
-"use client"
+"use client";
 
-import { useMemo } from "react"
-import PrimaryButton from "@/components/buttons/PrimaryButton"
-import CheckIcon from "@/components/icons/CheckIcon"
-import ArrowLeft from "@/components/icons/ArrowLeft"
-import OnboardingField from "@/components/onboarding/OnboardingField"
-import { inknut } from "@/app/fonts"
-import { useOnboardingDraft, type Mode } from "@/stores/onboardingDraft"
+import { useMemo } from "react";
+import PrimaryButton from "@/components/buttons/PrimaryButton";
+import CheckIcon from "@/components/icons/CheckIcon";
+import ArrowLeft from "@/components/icons/ArrowLeft";
+import OnboardingField from "@/components/onboarding/OnboardingField";
+import { inknut } from "@/app/fonts";
+import { useOnboardingDraft, type Mode } from "@/stores/onboardingDraft";
+import Link from "next/link";
 
 type Props = {
-  mode: Mode
-  backHref: string
-  onNextHref: string
-}
+  mode: Mode;
+  backHref: string;
+  onNextHref: string;
+};
 
 function TermsRow({
   checked,
   onCheckedChange,
 }: {
-  checked: boolean
-  onCheckedChange: (v: boolean) => void
+  checked: boolean;
+  onCheckedChange: (v: boolean) => void;
 }) {
   return (
     <label className="w-[426px] h-[23px] flex items-center gap-[7px] py-[5px] cursor-pointer select-none">
@@ -58,26 +59,35 @@ function TermsRow({
       {/* Only "Terms of Service" should be black + italic + underline */}
       <span className="flex-1 font-inter text-[12px] leading-[140%] text-[#A5A5A5]">
         I accept and agree to the{" "}
-        <span className="text-black italic underline">Terms of Service</span> of Konfolio.
+        <span className="text-black italic underline">
+          <Link
+            href="/terms-of-service"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Terms of Service
+          </Link>
+        </span>
+        of Konfolio.
       </span>
     </label>
-  )
+  );
 }
 
 export default function NameCard({ mode, backHref, onNextHref }: Props) {
   // Zustand state
-  const firstName = useOnboardingDraft((s) => s.firstName)
-  const lastName = useOnboardingDraft((s) => s.lastName)
-  const preferredName = useOnboardingDraft((s) => s.preferredName)
-  const organization = useOnboardingDraft((s) => s.organization)
-  const acceptedTerms = useOnboardingDraft((s) => s.acceptedTerms)
+  const firstName = useOnboardingDraft((s) => s.firstName);
+  const lastName = useOnboardingDraft((s) => s.lastName);
+  const preferredName = useOnboardingDraft((s) => s.preferredName);
+  const organization = useOnboardingDraft((s) => s.organization);
+  const acceptedTerms = useOnboardingDraft((s) => s.acceptedTerms);
 
   // Zustand setters
-  const setFirstName = useOnboardingDraft((s) => s.setFirstName)
-  const setLastName = useOnboardingDraft((s) => s.setLastName)
-  const setPreferredName = useOnboardingDraft((s) => s.setPreferredName)
-  const setOrganization = useOnboardingDraft((s) => s.setOrganization)
-  const setAcceptedTerms = useOnboardingDraft((s) => s.setAcceptedTerms)
+  const setFirstName = useOnboardingDraft((s) => s.setFirstName);
+  const setLastName = useOnboardingDraft((s) => s.setLastName);
+  const setPreferredName = useOnboardingDraft((s) => s.setPreferredName);
+  const setOrganization = useOnboardingDraft((s) => s.setOrganization);
+  const setAcceptedTerms = useOnboardingDraft((s) => s.setAcceptedTerms);
 
   const thirdField = useMemo(() => {
     if (mode === "artist") {
@@ -88,7 +98,7 @@ export default function NameCard({ mode, backHref, onNextHref }: Props) {
           value={preferredName}
           onChange={setPreferredName}
         />
-      )
+      );
     }
 
     return (
@@ -97,14 +107,14 @@ export default function NameCard({ mode, backHref, onNextHref }: Props) {
         value={organization}
         onChange={setOrganization}
       />
-    )
-  }, [mode, organization, preferredName, setOrganization, setPreferredName])
+    );
+  }, [mode, organization, preferredName, setOrganization, setPreferredName]);
 
   const canContinue =
     firstName.trim() !== "" &&
     lastName.trim() !== "" &&
     (mode === "artist" ? true : organization.trim() !== "") &&
-    acceptedTerms
+    acceptedTerms;
 
   return (
     <div
@@ -143,8 +153,16 @@ export default function NameCard({ mode, backHref, onNextHref }: Props) {
 
       {/* Middle block (shifted up) */}
       <div className="w-[426px] flex flex-col items-center gap-[22px] mt-[50px]">
-        <OnboardingField label="First Name" value={firstName} onChange={setFirstName} />
-        <OnboardingField label="Last Name" value={lastName} onChange={setLastName} />
+        <OnboardingField
+          label="First Name"
+          value={firstName}
+          onChange={setFirstName}
+        />
+        <OnboardingField
+          label="Last Name"
+          value={lastName}
+          onChange={setLastName}
+        />
         {thirdField}
         <TermsRow checked={acceptedTerms} onCheckedChange={setAcceptedTerms} />
       </div>
@@ -159,5 +177,5 @@ export default function NameCard({ mode, backHref, onNextHref }: Props) {
         </PrimaryButton>
       </div>
     </div>
-  )
+  );
 }

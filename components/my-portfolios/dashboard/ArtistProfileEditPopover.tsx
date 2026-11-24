@@ -1,84 +1,81 @@
 // /components/my-portfolios/dashboard/ArtistProfileEditPopover.tsx
-"use client"
+"use client";
 
-import { useEffect, useRef, useState } from "react"
-import type React from "react"
-import useClickOutside from "@/components/hooks/useClickOutside"
-import { supabase } from "@/lib/supabase/browser"
-import { useRouter } from "next/navigation"
+import { useEffect, useRef, useState } from "react";
+import type React from "react";
+import useClickOutside from "@/components/hooks/useClickOutside";
+import { supabase } from "@/lib/supabase/browser";
+import { useRouter } from "next/navigation";
 
-import DeleteIcon from "@/components/icons/DeleteIcon"
-import PlusIcon from "@/components/icons/PlusIcon"
-import LocationIcon from "@/components/icons/LocationIcon"
-import LinkIcon from "@/components/icons/LinkIcon"
-import CheckIcon from "@/components/icons/CheckIcon"
+import DeleteIcon from "@/components/icons/DeleteIcon";
+import PlusIcon from "@/components/icons/PlusIcon";
+import LocationIcon from "@/components/icons/LocationIcon";
+import LinkIcon from "@/components/icons/LinkIcon";
+import CheckIcon from "@/components/icons/CheckIcon";
 
-import PencilIcon from "@/components/icons/PencilIcon"
-import TrashIcon from "@/components/icons/TrashIcon"
+import PencilIcon from "@/components/icons/PencilIcon";
+import TrashIcon from "@/components/icons/TrashIcon";
 
-import HomeIcon from "@/components/icons/HomeIcon"
-import ShopIcon from "@/components/icons/ShopIcon"
-import InstagramIcon from "@/components/icons/InstagramIcon"
-import XIcon from "@/components/icons/XIcon"
-import FacebookIcon from "@/components/icons/FacebookIcon"
-import TumblrIcon from "@/components/icons/TumblrIcon"
-import PixivIcon from "@/components/icons/PixivIcon"
-import BlueskyIcon from "@/components/icons/BlueskyIcon"
+import HomeIcon from "@/components/icons/HomeIcon";
+import ShopIcon from "@/components/icons/ShopIcon";
+import InstagramIcon from "@/components/icons/InstagramIcon";
+import XIcon from "@/components/icons/XIcon";
+import FacebookIcon from "@/components/icons/FacebookIcon";
+import TumblrIcon from "@/components/icons/TumblrIcon";
+import PixivIcon from "@/components/icons/PixivIcon";
+import BlueskyIcon from "@/components/icons/BlueskyIcon";
 
-import Tag from "@/components/onboarding/Tag"
-import MerchTagPicker from "@/components/my-portfolios/MerchTagPicker"
+import Tag from "@/components/onboarding/Tag";
+import MerchTagPicker from "@/components/my-portfolios/MerchTagPicker";
 
 export type ArtistProfilePopupData = {
-  noticeText?: string
-  profileImageUrl?: string
-  businessName?: string
-  locationText?: string
-  firstName?: string
-  lastName?: string
-  preferredName?: string
-  formsFilled?: number
-  visitors?: number
-  exploreTags?: { label: string; checked: boolean }[]
-  merchTags?: string[]
-  previousVends?: string[]
-  betaText?: string
-}
+  noticeText?: string;
+  profileImageUrl?: string;
+  businessName?: string;
+  locationText?: string;
+  firstName?: string;
+  lastName?: string;
+  preferredName?: string;
+  formsFilled?: number;
+  visitors?: number;
+  exploreTags?: { label: string; checked: boolean }[];
+  merchTags?: string[];
+  previousVends?: string[];
+  betaText?: string;
+};
 
 type SavedProfilePatch = {
-  first_name: string | null
-  last_name: string | null
-  preferred_name: string | null
-  business_name: string | null
-  profile_image_url: string | null
-}
+  first_name: string | null;
+  last_name: string | null;
+  preferred_name: string | null;
+  business_name: string | null;
+  profile_image_url: string | null;
+};
 
 type Props = {
-  open: boolean
-  onClose: () => void
-  data?: ArtistProfilePopupData
-
-  onSaved?: (patch: SavedProfilePatch) => void
-
-  onToggleExploreTag?: (label: string) => void
-  onAddSalesPermit?: () => void
-
-  onSupport?: () => void
-  onReportIssue?: () => void
-  onSignOut?: () => void
-}
+  open: boolean;
+  onClose: () => void;
+  data?: ArtistProfilePopupData;
+  onSaved?: (patch: SavedProfilePatch) => void;
+  onToggleExploreTag?: (label: string) => void;
+  onAddSalesPermit?: () => void;
+  onSupport?: () => void;
+  onReportIssue?: () => void;
+  onSignOut?: () => void;
+};
 
 type CollabOption =
   | "Stamp Rally"
   | "Share Table"
   | "Other Collabs"
-  | "Not open for collabs"
+  | "Not open for collabs";
 
 const COLLAB_OPTIONS: CollabOption[] = [
   "Stamp Rally",
   "Share Table",
   "Other Collabs",
   "Not open for collabs",
-]
+];
 
 type SocialKey =
   | "website"
@@ -88,106 +85,110 @@ type SocialKey =
   | "facebook"
   | "tumblr"
   | "pixiv"
-  | "bluesky"
+  | "bluesky";
 
-type LinksMap = Partial<Record<SocialKey, string>>
+type LinksMap = Record<string, string>;
 
-const SOCIAL_ROWS: { key: SocialKey; label: string; Icon: React.ComponentType<any> }[] = [
-  { key: "website", label: "Main Website", Icon: HomeIcon },
-  { key: "instagram", label: "Instagram", Icon: InstagramIcon },
-  { key: "x", label: "X", Icon: XIcon },
-  { key: "bluesky", label: "Bluesky", Icon: BlueskyIcon },
-  { key: "shop", label: "Main Shop", Icon: ShopIcon },
-  { key: "facebook", label: "Facebook", Icon: FacebookIcon },
-  { key: "tumblr", label: "Tumblr", Icon: TumblrIcon },
-  { key: "pixiv", label: "Pixiv", Icon: PixivIcon },
-]
+const SOCIAL_ROWS: {
+  key: SocialKey;
+  label: string;
+  Icon: React.ComponentType<any>;
+}[] = [
+    { key: "website", label: "Main Website", Icon: HomeIcon },
+    { key: "instagram", label: "Instagram", Icon: InstagramIcon },
+    { key: "x", label: "X", Icon: XIcon },
+    { key: "bluesky", label: "Bluesky", Icon: BlueskyIcon },
+    { key: "shop", label: "Main Shop", Icon: ShopIcon },
+    { key: "facebook", label: "Facebook", Icon: FacebookIcon },
+    { key: "tumblr", label: "Tumblr", Icon: TumblrIcon },
+    { key: "pixiv", label: "Pixiv", Icon: PixivIcon },
+  ];
 
 async function getAccessToken(): Promise<string | null> {
-  const { data } = await supabase.auth.getSession()
-  return data.session?.access_token ?? null
+  const { data } = await supabase.auth.getSession();
+  return data.session?.access_token ?? null;
 }
 
 function formatMemberSince(createdAt?: string | null) {
-  if (!createdAt) return "Member since —"
-  const d = new Date(createdAt)
-  if (Number.isNaN(d.getTime())) return "Member since —"
+  if (!createdAt) return "Member since —";
+  const d = new Date(createdAt);
+  if (Number.isNaN(d.getTime())) return "Member since —";
 
   return `Member since ${d.toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
     year: "numeric",
-  })}`
+  })}`;
 }
 
 function splitYear(label: string) {
-  const trimmed = label.trim()
+  const trimmed = label.trim();
 
-  const endYear = trimmed.match(/^(.*?)(\s(19|20)\d{2})$/)
-  if (endYear) return { name: endYear[1].trim(), year: endYear[2].trim(), tail: "" }
+  const endYear = trimmed.match(/^(.*?)(\s(19|20)\d{2})$/);
+  if (endYear)
+    return { name: endYear[1].trim(), year: endYear[2].trim(), tail: "" };
 
-  const anyYear = trimmed.match(/(19|20)\d{2}/)
+  const anyYear = trimmed.match(/(19|20)\d{2}/);
   if (anyYear) {
-    const idx = trimmed.indexOf(anyYear[0])
+    const idx = trimmed.indexOf(anyYear[0]);
     return {
       name: trimmed.slice(0, idx).trim(),
       year: anyYear[0],
       tail: trimmed.slice(idx + anyYear[0].length).trim(),
-    }
+    };
   }
 
-  return { name: trimmed, year: "", tail: "" }
+  return { name: trimmed, year: "", tail: "" };
 }
 
 function defaultExploreTags(): { label: string; checked: boolean }[] {
-  return COLLAB_OPTIONS.map((label) => ({ label, checked: false }))
+  return COLLAB_OPTIONS.map((label) => ({ label, checked: false }));
 }
 
 function normalizeStringArray(v: any): string[] {
-  if (!Array.isArray(v)) return []
-  return v.map((x) => (typeof x === "string" ? x.trim() : "")).filter(Boolean)
+  if (!Array.isArray(v)) return [];
+  return v.map((x) => (typeof x === "string" ? x.trim() : "")).filter(Boolean);
 }
 
 function isNonEmptyString(v: any): v is string {
-  return typeof v === "string" && v.trim().length > 0
+  return typeof v === "string" && v.trim().length > 0;
 }
 
 function normalizeLinksMap(v: any): LinksMap {
-  if (!v || typeof v !== "object" || Array.isArray(v)) return {}
-  const out: LinksMap = {}
-  for (const row of SOCIAL_ROWS) {
-    const raw = (v as any)[row.key]
-    if (isNonEmptyString(raw)) out[row.key] = String(raw).trim()
+  if (!v || typeof v !== "object" || Array.isArray(v)) return {};
+  const out: LinksMap = {};
+  for (const [key, value] of Object.entries(v)) {
+    if (isNonEmptyString(value)) out[key] = value.trim();
   }
-  return out
+  return out;
 }
 
 function stableJson(v: any) {
   try {
-    return JSON.stringify(v ?? null)
+    return JSON.stringify(v ?? null);
   } catch {
-    return ""
+    return "";
   }
 }
 
 function normalizeUrlInput(raw: string) {
-  const s = raw.trim()
-  if (!s) return ""
-  if (/^https?:\/\//i.test(s)) return s
-  return `https://${s}`
+  const s = raw.trim();
+  if (!s) return "";
+  if (/^https?:\/\//i.test(s)) return s;
+  return `https://${s}`;
 }
 
 function inferSocialKey(url: string): SocialKey | null {
   try {
-    const u = new URL(url)
-    const host = u.hostname.toLowerCase()
+    const u = new URL(url);
+    const host = u.hostname.toLowerCase();
 
-    if (host.includes("instagram.com")) return "instagram"
-    if (host === "x.com" || host.includes("twitter.com")) return "x"
-    if (host.includes("bsky.app") || host.includes("bluesky")) return "bluesky"
-    if (host.includes("facebook.com")) return "facebook"
-    if (host.includes("tumblr.com")) return "tumblr"
-    if (host.includes("pixiv.net")) return "pixiv"
+    if (host.includes("instagram.com")) return "instagram";
+    if (host === "x.com" || host.includes("twitter.com")) return "x";
+    if (host.includes("bsky.app") || host.includes("bluesky")) return "bluesky";
+    if (host.includes("facebook.com")) return "facebook";
+    if (host.includes("tumblr.com")) return "tumblr";
+    if (host.includes("pixiv.net")) return "pixiv";
 
     if (
       host.includes("etsy.com") ||
@@ -195,36 +196,40 @@ function inferSocialKey(url: string): SocialKey | null {
       host.includes("bigcartel.com") ||
       host.includes("shopify.com")
     ) {
-      return "shop"
+      return "shop";
     }
 
-    return null
+    return null;
   } catch {
-    return null
+    return null;
   }
 }
 
-function pickFallbackLinkKey(current: LinksMap): SocialKey {
-  if (!current.website) return "website"
-  if (!current.shop) return "shop"
-  return "website"
+function pickAvailableLinkKey(current: LinksMap, platform: SocialKey | null): string {
+  const primaryKey = platform ?? "website";
+  if (!Object.prototype.hasOwnProperty.call(current, primaryKey)) return primaryKey;
+
+  let index = 1;
+  while (Object.prototype.hasOwnProperty.call(current, `additional_${index}`)) {
+    index += 1;
+  }
+  return `additional_${index}`;
 }
 
 function countLinks(m: LinksMap) {
-  return Object.values(m).filter((v) => isNonEmptyString(v)).length
+  return Object.values(m).filter((v) => isNonEmptyString(v)).length;
 }
 
 function limitLinksToMax(m: LinksMap, max: number): LinksMap {
-  const out: LinksMap = {}
-  let n = 0
-  for (const row of SOCIAL_ROWS) {
-    const v = m[row.key]
-    if (!isNonEmptyString(v)) continue
-    out[row.key] = v
-    n += 1
-    if (n >= max) break
+  const out: LinksMap = {};
+  let n = 0;
+  for (const [key, value] of Object.entries(m)) {
+    if (!isNonEmptyString(value)) continue;
+    if (n >= max) break;
+    out[key] = value.trim();
+    n += 1;
   }
-  return out
+  return out;
 }
 
 export default function ArtistProfileEditPopover({
@@ -238,245 +243,262 @@ export default function ArtistProfileEditPopover({
   onReportIssue,
   onSignOut,
 }: Props) {
-  const modalRef = useRef<HTMLDivElement | null>(null)
-  const router = useRouter()
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
 
   async function handleSignOut() {
-    setSaveError("")
+    setSaveError("");
     try {
-      await supabase.auth.signOut()
+      await supabase.auth.signOut();
     } catch (e: any) {
-      setSaveError(e?.message ?? "Failed to sign out")
-      return
+      setSaveError(e?.message ?? "Failed to sign out");
+      return;
     }
 
-    onClose()
-    router.push("/")
-    router.refresh()
+    onClose();
+    router.push("/");
+    router.refresh();
   }
 
   useClickOutside(modalRef, () => {
-    if (open) onClose()
-  })
+    if (open) onClose();
+  });
 
   const {
     noticeText = "Changes made here will carry onto your next uses of autofills.",
     profileImageUrl = "",
     businessName = "Business Name",
     locationText: locationTextFromProps = "City, State",
-    firstName = "First",
-    lastName = "Last",
-    preferredName = "Preferred Name",
+    firstName = "",
+    lastName = "",
+    preferredName = "",
     formsFilled = 0,
     visitors = 0,
     exploreTags: exploreTagsProp,
     merchTags: merchTagsFromProps = [],
     previousVends: previousVendsFromProps = [],
     betaText = "Beta v.1.0",
-  } = data ?? {}
+  } = data ?? {};
 
-  const [businessNameText, setBusinessNameText] = useState(businessName)
-  const [locationText, setLocationText] = useState(locationTextFromProps)
+  const [businessNameText, setBusinessNameText] = useState(businessName);
+  const [locationText, setLocationText] = useState(locationTextFromProps);
+  const [firstNameText, setFirstNameText] = useState(firstName);
+  const [lastNameText, setLastNameText] = useState(lastName);
+  const [preferredNameText, setPreferredNameText] = useState(preferredName);
+  const [emailText, setEmailText] = useState("myemailaddress@konfolio.com");
+  const [memberSince, setMemberSince] = useState("Member since —");
+  const [previousVends, setPreviousVends] = useState<string[]>(
+    previousVendsFromProps,
+  );
+  const [merchTags, setMerchTags] = useState<string[]>(merchTagsFromProps);
+  const [salesPermitYes, setSalesPermitYes] = useState(false);
+  const [linksMap, setLinksMap] = useState<LinksMap>({});
+  const [exploreTags, setExploreTags] = useState<
+    { label: string; checked: boolean }[]
+  >(exploreTagsProp ?? defaultExploreTags());
+  const [linkValue, setLinkValue] = useState("");
+  const [linkFocused, setLinkFocused] = useState(false);
+  const [eventValue, setEventValue] = useState("");
+  const [eventFocused, setEventFocused] = useState(false);
+  const [addingSalesLocation, setAddingSalesLocation] = useState(false);
+  const [salesLocationDraft, setSalesLocationDraft] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const [isDirty, setIsDirty] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">(
+    "idle",
+  );
 
-  const [firstNameText, setFirstNameText] = useState(firstName)
-  const [lastNameText, setLastNameText] = useState(lastName)
-  const [preferredNameText, setPreferredNameText] = useState(preferredName)
-
-  const [emailText, setEmailText] = useState("myemailaddress@konfolio.com")
-
-  const [memberSince, setMemberSince] = useState("Member since —")
-
-  const [previousVends, setPreviousVends] = useState<string[]>(previousVendsFromProps)
-  const [merchTags, setMerchTags] = useState<string[]>(merchTagsFromProps)
-
-  const [salesPermitYes, setSalesPermitYes] = useState(false)
-  const [linksMap, setLinksMap] = useState<LinksMap>({})
-
-  const [exploreTags, setExploreTags] = useState<{ label: string; checked: boolean }[]>(
-    exploreTagsProp ?? defaultExploreTags(),
-  )
-
-  const [linkValue, setLinkValue] = useState("")
-  const [linkFocused, setLinkFocused] = useState(false)
-
-  const [eventValue, setEventValue] = useState("")
-  const [eventFocused, setEventFocused] = useState(false)
-
-  const [isSaving, setIsSaving] = useState(false)
-  const [saveError, setSaveError] = useState("")
-  const [isDirty, setIsDirty] = useState(false)
-  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle")
-
-  // Avatar (deferred upload until Save)
-  const fileInputRef = useRef<HTMLInputElement | null>(null)
-  const [pendingAvatarFile, setPendingAvatarFile] = useState<File | null>(null)
-  const [pendingAvatarPreviewUrl, setPendingAvatarPreviewUrl] = useState<string>("")
-  const [profileImageUrlText, setProfileImageUrlText] = useState<string>(profileImageUrl || "")
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [pendingAvatarFile, setPendingAvatarFile] = useState<File | null>(null);
+  const [pendingAvatarPreviewUrl, setPendingAvatarPreviewUrl] =
+    useState<string>("");
+  const [profileImageUrlText, setProfileImageUrlText] = useState<string>(
+    profileImageUrl || "",
+  );
 
   const initialRef = useRef<{
-    profileImageUrlText: string
-    businessNameText: string
-    locationText: string
-    firstNameText: string
-    lastNameText: string
-    preferredNameText: string
-    salesPermitYes: boolean
-    collabs: string[]
-    merchTags: string[]
-    previousVends: string[]
-    linksMap: LinksMap
-  } | null>(null)
+    profileImageUrlText: string;
+    businessNameText: string;
+    locationText: string;
+    firstNameText: string;
+    lastNameText: string;
+    preferredNameText: string;
+    salesPermitYes: boolean;
+    collabs: string[];
+    merchTags: string[];
+    previousVends: string[];
+    linksMap: LinksMap;
+  } | null>(null);
 
-  const saveTimeoutRef = useRef<number | null>(null)
+  const saveTimeoutRef = useRef<number | null>(null);
 
-  const linksCount = countLinks(linksMap)
-  const canAddLink = linksCount < 5
+  const linksCount = countLinks(linksMap);
+  const canAddLink = linksCount < 5;
+  const additionalLinkKeys = Object.keys(linksMap).filter(
+    (key) => isNonEmptyString(linksMap[key]) && !SOCIAL_ROWS.some((row) => row.key === key),
+  );
+  const linkRows = [
+    ...SOCIAL_ROWS,
+    ...additionalLinkKeys.map((key) => ({ key, label: "Additional Link", Icon: LinkIcon })),
+  ];
 
-  useEffect(() => setBusinessNameText(businessName), [businessName])
-  useEffect(() => setLocationText(locationTextFromProps), [locationTextFromProps])
-  useEffect(() => setFirstNameText(firstName), [firstName])
-  useEffect(() => setLastNameText(lastName), [lastName])
-  useEffect(() => setPreferredNameText(preferredName), [preferredName])
-
-  useEffect(() => setPreviousVends(previousVendsFromProps), [previousVendsFromProps])
-  useEffect(() => setMerchTags(merchTagsFromProps), [merchTagsFromProps])
-
-  useEffect(() => {
-    setProfileImageUrlText(profileImageUrl || "")
-  }, [profileImageUrl])
+  useEffect(() => setBusinessNameText(businessName), [businessName]);
+  useEffect(
+    () => setLocationText(locationTextFromProps),
+    [locationTextFromProps],
+  );
+  useEffect(() => setFirstNameText(firstName), [firstName]);
+  useEffect(() => setLastNameText(lastName), [lastName]);
+  useEffect(() => setPreferredNameText(preferredName), [preferredName]);
+  useEffect(
+    () => setPreviousVends(previousVendsFromProps),
+    [previousVendsFromProps],
+  );
+  useEffect(() => setMerchTags(merchTagsFromProps), [merchTagsFromProps]);
+  useEffect(
+    () => setProfileImageUrlText(profileImageUrl || ""),
+    [profileImageUrl],
+  );
 
   useEffect(() => {
     return () => {
-      if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current)
-    }
-  }, [])
+      if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     return () => {
-      if (pendingAvatarPreviewUrl) URL.revokeObjectURL(pendingAvatarPreviewUrl)
-    }
-  }, [pendingAvatarPreviewUrl])
+      if (pendingAvatarPreviewUrl) URL.revokeObjectURL(pendingAvatarPreviewUrl);
+    };
+  }, [pendingAvatarPreviewUrl]);
 
   useEffect(() => {
-    if (!open) return
+    if (!open) return;
 
-    setLinkValue("")
-    setLinkFocused(false)
-    setEventValue("")
-    setEventFocused(false)
+    setLinkValue("");
+    setLinkFocused(false);
+    setEventValue("");
+    setEventFocused(false);
+    setAddingSalesLocation(false);
+    setSalesLocationDraft("");
+    setExploreTags(exploreTagsProp ?? defaultExploreTags());
+    setMerchTags(merchTagsFromProps);
+    setIsSaving(false);
+    setSaveError("");
+    setIsDirty(false);
+    setSaveStatus("idle");
+    initialRef.current = null;
+    if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current);
 
-    setExploreTags(exploreTagsProp ?? defaultExploreTags())
-    setMerchTags(merchTagsFromProps)
+    setPendingAvatarFile(null);
+    if (pendingAvatarPreviewUrl) URL.revokeObjectURL(pendingAvatarPreviewUrl);
+    setPendingAvatarPreviewUrl("");
+    setProfileImageUrlText(profileImageUrl || "");
 
-    setIsSaving(false)
-    setSaveError("")
-    setIsDirty(false)
-    setSaveStatus("idle")
-    initialRef.current = null
-    if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current)
-
-    setPendingAvatarFile(null)
-    if (pendingAvatarPreviewUrl) URL.revokeObjectURL(pendingAvatarPreviewUrl)
-    setPendingAvatarPreviewUrl("")
-    setProfileImageUrlText(profileImageUrl || "")
-
-    let cancelled = false
+    let cancelled = false;
 
     async function loadProfileMeta() {
-      const sessionRes = await supabase.auth.getSession()
-      const userId = sessionRes.data.session?.user?.id
-      const authEmail = sessionRes.data.session?.user?.email
-      if (authEmail) setEmailText(authEmail)
-      if (!userId) return
+      const sessionRes = await supabase.auth.getSession();
+      const userId = sessionRes.data.session?.user?.id;
+      const authEmail = sessionRes.data.session?.user?.email;
+      if (authEmail) setEmailText(authEmail);
+      if (!userId) return;
 
       const metaRes = await supabase
         .from("profiles")
-        .select("location, created_at, prev_vends, collabs, merch_tags, sales_permit, links, profile_image_url")
+        .select(
+          "location, created_at, prev_vends, collabs, merch_tags, sales_permit, links, profile_image_url",
+        )
         .eq("id", userId)
-        .maybeSingle()
+        .maybeSingle();
 
-      if (cancelled) return
+      if (cancelled) return;
       if (metaRes.error) {
-        console.log("[ArtistProfileEditPopover] profile meta error:", metaRes.error)
-        return
+        console.log(
+          "[ArtistProfileEditPopover] profile meta error:",
+          metaRes.error,
+        );
+        return;
       }
 
-      const row: any = metaRes.data ?? {}
+      const row: any = metaRes.data ?? {};
 
-      const loc = String(row.location ?? "").trim()
-      if (loc) setLocationText(loc)
+      const loc = String(row.location ?? "").trim();
+      if (loc) setLocationText(loc);
 
-      setMemberSince(formatMemberSince(row.created_at ?? null))
+      setMemberSince(formatMemberSince(row.created_at ?? null));
 
-      const nextPrev = row.prev_vends == null ? [] : normalizeStringArray(row.prev_vends)
-      const nextMerch = row.merch_tags == null ? [] : normalizeStringArray(row.merch_tags)
-      setPreviousVends(nextPrev)
-      setMerchTags(nextMerch)
+      const nextPrev =
+        row.prev_vends == null ? [] : normalizeStringArray(row.prev_vends);
+      const nextMerch =
+        row.merch_tags == null ? [] : normalizeStringArray(row.merch_tags);
+      setPreviousVends(nextPrev);
+      setMerchTags(nextMerch);
 
-      const sp = String(row.sales_permit ?? "").trim().toLowerCase()
-      const spYes = sp === "yes"
-      setSalesPermitYes(spYes)
+      const sp = String(row.sales_permit ?? "")
+        .trim()
+        .toLowerCase();
+      const spYes = sp === "yes";
+      setSalesPermitYes(spYes);
 
-      const rawLinks = normalizeLinksMap(row.links)
-      const nextLinks = limitLinksToMax(rawLinks, 5)
-      setLinksMap(nextLinks)
+      const rawLinks = normalizeLinksMap(row.links);
+      const nextLinks = limitLinksToMax(rawLinks, 5);
+      setLinksMap(nextLinks);
 
-      let nextCollabs: string[] = []
+      let nextCollabs: string[] = [];
       if (Array.isArray(row.collabs)) {
-        nextCollabs = normalizeStringArray(row.collabs)
-        const selected = new Set<string>(nextCollabs)
-        setExploreTags(COLLAB_OPTIONS.map((label) => ({ label, checked: selected.has(label) })))
+        nextCollabs = normalizeStringArray(row.collabs);
+        const selected = new Set<string>(nextCollabs);
+        setExploreTags(
+          COLLAB_OPTIONS.map((label) => ({
+            label,
+            checked: selected.has(label),
+          })),
+        );
       } else {
-        setExploreTags(COLLAB_OPTIONS.map((label) => ({ label, checked: false })))
+        setExploreTags(
+          COLLAB_OPTIONS.map((label) => ({ label, checked: false })),
+        );
       }
 
-      const dbAvatar = String(row.profile_image_url ?? "").trim()
-      if (dbAvatar) {
-        setProfileImageUrlText(dbAvatar)
-      } else {
-        setProfileImageUrlText(profileImageUrl || "")
-      }
+      const dbAvatar = String(row.profile_image_url ?? "").trim();
+      setProfileImageUrlText(dbAvatar || profileImageUrl || "");
 
       const optionalRes = await supabase
         .from("profiles")
         .select("business_name, first_name, last_name, preferred_name, email")
         .eq("id", userId)
-        .maybeSingle()
+        .maybeSingle();
 
-      let bn = businessNameText
-      let fn = firstNameText
-      let ln = lastNameText
-      let pn = preferredNameText
+      let bn = businessNameText;
+      let fn = firstNameText;
+      let ln = lastNameText;
+      let pn = preferredNameText;
 
       if (!cancelled && !optionalRes.error) {
-        const r2: any = optionalRes.data ?? {}
+        const r2: any = optionalRes.data ?? {};
 
-        const business = String(r2.business_name ?? "").trim()
+        const business = String(r2.business_name ?? "").trim();
         if (business) {
-          bn = business
-          setBusinessNameText(business)
+          bn = business;
+          setBusinessNameText(business);
         }
 
-        const f = String(r2.first_name ?? "").trim()
-        if (f) {
-          fn = f
-          setFirstNameText(f)
-        }
+        const f = String(r2.first_name ?? "").trim();
+        fn = f;
+        setFirstNameText(f);
 
-        const l = String(r2.last_name ?? "").trim()
-        if (l) {
-          ln = l
-          setLastNameText(l)
-        }
+        const l = String(r2.last_name ?? "").trim();
+        ln = l;
+        setLastNameText(l);
 
-        const pref = String(r2.preferred_name ?? "").trim()
-        if (pref) {
-          pn = pref
-          setPreferredNameText(pref)
-        }
+        const pref = String(r2.preferred_name ?? "").trim();
+      pn = pref;
+      setPreferredNameText(pref);
 
-        const em = String(r2.email ?? "").trim()
-        if (em) setEmailText(em)
+        const em = String(r2.email ?? "").trim();
+        if (em) setEmailText(em);
       }
 
       initialRef.current = {
@@ -491,26 +513,28 @@ export default function ArtistProfileEditPopover({
         merchTags: nextMerch,
         previousVends: nextPrev,
         linksMap: nextLinks,
-      }
+      };
 
-      setIsDirty(false)
-      setSaveError("")
-      setSaveStatus("idle")
+      setIsDirty(false);
+      setSaveError("");
+      setSaveStatus("idle");
     }
 
-    loadProfileMeta()
+    loadProfileMeta();
 
     return () => {
-      cancelled = true
-    }
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, exploreTagsProp, merchTagsFromProps, locationTextFromProps])
+  }, [open, exploreTagsProp, merchTagsFromProps, locationTextFromProps]);
 
   useEffect(() => {
-    const init = initialRef.current
-    if (!init) return
+    const init = initialRef.current;
+    if (!init) return;
 
-    const currentCollabs = exploreTags.filter((t) => t.checked).map((t) => t.label)
+    const currentCollabs = exploreTags
+      .filter((t) => t.checked)
+      .map((t) => t.label);
 
     const same =
       profileImageUrlText.trim() === init.profileImageUrlText.trim() &&
@@ -523,13 +547,13 @@ export default function ArtistProfileEditPopover({
       stableJson(currentCollabs) === stableJson(init.collabs) &&
       stableJson(merchTags) === stableJson(init.merchTags) &&
       stableJson(previousVends) === stableJson(init.previousVends) &&
-      stableJson(linksMap) === stableJson(init.linksMap)
+      stableJson(linksMap) === stableJson(init.linksMap);
 
-    setIsDirty(!same)
+    setIsDirty(!same);
 
     if (!same && saveStatus === "saved") {
-      setSaveStatus("idle")
-      if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current)
+      setSaveStatus("idle");
+      if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current);
     }
   }, [
     profileImageUrlText,
@@ -544,93 +568,104 @@ export default function ArtistProfileEditPopover({
     previousVends,
     linksMap,
     saveStatus,
-  ])
+  ]);
 
   function toggleCollab(label: CollabOption) {
     setExploreTags((prev) => {
-      const checkedSet = new Set<string>(prev.filter((t) => t.checked).map((t) => t.label))
+      const checkedSet = new Set<string>(
+        prev.filter((t) => t.checked).map((t) => t.label),
+      );
 
       if (label === "Not open for collabs") {
-        if (checkedSet.has(label)) checkedSet.delete(label)
+        if (checkedSet.has(label)) checkedSet.delete(label);
         else {
-          checkedSet.clear()
-          checkedSet.add(label)
+          checkedSet.clear();
+          checkedSet.add(label);
         }
       } else {
-        checkedSet.delete("Not open for collabs")
-        if (checkedSet.has(label)) checkedSet.delete(label)
-        else checkedSet.add(label)
+        checkedSet.delete("Not open for collabs");
+        if (checkedSet.has(label)) checkedSet.delete(label);
+        else checkedSet.add(label);
       }
 
-      return COLLAB_OPTIONS.map((l) => ({ label: l, checked: checkedSet.has(l) }))
-    })
+      return COLLAB_OPTIONS.map((l) => ({
+        label: l,
+        checked: checkedSet.has(l),
+      }));
+    });
 
-    onToggleExploreTag?.(label)
+    onToggleExploreTag?.(label);
   }
 
   function onPickAvatarClick() {
-    fileInputRef.current?.click()
+    fileInputRef.current?.click();
   }
 
   function onAvatarFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0] || null
-    e.target.value = ""
-    if (!file) return
-    if (!file.type.startsWith("image/")) return
+    const file = e.target.files?.[0] || null;
+    e.target.value = "";
+    if (!file) return;
+    if (!file.type.startsWith("image/")) return;
 
-    setPendingAvatarFile(file)
+    setPendingAvatarFile(file);
 
-    if (pendingAvatarPreviewUrl) URL.revokeObjectURL(pendingAvatarPreviewUrl)
-    const nextPreview = URL.createObjectURL(file)
-    setPendingAvatarPreviewUrl(nextPreview)
+    if (pendingAvatarPreviewUrl) URL.revokeObjectURL(pendingAvatarPreviewUrl);
+    const nextPreview = URL.createObjectURL(file);
+    setPendingAvatarPreviewUrl(nextPreview);
 
-    setProfileImageUrlText("__pending_upload__")
+    setProfileImageUrlText("__pending_upload__");
   }
 
   async function uploadPendingAvatarIfAny(): Promise<string | null> {
-    if (!pendingAvatarFile) return null
+    if (!pendingAvatarFile) return null;
 
-    const token = await getAccessToken()
-    if (!token) throw new Error("Not signed in")
+    const token = await getAccessToken();
+    if (!token) throw new Error("Not signed in");
 
-    const fd = new FormData()
-    fd.append("file", pendingAvatarFile)
+    const fd = new FormData();
+    fd.append("file", pendingAvatarFile);
 
     const res = await fetch("/api/profile-image/upload", {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: fd,
-    })
+    });
 
     if (!res.ok) {
-      const txt = await res.text().catch(() => "")
-      console.log("[ArtistProfileEditPopover] avatar upload failed:", res.status, txt)
-      throw new Error("Failed to upload profile image")
+      const txt = await res.text().catch(() => "");
+      console.log(
+        "[ArtistProfileEditPopover] avatar upload failed:",
+        res.status,
+        txt,
+      );
+      throw new Error("Failed to upload profile image");
     }
 
-    const json = (await res.json().catch(() => null)) as { profileImageUrl?: string } | null
-    const newUrl = (json?.profileImageUrl || "").trim()
-    if (!newUrl) throw new Error("Upload missing profileImageUrl")
+    const json = (await res.json().catch(() => null)) as {
+      profileImageUrl?: string;
+    } | null;
+    const newUrl = (json?.profileImageUrl || "").trim();
+    if (!newUrl) throw new Error("Upload missing profileImageUrl");
 
-    return newUrl
+    return newUrl;
   }
 
   async function handleSave() {
-    setSaveError("")
-    setIsSaving(true)
-    setSaveStatus("saving")
-    if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current)
+    setSaveError("");
+    setIsSaving(true);
+    setSaveStatus("saving");
+    if (saveTimeoutRef.current) window.clearTimeout(saveTimeoutRef.current);
 
     try {
-      const sessionRes = await supabase.auth.getSession()
-      const userId = sessionRes.data.session?.user?.id
-      if (!userId) throw new Error("Not signed in")
+      const sessionRes = await supabase.auth.getSession();
+      const userId = sessionRes.data.session?.user?.id;
+      if (!userId) throw new Error("Not signed in");
 
-      const collabs = exploreTags.filter((t) => t.checked).map((t) => t.label)
+      const collabs = exploreTags.filter((t) => t.checked).map((t) => t.label);
 
-      let avatarUrlToSave: string | null = null
+      let avatarUrlToSave: string | null = null;
       if (pendingAvatarFile) {
-        avatarUrlToSave = await uploadPendingAvatarIfAny()
+        avatarUrlToSave = await uploadPendingAvatarIfAny();
       }
 
       const payload: any = {
@@ -644,20 +679,23 @@ export default function ArtistProfileEditPopover({
         merch_tags: merchTags,
         prev_vends: previousVends,
         links: limitLinksToMax(linksMap, 5),
-      }
+      };
 
       if (avatarUrlToSave) {
-        payload.profile_image_url = avatarUrlToSave
+        payload.profile_image_url = avatarUrlToSave;
       }
 
-      const res = await supabase.from("profiles").update(payload).eq("id", userId)
-      if (res.error) throw res.error
+      const res = await supabase
+        .from("profiles")
+        .update(payload)
+        .eq("id", userId);
+      if (res.error) throw res.error;
 
       const newProfileImageUrl =
         avatarUrlToSave ??
         (profileImageUrlText && profileImageUrlText !== "__pending_upload__"
           ? profileImageUrlText
-          : profileImageUrl || null)
+          : profileImageUrl || null);
 
       onSaved?.({
         business_name: (payload.business_name ?? null) as string | null,
@@ -665,22 +703,21 @@ export default function ArtistProfileEditPopover({
         last_name: (payload.last_name ?? null) as string | null,
         preferred_name: (payload.preferred_name ?? null) as string | null,
         profile_image_url: (newProfileImageUrl || null) as string | null,
-      })
+      });
 
-      const savedLinks = limitLinksToMax(linksMap, 5)
-      setLinksMap(savedLinks)
+      const savedLinks = limitLinksToMax(linksMap, 5);
+      setLinksMap(savedLinks);
 
       if (avatarUrlToSave) {
-        setProfileImageUrlText(avatarUrlToSave)
-        setPendingAvatarFile(null)
-        if (pendingAvatarPreviewUrl) URL.revokeObjectURL(pendingAvatarPreviewUrl)
-        setPendingAvatarPreviewUrl("")
+        setProfileImageUrlText(avatarUrlToSave);
+        setPendingAvatarFile(null);
+        if (pendingAvatarPreviewUrl)
+          URL.revokeObjectURL(pendingAvatarPreviewUrl);
+        setPendingAvatarPreviewUrl("");
       }
 
-      const finalAvatarForInit = String(newProfileImageUrl ?? "").trim()
-
       initialRef.current = {
-        profileImageUrlText: finalAvatarForInit,
+        profileImageUrlText: String(newProfileImageUrl ?? "").trim(),
         businessNameText: String(payload.business_name ?? "").trim(),
         firstNameText: String(payload.first_name ?? "").trim(),
         lastNameText: String(payload.last_name ?? "").trim(),
@@ -691,67 +728,95 @@ export default function ArtistProfileEditPopover({
         merchTags,
         previousVends,
         linksMap: savedLinks,
-      }
+      };
 
-      setIsDirty(false)
-      setSaveStatus("saved")
+      setIsDirty(false);
+      setSaveStatus("saved");
 
       saveTimeoutRef.current = window.setTimeout(() => {
-        setSaveStatus("idle")
-      }, 2000)
+        setSaveStatus("idle");
+      }, 2000);
     } catch (e: any) {
-      setSaveError(e?.message ?? "Failed to save")
-      setSaveStatus("idle")
+      setSaveError(e?.message ?? "Failed to save");
+      setSaveStatus("idle");
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
   }
 
   function removeSalesPermit() {
-    setSalesPermitYes(false)
+    setSalesPermitYes(false);
   }
 
-  if (!open) return null
+  if (!open) return null;
 
   const avatarSrc =
     pendingAvatarPreviewUrl ||
-    (profileImageUrlText && profileImageUrlText !== "__pending_upload__" ? profileImageUrlText : "")
+    (profileImageUrlText && profileImageUrlText !== "__pending_upload__"
+      ? profileImageUrlText
+      : "");
 
-  const showChecker = !avatarSrc
+  const showChecker = !avatarSrc;
+
+  const saveButtonLabel =
+    saveStatus === "saving"
+      ? "Saving..."
+      : saveStatus === "saved"
+        ? "Saved!"
+        : "Save";
+
+  const saveButtonClasses = [
+    "group flex items-center justify-center gap-[7px]",
+    "h-[39px] min-w-[150px]",
+    "px-[40px] py-[13px]",
+    "rounded-[100px]",
+    "text-[14px] leading-[140%] font-normal",
+    "transition-all duration-300 ease-out",
+    "whitespace-nowrap cursor-pointer",
+    saveStatus === "saved"
+      ? "bg-[#4CAF50] text-white opacity-100"
+      : "bg-[#262626] text-white hover:bg-[#262626CC] active:bg-[#262626B2]",
+    !isDirty && saveStatus !== "saved" ? "opacity-50 pointer-events-none" : "",
+  ].join(" ");
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center px-6">
-      <button aria-label="Close" onClick={onClose} className="absolute inset-0 bg-black/30" />
+    <div className="fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto overflow-x-hidden px-4 py-6 sm:px-6">
+      <button
+        aria-label="Close"
+        onClick={onClose}
+        className="absolute inset-0 bg-black/30 cursor-pointer"
+      />
 
       <div
         ref={modalRef}
-        className={[
-          "relative bg-white rounded-[15px]",
-          "shadow-[5px_5px_25px_rgba(0,0,0,0.10)]",
-          "w-[995px]",
-          "max-h-[calc(100vh-64px)]",
-          "overflow-hidden",
-        ].join(" ")}
-        role="dialog"
-        aria-modal="true"
+        className="
+          relative z-[1]
+          w-full
+          max-w-[995px]
+          max-h-[calc(100vh-48px)]
+          overflow-hidden
+          rounded-[15px]
+          bg-white
+          shadow-[5px_5px_25px_rgba(0,0,0,0.10)]
+        "
       >
         <button
           type="button"
           aria-label="Close popup"
           onClick={onClose}
-          className="absolute right-[20px] top-[20px] w-[26px] h-[26px] flex items-center justify-center z-[5]"
+          className="absolute right-[18px] top-[18px] z-[5] flex h-[26px] w-[26px] cursor-pointer items-center justify-center"
         >
-          <DeleteIcon className="w-[26px] h-[26px]" />
+          <DeleteIcon className="h-[26px] w-[26px]" />
         </button>
 
-        <div className="relative max-h-[calc(100vh-64px)] overflow-y-auto px-[130px]">
+        <div className="max-h-[calc(100vh-48px)] overflow-y-auto overflow-x-hidden px-5 pb-[92px] pt-0 sm:px-8 md:px-[80px] md:pb-0 lg:px-[130px]">
           <div className="sticky top-0 z-[2] bg-white">
-            <div className="flex flex-row items-center py-[25px]">
-              <p className="flex-1 text-[12px] leading-[130%] text-[#A5A5A5] whitespace-nowrap">
+            <div className="flex flex-col gap-[12px] py-[25px] pr-[44px] md:flex-row md:items-center md:pr-0">
+              <p className="flex-1 text-[12px] leading-[130%] text-[#A5A5A5] md:whitespace-nowrap">
                 {noticeText}
               </p>
 
-              <div className="flex items-center gap-[12px]">
+              <div className="hidden items-center gap-[12px] md:flex">
                 {saveError ? (
                   <p className="m-0 text-[12px] leading-[130%] text-[#FF4603] whitespace-nowrap">
                     {saveError}
@@ -762,35 +827,17 @@ export default function ArtistProfileEditPopover({
                   type="button"
                   onClick={handleSave}
                   disabled={!isDirty || isSaving}
-                  className={[
-                    "group flex items-center justify-center gap-[7px]",
-                    "h-[39px] min-w-[150px]",
-                    "px-[40px] py-[13px]",
-                    "rounded-[100px]",
-                    "text-[14px] leading-[140%] font-normal",
-                    "transition-all duration-300 ease-out",
-                    "whitespace-nowrap",
-                    saveStatus === "saved"
-                      ? "bg-[#4CAF50] text-white opacity-100"
-                      : "bg-[#262626] text-white hover:bg-[#262626CC] active:bg-[#262626B2]",
-                    !isDirty && saveStatus !== "saved" ? "opacity-50 pointer-events-none" : "",
-                  ].join(" ")}
+                  className={saveButtonClasses}
                   aria-label="Save changes"
                 >
-                  <span>
-                    {saveStatus === "saving"
-                      ? "Saving..."
-                      : saveStatus === "saved"
-                        ? "Saved!"
-                        : "Save"}
-                  </span>
+                  <span>{saveButtonLabel}</span>
                 </button>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-row items-start gap-[29px] py-[20px]">
-            <div className="w-[80px] h-[80px] shrink-0 relative">
+          <div className="flex flex-col items-center gap-[24px] py-[20px] md:flex-row md:items-start md:gap-[29px]">
+            <div className="relative h-[80px] w-[80px] shrink-0">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -803,15 +850,18 @@ export default function ArtistProfileEditPopover({
                 type="button"
                 onClick={onPickAvatarClick}
                 className={[
-                  "group relative w-[80px] h-[80px]",
-                  "rounded-[71.4286px] overflow-hidden bg-[#F7F7F7]",
-                  "cursor-pointer",
+                  "group relative h-[80px] w-[80px] cursor-pointer overflow-hidden rounded-[71.4286px] bg-[#F7F7F7]",
+                  "focus:outline-none focus:ring-2 focus:ring-[#262626]/20",
                 ].join(" ")}
                 aria-label="Choose profile photo"
               >
                 {!showChecker ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={avatarSrc} alt="Profile" className="w-full h-full object-cover" />
+                  <img
+                    src={avatarSrc}
+                    alt="Profile"
+                    className="h-full w-full object-cover"
+                  />
                 ) : (
                   <div
                     className="absolute inset-0"
@@ -824,25 +874,18 @@ export default function ArtistProfileEditPopover({
                   />
                 )}
 
-                <span
-                  className={[
-                    "absolute bottom-[6px] right-[6px]",
-                    "w-[25px] h-[25px] p-[3px]",
-                    "flex items-center justify-center",
-                    "bg-white rounded-[15.5px]",
-                    "shadow-[0_0_4px_rgba(0,0,0,0.1)]",
-                    "opacity-0 group-hover:opacity-100 transition-opacity",
-                  ].join(" ")}
-                >
-                  <PencilIcon className="w-[18px] h-[18px]" />
-                </span>
+                <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/20" />
+
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
+                  <PencilIcon className="h-[18px] w-[18px] text-white" />
+                </div>
               </button>
             </div>
 
-            <div className="w-[526px] flex flex-col gap-[50px]">
-              <div className="w-[300px] flex flex-col gap-[15px]">
-                <div className="flex flex-row items-center py-[5px] gap-[10px]">
-                  <div className="flex-1">
+            <div className="flex w-full max-w-[526px] flex-col gap-[44px] md:gap-[50px]">
+              <div className="flex w-full max-w-[300px] flex-col gap-[15px]">
+                <div className="flex flex-row items-center gap-[10px] py-[5px]">
+                  <div className="min-w-0 flex-1">
                     <EditableInline
                       value={businessNameText}
                       placeholder="Business Name"
@@ -853,12 +896,12 @@ export default function ArtistProfileEditPopover({
                   </div>
                 </div>
 
-                <div className="flex flex-row items-center gap-[5px] -mt-[10px]">
-                  <span className="w-[12px] h-[12px] flex items-center justify-center">
-                    <LocationIcon className="w-[12px] h-[12px] text-[#A5A5A5]" />
+                <div className="-mt-[10px] flex flex-row items-center gap-[5px]">
+                  <span className="flex h-[12px] w-[12px] items-center justify-center">
+                    <LocationIcon className="h-[12px] w-[12px] text-[#A5A5A5]" />
                   </span>
 
-                  <div className="flex-1 min-w-0">
+                  <div className="min-w-0 flex-1">
                     <EditableInline
                       value={locationText}
                       placeholder="City, State"
@@ -870,48 +913,49 @@ export default function ArtistProfileEditPopover({
                 </div>
               </div>
 
-              <div className="flex flex-col gap-[10px] w-full">
-                <div className="flex flex-wrap items-start content-start gap-x-[15px] gap-y-[10px]">
-                  <div className="w-[200px]">
-                    <EditableInline
-                      value={firstNameText}
-                      placeholder="First"
-                      textClassName="text-[15px] leading-[150%] font-normal text-[#262626]"
-                      onChange={setFirstNameText}
-                      onTrash={() => setFirstNameText("First")}
-                    />
+              <div className="flex w-full flex-col gap-[10px]">
+                <div className="flex flex-wrap content-start items-start gap-x-[15px] gap-y-[10px]">
+                  <div className="w-full sm:w-[200px]">
+                    <p className="w-full truncate text-[15px] leading-[150%] font-normal text-black/40">
+  {firstNameText}
+</p>
                   </div>
 
-                  <div className="w-[200px]">
-                    <EditableInline
-                      value={lastNameText}
-                      placeholder="Last"
-                      textClassName="text-[15px] leading-[150%] font-normal text-[#262626]"
-                      onChange={setLastNameText}
-                      onTrash={() => setLastNameText("Last")}
-                    />
+                  <div className="w-full sm:w-[200px]">
+                    <p className="w-full truncate text-[15px] leading-[150%] font-normal text-black/40">
+  {lastNameText}
+</p>
                   </div>
 
-                  <div className="w-[200px]">
+                  <div className="w-full sm:w-[200px]">
                     <EditableInline
-                      value={preferredNameText}
-                      placeholder="Preferred Name"
-                      textClassName="text-[15px] leading-[150%] font-normal text-[#D3D3D3]"
-                      onChange={setPreferredNameText}
-                      onTrash={() => setPreferredNameText("Preferred Name")}
-                    />
+  value={preferredNameText}
+  placeholder="Preferred Name"
+  textClassName={`text-[15px] leading-[150%] font-normal ${
+    preferredNameText.trim() ? "text-[#262626]" : "text-[#D3D3D3]"
+  }`}
+  onChange={setPreferredNameText}
+  onTrash={() => setPreferredNameText("")}
+/>
                   </div>
                 </div>
 
                 <p className="text-[12px] italic leading-[140%] text-[#A5A5A5]">
-                  “First Last” will be shown on your portfolio.
-                </p>
+  {(
+    preferredNameText.trim() ||
+    [firstNameText.trim(), lastNameText.trim()].filter(Boolean).join(" ")
+  )
+    ? `“${
+        preferredNameText.trim() ||
+        [firstNameText.trim(), lastNameText.trim()].filter(Boolean).join(" ")
+      }” will be shown on your portfolio.`
+    : "Add your name to show it on your portfolio."}
+</p>
 
-                <div className="w-full mt-[50px]">
-                  <HoverOnlyInline
-                    value={emailText || "myemailaddress@konfolio.com"}
-                    textClassName="text-[#262626]"
-                  />
+                <div className="mt-[40px] w-full md:mt-[50px]">
+                  <p className="w-full truncate text-[15px] font-normal leading-[150%] text-black/40">
+                    {emailText || "myemailaddress@konfolio.com"}
+                  </p>
                 </div>
               </div>
 
@@ -921,20 +965,24 @@ export default function ArtistProfileEditPopover({
               </div>
 
               <div className="flex flex-col items-start gap-[15px]">
-                <p className="w-full text-[15px] leading-[150%] text-[#A5A5A5]">Explore Tags</p>
+                <p className="w-full text-[15px] leading-[150%] text-[#A5A5A5]">
+                  Explore Tags
+                </p>
 
-                <div className="flex flex-wrap items-start content-start gap-x-[30px] gap-y-[15px] w-full">
+                <div className="flex w-full flex-wrap content-start items-start gap-x-[30px] gap-y-[15px]">
                   {exploreTags.map((t) => (
                     <button
                       key={t.label}
                       type="button"
                       onClick={() => toggleCollab(t.label as CollabOption)}
-                      className="flex items-center gap-[10px] h-[13px] p-0 bg-transparent border-0 cursor-pointer"
+                      className="flex h-[13px] cursor-pointer items-center gap-[10px] border-0 bg-transparent p-0"
                     >
                       <span
                         className={[
-                          "relative w-[13px] h-[13px] rounded-[3.25px] flex-shrink-0",
-                          t.checked ? "bg-[#262626]" : "bg-white border border-[#262626]",
+                          "relative h-[13px] w-[13px] flex-shrink-0 rounded-[3.25px]",
+                          t.checked
+                            ? "bg-[#262626]"
+                            : "border border-[#262626] bg-white",
                         ].join(" ")}
                         aria-hidden="true"
                       >
@@ -953,7 +1001,7 @@ export default function ArtistProfileEditPopover({
                         )}
                       </span>
 
-                      <span className="text-[15px] leading-[150%] text-[#262626] text-center">
+                      <span className="text-center text-[15px] leading-[150%] text-[#262626]">
                         {t.label}
                       </span>
                     </button>
@@ -961,130 +1009,156 @@ export default function ArtistProfileEditPopover({
                 </div>
               </div>
 
-              <div className="flex flex-col items-start gap-[15px] w-full">
-                <p className="w-full text-[15px] leading-[150%] text-[#A5A5A5]">Sales Permit</p>
+              <div className="flex w-full flex-col items-start gap-[15px]">
+                <p className="w-full text-[15px] leading-[150%] text-[#A5A5A5]">
+                  Sales Location
+                </p>
 
-                {salesPermitYes ? (
-                  <div className="flex flex-row items-center gap-[10px]">
-                    <div className="relative group">
-                      <Tag
-                        label={locationText}
-                        className="h-[25px] px-[20px] py-0 text-[15px] leading-[150%] border-[#A5A5A5] bg-white/10"
-                      />
+                <div className="flex flex-row flex-wrap items-center gap-[10px]">
+                  {locationText.trim() ? (
+                    <SalesLocationTag
+                      label={locationText.trim()}
+                      onDelete={() => setLocationText("")}
+                    />
+                  ) : null}
 
-                      <button
-                        type="button"
-                        aria-label="Remove sales permit"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          removeSalesPermit()
-                        }}
-                        className="
-                          absolute
-                          right-[-5.25px] top-1/2 -translate-y-1/2
-                          w-[17.25px] h-[17.25px]
-                          flex items-center justify-center
-                          bg-[#A5A5A5]
-                          rounded-full
-                          opacity-0 transition-opacity
-                          group-hover:opacity-100
-                          z-10
-                          [&_path]:stroke-[#FFFFFF]
-                          [&_path]:fill-[#FFFFFF]
-                        "
-                      >
-                        <DeleteIcon className="w-[13.42px] h-[13.42px]" />
-                      </button>
-                    </div>
+                  {addingSalesLocation ? (
+                    <input
+                      value={salesLocationDraft}
+                      onChange={(e) => setSalesLocationDraft(e.target.value)}
+                      autoFocus
+                      onBlur={() => {
+                        const next = salesLocationDraft.trim();
+                        if (next) setLocationText(next);
+                        setSalesLocationDraft("");
+                        setAddingSalesLocation(false);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          const next = salesLocationDraft.trim();
+                          if (next) setLocationText(next);
+                          setSalesLocationDraft("");
+                          setAddingSalesLocation(false);
+                        }
 
+                        if (e.key === "Escape") {
+                          e.preventDefault();
+                          setSalesLocationDraft("");
+                          setAddingSalesLocation(false);
+                        }
+                      }}
+                      placeholder="Add sales location"
+                      className={[
+                        "h-[25px] min-w-[160px] cursor-text bg-transparent outline-none",
+                        "border-b border-[#D3D3D3]",
+                        "text-[15px] leading-[150%] text-[#262626]",
+                        "placeholder:text-[#D3D3D3]",
+                      ].join(" ")}
+                      aria-label="Add sales location"
+                    />
+                  ) : (
                     <button
                       type="button"
-                      aria-label="Add sales permit"
-                      onClick={onAddSalesPermit}
-                      className="w-[16px] h-[16px] flex items-center justify-center"
+                      aria-label="Add sales location"
+                      onClick={() => {
+                        setSalesLocationDraft("");
+                        setAddingSalesLocation(true);
+                      }}
+                      className="flex cursor-pointer items-center justify-center text-[#A5A5A5] transition-colors hover:text-[#262626]"
                     >
-                      <PlusIcon className="w-[16px] h-[16px] text-[#A5A5A5]" />
+                      <PlusIcon className="h-[12px] w-[12px]" />
                     </button>
-                  </div>
-                ) : (
-                  <div className="text-[15px] leading-[150%] text-[#D3D3D3]">—</div>
-                )}
+                  )}
+
+                  {!locationText.trim() && !addingSalesLocation ? (
+                    <span className="text-[15px] leading-[150%] text-[#D3D3D3]">
+                      —
+                    </span>
+                  ) : null}
+                </div>
               </div>
 
-              <div className="flex flex-col items-start gap-[15px] w-full">
-                <p className="w-full text-[15px] leading-[150%] text-[#A5A5A5]">My Links</p>
+              <div className="flex w-full flex-col items-start gap-[15px]">
+                <p className="w-full text-[15px] leading-[150%] text-[#A5A5A5]">
+                  My Links
+                </p>
 
-                <div className="flex flex-col gap-[10px] w-full">
-                  {SOCIAL_ROWS.map((r) => {
-                    const href = linksMap[r.key]
-                    if (!isNonEmptyString(href)) return null
+                <div className="flex w-full flex-col gap-[10px]">
+                  {linkRows.map((r) => {
+                    const href = linksMap[r.key];
+                    if (!isNonEmptyString(href)) return null;
 
                     return (
-                      <EditableLinkRow
-                        key={r.key}
-                        Icon={r.Icon}
-                        value={href}
-                        onChangeValue={(next) => {
-                          setLinksMap((prev) => ({ ...prev, [r.key]: next }))
-                        }}
-                        onCommit={(finalValue) => {
-                          const trimmed = finalValue.trim()
-                          setLinksMap((prev) => ({ ...prev, [r.key]: trimmed }))
-                        }}
-                        onTrash={() => {
-                          setLinksMap((prev) => {
-                            const next: LinksMap = { ...prev }
-                            delete (next as any)[r.key]
-                            return next
-                          })
-                        }}
-                      />
-                    )
+                      <div key={r.key}>
+                        {r.key === additionalLinkKeys[0] ? (
+                          <p className="mb-[10px] mt-[5px] text-[13px] text-[#A5A5A5]">
+                            Additional Links
+                          </p>
+                        ) : null}
+                        <EditableLinkRow
+                          Icon={r.Icon}
+                          value={href}
+                          onChangeValue={(next) => {
+                            setLinksMap((prev) => ({ ...prev, [r.key]: next }));
+                          }}
+                          onCommit={(finalValue) => {
+                            const trimmed = finalValue.trim();
+                            setLinksMap((prev) => ({
+                              ...prev,
+                              [r.key]: trimmed,
+                            }));
+                          }}
+                          onTrash={() => {
+                            setLinksMap((prev) => {
+                              const next: LinksMap = { ...prev };
+                              delete next[r.key];
+                              return next;
+                            });
+                          }}
+                        />
+                      </div>
+                    );
                   })}
 
                   {canAddLink ? (
-                    <div className="flex items-center gap-[10px] w-full">
-                      <LinkIcon className="w-[16px] h-[16px] text-[#D3D3D3] shrink-0" />
+                    <div className="flex w-full items-center gap-[10px]">
+                      <LinkIcon className="h-[16px] w-[16px] shrink-0 text-[#D3D3D3]" />
 
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         <input
                           value={linkValue}
                           onChange={(e) => setLinkValue(e.target.value)}
                           onFocus={() => setLinkFocused(true)}
                           onBlur={() => setLinkFocused(false)}
                           onKeyDown={(e) => {
-                            if (e.key !== "Enter") return
-                            e.preventDefault()
+                            if (e.key !== "Enter") return;
+                            e.preventDefault();
+                            if (countLinks(linksMap) >= 5) return;
 
-                            if (countLinks(linksMap) >= 5) return
+                            const raw = linkValue.trim();
+                            if (!raw) return;
 
-                            const raw = linkValue.trim()
-                            if (!raw) return
-
-                            const url = normalizeUrlInput(raw)
-                            const key = inferSocialKey(url)
+                            const url = normalizeUrlInput(raw);
+                            const key = inferSocialKey(url);
 
                             setLinksMap((prev) => {
-                              if (countLinks(prev) >= 5) return prev
+                              if (countLinks(prev) >= 5) return prev;
+                              const chosen = pickAvailableLinkKey(prev, key);
+                              const next = { ...prev, [chosen]: url };
+                              if (countLinks(next) > 5) return prev;
+                              return next;
+                            });
 
-                              const chosen = key ?? pickFallbackLinkKey(prev)
-                              const next = { ...prev, [chosen]: url }
-
-                              if (countLinks(next) > 5) return prev
-                              return next
-                            })
-
-                            setLinkValue("")
-                            setLinkFocused(false)
+                            setLinkValue("");
+                            setLinkFocused(false);
                           }}
                           placeholder="Add Link"
                           className={[
-                            "w-full bg-transparent outline-none",
-                            "text-[15px] leading-[150%]",
+                            "w-full bg-transparent pb-[4px] text-[15px] leading-[150%] outline-none",
                             linkValue ? "text-[#262626]" : "text-[#D3D3D3]",
                             "placeholder:text-[#D3D3D3]",
-                            "pb-[4px]",
+                            "cursor-text",
                           ].join(" ")}
                           aria-label="Add Link"
                         />
@@ -1101,8 +1175,10 @@ export default function ArtistProfileEditPopover({
                 </div>
               </div>
 
-              <div className="flex flex-col items-start gap-[15px] w-full">
-                <p className="w-full text-[14px] leading-[130%] text-black">My Merchandise</p>
+              <div className="flex w-full flex-col items-start gap-[15px]">
+                <p className="w-full text-[14px] leading-[130%] text-black">
+                  My Merchandise
+                </p>
 
                 <div className="w-full">
                   <MerchTagPicker
@@ -1114,12 +1190,14 @@ export default function ArtistProfileEditPopover({
                 </div>
               </div>
 
-              <div className="flex flex-col items-start gap-[20px] w-full">
-                <p className="w-full text-[15px] leading-[150%] text-[#A5A5A5]">Previous Vends</p>
+              <div className="flex w-full flex-col items-start gap-[20px]">
+                <p className="w-full text-[15px] leading-[150%] text-[#A5A5A5]">
+                  Previous Vends
+                </p>
 
-                <div className="flex flex-col items-start gap-[5px] w-full">
+                <div className="flex w-full flex-col items-start gap-[5px]">
                   {previousVends.length === 0 ? (
-                    <p className="m-0 w-full font-inter font-normal text-[15px] leading-[140%] text-[#A5A5A5]">
+                    <p className="m-0 w-full font-inter text-[15px] font-normal leading-[140%] text-[#A5A5A5]">
                       —
                     </p>
                   ) : (
@@ -1129,18 +1207,22 @@ export default function ArtistProfileEditPopover({
                         value={v}
                         onChangeValue={(next) => {
                           setPreviousVends((prev) => {
-                            const copy = [...prev]
-                            copy[idx] = next
-                            return copy
-                          })
+                            const copy = [...prev];
+                            copy[idx] = next;
+                            return copy;
+                          });
                         }}
                         onCommit={() => {
                           setPreviousVends((prev) =>
-                            prev.map((x, i) => (i === idx ? x.trim() : x)).filter(Boolean),
-                          )
+                            prev
+                              .map((x, i) => (i === idx ? x.trim() : x))
+                              .filter(Boolean),
+                          );
                         }}
                         onTrash={() => {
-                          setPreviousVends((prev) => prev.filter((_, i) => i !== idx))
+                          setPreviousVends((prev) =>
+                            prev.filter((_, i) => i !== idx),
+                          );
                         }}
                       />
                     ))
@@ -1154,27 +1236,25 @@ export default function ArtistProfileEditPopover({
                         onFocus={() => setEventFocused(true)}
                         onBlur={() => setEventFocused(false)}
                         onKeyDown={(e) => {
-                          if (e.key !== "Enter") return
-                          e.preventDefault()
+                          if (e.key !== "Enter") return;
+                          e.preventDefault();
 
-                          const next = eventValue.trim()
-                          if (!next) return
+                          const next = eventValue.trim();
+                          if (!next) return;
 
                           setPreviousVends((prev) => {
-                            if (prev.length >= 4) return prev
-                            return [...prev, next]
-                          })
+                            if (prev.length >= 4) return prev;
+                            return [...prev, next];
+                          });
 
-                          setEventValue("")
-                          setEventFocused(false)
+                          setEventValue("");
+                          setEventFocused(false);
                         }}
                         placeholder="Add Event (Event 2026)"
                         className={[
-                          "w-full bg-transparent outline-none",
-                          "text-[15px] leading-[150%]",
+                          "w-full bg-transparent pb-[4px] text-[15px] leading-[150%] outline-none",
                           eventValue ? "text-[#262626]" : "text-[#D3D3D3]",
                           "placeholder:text-[#D3D3D3]",
-                          "pb-[4px]",
                         ].join(" ")}
                         aria-label="Add Event"
                       />
@@ -1190,28 +1270,94 @@ export default function ArtistProfileEditPopover({
                 </div>
               </div>
 
-              <p className="text-[15px] leading-[150%] text-[#A5A5A5]">{memberSince}</p>
+              <p className="text-[15px] leading-[150%] text-[#A5A5A5]">
+                {memberSince}
+              </p>
 
               <div className="flex flex-col items-start w-full">
-                <AsideRow label="Support" onClick={onSupport} />
-                <AsideRow label="Report issue" onClick={onReportIssue} />
+                <AsideRow
+                  label="Support"
+                  onClick={() => {
+                    window.location.href =
+                      "mailto:konfolios@gmail.com?subject=Konfolio Support Request&body=Hi Konfolio team,%0A%0AI need help with:%0A";
+                  }}
+                />
+
+                <AsideRow
+                  label="Report issue"
+                  onClick={() => {
+                    window.location.href =
+                      "mailto:konfolios@gmail.com?subject=Konfolio Bug Report&body=Please describe the issue:%0A%0ASteps to reproduce:%0A1.%0A2.%0A3.%0A";
+                  }}
+                />
+
                 <AsideRow
                   label="Sign out"
                   danger
                   onClick={() => {
-                    onSignOut?.()
-                    handleSignOut()
+                    onSignOut?.();
+                    handleSignOut();
                   }}
                 />
               </div>
 
-              <p className="text-[15px] leading-[150%] text-[#A5A5A5] pb-[40px]">{betaText}</p>
+              <p className="pb-[40px] text-[15px] leading-[150%] text-[#A5A5A5]">
+                {betaText}
+              </p>
             </div>
           </div>
         </div>
+
+        <div className="absolute bottom-0 left-0 right-0 z-[4] flex flex-col gap-[8px] border-t border-[#E9E9E9] bg-white px-5 py-4 md:hidden">
+          {saveError ? (
+            <p className="m-0 text-center text-[12px] leading-[130%] text-[#FF4603]">
+              {saveError}
+            </p>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={!isDirty || isSaving}
+            className={`${saveButtonClasses} w-full`}
+            aria-label="Save changes"
+          >
+            <span>{saveButtonLabel}</span>
+          </button>
+        </div>
       </div>
     </div>
-  )
+  );
+}
+
+function SalesLocationTag({
+  label,
+  onDelete,
+}: {
+  label: string;
+  onDelete: () => void;
+}) {
+  return (
+    <div className="group relative inline-flex items-center">
+      <Tag
+        label={label}
+        className="h-[25px] bg-white/10 px-[20px] py-0 pr-[32px] text-[15px] leading-[150%] border-[#A5A5A5]"
+      />
+
+      <button
+        type="button"
+        aria-label="Remove sales location"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onDelete();
+        }}
+        className="absolute right-[-5.25px] top-1/2 z-10 flex h-[17.25px] w-[17.25px] -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-[#A5A5A5] opacity-0 transition-opacity group-hover:opacity-100 [&_path]:fill-[#FFFFFF] [&_path]:stroke-[#FFFFFF]"
+      >
+        <DeleteIcon className="h-[13.42px] w-[13.42px]" />
+      </button>
+    </div>
+  );
 }
 
 function EditableInline({
@@ -1221,33 +1367,33 @@ function EditableInline({
   onChange,
   onTrash,
 }: {
-  value: string
-  placeholder: string
-  textClassName: string
-  onChange: (v: string) => void
-  onTrash: () => void
+  value: string;
+  placeholder: string;
+  textClassName: string;
+  onChange: (v: string) => void;
+  onTrash: () => void;
 }) {
-  const [editing, setEditing] = useState(false)
-  const inputRef = useRef<HTMLInputElement | null>(null)
+  const [editing, setEditing] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    if (!editing) return
+    if (!editing) return;
     queueMicrotask(() => {
-      inputRef.current?.focus()
-      inputRef.current?.select()
-    })
-  }, [editing])
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    });
+  }, [editing]);
 
   return (
     <div className="group w-full">
       <div
         className={[
-          "flex items-center gap-[10px] w-full",
+          "flex w-full cursor-pointer items-center gap-[10px]",
           editing ? "border-b border-[#D3D3D3] pb-[4px]" : "",
         ].join(" ")}
         onClick={() => setEditing(true)}
       >
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           {editing ? (
             <input
               ref={inputRef}
@@ -1256,70 +1402,74 @@ function EditableInline({
               onBlur={() => setEditing(false)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === "Escape") {
-                  e.preventDefault()
-                  setEditing(false)
+                  e.preventDefault();
+                  setEditing(false);
                 }
               }}
               placeholder={placeholder}
               className={[
-                "w-full bg-transparent outline-none placeholder:text-[#D3D3D3]",
+                "w-full cursor-text bg-transparent outline-none placeholder:text-[#D3D3D3]",
                 textClassName,
               ].join(" ")}
             />
           ) : (
-            <span className={["block w-full min-w-0 truncate", textClassName].join(" ")}>
+            <span
+              className={["block w-full min-w-0 truncate", textClassName].join(
+                " ",
+              )}
+            >
               {value?.trim() ? value : placeholder}
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-[10px] opacity-0 group-hover:opacity-100 transition-opacity text-[#A5A5A5]">
+        <div className="flex items-center gap-[10px] text-[#A5A5A5] opacity-0 transition-opacity group-hover:opacity-100">
           <button
             type="button"
             aria-label="Edit"
-            className="w-[16px] h-[16px] flex items-center justify-center"
+            className="flex h-[16px] w-[16px] cursor-pointer items-center justify-center"
             onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              setEditing(true)
+              e.preventDefault();
+              e.stopPropagation();
+              setEditing(true);
             }}
           >
-            <PencilIcon className="w-[16px] h-[16px]" />
+            <PencilIcon className="h-[16px] w-[16px]" />
           </button>
 
           <button
             type="button"
             aria-label="Clear"
-            className="w-[16px] h-[16px] flex items-center justify-center"
+            className="flex h-[16px] w-[16px] cursor-pointer items-center justify-center"
             onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              setEditing(false)
-              onTrash()
+              e.preventDefault();
+              e.stopPropagation();
+              setEditing(false);
+              onTrash();
             }}
           >
-            <TrashIcon className="w-[16px] h-[16px]" />
+            <TrashIcon className="h-[16px] w-[16px]" />
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function HoverOnlyInline({
   value,
   textClassName = "text-[#D3D3D3]",
 }: {
-  value: string
-  textClassName?: string
+  value: string;
+  textClassName?: string;
 }) {
   return (
     <div className="group w-full">
-      <div className="flex items-center gap-[10px] w-full">
-        <div className="flex-1 min-w-0">
+      <div className="flex w-full items-center gap-[10px]">
+        <div className="min-w-0 flex-1">
           <span
             className={[
-              "block w-full min-w-0 truncate text-[15px] leading-[150%] font-normal",
+              "block w-full min-w-0 truncate text-[15px] font-normal leading-[150%]",
               textClassName,
             ].join(" ")}
           >
@@ -1327,17 +1477,17 @@ function HoverOnlyInline({
           </span>
         </div>
 
-        <div className="flex items-center gap-[10px] opacity-0 group-hover:opacity-100 transition-opacity text-[#A5A5A5]">
-          <span className="w-[16px] h-[16px] flex items-center justify-center">
-            <PencilIcon className="w-[16px] h-[16px]" />
+        <div className="flex items-center gap-[10px] text-[#A5A5A5] opacity-0 transition-opacity group-hover:opacity-100">
+          <span className="flex h-[16px] w-[16px] cursor-pointer items-center justify-center">
+            <PencilIcon className="h-[16px] w-[16px]" />
           </span>
-          <span className="w-[16px] h-[16px] flex items-center justify-center">
-            <TrashIcon className="w-[16px] h-[16px]" />
+          <span className="flex h-[16px] w-[16px] cursor-pointer items-center justify-center">
+            <TrashIcon className="h-[16px] w-[16px]" />
           </span>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function EditableLinkRow({
@@ -1347,102 +1497,102 @@ function EditableLinkRow({
   onCommit,
   onTrash,
 }: {
-  Icon: React.ComponentType<any>
-  value: string
-  onChangeValue: (next: string) => void
-  onCommit: (finalValue: string) => void
-  onTrash: () => void
+  Icon: React.ComponentType<any>;
+  value: string;
+  onChangeValue: (next: string) => void;
+  onCommit: (finalValue: string) => void;
+  onTrash: () => void;
 }) {
-  const [editing, setEditing] = useState(false)
-  const inputRef = useRef<HTMLInputElement | null>(null)
-  const [draft, setDraft] = useState(value)
+  const [editing, setEditing] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [draft, setDraft] = useState(value);
 
-  useEffect(() => setDraft(value), [value])
+  useEffect(() => setDraft(value), [value]);
 
   useEffect(() => {
-    if (!editing) return
+    if (!editing) return;
     queueMicrotask(() => {
-      inputRef.current?.focus()
-      inputRef.current?.select()
-    })
-  }, [editing])
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    });
+  }, [editing]);
 
   return (
-    <div className="flex flex-row items-center gap-[10px] h-[24px] w-full group">
-      <Icon className="w-[16px] h-[16px]" />
+    <div className="group flex h-[24px] w-full flex-row items-center gap-[10px]">
+      <Icon className="h-[16px] w-[16px] shrink-0" />
 
       <div
         className={[
-          "flex-1 min-w-0 flex items-center gap-[10px]",
+          "flex min-w-0 flex-1 cursor-pointer items-center gap-[10px]",
           editing ? "border-b border-[#D3D3D3] pb-[4px]" : "",
         ].join(" ")}
         onClick={() => setEditing(true)}
       >
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           {editing ? (
             <input
               ref={inputRef}
               value={draft}
               onChange={(e) => {
-                setDraft(e.target.value)
-                onChangeValue(e.target.value)
+                setDraft(e.target.value);
+                onChangeValue(e.target.value);
               }}
               onBlur={() => {
-                setEditing(false)
-                onCommit(draft)
+                setEditing(false);
+                onCommit(draft);
               }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  e.preventDefault()
-                  setEditing(false)
-                  onCommit(draft)
+                  e.preventDefault();
+                  setEditing(false);
+                  onCommit(draft);
                 }
                 if (e.key === "Escape") {
-                  e.preventDefault()
-                  setEditing(false)
+                  e.preventDefault();
+                  setEditing(false);
                 }
               }}
-              className="w-full bg-transparent outline-none text-[15px] leading-[150%] text-[#262626]"
+              className="w-full cursor-text bg-transparent text-[15px] leading-[150%] text-[#262626] outline-none"
               aria-label="Edit link"
             />
           ) : (
-            <span className="block w-full min-w-0 text-[15px] leading-[150%] text-[#262626] truncate">
+            <span className="block w-full min-w-0 truncate text-[15px] leading-[150%] text-[#262626]">
               {value}
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-[10px] opacity-0 group-hover:opacity-100 transition-opacity text-[#A5A5A5]">
+        <div className="flex items-center gap-[10px] text-[#A5A5A5] opacity-0 transition-opacity group-hover:opacity-100">
           <button
             type="button"
             aria-label="Edit"
-            className="w-[16px] h-[16px] flex items-center justify-center"
+            className="flex h-[16px] w-[16px] cursor-pointer items-center justify-center"
             onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              setEditing(true)
+              e.preventDefault();
+              e.stopPropagation();
+              setEditing(true);
             }}
           >
-            <PencilIcon className="w-[16px] h-[16px]" />
+            <PencilIcon className="h-[16px] w-[16px]" />
           </button>
 
           <button
             type="button"
             aria-label="Remove"
-            className="w-[16px] h-[16px] flex items-center justify-center"
+            className="flex h-[16px] w-[16px] cursor-pointer items-center justify-center"
             onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              setEditing(false)
-              onTrash()
+              e.preventDefault();
+              e.stopPropagation();
+              setEditing(false);
+              onTrash();
             }}
           >
-            <TrashIcon className="w-[16px] h-[16px]" />
+            <TrashIcon className="h-[16px] w-[16px]" />
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function EditableVendRow({
@@ -1451,99 +1601,101 @@ function EditableVendRow({
   onCommit,
   onTrash,
 }: {
-  value: string
-  onChangeValue: (next: string) => void
-  onCommit: () => void
-  onTrash: () => void
+  value: string;
+  onChangeValue: (next: string) => void;
+  onCommit: () => void;
+  onTrash: () => void;
 }) {
-  const [editing, setEditing] = useState(false)
-  const inputRef = useRef<HTMLInputElement | null>(null)
+  const [editing, setEditing] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    if (!editing) return
+    if (!editing) return;
     queueMicrotask(() => {
-      inputRef.current?.focus()
-      inputRef.current?.select()
-    })
-  }, [editing])
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    });
+  }, [editing]);
 
-  const { name, year, tail } = splitYear(value)
+  const { name, year, tail } = splitYear(value);
 
   return (
-    <div className="w-full group">
+    <div className="group w-full">
       <div
         className={[
-          "flex items-center gap-[10px] w-full",
+          "flex w-full items-center gap-[10px]",
           editing ? "border-b border-[#D3D3D3] pb-[4px]" : "",
         ].join(" ")}
         onClick={() => setEditing(true)}
       >
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           {editing ? (
             <input
               ref={inputRef}
               value={value}
               onChange={(e) => onChangeValue(e.target.value)}
               onBlur={() => {
-                setEditing(false)
-                onCommit()
+                setEditing(false);
+                onCommit();
               }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  e.preventDefault()
-                  setEditing(false)
-                  onCommit()
+                  e.preventDefault();
+                  setEditing(false);
+                  onCommit();
                 }
                 if (e.key === "Escape") {
-                  e.preventDefault()
-                  setEditing(false)
+                  e.preventDefault();
+                  setEditing(false);
                 }
               }}
-              className="w-full bg-transparent outline-none font-inter font-normal text-[15px] leading-[140%] text-[#262626]"
+              className="w-full cursor-text bg-transparent font-inter text-[15px] font-normal leading-[140%] text-[#262626] outline-none"
               aria-label="Edit event"
             />
           ) : (
-            <p className="m-0 font-inter font-normal text-[15px] leading-[140%] text-[#262626] truncate">
+            <p className="m-0 truncate font-inter text-[15px] font-normal leading-[140%] text-[#262626]">
               <span>{name}</span>
               {year ? (
-                <span className="ml-[6px] italic text-[12px] text-[#A5A5A5]">{year}</span>
+                <span className="ml-[6px] text-[12px] italic text-[#A5A5A5]">
+                  {year}
+                </span>
               ) : null}
               {tail ? <span className="ml-[6px]">{tail}</span> : null}
             </p>
           )}
         </div>
 
-        <div className="flex items-center gap-[10px] opacity-0 group-hover:opacity-100 transition-opacity text-[#A5A5A5]">
+        <div className="flex items-center gap-[10px] text-[#A5A5A5] opacity-0 transition-opacity group-hover:opacity-100">
           <button
             type="button"
             aria-label="Edit"
-            className="w-[16px] h-[16px] flex items-center justify-center"
+            className="flex h-[16px] w-[16px] cursor-pointer items-center justify-center"
             onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              setEditing(true)
+              e.preventDefault();
+              e.stopPropagation();
+              setEditing(true);
             }}
           >
-            <PencilIcon className="w-[16px] h-[16px]" />
+            <PencilIcon className="h-[16px] w-[16px]" />
           </button>
 
           <button
             type="button"
             aria-label="Remove"
-            className="w-[16px] h-[16px] flex items-center justify-center"
+            className="flex h-[16px] w-[16px] cursor-pointer items-center justify-center"
             onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              setEditing(false)
-              onTrash()
+              e.preventDefault();
+              e.stopPropagation();
+              setEditing(false);
+              onTrash();
             }}
           >
-            <TrashIcon className="w-[16px] h-[16px]" />
+            <TrashIcon className="h-[16px] w-[16px]" />
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function CountBlock({ label, value }: { label: string; value: number }) {
@@ -1552,7 +1704,7 @@ function CountBlock({ label, value }: { label: string; value: number }) {
       <span className="text-[15px] leading-[150%] text-[#A5A5A5]">{label}</span>
       <span className="text-[15px] leading-[150%] text-[#262626]">{value}</span>
     </div>
-  )
+  );
 }
 
 function AsideRow({
@@ -1560,24 +1712,24 @@ function AsideRow({
   danger = false,
   onClick,
 }: {
-  label: string
-  danger?: boolean
-  onClick?: () => void
+  label: string;
+  danger?: boolean;
+  onClick?: () => void;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="w-[526px] h-[40px] px-[10px] flex items-center rounded-[10px] hover:bg-black/5"
+      className="flex h-[40px] w-full max-w-[526px] cursor-pointer items-center rounded-[10px] px-[10px] hover:bg-black/5"
     >
       <span
         className={[
-          "text-[14px] leading-[130%] font-normal flex items-center",
+          "flex items-center text-[14px] font-normal leading-[130%]",
           danger ? "text-[#FF4603]" : "text-[#262626]",
         ].join(" ")}
       >
         {label}
       </span>
     </button>
-  )
+  );
 }
