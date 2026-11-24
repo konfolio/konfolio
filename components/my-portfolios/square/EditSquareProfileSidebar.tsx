@@ -28,6 +28,7 @@ import LinkPicker, { type LinkPickerValue } from "@/components/my-portfolios/Lin
 import ColorPicker from "@/components/my-portfolios/ColorPicker"
 
 type Props = {
+  publicEmailSlot?: import("react").ReactNode
   showLocation?: boolean
   showEmail?: boolean
   onChangeShowLocation?: (visible: boolean) => void
@@ -193,6 +194,7 @@ function KonfolioLogo({ primaryTextColor }: { primaryTextColor: string }) {
 
 export default function EditSquareProfileSidebar({
   showLocation = true,
+  publicEmailSlot,
   showEmail = true,
   onChangeShowLocation,
   onChangeShowEmail,
@@ -668,7 +670,7 @@ export default function EditSquareProfileSidebar({
                 )}
               </div></PortfolioField>
 
-              <PortfolioField label="email" editable={editable} isDark={bannerIsDark} visible={showEmail} onVisibilityChange={onChangeShowEmail}>{editable ? (
+              <PortfolioField label="email" editable={editable} isDark={bannerIsDark} visible={showEmail} onVisibilityChange={onChangeShowEmail}>{!editable && publicEmailSlot !== undefined ? <div className={secondaryTextClass}>{publicEmailSlot}</div> : (<> {editable ? (
                 <input
                   value={localEmail}
                   onChange={(e) => {
@@ -682,7 +684,7 @@ export default function EditSquareProfileSidebar({
                 <p className={`m-0 w-full truncate text-center font-inter text-[15px] leading-[140%] ${secondaryTextClass}`}>
                   {safeStr(localEmail) || "myemailaddress@konfolio.com"}
                 </p>
-              )}</PortfolioField>
+              )} </>)}</PortfolioField>
             </div>
 
             {editable ? (
@@ -1088,7 +1090,7 @@ export default function EditSquareProfileSidebar({
             </div></PortfolioField>
           </div>
 
-          <PortfolioField label="email" editable={editable} isDark={bannerIsDark} visible={showEmail} onVisibilityChange={onChangeShowEmail}>{editable ? (
+          <PortfolioField label="email" editable={editable} isDark={bannerIsDark} visible={showEmail} onVisibilityChange={onChangeShowEmail}>{!editable && publicEmailSlot !== undefined ? <div className={secondaryTextClass}>{publicEmailSlot}</div> : (<> {editable ? (
             <input
               value={localEmail}
               onChange={(e) => {
@@ -1111,7 +1113,7 @@ export default function EditSquareProfileSidebar({
             <p className={`m-0 w-full text-center font-inter font-normal text-[15px] leading-[140%] ${secondaryTextClass}`}>
               {safeStr(localEmail)}
             </p>
-          )}</PortfolioField>
+          )} </>)}</PortfolioField>
         </div>
       </div>
 

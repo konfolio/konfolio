@@ -2,6 +2,7 @@
 "use client"
 
 import * as React from "react"
+import ProtectedEmail from "@/components/public/ProtectedEmail"
 
 import EditSquareProfileSidebar from "@/components/my-portfolios/square/EditSquareProfileSidebar"
 import EditSquareImageGrid from "@/components/my-portfolios/square/EditSquareImageGrid"
@@ -190,7 +191,8 @@ export default function PublicKonfolioView({
   const profileImageUrl = safeStr(content?.profileImageUrl)
   const displayName = safeStr(content?.displayName) || "Your Name"
   const locationText = safeStr(content?.locationText) || "City, State"
-  const email = safeStr(content?.email) || "myemailaddress@konfolio.com"
+  const showEmail = content?.showEmail !== false && content?.hasPublicEmail === true
+  const publicEmailSlot = showEmail ? <ProtectedEmail key={konfolioId} konfolioId={konfolioId} /> : null
 
   const businessName =
     safeStr(content?.businessName) || safeStr(ownerBusinessName) || "Business Name"
@@ -244,7 +246,9 @@ export default function PublicKonfolioView({
                 businessName={businessName}
                 displayName={displayName}
                 locationText={locationText}
-                email={email}
+                email=""
+                showEmail={showEmail}
+                publicEmailSlot={publicEmailSlot}
                 linksValue={linksValue}
                 merchTags={merchTags}
                 previousVends={previousVendsArr}
@@ -273,7 +277,9 @@ export default function PublicKonfolioView({
                 businessName={businessName}
                 displayName={displayName}
                 locationText={locationText}
-                email={email}
+                email=""
+                showEmail={showEmail}
+                publicEmailSlot={publicEmailSlot}
                 linksValue={linksValue}
                 merchTags={merchTags}
                 previousVends={previousVendsArr}
@@ -313,7 +319,9 @@ export default function PublicKonfolioView({
             businessName={businessName}
             displayName={displayName}
             locationText={locationText}
-            email={email}
+            email=""
+                showEmail={showEmail}
+                publicEmailSlot={publicEmailSlot}
             linksValue={linksValue}
             merchTags={merchTags}
             previousVends={previousVendsArr}
@@ -343,7 +351,9 @@ export default function PublicKonfolioView({
             businessName={businessName}
             displayName={displayName}
             locationText={locationText}
-            email={email}
+            email=""
+                showEmail={showEmail}
+                publicEmailSlot={publicEmailSlot}
             linksValue={linksValue}
             merchTags={merchTags}
             previousVends={previousVendsArr}

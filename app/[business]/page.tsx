@@ -1,96 +1,19 @@
-// app/[business]/page.tsx
-
 import { notFound } from "next/navigation"
-import { createClient } from "@supabase/supabase-js"
-
 import PublicKonfolioView from "@/components/public/PublicKonfolioView"
-
-type Template = "square" | "portrait"
-
-function slugify(input: string): string {
-  return (input || "")
-    .toLowerCase()
-    .trim()
-    .replace(/['"]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "")
-}
+import { findPublicKonfolio, slugify } from "@/lib/publicKonfolioLookup"
 
 export const runtime = "nodejs"
+export const dynamic = "force-dynamic"
 
-export default async function PublicBusinessKonfolioPage({
-  params,
-}: {
+export default async function PublicBusinessKonfolioPage({ params }: {
   params: Promise<{ business: string }>
 }) {
   const { business } = await params
-
-  const businessSlug = slugify(business)
-
-  if (!businessSlug) {
-    return notFound()
-  }
-
-  const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
-
-  // Find the business owner
-  const { data: owner, error: ownerErr } = await supabaseAdmin
-    .from("profiles")
-    .select("id, business_name, business_slug")
-    .eq("business_slug", businessSlug)
-    .maybeSingle()
-
-  if (ownerErr) {
-    console.error("Profile lookup error:", ownerErr)
-    return notFound()
-  }
-
-  if (!owner) {
-    console.warn("No profile found for business slug:", businessSlug)
-    return notFound()
-  }
-
-  // The primary portfolio has the same slug as the business.
-  // IMPORTANT:
-  // We only require the Konfolio to be published.
-  // explore_enabled controls Explore visibility, not direct-link access.
-  const { data: k, error: kErr } = await supabaseAdmin
-    .from("konfolios")
-    .select(
-      "id, user_id, template, status, content, portfolio_name, portfolio_slug, explore_enabled"
-    )
-    .eq("user_id", owner.id)
-    .eq("portfolio_slug", businessSlug)
-    .eq("status", "published")
-    .maybeSingle()
-
-  if (kErr) {
-    console.error("Konfolio lookup error:", kErr)
-    return notFound()
-  }
-
-  if (!k) {
-    console.warn("No published primary konfolio found:", {
-      ownerId: owner.id,
-      businessSlug,
-    })
-
-    return notFound()
-  }
-
-  const template: Template =
-    (k.template as any) === "portrait" ? "portrait" : "square"
-
-  return (
-    <PublicKonfolioView
-      konfolioId={k.id}
-      template={template}
-      content={k.content ?? {}}
-      ownerBusinessName={String(owner.business_name ?? "")}
-    />
-  )
+  const slug = slugify(business)
+  if (!slug) return notFound()
+  const k = await findPublicKonfolio(slug, slug)
+  if (!k) return notFound()
+  return <PublicKonfolioView konfolioId={k.id}
+    template={k.template === "portrait" ? "portrait" : "square"}
+    content={k.content} ownerBusinessName={String(k.businessName ?? "")} />
 }
