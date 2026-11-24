@@ -9,6 +9,7 @@ import {
 } from "@/lib/publicFormLookup";
 
 import { publicFormUrl } from "@/lib/publicFormUrls";
+import { toPublicKonfolioContent } from "@/lib/publicKonfolioContent";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -108,6 +109,12 @@ export default async function PublicKonfolioPage({
     redirect(`/${businessSlug}`);
   }
 
+  // Remove email before sending content to the browser.
+  // Also sets hasPublicEmail for the protected reveal button.
+  const publicContent = toPublicKonfolioContent(
+    k.content ?? {},
+  );
+
   // Published Link Access Only portfolios remain accessible.
   return (
     <PublicKonfolioView
@@ -117,7 +124,7 @@ export default async function PublicKonfolioPage({
           ? "portrait"
           : "square"
       }
-      content={k.content ?? {}}
+      content={publicContent}
       ownerBusinessName={String(
         owner.business_name ?? "",
       )}

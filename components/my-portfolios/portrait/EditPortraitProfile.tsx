@@ -30,6 +30,7 @@ import MerchTagPicker from "@/components/my-portfolios/MerchTagPicker"
 type OpenPicker = "banner" | "background" | null
 
 type Props = {
+  publicEmailSlot?: import("react").ReactNode
   showLocation?: boolean
   showEmail?: boolean
   onChangeShowLocation?: (visible: boolean) => void
@@ -189,6 +190,7 @@ const EMPTY_PREVIOUS_VENDS: string[] = []
 
 export default function EditPortraitProfile({
   showLocation = true,
+  publicEmailSlot,
   showEmail = true,
   onChangeShowLocation,
   onChangeShowEmail,
@@ -745,7 +747,7 @@ export default function EditPortraitProfile({
                   />
                 </div></PortfolioField>
 
-                <PortfolioField label="email" editable={editable} isDark={bannerIsDark} visible={showEmail} onVisibilityChange={onChangeShowEmail}><input
+                <PortfolioField label="email" editable={editable} isDark={bannerIsDark} visible={showEmail} onVisibilityChange={onChangeShowEmail}>{!editable && publicEmailSlot !== undefined ? <div className={secondaryTextClass}>{publicEmailSlot}</div> : (<> <input
                   value={localEmail}
                   placeholder={EMAIL_PLACEHOLDER}
                   readOnly={!editable}
@@ -755,7 +757,7 @@ export default function EditPortraitProfile({
                     onChangeEmail?.(e.target.value)
                   }}
                   className={`w-full bg-transparent text-center font-inter text-[15px] leading-[140%] ${secondaryTextClass} ${secondaryPlaceholderClass} outline-none`}
-                /></PortfolioField>
+                /> </>)}</PortfolioField>
               </div>
 
               {editable ? (
@@ -1143,7 +1145,7 @@ export default function EditPortraitProfile({
                   </div></PortfolioField>
                 </div>
 
-                <PortfolioField label="email" editable={editable} isDark={bannerIsDark} visible={showEmail} onVisibilityChange={onChangeShowEmail}><input
+                <PortfolioField label="email" editable={editable} isDark={bannerIsDark} visible={showEmail} onVisibilityChange={onChangeShowEmail}>{!editable && publicEmailSlot !== undefined ? <div className={secondaryTextClass}>{publicEmailSlot}</div> : (<> <input
                   value={localEmail}
                   placeholder={EMAIL_PLACEHOLDER}
                   readOnly={!editable}
@@ -1162,7 +1164,7 @@ export default function EditPortraitProfile({
                     onChangeEmail?.(e.target.value)
                   }}
                   className={`w-full text-right font-inter font-normal text-[15px] leading-[18px] ${secondaryTextClass} ${secondaryPlaceholderClass} bg-transparent outline-none`}
-                /></PortfolioField>
+                /> </>)}</PortfolioField>
               </div>
             </div>
           </div>
