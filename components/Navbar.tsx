@@ -95,6 +95,8 @@ export default function Navbar() {
 
   const isExploreActive =
     pathname === "/explore" || pathname.startsWith("/explore/");
+  const isUpgradeActive =
+    pathname === "/upgrade" || pathname.startsWith("/upgrade/");
 
   const isMyPortfoliosActive =
     pathname === "/my-portfolios" || pathname.startsWith("/my-portfolios/");
@@ -223,6 +225,14 @@ export default function Navbar() {
                   active={isExploreActive}
                   widthClass="w-[60px]"
                 />
+
+                <NavItem
+                  href="/upgrade"
+                  label="Upgrade"
+                  active={isUpgradeActive}
+                  widthClass="w-[70px]"
+                />
+
                 <a
                   href={supportEmail}
                   className="hidden lg:flex flex-col items-start pt-[6px] gap-[6px] w-[65px] h-[24px]"
@@ -251,6 +261,13 @@ export default function Navbar() {
                 label="Explore"
                 active={isExploreActive}
                 widthClass="w-[62px]"
+              />
+            ) : showSignedOutUI ? (
+              <NavItem
+                href="/upgrade"
+                label="Upgrade"
+                active={isUpgradeActive}
+                widthClass="w-[72px]"
               />
             ) : (
               // authUnknown: render placeholders so nothing flashes to signed-out version
