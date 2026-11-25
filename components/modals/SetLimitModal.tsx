@@ -65,7 +65,7 @@ export default function SetLimitModal({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="relative w-full max-w-[680px] rounded-[16px] bg-white px-[48px] py-[48px] shadow-xl">
+      <div className="relative w-full max-w-[680px] rounded-[16px] bg-white px-[48px] py-[48px] shadow-[0_20px_60px_-5px_#0000001a]">
         <button
           type="button"
           aria-label="Close"
@@ -133,16 +133,13 @@ export default function SetLimitModal({
             </label>
 
             <div className="flex h-[48px] overflow-hidden rounded-[10px] border border-[#E9E9E9] bg-white">
-              <div className="flex w-[56px] shrink-0 items-center justify-center border-r border-[#E9E9E9] text-[14px] text-[#C0BDB4]">
-                {receivingLimit || "0"}
-              </div>
               <input
                 type="number"
                 min={0}
                 max={MAX_APPLICATIONS}
                 step={1}
                 aria-label="Maximum applications"
-                placeholder="Maximum Applications"
+                placeholder="250"
                 disabled={!receivingEnabled}
                 value={receivingLimit}
                 onChange={(e) => {
@@ -161,6 +158,11 @@ export default function SetLimitModal({
                 }}
                 className="min-w-0 flex-1 px-[14px] text-[14px] text-[#262626] outline-none placeholder:text-[#C0BDB4] disabled:opacity-40"
               />
+              <div className="flex w-[180px] shrink-0 items-center border-r border-[#E9E9E9] text-[14px] text-[#C0BDB4]">
+                <span>
+                  Maximum applications
+                </span>
+              </div>
             </div>
           </div>
 

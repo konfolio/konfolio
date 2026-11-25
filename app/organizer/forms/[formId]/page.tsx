@@ -219,7 +219,7 @@ export default function OrganizerFormPage() {
     <div className="flex h-dvh min-h-[360px] flex-col bg-white text-zinc-900">
       <div className="shrink-0"><Navbar /></div>
 
-      <div className="flex min-h-0 w-full flex-1 flex-col px-3 sm:px-6 lg:px-10">
+      <div className="flex min-h-0 w-full flex-1 flex-col px-3 sm:px-6 lg:px-20">
         <OrganizerFormHeader
           formId={formId}
           appCount={apps.length}
