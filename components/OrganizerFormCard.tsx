@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useId, useRef, useState, type ReactNode } from "react";
-import { Copy, Link as LinkIcon, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { Copy, Link as LinkIcon, MoreVertical, Pencil, Trash2, UserPlus, type LucideIcon } from "lucide-react";
 import TimeIcon from "@/components/icons/TimeIcon";
 import EyeIcon from "@/components/icons/EyeIcon";
 import UserIcon from "@/components/icons/UserIcon";
 import HoverTag from "@/components/my-portfolios/dashboard/HoverTag";
 import PortfolioDeleteConfirm from "@/components/my-portfolios/dashboard/PortfolioDeleteConfirm";
 import useClickOutside from "@/components/hooks/useClickOutside";
+import ShareFormModal from "@/components/modals/ShareFormModal";
 
 export type FormRow = {
   id: string;
@@ -23,7 +24,11 @@ export type FormRow = {
   applications_count: number;
 };
 
-type Props = { form: FormRow; onChanged?: () => void | Promise<void> };
+type Props = {
+  form: FormRow;
+  onChanged?: () => void | Promise<void>;
+  onShareAccess?: (form: FormRow) => void;
+};
 
 function Metric({ label, children }: { label: string; children: ReactNode }) {
   const id = useId();
@@ -37,6 +42,31 @@ function Metric({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
+type MenuItemProps = {
+  icon: LucideIcon;
+  label: string;
+  onClick: () => void;
+  danger?: boolean;
+  autoFocus?: boolean;
+  disabled?: boolean;
+};
+
+function MenuItem({ icon: Icon, label, onClick, danger, autoFocus, disabled }: MenuItemProps) {
+  return (
+    <button
+      type="button"
+      role="menuitem"
+      autoFocus={autoFocus}
+      disabled={disabled}
+      onClick={onClick}
+      className={`flex h-[30px] w-full shrink-0 items-center gap-[10px] overflow-hidden rounded-[10px] px-[10px] text-left text-[14px] leading-[1.3] hover:bg-[#F7F7F7] focus-visible:bg-[#F7F7F7] focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent ${danger ? "text-[#FF4603]" : "text-[#262626]"}`}
+    >
+      <Icon size={14} strokeWidth={1.5} aria-hidden className={`shrink-0 ${danger ? "" : "text-black/40"}`} />
+      <span className="min-w-0 flex-1 truncate">{label}</span>
+    </button>
+  );
+}
+
 export default function OrganizerFormCard({ form, onChanged }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -44,6 +74,7 @@ export default function OrganizerFormCard({ form, onChanged }: Props) {
   const [busy, setBusy] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [message, setMessage] = useState("");
+  const [shareOpen, setShareOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuId = useId();
@@ -103,16 +134,25 @@ export default function OrganizerFormCard({ form, onChanged }: Props) {
             {status}
           </span>
           <div ref={menuRef} className="relative shrink-0">
-            <button ref={menuButtonRef} type="button" aria-label={`More options for ${form.title}`} aria-expanded={menuOpen} aria-controls={menuId} onClick={() => setMenuOpen(!menuOpen)} className="flex h-[24px] w-[24px] items-center justify-center rounded-full hover:bg-[#F7F7F7] focus-visible:outline-2" disabled={busy}>
+            <button ref={menuButtonRef} type="button" aria-label={`More options for ${form.title}`} aria-haspopup="menu" aria-expanded={menuOpen} aria-controls={menuId} onClick={() => setMenuOpen(!menuOpen)} className="flex h-[24px] w-[24px] items-center justify-center rounded-full hover:bg-[#F7F7F7] focus-visible:outline-2" disabled={busy}>
               <MoreVertical size={20} strokeWidth={1.5} />
             </button>
             {menuOpen && (
-              <div id={menuId} aria-label="Form options" onKeyDown={(e) => { if (e.key === "Escape") { setMenuOpen(false); menuButtonRef.current?.focus(); } }} className="absolute right-0 top-[32px] z-30 w-[235px] rounded-[20px] bg-white p-[12px] shadow-[0_4px_20px_rgba(0,0,0,0.12)]">
-                <button autoFocus type="button" onClick={() => { setTitle(form.title); setEditing(true); setMenuOpen(false); }} className="flex w-full items-center gap-[15px] rounded-lg px-[12px] py-[12px] text-left text-[16px] hover:bg-[#F7F7F7]"><Pencil size={18} className="text-[#999999]" />Edit Name</button>
-                <button type="button" onClick={() => void copyUrl()} className="flex w-full items-center gap-[15px] rounded-lg px-[12px] py-[12px] text-left text-[16px] hover:bg-[#F7F7F7]"><LinkIcon size={18} className="text-[#999999]" />Copy Form URL</button>
-                <hr className="my-[12px] border-[#D9D9D9]" />
-                <button type="button" onClick={() => void mutate("POST")} className="flex w-full items-center gap-[15px] rounded-lg px-[12px] py-[12px] text-left text-[16px] hover:bg-[#F7F7F7]"><Copy size={18} className="text-[#999999]" />Duplicate</button>
-                <button type="button" onClick={() => { setMenuOpen(false); setDeleteOpen(true); }} className="flex w-full items-center gap-[15px] rounded-lg px-[12px] py-[12px] text-left text-[16px] text-[#F04D16] hover:bg-[#F7F7F7]"><Trash2 size={18} />Delete</button>
+              <div
+                id={menuId}
+                role="menu"
+                aria-label="Form options"
+                onKeyDown={(e) => { if (e.key === "Escape") { setMenuOpen(false); menuButtonRef.current?.focus(); } }}
+                className="absolute right-0 top-[32px] z-30 flex w-[224px] flex-col gap-[5px] rounded-[15px] bg-white p-[10px] drop-shadow-[2px_2px_5px_rgba(0,0,0,0.1)]"
+              >
+                <MenuItem icon={UserPlus} label="Share Access" autoFocus onClick={() => { setMenuOpen(false); setShareOpen(true); }} />
+                <MenuItem icon={LinkIcon} label="Copy Form URL" onClick={() => void copyUrl()} />
+                <MenuItem icon={Pencil} label="Edit Name" onClick={() => { setTitle(form.title); setEditing(true); setMenuOpen(false); }} />
+                <div role="separator" className="flex h-[20px] shrink-0 items-center">
+                  <span className="h-px w-full bg-[#D3D3D3]" />
+                </div>
+                <MenuItem icon={Copy} label="Duplicate" onClick={() => void mutate("POST")} />
+                <MenuItem icon={Trash2} label="Delete" danger onClick={() => { setMenuOpen(false); setDeleteOpen(true); }} />
               </div>
             )}
           </div>
@@ -138,6 +178,7 @@ export default function OrganizerFormCard({ form, onChanged }: Props) {
         {busy && !editing && <p role="status" className="sr-only">Updating form...</p>}
       </div>
       <PortfolioDeleteConfirm open={deleteOpen} onClose={() => { if (!busy) setDeleteOpen(false); }} onCancel={() => setDeleteOpen(false)} onConfirmDelete={() => void mutate("DELETE")} title="Delete this form?" subtitle="This form and its submissions cannot be recovered after deletion." isDeleting={busy} />
+      <ShareFormModal open={shareOpen} formId={form.id} onClose={() => { setShareOpen(false); menuButtonRef.current?.focus(); }} />
     </article>
   );
 }

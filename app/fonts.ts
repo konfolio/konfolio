@@ -4,7 +4,7 @@ export const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 
 export const inknut = Inknut_Antiqua({
   subsets: ["latin"],
-  weight: ["600"],
+  weight: ["700"],
   variable: "--font-inknut",
 })
 
