@@ -13,8 +13,10 @@ import ArrowRight from "@/components/icons/ArrowRight"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
 import InfoPopover from "@/components/icons/InfoPopover"
 import PortfolioNameCard from "@/components/my-portfolios/dashboard/PortfolioNameCard"
+import DeleteIcon from "@/components/icons/DeleteIcon"
 
-type TemplateType = "square" | "portrait"
+
+type TemplateType = "square" | "portrait" | "shared" | "custom"
 
 type TemplateCard = {
   title: string
@@ -30,7 +32,7 @@ type TemplateCard = {
 }
 
 type Props = {
-  templates?: [TemplateCard, TemplateCard]
+  templates?: [TemplateCard, TemplateCard, TemplateCard]
   infoText?: string
   title?: string
 
@@ -50,6 +52,11 @@ type Props = {
    * Default false so popover behavior stays unchanged.
    */
   enableNameStep?: boolean
+
+    // ---- Chose template ----
+  onClose?: () => void
+  onExploreTemplate?: (t: TemplateType) => void
+  onUseTemplateCode?: (code: string) => void
 }
 
 async function getAccessToken(): Promise<string | null> {
@@ -95,11 +102,26 @@ export default function CreateKonfolioCard({
       secondaryHref: "/explore?template=portrait",
       templateType: "portrait",
     },
+    {
+      title: "4x2 Shared Template",
+      subtitle: "6 Product, 2 Table Display",
+      tagLabel: "Best For New Artists",
+      imageSrc: "/images/template-3.png",
+      imageAlt: "Shared template preview",
+      primaryCta: "Use Shared Template",
+      primaryHref: "/my-portfolios/new?template=shared",
+      secondaryCta: "Explore Shared Examples",
+      secondaryHref: "/explore?template=shared",
+      templateType: "shared",
+    },
   ],
   onPickTemplate,
   disabled = false,
   primaryLoadingLabel,
   enableNameStep = false,
+  onClose,
+  onExploreTemplate,
+  onUseTemplateCode,
 }: Props) {
   const router = useRouter()
 
@@ -279,103 +301,231 @@ export default function CreateKonfolioCard({
     }
   }, [])
 
-  return (
-    <>
-      <section
-        ref={sectionRef}
-        className="relative w-[1254px] h-[766px] flex flex-col items-end gap-[41px] max-w-[calc(100vw-40px)]"
-      >
-        <div className="relative w-full h-[18px] flex items-center justify-center">
-          <p className="m-0 font-inter font-normal text-[25px] leading-[30px] text-[#262626] text-center">
-            {title}
-          </p>
+  // ---- Display data (index-aligned with `templates`) ----
+const TEMPLATE_CARDS = [
+  {
+    title: '3×3 Square Template',
+    specs: '4 Artwork, 4 Product, 1 Table Display',
+    badge: 'Best For Product Variety',
+    thumbnail: '/images/template-1.png',
+    ctaLabel: 'Use Square Template',
+    exploreLabel: 'Explore Square Examples',
+  },
+  {
+    title: '4×2 Portrait Template',
+    specs: '4 Artwork, 3 Product, 1 Table Display',
+    badge: 'Best For Art & Print Showcase',
+    thumbnail: '/images/template-2.png',
+    ctaLabel: 'Use Portrait Template',
+    exploreLabel: 'Explore Portrait Examples',
+  },
+  {
+    title: '4×2 Shared Template',
+    specs: '6 Product, 2 Table Display',
+    badge: 'Best For New Artists',
+    thumbnail: '/images/template-3.png',
+    ctaLabel: 'Use Shared Template',
+    exploreLabel: 'Explore Shared Examples',
+  },
+] as const
 
-          <button
-            ref={infoBtnRef}
-            type="button"
-            onClick={() => setInfoOpen((v) => !v)}
-            className="
-              absolute right-0 top-1/2
-              w-[36px] h-[36px]
-              flex items-center justify-center
-              rounded-[10px]
-              hover:bg-black/5
-              transition-colors
-              focus:outline-none focus-visible:outline-none
-              focus:ring-0 focus-visible:ring-0
-            "
-            style={{ transform: `translate(${iconShiftX}px, -50%)` }}
-            aria-label="Info"
-            aria-expanded={infoOpen}
-          >
-            <InfoIcon />
-          </button>
-        </div>
+// ---- Inside component, before return ----
+const [templateCode, setTemplateCode] = useState('')
 
-        <div style={popoverStyle}>
-          <div id="create-konfolio-info-popover">
-            <InfoPopover open={infoOpen} text={infoText} onClose={() => setInfoOpen(false)} />
-          </div>
-        </div>
+const handlePick = (type: TemplateType) => {
+  if (effectiveDisabled) return
+  if (onPickTemplate) return onPickTemplate(type)
+  if (enableNameStep) return openNameStep(type)
+  void createAndGo(type)
+}
 
-        {createError ? (
-          <p className="m-0 w-full text-center text-[12px] leading-[130%] text-[#FF4603]">{createError}</p>
-        ) : null}
-
-        <div className="relative w-[1254px] h-[707px] bg-white rounded-[15px] shadow-[4px_4px_15px_rgba(0,0,0,0.1)]">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-full px-[67px] flex items-center justify-between">
-              <TemplateColumn
-                t={templates[0]}
-                onPickTemplate={(t) => {
-                  if (effectiveDisabled) return
-
-                  // ✅ POPUP MODE: if parent handles selection, call parent immediately.
-                  if (onPickTemplate) return onPickTemplate(t)
-
-                  // ✅ Name-step mode (only when enabled)
-                  if (enableNameStep) return openNameStep(t)
-
-                  // ✅ Default: create + route immediately
-                  void createAndGo(t)
-                }}
-                disabled={effectiveDisabled}
-                loadingLabel={effectiveLoadingLabel}
-              />
-
-              <TemplateColumn
-                t={templates[1]}
-                onPickTemplate={(t) => {
-                  if (effectiveDisabled) return
-
-                  if (onPickTemplate) return onPickTemplate(t)
-                  if (enableNameStep) return openNameStep(t)
-                  void createAndGo(t)
-                }}
-                disabled={effectiveDisabled}
-                loadingLabel={effectiveLoadingLabel}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Only render Name Card if name-step is enabled */}
-      {enableNameStep ? (
-        <PortfolioNameCard
-          isOpen={nameCardOpen}
-          businessSlug={businessSlug}
-          onClose={closeNameStep}
-          onContinue={(portfolioName) => {
-            const t = pendingTemplate
-            if (!t) return
-
-            closeNameStep()
-            void createAndGo(t, portfolioName)
-          }}
-        />
+return (
+  <>
+    <section
+      ref={sectionRef}
+      className="relative flex h-[707px] max-h-[calc(100vh-40px)] w-[1102px] max-w-[calc(100vw-40px)] flex-col items-center gap-[30px] overflow-hidden rounded-[15px] bg-white px-[70px] pt-[50px] pb-[20px] shadow-[4px_4px_15px_rgba(0,0,0,0.1)]"
+    >
+      {/* Close (position needs fixing)*/}
+      {onClose ? (
+        <button
+          type="button"
+          onClick={() => onClose?.()}
+          aria-label="Close"
+          className="absolute left-[20px] top-[20px] z-20 size-[26px] cursor-pointer focus:outline-none"
+        >
+          <DeleteIcon />
+        </button>
       ) : null}
-    </>
+
+      {/* Info (kept; sits left of the X) */}
+      <div className="relative z-">
+        <p className="m-0 font-inter text-[20px] font-normal leading-[1.4] text-[#262626] text-center">
+          {title || 'Select A Template'}
+        </p>
+
+        <button
+          ref={infoBtnRef}
+          type="button"
+          onClick={() => setInfoOpen((v) => !v)}
+          className="absolute left-[135px] top-1/2 ml-[35px] flex size-[36px] -translate-y-1/2 items-center justify-center rounded-[10px] transition-colors hover:bg-black/5 focus:outline-none focus-visible:outline-none"
+          aria-label="Info"
+          aria-expanded={infoOpen}
+        >
+          <InfoIcon className="size-5"/>
+        </button>
+      </div>
+
+      <div style={popoverStyle}>
+        <div id="create-konfolio-info-popover">
+          <InfoPopover open={infoOpen} text={infoText} onClose={() => setInfoOpen(false)} />
+        </div>
+      </div>
+
+      {createError ? (
+        <p className="m-0 -mt-[18px] w-full text-center text-[12px] leading-[1.3] text-[#FF4603]">
+          {createError}
+        </p>
+      ) : null}
+
+      {/* Scrollable grid (px/-mx keeps card shadows from clipping) */}
+      <div className="-mx-[20px] -mt-[20px] min-h-0 w-[calc(100%+40px)] flex-1 overflow-y-auto overscroll-contain px-[20px] pt-[20px]">
+        <div className="mx-auto grid w-[962px] max-w-full grid-cols-1 gap-[20px] pb-[30px] lg:grid-cols-2">
+          {TEMPLATE_CARDS.map((card, i) => {
+            const t = templates[i]
+            if (!t) return null
+            return (
+            <TemplateOptionCard
+              key={card.title}
+              {...card}
+              onUse={() => handlePick(t.templateType)} // ← or t.id, whatever TemplateColumn used
+              onExplore={onExploreTemplate ? () => onExploreTemplate(t.templateType) : undefined}
+              disabled={effectiveDisabled}
+              loadingLabel={effectiveLoadingLabel}
+            />
+            )
+          })}
+
+          <TemplateCodeCard
+            value={templateCode}
+            onChange={setTemplateCode}
+            onSubmit={() => onUseTemplateCode?.(templateCode.trim())}
+            disabled={effectiveDisabled}
+          />
+        </div>
+      </div>
+    </section>
+
+    {enableNameStep ? (
+      <PortfolioNameCard
+        isOpen={nameCardOpen}
+        businessSlug={businessSlug}
+        onClose={closeNameStep}
+        onContinue={(portfolioName) => {
+          const t = pendingTemplate
+          if (!t) return
+          closeNameStep()
+          void createAndGo(t, portfolioName)
+        }}
+      />
+    ) : null}
+  </>
+)
+}
+
+// ---- Sub-components ----
+const cardBase =
+  'flex flex-col items-center rounded-[15px] bg-white px-[20px] py-[30px] shadow-[2px_2px_15px_rgba(0,0,0,0.1)] gap-[25px]'
+
+const primaryBtn =
+  'flex h-[33px] min-w-[150px] items-center justify-center rounded-full bg-[#262626] px-[40px] font-inter text-[14px] leading-[1.3] text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:opacity-50'
+
+type TemplateCardProps = {
+  title: string
+  specs: string
+  badge: string
+  thumbnail: string
+  ctaLabel: string
+  exploreLabel: string
+  onUse: () => void
+  onExplore?: () => void
+  disabled?: boolean
+  loadingLabel?: string
+}
+
+function TemplateOptionCard({
+  title, specs, badge, thumbnail, ctaLabel, exploreLabel,
+  onUse, onExplore, disabled, loadingLabel,
+}: TemplateCardProps) {
+  return (
+    <div className={`${cardBase} gap-[20px]`}>
+      <div className="flex flex-col items-center gap-[5px] text-center font-inter">
+        <p className="m-0 text-[20px] leading-[1.4] text-[#262626]">{title}</p>
+        <p className="m-0 text-[12px] leading-[1.3] text-black/40">{specs}</p>
+      </div>
+
+      <span className="rounded-full border-[0.5px] border-black/40 px-[22px] py-[5px] font-inter text-[12px] leading-[1.3] text-black/40">
+        {badge}
+      </span>
+
+      <div className="h-[232px] w-[357px] max-w-full overflow-hidden rounded-[6.6px] border-[0.33px] border-[#d3d3d3] shadow-[2.6px_2.6px_6.6px_rgba(0,0,0,0.05)]">
+        <img src={thumbnail} alt={`${title} preview`} className="size-full object-cover" />
+      </div>
+
+      <div className="flex flex-col items-center gap-[5px]">
+        <button type="button" onClick={onUse} disabled={disabled} className={primaryBtn}>
+          {disabled && loadingLabel ? loadingLabel : ctaLabel}
+        </button>
+
+        <button
+          type="button"
+          onClick={onExplore}
+          className="flex items-center gap-[5px] p-[5px] font-inter text-[12px] leading-[1.3] text-black/40 transition-colors hover:text-black/60"
+        >
+          {exploreLabel}
+          <ArrowRight className="size-3"/>
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function TemplateCodeCard({
+  value, onChange, onSubmit, disabled,
+}: {
+  value: string
+  onChange: (v: string) => void
+  onSubmit: () => void
+  disabled?: boolean
+}) {
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        if (value.trim()) onSubmit()
+      }}
+      className={`${cardBase} min-h-[473px] justify-center gap-[59px]`}
+    >
+      <div className="flex flex-col items-center gap-[5px] text-center font-inter">
+        <p className="m-0 text-[20px] leading-[1.4] text-[#262626]">Template Code</p>
+        <p className="m-0 text-[12px] leading-[1.3] text-black/40">
+          Customized template from event organizer
+        </p>
+      </div>
+
+      <label className="w-[327px] max-w-full pt-[10px]">
+        <span className="sr-only">Template code</span>
+        <input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Enter Code"
+          className="w-full border-0 border-b border-[#d3d3d3] bg-transparent pb-[10px] text-center font-inter text-[17px] leading-[1.4] text-[#262626] outline-none transition-colors placeholder:text-[#d3d3d3] focus:border-[#262626]"
+        />
+      </label>
+
+      <button type="submit" disabled={disabled || !value.trim()} className={primaryBtn}>
+        Use Custom Template
+      </button>
+    </form>
   )
 }
 
