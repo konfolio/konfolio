@@ -49,7 +49,7 @@ export default function MyFormsPage() {
       <Navbar />
 
       {/* Host Profile Header */}
-      <DashboardProfileHeader formCount={forms.length} />
+      <DashboardProfileHeader formCount={forms.length} forms={forms.map((f) => ({ id: f.id, title: f.title }))} />
 
       <section className="w-full flex justify-center px-4 sm:px-8 lg:px-[150px] py-[40px]">
         <div className="grid w-full max-w-[1212px] grid-cols-[repeat(auto-fill,minmax(min(100%,460px),1fr))] items-start gap-[24px]">

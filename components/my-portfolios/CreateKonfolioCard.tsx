@@ -377,7 +377,7 @@ return (
 
       <div style={popoverStyle}>
         <div id="create-konfolio-info-popover">
-          <InfoPopover open={infoOpen} text={infoText} onClose={() => setInfoOpen(false)} />
+          <InfoPopover open={infoOpen} text={infoText} onClose={() => setInfoOpen(false)} width={166}/>
         </div>
       </div>
 

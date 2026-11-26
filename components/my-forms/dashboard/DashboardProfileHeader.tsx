@@ -1,7 +1,7 @@
 // components/my-forms/dashboard/DashboardProfileHeader.tsx
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import SecondaryButton from "@/components/buttons/SecondaryButton";
 import PencilIcon from "@/components/icons/PencilIcon";
@@ -11,6 +11,11 @@ import OrganizerProfileEditPopover, {
   type OrganizerProfilePopupData,
 } from "@/components/my-forms/dashboard/OrganizerProfileEditPopover";
 import CreateFormWizard from "@/components/organizer/CreateFormWizard";
+import CreateInvoiceWizard, {
+  type InvoiceFormOption,
+} from "@/components/organizer/CreateInvoiceWizard";
+import ArrowDown from "@/components/icons/ArrowDown";
+import CreateExpand, { type CreateOption } from "@/components/my-forms/dashboard/CreateExpand";
 
 type Profile = {
   first_name: string | null;
@@ -26,6 +31,7 @@ type Props = {
   organizationName?: string;
   locationLine?: string;
   formCount?: number;
+  forms?: InvoiceFormOption[];
 
   className?: string;
 };
@@ -42,11 +48,15 @@ export default function DashboardProfileHeader({
   locationLine: locationLineOverride,
   formCount: formCountOverride,
 
+  forms = [],
   className = "",
 }: Props) {
   const [signedIn, setSignedIn] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false); // CreateFormWizard
+  const [invoiceOpen, setInvoiceOpen] = useState(false); //CreateInvoiceWizard
+  const [createMenuOpen, setCreateMenuOpen] = useState(false); // Create popup
+  const createWrapRef = useRef<HTMLDivElement>(null);
 
   const [profilePopoverOpen, setProfilePopoverOpen] = useState(false);
 
@@ -100,6 +110,36 @@ export default function DashboardProfileHeader({
       sub.subscription.unsubscribe();
     };
   }, []);
+
+  // Close the Create popup on background click or Escape
+  useEffect(() => {
+    if (!createMenuOpen) return;
+
+    const onDown = (e: MouseEvent) => {
+      if (!createWrapRef.current?.contains(e.target as Node)) {
+        setCreateMenuOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setCreateMenuOpen(false);
+    };
+
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [createMenuOpen]);
+
+  const handleCreateSelect = (option: CreateOption) => {
+    setCreateMenuOpen(false);
+    if (option === "form") {
+      setOpen(true); // opens CreateFormWizard
+    } else {
+      setInvoiceOpen(true);
+    }
+  };
 
   const fullName = useMemo(() => fullNameFromProfile(profile), [profile]);
 
@@ -200,20 +240,30 @@ export default function DashboardProfileHeader({
                 {resolvedCount} forms
               </div>
 
-              <SecondaryButton
-                onClick={() => {
-                  setOpen(true);
-                }}
-                className="w-[150px] min-w-[150px] h-[30px] px-[40px] py-[10px] gap-[7px]"
-                disabled={!signedIn}
-              >
-                <span className="inline-flex items-center gap-[7px]">
-                  <span className="text-[14px] leading-[14px] font-normal">
-                    +
+              <div ref={createWrapRef} className="relative">
+                <SecondaryButton
+                  onClick={() => setCreateMenuOpen((v) => !v)}
+                  className="w-[150px] min-w-[150px] h-[30px] px-[40px] py-[10px] gap-[7px]"
+                  disabled={!signedIn}
+                >
+                  <span className="inline-flex items-center gap-[7px]">
+                    <span className="text-[14px] leading-[14px] font-normal">
+                      Create
+                    </span>
+                    <ArrowDown
+                      color="#000000"
+                      className={`transition-transform ${createMenuOpen ? "rotate-180" : ""}`}
+                    />
                   </span>
-                  <span>Create</span>
-                </span>
-              </SecondaryButton>
+                </SecondaryButton>
+
+                {createMenuOpen ? (
+                  <CreateExpand
+                    onSelect={handleCreateSelect}
+                    className="absolute right-0 top-[calc(100%+8px)] z-50"
+                  />
+                ) : null}
+              </div>
             </div>
           </div>
         </div>
@@ -225,6 +275,7 @@ export default function DashboardProfileHeader({
         data={popoverData}
       />
       <CreateFormWizard open={open} onClose={() => setOpen(false)} />
+        <CreateInvoiceWizard open={invoiceOpen} onClose={() => setInvoiceOpen(false)} forms={forms} />
     </>
   );
 }

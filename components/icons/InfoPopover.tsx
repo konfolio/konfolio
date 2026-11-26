@@ -9,6 +9,7 @@ type Props = {
   text?: string
   children?: React.ReactNode
   className?: string
+  width?: number
 }
 
 export default function InfoPopover({ open, onClose, text, children, className = "" }: Props) {
@@ -31,13 +32,14 @@ export default function InfoPopover({ open, onClose, text, children, className =
       ref={popoverRef}
       className={`
         relative
-        w-[166px] h-[87px]
+        w-full h-full
         bg-white
         rounded-[10px]
         shadow-[2px_2px_15px_rgba(0,0,0,0.1)]
         px-[15px] py-[15px]
         flex items-center
         ${className}
+        style={{ width: width ?? undefined
       `}
       role="dialog"
       aria-label="Info"
@@ -46,9 +48,9 @@ export default function InfoPopover({ open, onClose, text, children, className =
       <PopoverArrow className="absolute top-[-8px] left-1/2 -translate-x-1/2" />
 
       {children ? (
-        <div className="w-[136px] h-[57px]">{children}</div>
+        <div className="w-full h-full">{children}</div>
       ) : (
-        <p className="m-0 w-[136px] h-[57px] font-inter font-normal text-[12px] leading-[130%] text-black">
+        <p className="m-0 w-full h-full font-inter font-normal text-[12px] leading-[130%] text-black">
           {text ?? ""}
         </p>
       )}
