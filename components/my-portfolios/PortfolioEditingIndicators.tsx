@@ -11,19 +11,22 @@ type FieldProps = {
     onVisibilityChange?: (visible: boolean) => void
     isDark?: boolean
     indicatorPlacement?: "edge" | "inline"
+    /** Also reveal the indicators while an ancestor with `group/card` is hovered. */
+    revealOnParentHover?: boolean
 }
 
-export function PortfolioField({ children, label, editable, visible = true, onVisibilityChange, isDark = false, indicatorPlacement = "edge" }: FieldProps) {
+export function PortfolioField({ children, label, editable, visible = true, onVisibilityChange, isDark = false, indicatorPlacement = "edge", revealOnParentHover = false }: FieldProps) {
     const fieldRef = useRef<HTMLDivElement>(null)
     const indicatorTextClass = isDark ? "text-white/40" : "text-black/40"
     const editTextClass = isDark ? "text-white" : "text-black"
     const inline = indicatorPlacement === "inline"
+    const parentReveal = revealOnParentHover ? "group-hover/card:opacity-100 group-hover/card:pointer-events-auto" : ""
     if (!editable) return visible ? <>{children}</> : null
 
     return (
         <div ref={fieldRef} className={`group/field relative min-w-0 ${inline ? "inline-flex max-w-full items-center gap-[6px]" : `w-full ${onVisibilityChange ? "px-[48px]" : "px-[24px]"}`}`}>
             <div className={`${visible ? "" : "opacity-40"} ${inline ? "min-w-0 [&_input]:!w-auto [&_input]:max-w-full [&_input]:[field-sizing:content]" : ""}`}>{children}</div>
-            <div className={`${inline ? "relative flex shrink-0" : "absolute right-0 top-1/2 z-30 flex -translate-y-1/2"} items-center gap-[6px] opacity-0 pointer-events-none transition-opacity group-hover/field:opacity-100 group-hover/field:pointer-events-auto group-focus-within/field:opacity-100 group-focus-within/field:pointer-events-auto`}>
+            <div className={`${inline ? "relative flex shrink-0" : "absolute right-0 top-1/2 z-30 flex -translate-y-1/2"} items-center gap-[6px] opacity-0 pointer-events-none transition-opacity group-hover/field:opacity-100 group-hover/field:pointer-events-auto group-focus-within/field:opacity-100 group-focus-within/field:pointer-events-auto ${parentReveal}`}>
                 <button type="button" aria-label={`Edit ${label}`} title={`Edit ${label}`} className={`flex h-[20px] w-[20px] items-center justify-center ${editTextClass} focus-visible:outline-2`} onClick={() => {
                     const input = fieldRef.current?.querySelector("input")
                     input?.focus()

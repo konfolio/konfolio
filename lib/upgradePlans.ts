@@ -8,6 +8,7 @@ export type Feature = {
 export type AddOn = {
   label: string;
   price: string;
+  href?: string;
   available?: boolean; // defaults to true
 };
 
@@ -24,7 +25,11 @@ export type Plan = {
 
 const organizerAddOns: AddOn[] = [
   { label: "100 permanent application space", price: "$9.99" },
-  { label: "Customized portfolio template", price: "$199.99" },
+  { label: "Customized portfolio template", price: "$73.99", href: "/custom-template" },
+];
+
+const vendorAddOns: AddOn[] = [
+  { label: "Permanent portfolio slot", price: "$14.99" },
 ];
 
 export const organizerPlans: Plan[] = [
@@ -81,7 +86,7 @@ export const vendorPlans: Plan[] = [
       { label: "Viewer statistics", included: false, highUsage: true },
       { label: "20% OFF All Fees", included: false, highUsage: true },
     ],
-    addOns: [{ label: "Permanent portfolio slot", price: "$14.99" }],
+    addOns: vendorAddOns,
     recommendedFor:
       "Artists who are just starting up and is attending limited conventions and fairs. You have recognizable products representing your brand or are only marketing your best sellers.",
   },
@@ -99,7 +104,7 @@ export const vendorPlans: Plan[] = [
       { label: "Viewer statistics", included: true, highUsage: true },
       { label: "20% OFF All Fees", included: true, highUsage: true },
     ],
-    addOns: [{ label: "Permanent portfolio slot", price: "$14.99"}],
+    addOns: vendorAddOns,
     recommendedFor:
       "Full-time artists who bring high customization to their portfolios or are attending many conventions and fairs. You try different types of products, so you need a portfolio that reflects your changing inventory.",
   },

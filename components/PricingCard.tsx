@@ -3,7 +3,6 @@ import Link from "next/link";
 import type { AddOn, Feature, Plan } from "@/lib/upgradePlans";
 import InfoIcon from "@/components/icons/InfoIcon";
 
-
 type PricingCardProps = {
   plan: Plan;
   // onUpgrade?: (planId: string) => void;
@@ -41,8 +40,7 @@ function FeatureRow({ feature }: { feature: Feature }) {
           aria-label={`About ${feature.label}`}
           className="absolute -left-[25px] top-0.5 size-4"
         >
-          {/* <img src="components/icons/InfoIcon.tsx" alt="" width={16} height={16} /> */}
-          <InfoIcon className="size-5"/>
+          <InfoIcon className="size-5" />
         </button>
       )}
       <span className={`flex-1 text-sub ${muted ? "text-[#D3D3D3]" : "text-black"}`}>
@@ -54,17 +52,37 @@ function FeatureRow({ feature }: { feature: Feature }) {
   );
 }
 
+const addOnRowBase =
+  "flex h-[38px] w-full items-center justify-between gap-4 rounded-full bg-[#F7F7F7] px-[22px] text-sub";
+
 function AddOnRow({ addOn }: { addOn: AddOn }) {
   const available = addOn.available ?? true;
+  const textClass = available ? "text-black" : "text-[#D3D3D3]";
+
+  const content = (
+    <>
+      <span>{addOn.label}</span>
+      <span>{addOn.price}</span>
+    </>
+  );
+
+  // Whole row opens the linked page (e.g. the custom template builder)
+  if (addOn.href && available) {
+    return (
+      <li>
+        <Link
+          href={addOn.href}
+          className={`${addOnRowBase} ${textClass} cursor-pointer transition-colors hover:bg-[#EDEDED] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black`}
+        >
+          {content}
+        </Link>
+      </li>
+    );
+  }
 
   return (
-    <li
-      className={`flex h-[38px] items-center justify-between gap-4 rounded-full bg-[#F7F7F7] px-[22px] text-sub ${
-        available ? "" : "text-[#D3D3D3]"
-      }`}
-    >
-      <span className={available ? "text-black" : ""}>{addOn.label}</span>
-      <span className={available ? "text-black" : ""}>{addOn.price}</span>
+    <li className={`${addOnRowBase} ${textClass}`} aria-disabled={!available || undefined}>
+      {content}
     </li>
   );
 }
